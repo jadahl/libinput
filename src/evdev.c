@@ -103,18 +103,18 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		device->rel.dy = 0;
 		goto handled;
 	case EVDEV_ABSOLUTE_MT_DOWN:
+		x = wl_fixed_from_int(device->mt.slots[slot].x);
+		y = wl_fixed_from_int(device->mt.slots[slot].y);
 		weston_output_transform_coordinate(device->output,
-						   device->mt.slots[slot].x,
-						   device->mt.slots[slot].y,
-						   &x, &y);
+						   x, y, &x, &y);
 		notify_touch(master, time,
 			     slot, x, y, WL_TOUCH_DOWN);
 		goto handled;
 	case EVDEV_ABSOLUTE_MT_MOTION:
+		x = wl_fixed_from_int(device->mt.slots[slot].x);
+		y = wl_fixed_from_int(device->mt.slots[slot].y);
 		weston_output_transform_coordinate(device->output,
-						   device->mt.slots[slot].x,
-						   device->mt.slots[slot].y,
-						   &x, &y);
+						   x, y, &x, &y);
 		notify_touch(master, time,
 			     slot, x, y, WL_TOUCH_MOTION);
 		goto handled;
@@ -124,14 +124,18 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		goto handled;
 	case EVDEV_ABSOLUTE_TOUCH_DOWN:
 		transform_absolute(device, &cx, &cy);
+		x = wl_fixed_from_int(cx);
+		y = wl_fixed_from_int(cy);
 		weston_output_transform_coordinate(device->output,
-						   cx, cy, &x, &y);
+						   x, y, &x, &y);
 		notify_touch(master, time, 0, x, y, WL_TOUCH_DOWN);
 		goto handled;
 	case EVDEV_ABSOLUTE_MOTION:
 		transform_absolute(device, &cx, &cy);
+		x = wl_fixed_from_int(cx);
+		y = wl_fixed_from_int(cy);
 		weston_output_transform_coordinate(device->output,
-						   cx, cy, &x, &y);
+						   x, y, &x, &y);
 
 		if (device->caps & EVDEV_TOUCH)
 			notify_touch(master, time, 0, x, y, WL_TOUCH_MOTION);
