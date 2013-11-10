@@ -20,47 +20,43 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _FILTER_H_
-#define _FILTER_H_
+#ifndef FILTER_H
+#define FILTER_H
 
 #include "config.h"
 
-#include <wayland-util.h>
-
-#include "compositor.h"
-
-struct weston_motion_params {
+struct motion_params {
 	double dx, dy;
 };
 
-struct weston_motion_filter;
+struct motion_filter;
 
-WL_EXPORT void
-weston_filter_dispatch(struct weston_motion_filter *filter,
-		       struct weston_motion_params *motion,
+void
+filter_dispatch(struct motion_filter *filter,
+		struct motion_params *motion,
+		void *data, uint32_t time);
+
+
+struct motion_filter_interface {
+	void (*filter)(struct motion_filter *filter,
+		       struct motion_params *motion,
 		       void *data, uint32_t time);
-
-
-struct weston_motion_filter_interface {
-	void (*filter)(struct weston_motion_filter *filter,
-		       struct weston_motion_params *motion,
-		       void *data, uint32_t time);
-	void (*destroy)(struct weston_motion_filter *filter);
+	void (*destroy)(struct motion_filter *filter);
 };
 
-struct weston_motion_filter {
-	struct weston_motion_filter_interface *interface;
+struct motion_filter {
+	struct motion_filter_interface *interface;
 };
 
-WL_EXPORT struct weston_motion_filter *
+struct motion_filter *
 create_linear_acceleration_filter(double speed);
 
-typedef double (*accel_profile_func_t)(struct weston_motion_filter *filter,
+typedef double (*accel_profile_func_t)(struct motion_filter *filter,
 				       void *data,
 				       double velocity,
 				       uint32_t time);
 
-WL_EXPORT struct weston_motion_filter *
+struct motion_filter *
 create_pointer_accelator_filter(accel_profile_func_t filter);
 
-#endif // _FILTER_H_
+#endif /* FILTER_H */

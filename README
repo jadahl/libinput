@@ -1,0 +1,9 @@
+This library does processing on input device events while providing an API
+to the the user used for delegating more useful input events.
+
+Input event processing includes scaling touch coordinates, generating
+pointer events from touchpads, pointer acceleration, etc.
+
+It is based on the input code from the weston Wayland reference compositor.
+
+It has no other dependencies than libmtdev and supports only evdev devices.

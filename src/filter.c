@@ -27,15 +27,12 @@
 #include <limits.h>
 #include <math.h>
 
-#include <wayland-util.h>
-
-#include "compositor.h"
 #include "filter.h"
 
 void
-weston_filter_dispatch(struct weston_motion_filter *filter,
-		       struct weston_motion_params *motion,
-		       void *data, uint32_t time)
+filter_dispatch(struct motion_filter *filter,
+		struct motion_params *motion,
+		void *data, uint32_t time)
 {
 	filter->interface->filter(filter, motion, data, time);
 }
@@ -57,7 +54,7 @@ struct pointer_tracker {
 
 struct pointer_accelerator;
 struct pointer_accelerator {
-	struct weston_motion_filter base;
+	struct motion_filter base;
 
 	accel_profile_func_t profile;
 
@@ -267,15 +264,15 @@ soften_delta(double last_delta, double delta)
 
 static void
 apply_softening(struct pointer_accelerator *accel,
-		struct weston_motion_params *motion)
+		struct motion_params *motion)
 {
 	motion->dx = soften_delta(accel->last_dx, motion->dx);
 	motion->dy = soften_delta(accel->last_dy, motion->dy);
 }
 
 static void
-accelerator_filter(struct weston_motion_filter *filter,
-		   struct weston_motion_params *motion,
+accelerator_filter(struct motion_filter *filter,
+		   struct motion_params *motion,
 		   void *data, uint32_t time)
 {
 	struct pointer_accelerator *accel =
@@ -299,7 +296,7 @@ accelerator_filter(struct weston_motion_filter *filter,
 }
 
 static void
-accelerator_destroy(struct weston_motion_filter *filter)
+accelerator_destroy(struct motion_filter *filter)
 {
 	struct pointer_accelerator *accel =
 		(struct pointer_accelerator *) filter;
@@ -308,12 +305,12 @@ accelerator_destroy(struct weston_motion_filter *filter)
 	free(accel);
 }
 
-struct weston_motion_filter_interface accelerator_interface = {
+struct motion_filter_interface accelerator_interface = {
 	accelerator_filter,
 	accelerator_destroy
 };
 
-struct weston_motion_filter *
+struct motion_filter *
 create_pointer_accelator_filter(accel_profile_func_t profile)
 {
 	struct pointer_accelerator *filter;

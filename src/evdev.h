@@ -1,5 +1,6 @@
 /*
  * Copyright © 2011, 2012 Intel Corporation
+ * Copyright © 2013 Jonas Ådahl
  *
  * Permission to use, copy, modify, distribute, and sell this software and
  * its documentation for any purpose is hereby granted without fee, provided
@@ -26,7 +27,15 @@
 #include "config.h"
 
 #include <linux/input.h>
-#include <wayland-util.h>
+
+#include "evdev.h"
+#include "libinput-private.h"
+
+static inline void *
+zalloc(size_t size)
+{
+	return calloc(1, size);
+}
 
 #define MAX_SLOTS 16
 
@@ -56,10 +65,8 @@ enum evdev_device_seat_capability {
 };
 
 struct evdev_device {
-	struct weston_seat *seat;
-	struct wl_list link;
-	struct wl_event_source *source;
-	struct weston_output *output;
+	struct libinput_device base;
+
 	struct evdev_dispatch *dispatch;
 	char *devnode;
 	char *devname;
@@ -81,7 +88,7 @@ struct evdev_device {
 	struct mtdev *mtdev;
 
 	struct {
-		wl_fixed_t dx, dy;
+		li_fixed_t dx, dy;
 	} rel;
 
 	enum evdev_event_type pending_event;
@@ -123,17 +130,19 @@ struct evdev_dispatch {
 struct evdev_dispatch *
 evdev_touchpad_create(struct evdev_device *device);
 
-void
-evdev_led_update(struct evdev_device *device, enum weston_led leds);
+int
+evdev_device_dispatch(struct evdev_device *device);
 
-struct evdev_device *
-evdev_device_create(struct weston_seat *seat, const char *path, int device_fd);
+void
+evdev_device_led_update(struct evdev_device *device, enum libinput_led leds);
+
+int
+evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size);
+
+void
+evdev_device_calibrate(struct evdev_device *device, float calibration[6]);
 
 void
 evdev_device_destroy(struct evdev_device *device);
-
-void
-evdev_notify_keyboard_focus(struct weston_seat *seat,
-			    struct wl_list *evdev_devices);
 
 #endif /* EVDEV_H */
