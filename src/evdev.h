@@ -59,9 +59,9 @@ enum evdev_device_capability {
 };
 
 enum evdev_device_seat_capability {
-	EVDEV_SEAT_POINTER = (1 << 0),
-	EVDEV_SEAT_KEYBOARD = (1 << 1),
-	EVDEV_SEAT_TOUCH = (1 << 2)
+	EVDEV_DEVICE_POINTER = (1 << 0),
+	EVDEV_DEVICE_KEYBOARD = (1 << 1),
+	EVDEV_DEVICE_TOUCH = (1 << 2)
 };
 
 struct evdev_device {

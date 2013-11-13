@@ -586,21 +586,21 @@ evdev_configure_device(struct evdev_device *device)
 	if ((device->caps & (EVDEV_MOTION_ABS | EVDEV_MOTION_REL)) &&
 	    (device->caps & EVDEV_BUTTON)) {
 		device->base.device_interface->register_capability(
-			LIBINPUT_SEAT_CAP_POINTER,
+			LIBINPUT_DEVICE_CAP_POINTER,
 			device->base.device_interface_data);
-		device->seat_caps |= EVDEV_SEAT_POINTER;
+		device->seat_caps |= EVDEV_DEVICE_POINTER;
 	}
 	if ((device->caps & EVDEV_KEYBOARD)) {
 		device->base.device_interface->register_capability(
-			LIBINPUT_SEAT_CAP_KEYBOARD,
+			LIBINPUT_DEVICE_CAP_KEYBOARD,
 			device->base.device_interface_data);
-		device->seat_caps |= EVDEV_SEAT_KEYBOARD;
+		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
 	}
 	if ((device->caps & EVDEV_TOUCH)) {
 		device->base.device_interface->register_capability(
-			LIBINPUT_SEAT_CAP_TOUCH,
+			LIBINPUT_DEVICE_CAP_TOUCH,
 			device->base.device_interface_data);
-		device->seat_caps |= EVDEV_SEAT_TOUCH;
+		device->seat_caps |= EVDEV_DEVICE_TOUCH;
 	}
 
 	return 0;
@@ -678,19 +678,19 @@ evdev_device_destroy(struct evdev_device *device)
 {
 	struct evdev_dispatch *dispatch;
 
-	if (device->seat_caps & EVDEV_SEAT_POINTER) {
+	if (device->seat_caps & EVDEV_DEVICE_POINTER) {
 		device->base.device_interface->unregister_capability(
-			LIBINPUT_SEAT_CAP_POINTER,
+			LIBINPUT_DEVICE_CAP_POINTER,
 			device->base.device_interface_data);
 	}
-	if (device->seat_caps & EVDEV_SEAT_KEYBOARD) {
+	if (device->seat_caps & EVDEV_DEVICE_KEYBOARD) {
 		device->base.device_interface->unregister_capability(
-			LIBINPUT_SEAT_CAP_KEYBOARD,
+			LIBINPUT_DEVICE_CAP_KEYBOARD,
 			device->base.device_interface_data);
 	}
-	if (device->seat_caps & EVDEV_SEAT_TOUCH) {
+	if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
 		device->base.device_interface->unregister_capability(
-			LIBINPUT_SEAT_CAP_TOUCH,
+			LIBINPUT_DEVICE_CAP_TOUCH,
 			device->base.device_interface_data);
 	}
 

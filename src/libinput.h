@@ -28,10 +28,10 @@
 
 typedef int32_t li_fixed_t;
 
-enum libinput_seat_capability {
-	LIBINPUT_SEAT_CAP_KEYBOARD = 0,
-	LIBINPUT_SEAT_CAP_POINTER = 1,
-	LIBINPUT_SEAT_CAP_TOUCH = 2,
+enum libinput_device_capability {
+	LIBINPUT_DEVICE_CAP_KEYBOARD = 0,
+	LIBINPUT_DEVICE_CAP_POINTER = 1,
+	LIBINPUT_DEVICE_CAP_TOUCH = 2,
 };
 
 enum libinput_keyboard_key_state {
@@ -69,9 +69,9 @@ typedef void (*libinput_fd_callback)(int fd, void *data);
 
 struct libinput_device_interface {
 	/* */
-	void (*register_capability)(enum libinput_seat_capability capability,
+	void (*register_capability)(enum libinput_device_capability capability,
 				    void *data);
-	void (*unregister_capability)(enum libinput_seat_capability capability,
+	void (*unregister_capability)(enum libinput_device_capability capability,
 				      void *data);
 
 	/* */
