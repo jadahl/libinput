@@ -63,6 +63,66 @@ enum libinput_touch_type {
 	LIBINPUT_TOUCH_TYPE_CANCEL = 4,
 };
 
+enum libinput_event_type {
+
+	LIBINPUT_EVENT_KEYBOARD_KEY = 300,
+
+	LIBINPUT_EVENT_POINTER_MOTION = 400,
+	LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
+	LIBINPUT_EVENT_POINTER_BUTTON,
+	LIBINPUT_EVENT_POINTER_AXIS,
+
+	LIBINPUT_EVENT_TOUCH_TOUCH = 500,
+};
+
+struct libinput_event {
+	enum libinput_event_type type;
+};
+
+struct libinput_event_keyboard_key {
+	struct libinput_event base;
+	uint32_t time;
+	uint32_t key;
+	enum libinput_keyboard_key_state state;
+};
+
+struct libinput_event_pointer_motion {
+	struct libinput_event base;
+	uint32_t time;
+	li_fixed_t dx;
+	li_fixed_t dy;
+};
+
+struct libinput_event_pointer_motion_absolute {
+	struct libinput_event base;
+	uint32_t time;
+	li_fixed_t x;
+	li_fixed_t y;
+};
+
+struct libinput_event_pointer_button {
+	struct libinput_event base;
+	uint32_t time;
+	int32_t button;
+	enum libinput_pointer_button_state state;
+};
+
+struct libinput_event_pointer_axis {
+	struct libinput_event base;
+	uint32_t time;
+	enum libinput_pointer_axis axis;
+	li_fixed_t value;
+};
+
+struct libinput_event_touch_touch {
+	struct libinput_event base;
+	uint32_t time;
+	int32_t slot;
+	li_fixed_t x;
+	li_fixed_t y;
+	enum libinput_touch_type touch_type;
+};
+
 struct libinput_fd_handle;
 
 typedef void (*libinput_fd_callback)(int fd, void *data);
@@ -90,41 +150,6 @@ struct libinput_device_interface {
 	void (*device_lost)(void *data);
 };
 
-struct libinput_keyboard_listener {
-	void (*notify_key)(uint32_t time,
-			   uint32_t key,
-			   enum libinput_keyboard_key_state state,
-			   void *data);
-};
-
-struct libinput_pointer_listener {
-	void (*notify_motion)(uint32_t time,
-			      li_fixed_t dx,
-			      li_fixed_t dy,
-			      void *data);
-	void (*notify_motion_absolute)(uint32_t time,
-				       li_fixed_t x,
-				       li_fixed_t y,
-				       void *data);
-	void (*notify_button)(uint32_t time,
-			      int32_t button,
-			      enum libinput_pointer_button_state state,
-			      void *data);
-	void (*notify_axis)(uint32_t time,
-			    enum libinput_pointer_axis axis,
-			    li_fixed_t value,
-			    void *data);
-};
-
-struct libinput_touch_listener {
-	void (*notify_touch)(uint32_t time,
-			     int32_t slot,
-			     li_fixed_t x,
-			     li_fixed_t y,
-			     enum libinput_touch_type touch_type,
-			     void *data);
-};
-
 struct libinput_seat;
 struct libinput_device;
 
@@ -134,26 +159,11 @@ libinput_device_create_evdev(const char *devnode,
 			     const struct libinput_device_interface *interface,
 			     void *user_data);
 
-void
-libinput_device_set_keyboard_listener(
-	struct libinput_device *device,
-	const struct libinput_keyboard_listener *listener,
-	void *data);
-
-void
-libinput_device_set_pointer_listener(
-	struct libinput_device *device,
-	const struct libinput_pointer_listener *listener,
-	void *data);
-
-void
-libinput_device_set_touch_listener(
-	struct libinput_device *device,
-	const struct libinput_touch_listener *listener,
-	void *data);
-
 int
 libinput_device_dispatch(struct libinput_device *device);
+
+struct libinput_event *
+libinput_device_get_event(struct libinput_device *device);
 
 void
 libinput_device_destroy(struct libinput_device *device);

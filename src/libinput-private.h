@@ -29,14 +29,11 @@ struct libinput_device {
 	const struct libinput_device_interface *device_interface;
 	void *device_interface_data;
 
-	const struct libinput_keyboard_listener *keyboard_listener;
-	void *keyboard_listener_data;
-
-	const struct libinput_pointer_listener *pointer_listener;
-	void *pointer_listener_data;
-
-	const struct libinput_touch_listener *touch_listener;
-	void *touch_listener_data;
+	struct libinput_event **events;
+	size_t events_count;
+	size_t events_len;
+	size_t events_in;
+	size_t events_out;
 };
 
 void
