@@ -140,17 +140,18 @@ struct libinput_fd_handle;
 
 typedef void (*libinput_fd_callback)(int fd, void *data);
 
-struct libinput_device_interface {
-	void (*get_current_screen_dimensions)(int *width,
+struct libinput_interface {
+	void (*get_current_screen_dimensions)(struct libinput_device *device,
+					      int *width,
 					      int *height,
-					      void *data);
+					      void *user_data);
 };
 
 struct libinput;
 struct libinput_device;
 
 struct libinput *
-libinput_create(void);
+libinput_create(const struct libinput_interface *interface, void *user_data);
 
 int
 libinput_get_fd(struct libinput *libinput);
@@ -168,7 +169,6 @@ struct libinput_device *
 libinput_device_create_evdev(struct libinput *libinput,
 			     const char *devnode,
 			     int fd,
-			     const struct libinput_device_interface *interface,
 			     void *user_data);
 
 void

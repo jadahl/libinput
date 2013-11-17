@@ -227,13 +227,15 @@ evdev_process_touch(struct evdev_device *device,
 		    struct input_event *e,
 		    uint32_t time)
 {
+	struct libinput *libinput = device->base.libinput;
 	int screen_width;
 	int screen_height;
 
-	device->base.device_interface->get_current_screen_dimensions(
+	libinput->interface->get_current_screen_dimensions(
+		&device->base,
 		&screen_width,
 		&screen_height,
-		device->base.device_interface_data);
+		libinput->user_data);
 
 	switch (e->code) {
 	case ABS_MT_SLOT:
@@ -270,13 +272,15 @@ static inline void
 evdev_process_absolute_motion(struct evdev_device *device,
 			      struct input_event *e)
 {
+	struct libinput *libinput = device->base.libinput;
 	int screen_width;
 	int screen_height;
 
-	device->base.device_interface->get_current_screen_dimensions(
+	libinput->interface->get_current_screen_dimensions(
+		&device->base,
 		&screen_width,
 		&screen_height,
-		device->base.device_interface_data);
+		libinput->user_data);
 
 	switch (e->code) {
 	case ABS_X:
@@ -608,7 +612,6 @@ libinput_device_create_evdev(
 	struct libinput *libinput,
 	const char *devnode,
 	int fd,
-	const struct libinput_device_interface *device_interface,
 	void *user_data)
 {
 	struct evdev_device *device;
@@ -619,8 +622,7 @@ libinput_device_create_evdev(
 		return NULL;
 
 	device->base.libinput = libinput;
-	device->base.device_interface = device_interface;
-	device->base.device_interface_data = user_data;
+	device->base.user_data = user_data;
 
 	device->seat_caps = 0;
 	device->is_mt = 0;

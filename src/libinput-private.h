@@ -35,12 +35,14 @@ struct libinput {
 	size_t events_len;
 	size_t events_in;
 	size_t events_out;
+
+	const struct libinput_interface *interface;
+	void *user_data;
 };
 
 struct libinput_device {
 	struct libinput *libinput;
-	const struct libinput_device_interface *device_interface;
-	void *device_interface_data;
+	void *user_data;
 	int terminated;
 };
 

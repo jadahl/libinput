@@ -81,7 +81,7 @@ libinput_remove_source(struct libinput *libinput,
 }
 
 LIBINPUT_EXPORT struct libinput *
-libinput_create(void)
+libinput_create(const struct libinput_interface *interface, void *user_data)
 {
 	struct libinput *libinput;
 
@@ -90,6 +90,9 @@ libinput_create(void)
 		return NULL;
 
 	list_init(&libinput->source_destroy_list);
+
+	libinput->interface = interface;
+	libinput->user_data = user_data;
 
 	libinput->epoll_fd = epoll_create1(EPOLL_CLOEXEC);;
 	if (libinput->epoll_fd < 0)
@@ -414,7 +417,7 @@ libinput_device_destroy(struct libinput_device *device)
 LIBINPUT_EXPORT void *
 libinput_device_get_user_data(struct libinput_device *device)
 {
-	return device->device_interface_data;
+	return device->user_data;
 }
 
 LIBINPUT_EXPORT void
