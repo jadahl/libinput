@@ -31,6 +31,9 @@ AC_PROG_CC
 LT_PREREQ([2.2])
 LT_INIT
 
+AC_CHECK_DECL(EPOLL_CLOEXEC, [],
+	      [AC_MSG_ERROR("EPOLL_CLOEXEC is needed to compile libinput")],
+	      [[#include <sys/epoll.h>]])
 AC_CHECK_DECL(TFD_CLOEXEC,[],
 	      [AC_MSG_ERROR("TFD_CLOEXEC is needed to compile libinput")],
 	      [[#include <sys/timerfd.h>]])

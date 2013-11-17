@@ -77,6 +77,7 @@ enum libinput_event_type {
 
 struct libinput_event {
 	enum libinput_event_type type;
+	struct libinput_device *device;
 };
 
 struct libinput_event_keyboard_key {
@@ -138,35 +139,38 @@ struct libinput_device_interface {
 	void (*get_current_screen_dimensions)(int *width,
 					      int *height,
 					      void *data);
-
-	/* */
-	struct libinput_fd_handle * (*add_fd)(int fd,
-					      libinput_fd_callback callback,
-					      void *data);
-	void (*remove_fd)(struct libinput_fd_handle *fd_container,
-			  void *data);
-
-	/* */
-	void (*device_lost)(void *data);
 };
 
-struct libinput_seat;
+struct libinput;
 struct libinput_device;
 
+struct libinput *
+libinput_create(void);
+
+int
+libinput_get_fd(struct libinput *libinput);
+
+int
+libinput_dispatch(struct libinput *libinput);
+
+struct libinput_event *
+libinput_get_event(struct libinput *libinput);
+
+void
+libinput_destroy(struct libinput *libinput);
+
 struct libinput_device *
-libinput_device_create_evdev(const char *devnode,
+libinput_device_create_evdev(struct libinput *libinput,
+			     const char *devnode,
 			     int fd,
 			     const struct libinput_device_interface *interface,
 			     void *user_data);
 
-int
-libinput_device_dispatch(struct libinput_device *device);
-
-struct libinput_event *
-libinput_device_get_event(struct libinput_device *device);
-
 void
 libinput_device_destroy(struct libinput_device *device);
+
+void *
+libinput_device_get_user_data(struct libinput_device *device);
 
 void
 libinput_device_led_update(struct libinput_device *device,

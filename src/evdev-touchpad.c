@@ -137,7 +137,7 @@ struct touchpad_dispatch {
 		enum fsm_state state;
 		struct {
 			int fd;
-			struct libinput_fd_handle *fd_handle;
+			struct libinput_source *source;
 		} timer;
 	} fsm;
 
@@ -440,17 +440,15 @@ push_fsm_event(struct touchpad_dispatch *touchpad,
 }
 
 static void
-fsm_timeout_handler(int fd, void *data)
+fsm_timeout_handler(void *data)
 {
-	struct evdev_device *device = data;
-	struct touchpad_dispatch *touchpad =
-		(struct touchpad_dispatch *) device->dispatch;
+	struct touchpad_dispatch *touchpad = data;
 	uint64_t expires;
 	int len;
 	struct timespec ts;
 	uint32_t now;
 
-	len = read(fd, &expires, sizeof expires);
+	len = read(touchpad->fsm.timer.fd, &expires, sizeof expires);
 	if (len != sizeof expires)
 		/* This will only happen if the application made the fd
 		 * non-blocking, but this function should only be called
@@ -711,12 +709,10 @@ touchpad_destroy(struct evdev_dispatch *dispatch)
 {
 	struct touchpad_dispatch *touchpad =
 		(struct touchpad_dispatch *) dispatch;
+	struct libinput *libinput = touchpad->device->base.libinput;
 
 	touchpad->filter->interface->destroy(touchpad->filter);
-	touchpad->device->base.device_interface->remove_fd(
-		touchpad->fsm.timer.fd_handle,
-		touchpad->device->base.device_interface_data);
-	close(touchpad->fsm.timer.fd);
+	libinput_remove_source(libinput, touchpad->fsm.timer.source);
 	free(touchpad->fsm.events);
 	free(dispatch);
 }
@@ -801,13 +797,13 @@ touchpad_init(struct touchpad_dispatch *touchpad,
 	touchpad->fsm.state = FSM_IDLE;
 
 	touchpad->fsm.timer.fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
-	touchpad->fsm.timer.fd_handle =
-		touchpad->device->base.device_interface->add_fd(
-			touchpad->fsm.timer.fd,
-			fsm_timeout_handler,
-			touchpad->device->base.device_interface_data);
+	touchpad->fsm.timer.source =
+		libinput_add_fd(touchpad->device->base.libinput,
+				touchpad->fsm.timer.fd,
+				fsm_timeout_handler,
+				touchpad);
 
-	if (touchpad->fsm.timer.fd_handle == NULL) {
+	if (touchpad->fsm.timer.source == NULL) {
 		close(touchpad->fsm.timer.fd);
 		accel->interface->destroy(accel);
 		return -1;

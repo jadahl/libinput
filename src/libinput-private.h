@@ -24,10 +24,11 @@
 #define LIBINPUT_PRIVATE_H
 
 #include "libinput.h"
+#include "libinput-util.h"
 
-struct libinput_device {
-	const struct libinput_device_interface *device_interface;
-	void *device_interface_data;
+struct libinput {
+	int epoll_fd;
+	struct list source_destroy_list;
 
 	struct libinput_event **events;
 	size_t events_count;
@@ -35,6 +36,30 @@ struct libinput_device {
 	size_t events_in;
 	size_t events_out;
 };
+
+struct libinput_device {
+	struct libinput *libinput;
+	const struct libinput_device_interface *device_interface;
+	void *device_interface_data;
+};
+
+typedef void (*libinput_source_dispatch_t)(void *data);
+
+struct libinput_source;
+
+struct libinput_source *
+libinput_add_fd(struct libinput *libinput,
+		int fd,
+		libinput_source_dispatch_t dispatch,
+		void *data);
+
+void
+libinput_remove_source(struct libinput *libinput,
+		       struct libinput_source *source);
+
+void
+libinput_post_event(struct libinput *libinput,
+		    struct libinput_event *event);
 
 void
 keyboard_notify_key(struct libinput_device *device,
@@ -73,27 +98,5 @@ touch_notify_touch(struct libinput_device *device,
 		   li_fixed_t x,
 		   li_fixed_t y,
 		   enum libinput_touch_type touch_type);
-
-static inline li_fixed_t li_fixed_from_int(int i)
-{
-	return i * 256;
-}
-
-static inline li_fixed_t
-li_fixed_from_double(double d)
-{
-	union {
-		double d;
-		int64_t i;
-	} u;
-
-	u.d = d + (3LL << (51 - 8));
-
-	return u.i;
-}
-
-#define ARRAY_LENGTH(a) (sizeof (a) / sizeof (a)[0])
-
-#define LIBINPUT_EXPORT __attribute__ ((visibility("default")))
 
 #endif /* LIBINPUT_PRIVATE_H */

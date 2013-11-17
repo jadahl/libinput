@@ -6,6 +6,8 @@ include_HEADERS =			\
 libinput_la_SOURCES =			\
 	libinput.c			\
 	libinput.h			\
+	libinput-util.c			\
+	libinput-util.h			\
 	evdev.c				\
 	evdev.h				\
 	evdev-touchpad.c		\

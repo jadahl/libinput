@@ -67,6 +67,8 @@ enum evdev_device_seat_capability {
 struct evdev_device {
 	struct libinput_device base;
 
+	struct libinput_source *source;
+
 	struct evdev_dispatch *dispatch;
 	char *devnode;
 	char *devname;
@@ -130,8 +132,8 @@ struct evdev_dispatch {
 struct evdev_dispatch *
 evdev_touchpad_create(struct evdev_device *device);
 
-int
-evdev_device_dispatch(struct evdev_device *device);
+void
+evdev_device_proces_event(struct libinput_event *event);
 
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds);

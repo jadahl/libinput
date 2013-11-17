@@ -25,15 +25,140 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/epoll.h>
+#include <unistd.h>
 
 #include "libinput.h"
 #include "evdev.h"
 #include "libinput-private.h"
 
+struct libinput_source {
+	libinput_source_dispatch_t dispatch;
+	void *user_data;
+	int fd;
+	struct list link;
+};
+
+struct libinput_source *
+libinput_add_fd(struct libinput *libinput,
+		int fd,
+		libinput_source_dispatch_t dispatch,
+		void *user_data)
+{
+	struct libinput_source *source;
+	struct epoll_event ep;
+
+	source = malloc(sizeof *source);
+	if (!source)
+		return NULL;
+
+	source->dispatch = dispatch;
+	source->user_data = user_data;
+	source->fd = fd;
+
+	memset(&ep, 0, sizeof ep);
+	ep.events = EPOLLIN;
+	ep.data.ptr = source;
+
+	if (epoll_ctl(libinput->epoll_fd, EPOLL_CTL_ADD, fd, &ep) < 0) {
+		close(source->fd);
+		free(source);
+		return NULL;
+	}
+
+	return source;
+}
+
+void
+libinput_remove_source(struct libinput *libinput,
+		       struct libinput_source *source)
+{
+	epoll_ctl(libinput->epoll_fd, EPOLL_CTL_DEL, source->fd, NULL);
+	close(source->fd);
+	source->fd = -1;
+	list_insert(&libinput->source_destroy_list, &source->link);
+}
+
+LIBINPUT_EXPORT struct libinput *
+libinput_create(void)
+{
+	struct libinput *libinput;
+
+	libinput = zalloc(sizeof *libinput);
+	if (!libinput)
+		return NULL;
+
+	list_init(&libinput->source_destroy_list);
+
+	libinput->epoll_fd = epoll_create1(EPOLL_CLOEXEC);;
+	if (libinput->epoll_fd < 0)
+		return NULL;
+
+	return libinput;
+}
+
+LIBINPUT_EXPORT void
+libinput_destroy(struct libinput *libinput)
+{
+	struct libinput_event *event;
+
+	while ((event = libinput_get_event(libinput)))
+	       free(event);
+	free(libinput->events);
+
+	close(libinput->epoll_fd);
+	free(libinput);
+}
+
+LIBINPUT_EXPORT int
+libinput_get_fd(struct libinput *libinput)
+{
+	return libinput->epoll_fd;
+}
+
+LIBINPUT_EXPORT int
+libinput_dispatch(struct libinput *libinput)
+{
+	struct libinput_source *source, *next;
+	struct epoll_event ep[32];
+	int i, count;
+
+	count = epoll_wait(libinput->epoll_fd, ep, ARRAY_LENGTH(ep), 0);
+	if (count < 0)
+		return -1;
+
+	for (i = 0; i < count; ++i) {
+		source = ep[i].data.ptr;
+		if (source->fd == -1)
+			continue;
+
+		source->dispatch(source->user_data);
+	}
+
+	list_for_each_safe(source, next, &libinput->source_destroy_list, link)
+		free(source);
+	list_init(&libinput->source_destroy_list);
+
+	return 0;
+}
+
 static void
-post_event(struct libinput_device *device,
-	   enum libinput_event_type type,
-	   struct libinput_event *event);
+init_event_base(struct libinput_event *event,
+		enum libinput_event_type type,
+		struct libinput_device *device)
+{
+	event->type = type;
+	event->device = device;
+}
+
+static void
+post_device_event(struct libinput_device *device,
+		  enum libinput_event_type type,
+		  struct libinput_event *event)
+{
+	init_event_base(event, type, device);
+	libinput_post_event(device->libinput, event);
+}
 
 void
 keyboard_notify_key(struct libinput_device *device,
@@ -53,7 +178,9 @@ keyboard_notify_key(struct libinput_device *device,
 		.state = state,
 	};
 
-	post_event(device, LIBINPUT_EVENT_KEYBOARD_KEY, &key_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_KEYBOARD_KEY,
+			  &key_event->base);
 }
 
 void
@@ -74,7 +201,9 @@ pointer_notify_motion(struct libinput_device *device,
 		.dy = dy,
 	};
 
-	post_event(device, LIBINPUT_EVENT_POINTER_MOTION, &motion_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_POINTER_MOTION,
+			  &motion_event->base);
 }
 
 void
@@ -95,9 +224,9 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 		.y = y,
 	};
 
-	post_event(device,
-		   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
-		   &motion_absolute_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
+			  &motion_absolute_event->base);
 }
 
 void
@@ -118,7 +247,9 @@ pointer_notify_button(struct libinput_device *device,
 		.state = state,
 	};
 
-	post_event(device, LIBINPUT_EVENT_POINTER_BUTTON, &button_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_POINTER_BUTTON,
+			  &button_event->base);
 }
 
 void
@@ -139,7 +270,9 @@ pointer_notify_axis(struct libinput_device *device,
 		.value = value,
 	};
 
-	post_event(device, LIBINPUT_EVENT_POINTER_AXIS, &axis_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_POINTER_AXIS,
+			  &axis_event->base);
 }
 
 void
@@ -164,23 +297,18 @@ touch_notify_touch(struct libinput_device *device,
 		.touch_type = touch_type,
 	};
 
-	post_event(device, LIBINPUT_EVENT_TOUCH_TOUCH, &touch_event->base);
+	post_device_event(device,
+			  LIBINPUT_EVENT_TOUCH_TOUCH,
+			  &touch_event->base);
 }
 
-static void
-init_event_base(struct libinput_event *event, enum libinput_event_type type)
+void
+libinput_post_event(struct libinput *libinput,
+		    struct libinput_event *event)
 {
-	event->type = type;
-}
-
-static void
-post_event(struct libinput_device *device,
-	   enum libinput_event_type type,
-	   struct libinput_event *event)
-{
-	struct libinput_event **events = device->events;
-	size_t events_len = device->events_len;
-	size_t events_count = device->events_count;
+	struct libinput_event **events = libinput->events;
+	size_t events_len = libinput->events_len;
+	size_t events_count = libinput->events_count;
 	size_t move_len;
 	size_t new_out;
 
@@ -197,60 +325,53 @@ post_event(struct libinput_device *device,
 			return;
 		}
 
-		if (device->events_count > 0 && device->events_in == 0) {
-			device->events_in = device->events_len;
-		} else if (device->events_count > 0 &&
-			   device->events_out >= device->events_in) {
-			move_len = device->events_len - device->events_out;
+		if (libinput->events_count > 0 && libinput->events_in == 0) {
+			libinput->events_in = libinput->events_len;
+		} else if (libinput->events_count > 0 &&
+			   libinput->events_out >= libinput->events_in) {
+			move_len = libinput->events_len - libinput->events_out;
 			new_out = events_len - move_len;
 			memmove(events + new_out,
-				device->events + device->events_out,
+				libinput->events + libinput->events_out,
 				move_len * sizeof *events);
-			device->events_out = new_out;
+			libinput->events_out = new_out;
 		}
 
-		device->events = events;
-		device->events_len = events_len;
+		libinput->events = events;
+		libinput->events_len = events_len;
 	}
 
-	init_event_base(event, type);
-
-	device->events_count = events_count;
-	events[device->events_in] = event;
-	device->events_in = (device->events_in + 1) % device->events_len;
+	libinput->events_count = events_count;
+	events[libinput->events_in] = event;
+	libinput->events_in = (libinput->events_in + 1) % libinput->events_len;
 }
 
 LIBINPUT_EXPORT struct libinput_event *
-libinput_device_get_event(struct libinput_device *device)
+libinput_get_event(struct libinput *libinput)
 {
 	struct libinput_event *event;
 
-	if (device->events_count == 0)
+	if (libinput->events_count == 0)
 		return NULL;
 
-	event = device->events[device->events_out];
-	device->events_out = (device->events_out + 1) % device->events_len;
-	device->events_count--;
+	event = libinput->events[libinput->events_out];
+	libinput->events_out =
+		(libinput->events_out + 1) % libinput->events_len;
+	libinput->events_count--;
 
 	return event;
-}
-
-LIBINPUT_EXPORT int
-libinput_device_dispatch(struct libinput_device *device)
-{
-	return evdev_device_dispatch((struct evdev_device *) device);
 }
 
 LIBINPUT_EXPORT void
 libinput_device_destroy(struct libinput_device *device)
 {
-	struct libinput_event *event;
-
-	while ((event = libinput_device_get_event(device)))
-	       free(event);
-	free(device->events);
-
 	evdev_device_destroy((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT void *
+libinput_device_get_user_data(struct libinput_device *device)
+{
+	return device->device_interface_data;
 }
 
 LIBINPUT_EXPORT void

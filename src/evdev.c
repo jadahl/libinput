@@ -426,9 +426,10 @@ evdev_process_events(struct evdev_device *device,
 	}
 }
 
-int
-evdev_device_dispatch(struct evdev_device *device)
+static void
+evdev_device_dispatch(void *data)
 {
+	struct evdev_device *device = data;
 	int fd = device->fd;
 	struct input_event ev[32];
 	int len;
@@ -446,18 +447,17 @@ evdev_device_dispatch(struct evdev_device *device)
 
 		if (len < 0 || len % sizeof ev[0] != 0) {
 			if (len < 0 && errno != EAGAIN && errno != EINTR) {
-				device->base.device_interface->device_lost(
-					device->base.device_interface_data);
+				libinput_remove_source(device->base.libinput,
+						       device->source);
+				device->source = NULL;
 			}
 
-			return 1;
+			return;
 		}
 
 		evdev_process_events(device, ev, len / sizeof ev[0]);
 
 	} while (len > 0);
-
-	return 1;
 }
 
 static int
@@ -608,6 +608,7 @@ evdev_configure_device(struct evdev_device *device)
 
 LIBINPUT_EXPORT struct libinput_device *
 libinput_device_create_evdev(
+	struct libinput *libinput,
 	const char *devnode,
 	int fd,
 	const struct libinput_device_interface *device_interface,
@@ -620,6 +621,7 @@ libinput_device_create_evdev(
 	if (device == NULL)
 		return NULL;
 
+	device->base.libinput = libinput;
 	device->base.device_interface = device_interface;
 	device->base.device_interface_data = user_data;
 
@@ -650,6 +652,11 @@ libinput_device_create_evdev(
 	if (device->dispatch == NULL)
 		device->dispatch = fallback_dispatch_create();
 	if (device->dispatch == NULL)
+		goto err;
+
+	device->source =
+		libinput_add_fd(libinput, fd, evdev_device_dispatch, device);
+	if (!device->source)
 		goto err;
 
 	return &device->base;
