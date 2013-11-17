@@ -6,9 +6,9 @@ include_HEADERS =			\
 libinput_la_SOURCES =			\
 	libinput.c			\
 	libinput.h			\
-	evdev.c		\
-	evdev.h		\
-	evdev-touchpad.c	\
+	evdev.c				\
+	evdev.h				\
+	evdev-touchpad.c		\
 	filter.c			\
 	filter.h
 
