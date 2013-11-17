@@ -64,6 +64,8 @@ enum libinput_touch_type {
 };
 
 enum libinput_event_type {
+	LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY = 200,
+	LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY,
 
 	LIBINPUT_EVENT_KEYBOARD_KEY = 300,
 
@@ -78,6 +80,16 @@ enum libinput_event_type {
 struct libinput_event {
 	enum libinput_event_type type;
 	struct libinput_device *device;
+};
+
+struct libinput_event_device_register_capability {
+	struct libinput_event base;
+	enum libinput_device_capability capability;
+};
+
+struct libinput_event_device_unregister_capability {
+	struct libinput_event base;
+	enum libinput_device_capability capability;
 };
 
 struct libinput_event_keyboard_key {
@@ -129,13 +141,6 @@ struct libinput_fd_handle;
 typedef void (*libinput_fd_callback)(int fd, void *data);
 
 struct libinput_device_interface {
-	/* */
-	void (*register_capability)(enum libinput_device_capability capability,
-				    void *data);
-	void (*unregister_capability)(enum libinput_device_capability capability,
-				      void *data);
-
-	/* */
 	void (*get_current_screen_dimensions)(int *width,
 					      int *height,
 					      void *data);
@@ -165,6 +170,9 @@ libinput_device_create_evdev(struct libinput *libinput,
 			     int fd,
 			     const struct libinput_device_interface *interface,
 			     void *user_data);
+
+void
+libinput_device_terminate(struct libinput_device *device);
 
 void
 libinput_device_destroy(struct libinput_device *device);

@@ -27,6 +27,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "libinput.h"
 #include "evdev.h"
@@ -158,6 +159,40 @@ post_device_event(struct libinput_device *device,
 {
 	init_event_base(event, type, device);
 	libinput_post_event(device->libinput, event);
+}
+
+void
+device_register_capability(struct libinput_device *device,
+			   enum libinput_device_capability capability)
+{
+	struct libinput_event_device_register_capability *capability_event;
+
+	capability_event = malloc(sizeof *capability_event);
+
+	*capability_event = (struct libinput_event_device_register_capability) {
+		.capability = capability,
+	};
+
+	post_device_event(device,
+			  LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY,
+			  &capability_event->base);
+}
+
+void
+device_unregister_capability(struct libinput_device *device,
+			     enum libinput_device_capability capability)
+{
+	struct libinput_event_device_unregister_capability *capability_event;
+
+	capability_event = malloc(sizeof *capability_event);
+
+	*capability_event = (struct libinput_event_device_unregister_capability) {
+		.capability = capability,
+	};
+
+	post_device_event(device,
+			  LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY,
+			  &capability_event->base);
 }
 
 void
@@ -363,8 +398,16 @@ libinput_get_event(struct libinput *libinput)
 }
 
 LIBINPUT_EXPORT void
+libinput_device_terminate(struct libinput_device *device)
+{
+	evdev_device_terminate((struct evdev_device *) device);
+	device->terminated = 1;
+}
+
+LIBINPUT_EXPORT void
 libinput_device_destroy(struct libinput_device *device)
 {
+	assert(device->terminated);
 	evdev_device_destroy((struct evdev_device *) device);
 }
 

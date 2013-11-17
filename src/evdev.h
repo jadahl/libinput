@@ -145,6 +145,9 @@ void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6]);
 
 void
+evdev_device_terminate(struct evdev_device *terminate);
+
+void
 evdev_device_destroy(struct evdev_device *device);
 
 #endif /* EVDEV_H */

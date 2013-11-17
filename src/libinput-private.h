@@ -41,6 +41,7 @@ struct libinput_device {
 	struct libinput *libinput;
 	const struct libinput_device_interface *device_interface;
 	void *device_interface_data;
+	int terminated;
 };
 
 typedef void (*libinput_source_dispatch_t)(void *data);
@@ -60,6 +61,14 @@ libinput_remove_source(struct libinput *libinput,
 void
 libinput_post_event(struct libinput *libinput,
 		    struct libinput_event *event);
+
+void
+device_register_capability(struct libinput_device *device,
+			   enum libinput_device_capability capability);
+
+void
+device_unregister_capability(struct libinput_device *device,
+			     enum libinput_device_capability capability);
 
 void
 keyboard_notify_key(struct libinput_device *device,
