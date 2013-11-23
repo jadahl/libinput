@@ -25,6 +25,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <libudev.h>
 
 typedef int32_t li_fixed_t;
 
@@ -64,6 +65,11 @@ enum libinput_touch_type {
 };
 
 enum libinput_event_type {
+	LIBINPUT_EVENT_ADDED_SEAT = 0,
+	LIBINPUT_EVENT_REMOVED_SEAT,
+	LIBINPUT_EVENT_ADDED_DEVICE,
+	LIBINPUT_EVENT_REMOVED_DEVICE,
+
 	LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY = 200,
 	LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY,
 
@@ -77,8 +83,34 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_TOUCH_TOUCH = 500,
 };
 
+union libinput_event_target {
+	struct libinput *libinput;
+	struct libinput_seat *seat;
+	struct libinput_device *device;
+};
+
 struct libinput_event {
 	enum libinput_event_type type;
+	union libinput_event_target target;
+};
+
+struct libinput_event_added_seat {
+	struct libinput_event base;
+	struct libinput_seat *seat;
+};
+
+struct libinput_event_removed_seat {
+	struct libinput_event base;
+	struct libinput_seat *seat;
+};
+
+struct libinput_event_added_device {
+	struct libinput_event base;
+	struct libinput_device *device;
+};
+
+struct libinput_event_removed_device {
+	struct libinput_event base;
 	struct libinput_device *device;
 };
 
@@ -141,6 +173,9 @@ struct libinput_fd_handle;
 typedef void (*libinput_fd_callback)(int fd, void *data);
 
 struct libinput_interface {
+	int (*open_restricted)(const char *path, int flags, void *user_data);
+	void (*close_restricted)(int fd, void *user_data);
+
 	void (*get_current_screen_dimensions)(struct libinput_device *device,
 					      int *width,
 					      int *height,
@@ -150,8 +185,15 @@ struct libinput_interface {
 struct libinput;
 struct libinput_device;
 
+/*
+ * Base
+ */
+
 struct libinput *
-libinput_create(const struct libinput_interface *interface, void *user_data);
+libinput_create_udev(const struct libinput_interface *interface,
+		     void *user_data,
+		     struct udev *udev,
+		     const char *seat_id);
 
 int
 libinput_get_fd(struct libinput *libinput);
@@ -162,23 +204,58 @@ libinput_dispatch(struct libinput *libinput);
 struct libinput_event *
 libinput_get_event(struct libinput *libinput);
 
+void *
+libinput_get_user_data(struct libinput *libinput);
+
+int
+libinput_resume(struct libinput *libinput);
+
+void
+libinput_suspend(struct libinput *libinput);
+
 void
 libinput_destroy(struct libinput *libinput);
 
-struct libinput_device *
-libinput_device_create_evdev(struct libinput *libinput,
-			     const char *devnode,
-			     int fd,
-			     void *user_data);
+/*
+ * Seat
+ */
 
 void
-libinput_device_terminate(struct libinput_device *device);
+libinput_seat_ref(struct libinput_seat *seat);
 
 void
-libinput_device_destroy(struct libinput_device *device);
+libinput_seat_unref(struct libinput_seat *seat);
+
+void
+libinput_seat_set_user_data(struct libinput_seat *seat, void *user_data);
+
+void *
+libinput_seat_get_user_data(struct libinput_seat *seat);
+
+const char *
+libinput_seat_get_name(struct libinput_seat *seat);
+
+/*
+ * Device
+ */
+
+void
+libinput_device_ref(struct libinput_device *device);
+
+void
+libinput_device_unref(struct libinput_device *device);
+
+void
+libinput_device_set_user_data(struct libinput_device *device, void *user_data);
 
 void *
 libinput_device_get_user_data(struct libinput_device *device);
+
+const char *
+libinput_device_get_output_name(struct libinput_device *device);
+
+struct libinput_seat *
+libinput_device_get_seat(struct libinput_device *device);
 
 void
 libinput_device_led_update(struct libinput_device *device,

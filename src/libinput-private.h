@@ -30,6 +30,8 @@ struct libinput {
 	int epoll_fd;
 	struct list source_destroy_list;
 
+	struct list seat_list;
+
 	struct libinput_event **events;
 	size_t events_count;
 	size_t events_len;
@@ -40,15 +42,31 @@ struct libinput {
 	void *user_data;
 };
 
-struct libinput_device {
+struct libinput_seat {
 	struct libinput *libinput;
+	struct list link;
+	struct list devices_list;
+	void *user_data;
+	int refcount;
+	char *name;
+};
+
+struct libinput_device {
+	struct libinput_seat *seat;
+	struct list link;
 	void *user_data;
 	int terminated;
+	int refcount;
 };
 
 typedef void (*libinput_source_dispatch_t)(void *data);
 
 struct libinput_source;
+
+int
+libinput_init(struct libinput *libinput,
+	      const struct libinput_interface *interface,
+	      void *user_data);
 
 struct libinput_source *
 libinput_add_fd(struct libinput *libinput,
@@ -60,9 +78,33 @@ void
 libinput_remove_source(struct libinput *libinput,
 		       struct libinput_source *source);
 
+int
+open_restricted(struct libinput *libinput,
+		const char *path, int flags);
+
 void
-libinput_post_event(struct libinput *libinput,
-		    struct libinput_event *event);
+close_restricted(struct libinput *libinput, int fd);
+
+void
+libinput_seat_init(struct libinput_seat *seat,
+		   struct libinput *libinput,
+		   const char *name);
+
+void
+libinput_device_init(struct libinput_device *device,
+		     struct libinput_seat *seat);
+
+void
+notify_added_seat(struct libinput_seat *seat);
+
+void
+notify_removed_seat(struct libinput_seat *seat);
+
+void
+notify_added_device(struct libinput_device *device);
+
+void
+notify_removed_device(struct libinput_device *device);
 
 void
 device_register_capability(struct libinput_device *device,

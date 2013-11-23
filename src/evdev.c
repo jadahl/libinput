@@ -227,7 +227,7 @@ evdev_process_touch(struct evdev_device *device,
 		    struct input_event *e,
 		    uint32_t time)
 {
-	struct libinput *libinput = device->base.libinput;
+	struct libinput *libinput = device->base.seat->libinput;
 	int screen_width;
 	int screen_height;
 
@@ -272,7 +272,7 @@ static inline void
 evdev_process_absolute_motion(struct evdev_device *device,
 			      struct input_event *e)
 {
-	struct libinput *libinput = device->base.libinput;
+	struct libinput *libinput = device->base.seat->libinput;
 	int screen_width;
 	int screen_height;
 
@@ -434,6 +434,7 @@ static void
 evdev_device_dispatch(void *data)
 {
 	struct evdev_device *device = data;
+	struct libinput *libinput = device->base.seat->libinput;
 	int fd = device->fd;
 	struct input_event ev[32];
 	int len;
@@ -451,7 +452,7 @@ evdev_device_dispatch(void *data)
 
 		if (len < 0 || len % sizeof ev[0] != 0) {
 			if (len < 0 && errno != EAGAIN && errno != EINTR) {
-				libinput_remove_source(device->base.libinput,
+				libinput_remove_source(libinput,
 						       device->source);
 				device->source = NULL;
 			}
@@ -584,36 +585,41 @@ evdev_handle_device(struct evdev_device *device)
 	return 1;
 }
 
-static int
+static void
 evdev_configure_device(struct evdev_device *device)
 {
 	if ((device->caps & (EVDEV_MOTION_ABS | EVDEV_MOTION_REL)) &&
-	    (device->caps & EVDEV_BUTTON)) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_POINTER);
+	    (device->caps & EVDEV_BUTTON))
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
-	}
-	if ((device->caps & EVDEV_KEYBOARD)) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_KEYBOARD);
+	if ((device->caps & EVDEV_KEYBOARD))
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
-	}
-	if ((device->caps & EVDEV_TOUCH)) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_TOUCH);
+	if ((device->caps & EVDEV_TOUCH))
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
-	}
-
-	return 0;
 }
 
-LIBINPUT_EXPORT struct libinput_device *
-libinput_device_create_evdev(
-	struct libinput *libinput,
-	const char *devnode,
-	int fd,
-	void *user_data)
+static void
+register_device_capabilities(struct evdev_device *device)
 {
+	if (device->seat_caps & EVDEV_DEVICE_POINTER) {
+		device_register_capability(&device->base,
+					   LIBINPUT_DEVICE_CAP_POINTER);
+	}
+	if (device->seat_caps & EVDEV_DEVICE_KEYBOARD) {
+		device_register_capability(&device->base,
+					   LIBINPUT_DEVICE_CAP_KEYBOARD);
+	}
+	if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
+		device_register_capability(&device->base,
+					   LIBINPUT_DEVICE_CAP_TOUCH);
+	}
+}
+
+struct evdev_device *
+evdev_device_create(struct libinput_seat *seat,
+		    const char *devnode,
+		    int fd)
+{
+	struct libinput *libinput = seat->libinput;
 	struct evdev_device *device;
 	char devname[256] = "unknown";
 
@@ -621,8 +627,7 @@ libinput_device_create_evdev(
 	if (device == NULL)
 		return NULL;
 
-	device->base.libinput = libinput;
-	device->base.user_data = user_data;
+	libinput_device_init(&device->base, seat);
 
 	device->seat_caps = 0;
 	device->is_mt = 0;
@@ -644,8 +649,7 @@ libinput_device_create_evdev(
 		return NULL;
 	}
 
-	if (evdev_configure_device(device) == -1)
-		goto err;
+	evdev_configure_device(device);
 
 	/* If the dispatch was not set up use the fallback. */
 	if (device->dispatch == NULL)
@@ -658,7 +662,11 @@ libinput_device_create_evdev(
 	if (!device->source)
 		goto err;
 
-	return &device->base;
+	list_insert(seat->devices_list.prev, &device->base.link);
+	notify_added_device(&device->base);
+	register_device_capabilities(device);
+
+	return device;
 
 err:
 	evdev_device_destroy(device);
@@ -672,6 +680,12 @@ evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size)
 	return ioctl(device->fd, EVIOCGKEY(size), keys);
 }
 
+const char *
+evdev_device_get_output(struct evdev_device *device)
+{
+	return device->output_name;
+}
+
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6])
 {
@@ -680,7 +694,7 @@ evdev_device_calibrate(struct evdev_device *device, float calibration[6])
 }
 
 void
-evdev_device_terminate(struct evdev_device *device)
+evdev_device_remove(struct evdev_device *device)
 {
 	if (device->seat_caps & EVDEV_DEVICE_POINTER) {
 		device_unregister_capability(&device->base,
@@ -694,6 +708,18 @@ evdev_device_terminate(struct evdev_device *device)
 		device_unregister_capability(&device->base,
 					     LIBINPUT_DEVICE_CAP_TOUCH);
 	}
+
+	if (device->source)
+		libinput_remove_source(device->base.seat->libinput,
+				       device->source);
+
+	if (device->mtdev)
+		mtdev_close_delete(device->mtdev);
+	close(device->fd);
+	list_remove(&device->base.link);
+
+	notify_removed_device(&device->base);
+	libinput_device_unref(&device->base);
 }
 
 void
@@ -705,9 +731,6 @@ evdev_device_destroy(struct evdev_device *device)
 	if (dispatch)
 		dispatch->interface->destroy(dispatch);
 
-	if (device->mtdev)
-		mtdev_close_delete(device->mtdev);
-	close(device->fd);
 	free(device->devname);
 	free(device->devnode);
 	free(device);

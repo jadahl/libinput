@@ -709,7 +709,7 @@ touchpad_destroy(struct evdev_dispatch *dispatch)
 {
 	struct touchpad_dispatch *touchpad =
 		(struct touchpad_dispatch *) dispatch;
-	struct libinput *libinput = touchpad->device->base.libinput;
+	struct libinput *libinput = touchpad->device->base.seat->libinput;
 
 	touchpad->filter->interface->destroy(touchpad->filter);
 	libinput_remove_source(libinput, touchpad->fsm.timer.source);
@@ -798,7 +798,7 @@ touchpad_init(struct touchpad_dispatch *touchpad,
 
 	touchpad->fsm.timer.fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 	touchpad->fsm.timer.source =
-		libinput_add_fd(touchpad->device->base.libinput,
+		libinput_add_fd(touchpad->device->base.seat->libinput,
 				touchpad->fsm.timer.fd,
 				fsm_timeout_handler,
 				touchpad);

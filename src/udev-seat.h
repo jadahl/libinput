@@ -27,30 +27,24 @@
 
 #include <libudev.h>
 
-#include "compositor.h"
-
 struct udev_seat {
-	struct weston_seat base;
-	struct wl_list devices_list;
+	struct libinput_seat base;
+	char *seat_name;
 };
 
 struct udev_input {
+	struct libinput base;
+	struct udev *udev;
 	struct udev_monitor *udev_monitor;
-	struct wl_event_source *udev_monitor_source;
+	struct libinput_source *udev_monitor_source;
 	char *seat_id;
-	struct weston_compositor *compositor;
-	int enabled;
 };
 
-
-int udev_input_enable(struct udev_input *input, struct udev *udev);
+int udev_input_process_event(struct libinput_event);
+int udev_input_enable(struct udev_input *input);
 void udev_input_disable(struct udev_input *input);
-int udev_input_init(struct udev_input *input,
-		    struct weston_compositor *c,
-		    struct udev *udev,
-		    const char *seat_id);
 void udev_input_destroy(struct udev_input *input);
 
-struct udev_seat *udev_seat_get_named(struct weston_compositor *c,
-				      const char *seat_name);
+void udev_seat_destroy(struct udev_seat *seat);
+
 #endif

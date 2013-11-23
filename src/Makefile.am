@@ -12,7 +12,9 @@ libinput_la_SOURCES =			\
 	evdev.h				\
 	evdev-touchpad.c		\
 	filter.c			\
-	filter.h
+	filter.h			\
+	udev-seat.c			\
+	udev-seat.h
 
 libinput_la_LIBADD = $(MTDEV_LIBS)
 libinput_la_CFLAGS = $(MTDEV_CFLAGS)	\

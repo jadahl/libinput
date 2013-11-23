@@ -30,8 +30,9 @@
 #include <assert.h>
 
 #include "libinput.h"
-#include "evdev.h"
 #include "libinput-private.h"
+#include "evdev.h"
+#include "udev-seat.h"
 
 struct libinput_source {
 	libinput_source_dispatch_t dispatch;
@@ -39,6 +40,10 @@ struct libinput_source {
 	int fd;
 	struct list link;
 };
+
+static void
+libinput_post_event(struct libinput *libinput,
+		    struct libinput_event *event);
 
 struct libinput_source *
 libinput_add_fd(struct libinput *libinput,
@@ -80,25 +85,21 @@ libinput_remove_source(struct libinput *libinput,
 	list_insert(&libinput->source_destroy_list, &source->link);
 }
 
-LIBINPUT_EXPORT struct libinput *
-libinput_create(const struct libinput_interface *interface, void *user_data)
+int
+libinput_init(struct libinput *libinput,
+	      const struct libinput_interface *interface,
+	      void *user_data)
 {
-	struct libinput *libinput;
-
-	libinput = zalloc(sizeof *libinput);
-	if (!libinput)
-		return NULL;
-
-	list_init(&libinput->source_destroy_list);
+	libinput->epoll_fd = epoll_create1(EPOLL_CLOEXEC);;
+	if (libinput->epoll_fd < 0)
+		return -1;
 
 	libinput->interface = interface;
 	libinput->user_data = user_data;
+	list_init(&libinput->source_destroy_list);
+	list_init(&libinput->seat_list);
 
-	libinput->epoll_fd = epoll_create1(EPOLL_CLOEXEC);;
-	if (libinput->epoll_fd < 0)
-		return NULL;
-
-	return libinput;
+	return 0;
 }
 
 LIBINPUT_EXPORT void
@@ -112,6 +113,88 @@ libinput_destroy(struct libinput *libinput)
 
 	close(libinput->epoll_fd);
 	free(libinput);
+}
+
+int
+open_restricted(struct libinput *libinput,
+		const char *path, int flags)
+{
+	return libinput->interface->open_restricted(path,
+						    flags,
+						    libinput->user_data);
+}
+
+void
+close_restricted(struct libinput *libinput, int fd)
+{
+	return libinput->interface->close_restricted(fd, libinput->user_data);
+}
+
+void
+libinput_seat_init(struct libinput_seat *seat,
+		   struct libinput *libinput,
+		   const char *name)
+{
+	seat->refcount = 1;
+	seat->libinput = libinput;
+	seat->name = strdup(name);
+	list_init(&seat->devices_list);
+}
+
+LIBINPUT_EXPORT void
+libinput_seat_ref(struct libinput_seat *seat)
+{
+	seat->refcount++;
+}
+
+LIBINPUT_EXPORT void
+libinput_seat_unref(struct libinput_seat *seat)
+{
+	seat->refcount--;
+	if (seat->refcount == 0) {
+		free(seat->name);
+		udev_seat_destroy((struct udev_seat *) seat);
+	}
+}
+
+LIBINPUT_EXPORT void
+libinput_seat_set_user_data(struct libinput_seat *seat, void *user_data)
+{
+	seat->user_data = user_data;
+}
+
+LIBINPUT_EXPORT void *
+libinput_seat_get_user_data(struct libinput_seat *seat)
+{
+	return seat->user_data;
+}
+
+LIBINPUT_EXPORT const char *
+libinput_seat_get_name(struct libinput_seat *seat)
+{
+	return seat->name;
+}
+
+void
+libinput_device_init(struct libinput_device *device,
+		     struct libinput_seat *seat)
+{
+	device->seat = seat;
+	device->refcount = 1;
+}
+
+LIBINPUT_EXPORT void
+libinput_device_ref(struct libinput_device *device)
+{
+	device->refcount++;
+}
+
+LIBINPUT_EXPORT void
+libinput_device_unref(struct libinput_device *device)
+{
+	device->refcount--;
+	if (device->refcount == 0)
+		evdev_device_destroy((struct evdev_device *) device);
 }
 
 LIBINPUT_EXPORT int
@@ -149,19 +232,114 @@ libinput_dispatch(struct libinput *libinput)
 static void
 init_event_base(struct libinput_event *event,
 		enum libinput_event_type type,
-		struct libinput_device *device)
+		union libinput_event_target target)
 {
 	event->type = type;
-	event->device = device;
+	event->target = target;
 }
+
+static void
+post_base_event(struct libinput *libinput,
+		enum libinput_event_type type,
+		struct libinput_event *event)
+{
+	init_event_base(event, type,
+			(union libinput_event_target) { .libinput = libinput });
+	libinput_post_event(libinput, event);
+}
+
+#if 0
+static void
+post_seat_event(struct libinput_seat *seat,
+		enum libinput_event_type type,
+		struct libinput_event *event)
+{
+	init_event_base(event, type,
+			(union libinput_event_target) { .seat = seat });
+	libinput_post_event(seat->libinput, event);
+}
+#endif
 
 static void
 post_device_event(struct libinput_device *device,
 		  enum libinput_event_type type,
 		  struct libinput_event *event)
 {
-	init_event_base(event, type, device);
-	libinput_post_event(device->libinput, event);
+	init_event_base(event, type,
+			(union libinput_event_target) { .device = device });
+	libinput_post_event(device->seat->libinput, event);
+}
+
+void
+notify_added_seat(struct libinput_seat *seat)
+{
+	struct libinput_event_added_seat *added_seat_event;
+
+	added_seat_event = malloc(sizeof *added_seat_event);
+	if (!added_seat_event)
+		return;
+
+	*added_seat_event = (struct libinput_event_added_seat) {
+		.seat = seat,
+	};
+
+	post_base_event(seat->libinput,
+			LIBINPUT_EVENT_ADDED_SEAT,
+			&added_seat_event->base);
+}
+
+void
+notify_removed_seat(struct libinput_seat *seat)
+{
+	struct libinput_event_removed_seat *removed_seat_event;
+
+	removed_seat_event = malloc(sizeof *removed_seat_event);
+	if (!removed_seat_event)
+		return;
+
+	*removed_seat_event = (struct libinput_event_removed_seat) {
+		.seat = seat,
+	};
+
+	post_base_event(seat->libinput,
+			LIBINPUT_EVENT_REMOVED_SEAT,
+			&removed_seat_event->base);
+}
+
+void
+notify_added_device(struct libinput_device *device)
+{
+	struct libinput_event_added_device *added_device_event;
+
+	added_device_event = malloc(sizeof *added_device_event);
+	if (!added_device_event)
+		return;
+
+	*added_device_event = (struct libinput_event_added_device) {
+		.device = device,
+	};
+
+	post_base_event(device->seat->libinput,
+			LIBINPUT_EVENT_ADDED_DEVICE,
+			&added_device_event->base);
+}
+
+void
+notify_removed_device(struct libinput_device *device)
+{
+	struct libinput_event_removed_device *removed_device_event;
+
+	removed_device_event = malloc(sizeof *removed_device_event);
+	if (!removed_device_event)
+		return;
+
+	*removed_device_event = (struct libinput_event_removed_device) {
+		.device = device,
+	};
+
+	post_base_event(device->seat->libinput,
+			LIBINPUT_EVENT_REMOVED_DEVICE,
+			&removed_device_event->base);
 }
 
 void
@@ -340,7 +518,7 @@ touch_notify_touch(struct libinput_device *device,
 			  &touch_event->base);
 }
 
-void
+static void
 libinput_post_event(struct libinput *libinput,
 		    struct libinput_event *event)
 {
@@ -400,24 +578,46 @@ libinput_get_event(struct libinput *libinput)
 	return event;
 }
 
-LIBINPUT_EXPORT void
-libinput_device_terminate(struct libinput_device *device)
+LIBINPUT_EXPORT void *
+libinput_get_user_data(struct libinput *libinput)
 {
-	evdev_device_terminate((struct evdev_device *) device);
-	device->terminated = 1;
+	return libinput->user_data;
+}
+
+LIBINPUT_EXPORT int
+libinput_resume(struct libinput *libinput)
+{
+	return udev_input_enable((struct udev_input *) libinput);
 }
 
 LIBINPUT_EXPORT void
-libinput_device_destroy(struct libinput_device *device)
+libinput_suspend(struct libinput *libinput)
 {
-	assert(device->terminated);
-	evdev_device_destroy((struct evdev_device *) device);
+	udev_input_disable((struct udev_input *) libinput);
+}
+
+LIBINPUT_EXPORT void
+libinput_device_set_user_data(struct libinput_device *device, void *user_data)
+{
+	device->user_data = user_data;
 }
 
 LIBINPUT_EXPORT void *
 libinput_device_get_user_data(struct libinput_device *device)
 {
 	return device->user_data;
+}
+
+LIBINPUT_EXPORT const char *
+libinput_device_get_output_name(struct libinput_device *device)
+{
+	return evdev_device_get_output((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT struct libinput_seat *
+libinput_device_get_seat(struct libinput_device *device)
+{
+	return device->seat;
 }
 
 LIBINPUT_EXPORT void

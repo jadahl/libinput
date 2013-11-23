@@ -70,6 +70,7 @@ struct evdev_device {
 	struct libinput_source *source;
 
 	struct evdev_dispatch *dispatch;
+	char *output_name;
 	char *devnode;
 	char *devname;
 	int fd;
@@ -129,6 +130,11 @@ struct evdev_dispatch {
 	struct evdev_dispatch_interface *interface;
 };
 
+struct evdev_device *
+evdev_device_create(struct libinput_seat *seat,
+		    const char *devnode,
+		    int fd);
+
 struct evdev_dispatch *
 evdev_touchpad_create(struct evdev_device *device);
 
@@ -141,11 +147,14 @@ evdev_device_led_update(struct evdev_device *device, enum libinput_led leds);
 int
 evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size);
 
+const char *
+evdev_device_get_output(struct evdev_device *device);
+
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6]);
 
 void
-evdev_device_terminate(struct evdev_device *terminate);
+evdev_device_remove(struct evdev_device *device);
 
 void
 evdev_device_destroy(struct evdev_device *device);
