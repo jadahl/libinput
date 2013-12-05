@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -212,7 +213,7 @@ libinput_dispatch(struct libinput *libinput)
 
 	count = epoll_wait(libinput->epoll_fd, ep, ARRAY_LENGTH(ep), 0);
 	if (count < 0)
-		return -1;
+		return -errno;
 
 	for (i = 0; i < count; ++i) {
 		source = ep[i].data.ptr;
