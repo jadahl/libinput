@@ -227,7 +227,7 @@ libinput_dispatch(struct libinput *libinput)
 		free(source);
 	list_init(&libinput->source_destroy_list);
 
-	return 0;
+	return libinput->events_count > 0 ? 0 : -EAGAIN;
 }
 
 static void
