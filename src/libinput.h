@@ -162,7 +162,7 @@ struct libinput_event_pointer_axis {
 struct libinput_event_touch_touch {
 	struct libinput_event base;
 	uint32_t time;
-	int32_t slot;
+	uint32_t slot;
 	li_fixed_t x;
 	li_fixed_t y;
 	enum libinput_touch_type touch_type;
