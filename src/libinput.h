@@ -148,7 +148,7 @@ struct libinput_event_pointer_motion_absolute {
 struct libinput_event_pointer_button {
 	struct libinput_event base;
 	uint32_t time;
-	int32_t button;
+	uint32_t button;
 	enum libinput_pointer_button_state state;
 };
 
