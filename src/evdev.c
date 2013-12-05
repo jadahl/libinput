@@ -690,7 +690,7 @@ void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6])
 {
 	device->abs.apply_calibration = 1;
-	memcpy(device->abs.calibration, calibration, sizeof calibration);
+	memcpy(device->abs.calibration, calibration, sizeof device->abs.calibration);
 }
 
 void
