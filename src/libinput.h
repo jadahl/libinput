@@ -83,6 +83,10 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_TOUCH_TOUCH = 500,
 };
 
+struct libinput;
+struct libinput_device;
+struct libinput_seat;
+
 union libinput_event_target {
 	struct libinput *libinput;
 	struct libinput_seat *seat;
@@ -181,10 +185,6 @@ struct libinput_interface {
 					      int *height,
 					      void *user_data);
 };
-
-struct libinput;
-struct libinput_device;
-struct libinput_seat;
 
 /*
  * Base
