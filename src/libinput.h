@@ -184,6 +184,7 @@ struct libinput_interface {
 
 struct libinput;
 struct libinput_device;
+struct libinput_seat;
 
 /*
  * Base
