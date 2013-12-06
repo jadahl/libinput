@@ -59,10 +59,18 @@ else
 fi
 AM_CONDITIONAL([HAVE_DOXYGEN], [test "x$have_doxygen" = "xyes"])
 
+AC_ARG_ENABLE(tests,
+	      AS_HELP_STRING([--enable-tests], [Build the tests (default=yes)]),
+	      [build_tests="$enableval"],
+	      [build_tests="yes"])
+
+AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
+
 AC_CONFIG_FILES([Makefile
 		 doc/Makefile
 		 doc/libinput.doxygen
 		 src/Makefile
 		 src/libinput.pc
-		 src/libinput-version.h])
+		 src/libinput-version.h
+		 test/Makefile])
 AC_OUTPUT

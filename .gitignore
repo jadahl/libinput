@@ -26,3 +26,5 @@ src/libinput-version.h
 doc/libinput.doxygen
 doc/html
 tags
+test/test-*
+test-driver
