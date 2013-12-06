@@ -28,7 +28,6 @@
 
 #include <linux/input.h>
 
-#include "evdev.h"
 #include "libinput-private.h"
 
 static inline void *
