@@ -172,10 +172,6 @@ struct libinput_event_touch_touch {
 	enum libinput_touch_type touch_type;
 };
 
-struct libinput_fd_handle;
-
-typedef void (*libinput_fd_callback)(int fd, void *data);
-
 struct libinput_interface {
 	int (*open_restricted)(const char *path, int flags, void *user_data);
 	void (*close_restricted)(int fd, void *user_data);
