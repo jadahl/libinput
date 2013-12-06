@@ -25,7 +25,7 @@ AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
 
 # Check for programs
-AC_PROG_CC
+AC_PROG_CC_C99
 
 # Initialize libtool
 LT_PREREQ([2.2])
