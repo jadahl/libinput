@@ -1,5 +1,18 @@
 if BUILD_TESTS
-AM_CPPFLAGS = -I$(top_srcdir)/src 
+AM_CPPFLAGS = -I$(top_srcdir)/src $(CHECK_CFLAGS) $(LIBEVDEV_CFLAGS)
+
+TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la -lm
+noinst_LTLIBRARIES = liblitest.la
+liblitest_la_SOURCES = \
+	$(top_srcdir)/src/libinput-util.h \
+	$(top_srcdir)/src/libinput-util.c \
+	litest.h \
+	litest-int.h \
+	litest-bcm5974.c \
+	litest-keyboard.c \
+	litest-synaptics.c \
+	litest-trackpoint.c \
+	litest.c
 
 run_tests =
 build_tests = test-build-linker test-build-pedantic-c99 test-build-std-gnuc90

@@ -60,9 +60,24 @@ fi
 AM_CONDITIONAL([HAVE_DOXYGEN], [test "x$have_doxygen" = "xyes"])
 
 AC_ARG_ENABLE(tests,
-	      AS_HELP_STRING([--enable-tests], [Build the tests (default=yes)]),
+	      AS_HELP_STRING([--enable-tests], [Build the tests (default=auto)]),
 	      [build_tests="$enableval"],
-	      [build_tests="yes"])
+	      [build_tests="auto"])
+
+PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4], [HAVE_LIBEVDEV="yes"], [HAVE_LIBEVDEV="no"])
+PKG_CHECK_MODULES(CHECK, [check >= 0.9.9], [HAVE_CHECK="yes"], [HAVE_CHECK="no"])
+
+if test "x$build_tests" = "xauto"; then
+	if test "x$HAVE_CHECK" = "xyes" -a "x$HAVE_LIBEVDEV" = "xyes"; then
+		build_tests="yes"
+	fi
+fi
+if test "x$build_tests" = "xyes" -a "x$HAVE_CHECK" = "xno"; then
+       AC_MSG_ERROR([Cannot build tests, check is missing])
+fi
+if test "x$build_tests" = "xyes" -a "x$HAVE_LIBEVDEV" = "xno"; then
+       AC_MSG_ERROR([Cannot build tests, libevdev is missing])
+fi
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
 
