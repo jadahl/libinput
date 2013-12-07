@@ -35,6 +35,12 @@
 #include "evdev.h"
 #include "udev-seat.h"
 
+enum libinput_event_class {
+	LIBINPUT_EVENT_CLASS_BASE,
+	LIBINPUT_EVENT_CLASS_SEAT,
+	LIBINPUT_EVENT_CLASS_DEVICE,
+};
+
 struct libinput_source {
 	libinput_source_dispatch_t dispatch;
 	void *user_data;
@@ -114,6 +120,48 @@ libinput_destroy(struct libinput *libinput)
 
 	close(libinput->epoll_fd);
 	free(libinput);
+}
+
+static enum libinput_event_class
+libinput_event_get_class(struct libinput_event *event)
+{
+	switch (event->type) {
+	case LIBINPUT_EVENT_ADDED_SEAT:
+	case LIBINPUT_EVENT_REMOVED_SEAT:
+	case LIBINPUT_EVENT_ADDED_DEVICE:
+	case LIBINPUT_EVENT_REMOVED_DEVICE:
+		return LIBINPUT_EVENT_CLASS_BASE;
+
+	case LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY:
+	case LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY:
+	case LIBINPUT_EVENT_KEYBOARD_KEY:
+	case LIBINPUT_EVENT_POINTER_MOTION:
+	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
+	case LIBINPUT_EVENT_POINTER_BUTTON:
+	case LIBINPUT_EVENT_POINTER_AXIS:
+	case LIBINPUT_EVENT_TOUCH_TOUCH:
+		return LIBINPUT_EVENT_CLASS_DEVICE;
+	}
+
+	/* We should never end up here. */
+	abort();
+}
+
+LIBINPUT_EXPORT void
+libinput_event_destroy(struct libinput_event *event)
+{
+	switch (libinput_event_get_class(event)) {
+	case LIBINPUT_EVENT_CLASS_BASE:
+		break;
+	case LIBINPUT_EVENT_CLASS_SEAT:
+		libinput_seat_unref(event->target.seat);
+		break;
+	case LIBINPUT_EVENT_CLASS_DEVICE:
+		libinput_device_unref(event->target.device);
+		break;
+	}
+
+	free(event);
 }
 
 int
@@ -544,6 +592,17 @@ libinput_post_event(struct libinput *libinput,
 
 		libinput->events = events;
 		libinput->events_len = events_len;
+	}
+
+	switch (libinput_event_get_class(event)) {
+	case LIBINPUT_EVENT_CLASS_BASE:
+		break;
+	case LIBINPUT_EVENT_CLASS_SEAT:
+		libinput_seat_ref(event->target.seat);
+		break;
+	case LIBINPUT_EVENT_CLASS_DEVICE:
+		libinput_device_ref(event->target.device);
+		break;
 	}
 
 	libinput->events_count = events_count;

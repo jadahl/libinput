@@ -296,7 +296,8 @@ libinput_dispatch(struct libinput *libinput);
  *
  * Retrieve the next event from libinput's internal event queue.
  *
- * After handling the retrieved event, the caller must free it using free().
+ * After handling the retrieved event, the caller must destroy it using
+ * libinput_event_destroy().
  *
  * @param libinput A previously initialized libinput context
  * @return The next available event, or NULL if no event is available.
@@ -349,6 +350,20 @@ libinput_suspend(struct libinput *libinput);
  */
 void
 libinput_destroy(struct libinput *libinput);
+
+/**
+ * @defgroup event Acessing and destruction of events
+ */
+
+/**
+ * @ingroup event
+ *
+ * Destroy the event.
+ *
+ * @param event An event retrieved by libinput_get_event().
+ */
+void
+libinput_event_destroy(struct libinput_event *event);
 
 /**
  * @defgroup seat Initialization and manipulation of seats
