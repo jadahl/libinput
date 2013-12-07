@@ -249,18 +249,6 @@ post_base_event(struct libinput *libinput,
 	libinput_post_event(libinput, event);
 }
 
-#if 0
-static void
-post_seat_event(struct libinput_seat *seat,
-		enum libinput_event_type type,
-		struct libinput_event *event)
-{
-	init_event_base(event, type,
-			(union libinput_event_target) { .seat = seat });
-	libinput_post_event(seat->libinput, event);
-}
-#endif
-
 static void
 post_device_event(struct libinput_device *device,
 		  enum libinput_event_type type,
