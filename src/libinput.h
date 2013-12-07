@@ -296,6 +296,8 @@ libinput_dispatch(struct libinput *libinput);
  *
  * Retrieve the next event from libinput's internal event queue.
  *
+ * After handling the retrieved event, the caller must free it using free().
+ *
  * @param libinput A previously initialized libinput context
  * @return The next available event, or NULL if no event is available.
  */
