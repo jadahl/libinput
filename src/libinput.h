@@ -167,6 +167,16 @@ struct libinput_event_touch_touch;
  * @defgroup event Acessing and destruction of events
  */
 
+/**
+ * @ingroup event
+ *
+ * Destroy the event.
+ *
+ * @param event An event retrieved by libinput_get_event().
+ */
+void
+libinput_event_destroy(struct libinput_event *event);
+
 enum libinput_event_type
 libinput_event_get_type(struct libinput_event *event);
 
@@ -445,20 +455,6 @@ libinput_suspend(struct libinput *libinput);
  */
 void
 libinput_destroy(struct libinput *libinput);
-
-/**
- * @defgroup event Acessing and destruction of events
- */
-
-/**
- * @ingroup event
- *
- * Destroy the event.
- *
- * @param event An event retrieved by libinput_get_event().
- */
-void
-libinput_event_destroy(struct libinput_event *event);
 
 /**
  * @defgroup seat Initialization and manipulation of seats
