@@ -177,9 +177,29 @@ struct libinput_event_touch_touch;
 void
 libinput_event_destroy(struct libinput_event *event);
 
+/**
+ * @ingroup event
+ *
+ * Get the type of the event.
+ *
+ * @param event An event retrieved by libinput_get_event().
+ */
 enum libinput_event_type
 libinput_event_get_type(struct libinput_event *event);
 
+/**
+ * @ingroup event
+ *
+ * Get get the target union of the event.
+ *
+ * The valid union member depends on the event type. For global events not
+ * related to some seat or device, the target is a libinput struct pointer.
+ * For events associated with a seat, the target is a libinput_seat pointer
+ * and for events associated with a device, the target is a libinput_device
+ * pointer.
+ *
+ * @param event An event retrieved by libinput_get_event().
+ */
 union libinput_event_target
 libinput_event_get_target(struct libinput_event *event);
 
