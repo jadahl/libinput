@@ -228,6 +228,10 @@ struct libinput_event_touch_touch {
 	enum libinput_touch_type touch_type;
 };
 
+/**
+ * @defgroup base Initialization and manipulation of libinput contexts
+ */
+
 struct libinput_interface {
 	int (*open_restricted)(const char *path, int flags, void *user_data);
 	void (*close_restricted)(int fd, void *user_data);
@@ -237,10 +241,6 @@ struct libinput_interface {
 					      int *height,
 					      void *user_data);
 };
-
-/**
- * @defgroup base Initialization and manipulation of libinput contexts
- */
 
 /**
  * @ingroup base
