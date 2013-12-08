@@ -48,9 +48,280 @@ struct libinput_source {
 	struct list link;
 };
 
+struct libinput_event {
+	enum libinput_event_type type;
+	union libinput_event_target target;
+};
+
+struct libinput_event_added_seat {
+	struct libinput_event base;
+	struct libinput_seat *seat;
+};
+
+struct libinput_event_removed_seat {
+	struct libinput_event base;
+	struct libinput_seat *seat;
+};
+
+struct libinput_event_added_device {
+	struct libinput_event base;
+	struct libinput_device *device;
+};
+
+struct libinput_event_removed_device {
+	struct libinput_event base;
+	struct libinput_device *device;
+};
+
+struct libinput_event_device_register_capability {
+	struct libinput_event base;
+	enum libinput_device_capability capability;
+};
+
+struct libinput_event_device_unregister_capability {
+	struct libinput_event base;
+	enum libinput_device_capability capability;
+};
+
+struct libinput_event_keyboard_key {
+	struct libinput_event base;
+	uint32_t time;
+	uint32_t key;
+	enum libinput_keyboard_key_state state;
+};
+
+struct libinput_event_pointer_motion {
+	struct libinput_event base;
+	uint32_t time;
+	li_fixed_t dx;
+	li_fixed_t dy;
+};
+
+struct libinput_event_pointer_motion_absolute {
+	struct libinput_event base;
+	uint32_t time;
+	li_fixed_t x;
+	li_fixed_t y;
+};
+
+struct libinput_event_pointer_button {
+	struct libinput_event base;
+	uint32_t time;
+	uint32_t button;
+	enum libinput_pointer_button_state state;
+};
+
+struct libinput_event_pointer_axis {
+	struct libinput_event base;
+	uint32_t time;
+	enum libinput_pointer_axis axis;
+	li_fixed_t value;
+};
+
+struct libinput_event_touch_touch {
+	struct libinput_event base;
+	uint32_t time;
+	uint32_t slot;
+	li_fixed_t x;
+	li_fixed_t y;
+	enum libinput_touch_type touch_type;
+};
+
 static void
 libinput_post_event(struct libinput *libinput,
 		    struct libinput_event *event);
+
+LIBINPUT_EXPORT enum libinput_event_type
+libinput_event_get_type(struct libinput_event *event)
+{
+	return event->type;
+}
+
+LIBINPUT_EXPORT union libinput_event_target
+libinput_event_get_target(struct libinput_event *event)
+{
+	return event->target;
+}
+
+LIBINPUT_EXPORT struct libinput_seat *
+libinput_event_added_seat_get_seat(struct libinput_event_added_seat *event)
+{
+	return event->seat;
+}
+
+LIBINPUT_EXPORT struct libinput_seat *
+libinput_event_removed_seat_get_seat(struct libinput_event_removed_seat *event)
+{
+	return event->seat;
+}
+
+LIBINPUT_EXPORT struct libinput_device *
+libinput_event_added_device_get_device(
+	struct libinput_event_added_device *event)
+{
+	return event->device;
+}
+
+LIBINPUT_EXPORT struct libinput_device *
+libinput_event_removed_device_get_device(
+	struct libinput_event_removed_device *event)
+{
+	return event->device;
+}
+
+LIBINPUT_EXPORT enum libinput_device_capability
+libinput_event_device_register_capability_get_capability(
+	struct libinput_event_device_register_capability *event)
+{
+	return event->capability;
+}
+
+LIBINPUT_EXPORT enum libinput_device_capability
+libinput_event_device_unregister_capability_get_capability(
+	struct libinput_event_device_unregister_capability *event)
+{
+	return event->capability;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_keyboard_key_get_time(
+	struct libinput_event_keyboard_key *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_keyboard_key_get_key(
+	struct libinput_event_keyboard_key *event)
+{
+	return event->key;
+}
+
+LIBINPUT_EXPORT enum libinput_keyboard_key_state
+libinput_event_keyboard_key_get_state(
+	struct libinput_event_keyboard_key *event)
+{
+	return event->state;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_motion_get_time(
+	struct libinput_event_pointer_motion *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_motion_get_dx(
+	struct libinput_event_pointer_motion *event)
+{
+	return event->dx;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_motion_get_dy(
+	struct libinput_event_pointer_motion *event)
+{
+	return event->dy;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_motion_absolute_get_time(
+	struct libinput_event_pointer_motion_absolute *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_motion_absolute_get_x(
+	struct libinput_event_pointer_motion_absolute *event)
+{
+	return event->x;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_motion_absolute_get_y(
+	struct libinput_event_pointer_motion_absolute *event)
+{
+	return event->y;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_button_get_time(
+	struct libinput_event_pointer_button *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_button_get_button(
+	struct libinput_event_pointer_button *event)
+{
+	return event->button;
+}
+
+LIBINPUT_EXPORT enum libinput_pointer_button_state
+libinput_event_pointer_button_get_state(
+	struct libinput_event_pointer_button *event)
+{
+	return event->state;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_axis_get_time(
+	struct libinput_event_pointer_axis *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT enum libinput_pointer_axis
+libinput_event_pointer_axis_get_axis(
+	struct libinput_event_pointer_axis *event)
+{
+	return event->axis;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_axis_get_value(
+	struct libinput_event_pointer_axis *event)
+{
+	return event->value;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_touch_touch_get_time(
+	struct libinput_event_touch_touch *event)
+{
+	return event->time;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_touch_touch_get_slot(
+	struct libinput_event_touch_touch *event)
+{
+	return event->slot;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_touch_touch_get_x(
+	struct libinput_event_touch_touch *event)
+{
+	return event->x;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_touch_touch_get_y(
+	struct libinput_event_touch_touch *event)
+{
+	return event->y;
+}
+
+LIBINPUT_EXPORT enum libinput_touch_type
+libinput_event_touch_touch_get_touch_type(
+	struct libinput_event_touch_touch *event)
+{
+	return event->touch_type;
+}
 
 struct libinput_source *
 libinput_add_fd(struct libinput *libinput,

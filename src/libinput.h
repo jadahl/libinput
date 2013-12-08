@@ -149,84 +149,179 @@ union libinput_event_target {
 	struct libinput_device *device;
 };
 
-struct libinput_event {
-	enum libinput_event_type type;
-	union libinput_event_target target;
-};
+struct libinput_event;
+struct libinput_event_added_seat;
+struct libinput_event_removed_seat;
+struct libinput_event_added_device;
+struct libinput_event_removed_device;
+struct libinput_event_device_register_capability;
+struct libinput_event_device_unregister_capability;
+struct libinput_event_keyboard_key;
+struct libinput_event_pointer_motion;
+struct libinput_event_pointer_motion_absolute;
+struct libinput_event_pointer_button;
+struct libinput_event_pointer_axis;
+struct libinput_event_touch_touch;
 
-struct libinput_event_added_seat {
-	struct libinput_event base;
-	struct libinput_seat *seat;
-};
+/**
+ * @defgroup event Acessing and destruction of events
+ */
 
-struct libinput_event_removed_seat {
-	struct libinput_event base;
-	struct libinput_seat *seat;
-};
+enum libinput_event_type
+libinput_event_get_type(struct libinput_event *event);
 
-struct libinput_event_added_device {
-	struct libinput_event base;
-	struct libinput_device *device;
-};
+union libinput_event_target
+libinput_event_get_target(struct libinput_event *event);
 
-struct libinput_event_removed_device {
-	struct libinput_event base;
-	struct libinput_device *device;
-};
+/**
+ * @defgroup event_added_seat Added seat event
+ */
 
-struct libinput_event_device_register_capability {
-	struct libinput_event base;
-	enum libinput_device_capability capability;
-};
+struct libinput_seat *
+libinput_event_added_seat_get_seat(struct libinput_event_added_seat *event);
 
-struct libinput_event_device_unregister_capability {
-	struct libinput_event base;
-	enum libinput_device_capability capability;
-};
+/**
+ * @defgroup event_removed_seat Removed seat event
+ */
 
-struct libinput_event_keyboard_key {
-	struct libinput_event base;
-	uint32_t time;
-	uint32_t key;
-	enum libinput_keyboard_key_state state;
-};
+struct libinput_seat *
+libinput_event_removed_seat_get_seat(struct libinput_event_removed_seat *event);
 
-struct libinput_event_pointer_motion {
-	struct libinput_event base;
-	uint32_t time;
-	li_fixed_t dx;
-	li_fixed_t dy;
-};
+/**
+ * @defgroup event_added_device Added device event
+ */
 
-struct libinput_event_pointer_motion_absolute {
-	struct libinput_event base;
-	uint32_t time;
-	li_fixed_t x;
-	li_fixed_t y;
-};
+struct libinput_device *
+libinput_event_added_device_get_device(
+	struct libinput_event_added_device *event);
 
-struct libinput_event_pointer_button {
-	struct libinput_event base;
-	uint32_t time;
-	uint32_t button;
-	enum libinput_pointer_button_state state;
-};
+/**
+ * @defgroup event_removed_device Removed device event
+ */
 
-struct libinput_event_pointer_axis {
-	struct libinput_event base;
-	uint32_t time;
-	enum libinput_pointer_axis axis;
-	li_fixed_t value;
-};
+struct libinput_device *
+libinput_event_removed_device_get_device(
+	struct libinput_event_removed_device *event);
 
-struct libinput_event_touch_touch {
-	struct libinput_event base;
-	uint32_t time;
-	uint32_t slot;
-	li_fixed_t x;
-	li_fixed_t y;
-	enum libinput_touch_type touch_type;
-};
+/**
+ * @defgroup event_device_register_capability Register device capability event
+ */
+
+enum libinput_device_capability
+libinput_event_device_register_capability_get_capability(
+	struct libinput_event_device_register_capability *event);
+
+/**
+ * @defgroup event_device_unregister_capability Register device capability event
+ */
+
+enum libinput_device_capability
+libinput_event_device_unregister_capability_get_capability(
+	struct libinput_event_device_unregister_capability *event);
+
+/**
+ * @defgroup event_keyboard_key Keyboard key event
+ */
+
+uint32_t
+libinput_event_keyboard_key_get_time(
+	struct libinput_event_keyboard_key *event);
+
+uint32_t
+libinput_event_keyboard_key_get_key(
+	struct libinput_event_keyboard_key *event);
+
+enum libinput_keyboard_key_state
+libinput_event_keyboard_key_get_state(
+	struct libinput_event_keyboard_key *event);
+
+/**
+ * @defgroup event_pointer_motion Pointer motion event
+ */
+
+uint32_t
+libinput_event_pointer_motion_get_time(
+	struct libinput_event_pointer_motion *event);
+
+li_fixed_t
+libinput_event_pointer_motion_get_dx(
+	struct libinput_event_pointer_motion *event);
+
+li_fixed_t
+libinput_event_pointer_motion_get_dy(
+	struct libinput_event_pointer_motion *event);
+
+/**
+ * @defgroup event_pointer_motion_absolute Absolute pointer motion event
+ */
+
+uint32_t
+libinput_event_pointer_motion_absolute_get_time(
+	struct libinput_event_pointer_motion_absolute *event);
+
+li_fixed_t
+libinput_event_pointer_motion_absolute_get_x(
+	struct libinput_event_pointer_motion_absolute *event);
+
+li_fixed_t
+libinput_event_pointer_motion_absolute_get_y(
+	struct libinput_event_pointer_motion_absolute *event);
+
+/**
+ * @defgroup event_pointer_button Pointer button event
+ */
+
+uint32_t
+libinput_event_pointer_button_get_time(
+	struct libinput_event_pointer_button *event);
+
+uint32_t
+libinput_event_pointer_button_get_button(
+	struct libinput_event_pointer_button *event);
+
+enum libinput_pointer_button_state
+libinput_event_pointer_button_get_state(
+	struct libinput_event_pointer_button *event);
+
+/**
+ * @defgroup event_pointer_axis Pointer axis event
+ */
+
+uint32_t
+libinput_event_pointer_axis_get_time(
+	struct libinput_event_pointer_axis *event);
+
+enum libinput_pointer_axis
+libinput_event_pointer_axis_get_axis(
+	struct libinput_event_pointer_axis *event);
+
+li_fixed_t
+libinput_event_pointer_axis_get_value(
+	struct libinput_event_pointer_axis *event);
+
+/**
+ * @defgroup event_pointer_button Pointer button event
+ */
+
+uint32_t
+libinput_event_touch_touch_get_time(
+	struct libinput_event_touch_touch *event);
+
+uint32_t
+libinput_event_touch_touch_get_slot(
+	struct libinput_event_touch_touch *event);
+
+li_fixed_t
+libinput_event_touch_touch_get_x(
+	struct libinput_event_touch_touch *event);
+
+li_fixed_t
+libinput_event_touch_touch_get_y(
+	struct libinput_event_touch_touch *event);
+
+enum libinput_touch_type
+libinput_event_touch_touch_get_touch_type(
+	struct libinput_event_touch_touch *event);
 
 /**
  * @defgroup base Initialization and manipulation of libinput contexts
