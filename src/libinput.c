@@ -421,6 +421,9 @@ libinput_event_get_class(struct libinput_event *event)
 LIBINPUT_EXPORT void
 libinput_event_destroy(struct libinput_event *event)
 {
+	if (event == NULL)
+		return;
+
 	switch (libinput_event_get_class(event)) {
 	case LIBINPUT_EVENT_CLASS_BASE:
 		break;
