@@ -332,6 +332,9 @@ libinput_create_from_udev(const struct libinput_interface *interface,
 {
 	struct udev_input *input;
 
+	if (!interface || !udev || !seat_id)
+		return NULL;
+
 	input = zalloc(sizeof *input);
 	if (!input)
 		return NULL;
