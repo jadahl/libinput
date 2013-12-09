@@ -16,8 +16,10 @@ libinput_la_SOURCES =			\
 	udev-seat.c			\
 	udev-seat.h
 
-libinput_la_LIBADD = $(MTDEV_LIBS)
+libinput_la_LIBADD = $(MTDEV_LIBS) \
+		     $(LIBUDEV_LIBS)
 libinput_la_CFLAGS = $(MTDEV_CFLAGS)	\
+		     $(LIBUDEV_CFLAGS)	\
 		     $(GCC_CFLAGS)
 
 pkgconfigdir = $(libdir)/pkgconfig

@@ -43,6 +43,7 @@ AC_CHECK_DECL(CLOCK_MONOTONIC,[],
 
 PKG_PROG_PKG_CONFIG()
 PKG_CHECK_MODULES(MTDEV, [mtdev >= 1.1.0])
+PKG_CHECK_MODULES(LIBUDEV, [libudev])
 
 if test "x$GCC" = "xyes"; then
 	GCC_CFLAGS="-Wall -Wextra -Wno-unused-parameter -g -Wstrict-prototypes -Wmissing-prototypes -fvisibility=hidden"
