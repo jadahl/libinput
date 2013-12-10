@@ -419,7 +419,7 @@ struct libinput_interface {
  * @param udev An already initialized udev context
  * @param seat_id A seat identifier. This string must not be NULL.
  *
- * @return An initialize libinput context, ready to handle events or NULL on
+ * @return An initialized libinput context, ready to handle events or NULL on
  * error.
  */
 struct libinput *
