@@ -198,9 +198,42 @@ out:
 	udev_device_unref(udev_device);
 }
 
-int
-udev_input_enable(struct udev_input *input)
+static void
+udev_input_remove_devices(struct udev_input *input)
 {
+	struct evdev_device *device, *next;
+	struct udev_seat *seat;
+
+	list_for_each(seat, &input->base.seat_list, base.link) {
+		list_for_each_safe(device, next,
+				   &seat->base.devices_list, base.link) {
+			close_restricted(&input->base, device->fd);
+			evdev_device_remove(device);
+		}
+	}
+}
+
+
+static void
+udev_input_disable(struct libinput *libinput)
+{
+	struct udev_input *input = (struct udev_input*)libinput;
+
+	if (!input->udev_monitor)
+		return;
+
+	udev_monitor_unref(input->udev_monitor);
+	input->udev_monitor = NULL;
+	libinput_remove_source(&input->base, input->udev_monitor_source);
+	input->udev_monitor_source = NULL;
+
+	udev_input_remove_devices(input);
+}
+
+static int
+udev_input_enable(struct libinput *libinput)
+{
+	struct udev_input *input = (struct udev_input*)libinput;
 	struct udev *udev = input->udev;
 	int fd;
 
@@ -235,7 +268,7 @@ udev_input_enable(struct udev_input *input)
 	}
 
 	if (udev_input_add_devices(input, udev) < 0) {
-		udev_input_disable(input);
+		udev_input_disable(libinput);
 		return -1;
 	}
 
@@ -243,48 +276,27 @@ udev_input_enable(struct udev_input *input)
 }
 
 static void
-udev_input_remove_devices(struct udev_input *input)
-{
-	struct evdev_device *device, *next;
-	struct udev_seat *seat;
-
-	list_for_each(seat, &input->base.seat_list, base.link) {
-		list_for_each_safe(device, next,
-				   &seat->base.devices_list, base.link) {
-			close_restricted(&input->base, device->fd);
-			evdev_device_remove(device);
-		}
-	}
-}
-
-void
-udev_input_disable(struct udev_input *input)
-{
-	if (!input->udev_monitor)
-		return;
-
-	udev_monitor_unref(input->udev_monitor);
-	input->udev_monitor = NULL;
-	libinput_remove_source(&input->base, input->udev_monitor_source);
-	input->udev_monitor_source = NULL;
-
-	udev_input_remove_devices(input);
-}
-
-void
-udev_input_destroy(struct udev_input *input)
+udev_input_destroy(struct libinput *input)
 {
 	struct libinput_seat *seat, *next;
+	struct udev_input *udev_input = (struct udev_input*)input;
 
 	if (input == NULL)
 		return;
 
 	udev_input_disable(input);
-	list_for_each_safe(seat, next, &input->base.seat_list, link) {
+	list_for_each_safe(seat, next, &input->seat_list, link) {
 		libinput_seat_unref(seat);
 	}
-	udev_unref(input->udev);
-	free(input->seat_id);
+	udev_unref(udev_input->udev);
+	free(udev_input->seat_id);
+}
+
+static void
+udev_seat_destroy(struct libinput_seat *seat)
+{
+	struct udev_seat *useat = (struct udev_seat*)seat;
+	free(useat);
 }
 
 static struct udev_seat *
@@ -296,18 +308,11 @@ udev_seat_create(struct udev_input *input, const char *seat_name)
 	if (!seat)
 		return NULL;
 
-	libinput_seat_init(&seat->base, &input->base, seat_name);
+	libinput_seat_init(&seat->base, &input->base, seat_name, udev_seat_destroy);
 	list_insert(&input->base.seat_list, &seat->base.link);
 	notify_added_seat(&seat->base);
 
 	return seat;
-}
-
-void
-udev_seat_destroy(struct udev_seat *seat)
-{
-	list_remove(&seat->base.link);
-	free(seat);
 }
 
 static struct udev_seat *
@@ -328,6 +333,12 @@ udev_seat_get_named(struct udev_input *input, const char *seat_name)
 	return seat;
 }
 
+static const struct libinput_interface_backend interface_backend = {
+	.resume = udev_input_enable,
+	.suspend = udev_input_disable,
+	.destroy = udev_input_destroy,
+};
+
 LIBINPUT_EXPORT struct libinput *
 libinput_create_from_udev(const struct libinput_interface *interface,
 			  void *user_data,
@@ -343,7 +354,8 @@ libinput_create_from_udev(const struct libinput_interface *interface,
 	if (!input)
 		return NULL;
 
-	if (libinput_init(&input->base, interface, user_data) != 0) {
+	if (libinput_init(&input->base, interface,
+			  &interface_backend, user_data) != 0) {
 		free(input);
 		return NULL;
 	}
@@ -351,7 +363,7 @@ libinput_create_from_udev(const struct libinput_interface *interface,
 	input->udev = udev_ref(udev);
 	input->seat_id = strdup(seat_id);
 
-	if (udev_input_enable(input) < 0) {
+	if (udev_input_enable(&input->base) < 0) {
 		udev_unref(udev);
 		libinput_destroy(&input->base);
 		free(input);

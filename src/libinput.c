@@ -33,7 +33,6 @@
 #include "libinput.h"
 #include "libinput-private.h"
 #include "evdev.h"
-#include "udev-seat.h"
 
 enum libinput_event_class {
 	LIBINPUT_EVENT_CLASS_BASE,
@@ -366,6 +365,7 @@ libinput_remove_source(struct libinput *libinput,
 int
 libinput_init(struct libinput *libinput,
 	      const struct libinput_interface *interface,
+	      const struct libinput_interface_backend *interface_backend,
 	      void *user_data)
 {
 	libinput->epoll_fd = epoll_create1(EPOLL_CLOEXEC);;
@@ -380,6 +380,7 @@ libinput_init(struct libinput *libinput,
 	}
 
 	libinput->interface = interface;
+	libinput->interface_backend = interface_backend;
 	libinput->user_data = user_data;
 	list_init(&libinput->source_destroy_list);
 	list_init(&libinput->seat_list);
@@ -412,6 +413,8 @@ libinput_destroy(struct libinput *libinput)
 
 	if (libinput == NULL)
 		return;
+
+	libinput->interface_backend->destroy(libinput);
 
 	while ((event = libinput_get_event(libinput)))
 	       libinput_event_destroy(event);
@@ -496,11 +499,13 @@ close_restricted(struct libinput *libinput, int fd)
 void
 libinput_seat_init(struct libinput_seat *seat,
 		   struct libinput *libinput,
-		   const char *name)
+		   const char *name,
+		   libinput_seat_destroy_func destroy)
 {
 	seat->refcount = 1;
 	seat->libinput = libinput;
 	seat->name = strdup(name);
+	seat->destroy = destroy;
 	list_init(&seat->devices_list);
 }
 
@@ -513,8 +518,9 @@ libinput_seat_ref(struct libinput_seat *seat)
 static void
 libinput_seat_destroy(struct libinput_seat *seat)
 {
+	list_remove(&seat->link);
 	free(seat->name);
-	udev_seat_destroy((struct udev_seat *) seat);
+	seat->destroy(seat);
 }
 
 LIBINPUT_EXPORT void
@@ -957,13 +963,13 @@ libinput_get_user_data(struct libinput *libinput)
 LIBINPUT_EXPORT int
 libinput_resume(struct libinput *libinput)
 {
-	return udev_input_enable((struct udev_input *) libinput);
+	return libinput->interface_backend->resume(libinput);
 }
 
 LIBINPUT_EXPORT void
 libinput_suspend(struct libinput *libinput)
 {
-	udev_input_disable((struct udev_input *) libinput);
+	libinput->interface_backend->suspend(libinput);
 }
 
 LIBINPUT_EXPORT void

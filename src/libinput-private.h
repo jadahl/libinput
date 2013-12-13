@@ -26,6 +26,12 @@
 #include "libinput.h"
 #include "libinput-util.h"
 
+struct libinput_interface_backend {
+	int (*resume)(struct libinput *libinput);
+	void (*suspend)(struct libinput *libinput);
+	void (*destroy)(struct libinput *libinput);
+};
+
 struct libinput {
 	int epoll_fd;
 	struct list source_destroy_list;
@@ -39,8 +45,11 @@ struct libinput {
 	size_t events_out;
 
 	const struct libinput_interface *interface;
+	const struct libinput_interface_backend *interface_backend;
 	void *user_data;
 };
+
+typedef void (*libinput_seat_destroy_func) (struct libinput_seat *seat);
 
 struct libinput_seat {
 	struct libinput *libinput;
@@ -49,6 +58,7 @@ struct libinput_seat {
 	void *user_data;
 	int refcount;
 	char *name;
+	libinput_seat_destroy_func destroy;
 };
 
 struct libinput_device {
@@ -66,6 +76,7 @@ struct libinput_source;
 int
 libinput_init(struct libinput *libinput,
 	      const struct libinput_interface *interface,
+	      const struct libinput_interface_backend *interface_backend,
 	      void *user_data);
 
 struct libinput_source *
@@ -88,7 +99,8 @@ close_restricted(struct libinput *libinput, int fd);
 void
 libinput_seat_init(struct libinput_seat *seat,
 		   struct libinput *libinput,
-		   const char *name);
+		   const char *name,
+		   libinput_seat_destroy_func destroy);
 
 void
 libinput_device_init(struct libinput_device *device,
