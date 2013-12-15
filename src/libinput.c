@@ -961,3 +961,11 @@ libinput_device_calibrate(struct libinput_device *device,
 {
 	evdev_device_calibrate((struct evdev_device *) device, calibration);
 }
+
+LIBINPUT_EXPORT int
+libinput_device_has_capability(struct libinput_device *device,
+			       enum libinput_device_capability capability)
+{
+	return evdev_device_has_capability((struct evdev_device *) device,
+					   capability);
+}

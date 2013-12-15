@@ -693,6 +693,22 @@ evdev_device_calibrate(struct evdev_device *device, float calibration[6])
 	memcpy(device->abs.calibration, calibration, sizeof device->abs.calibration);
 }
 
+int
+evdev_device_has_capability(struct evdev_device *device,
+			    enum libinput_device_capability capability)
+{
+	switch (capability) {
+	case LIBINPUT_DEVICE_CAP_POINTER:
+		return !!(device->seat_caps & EVDEV_DEVICE_POINTER);
+	case LIBINPUT_DEVICE_CAP_KEYBOARD:
+		return !!(device->seat_caps & EVDEV_DEVICE_KEYBOARD);
+	case LIBINPUT_DEVICE_CAP_TOUCH:
+		return !!(device->seat_caps & EVDEV_DEVICE_TOUCH);
+	default:
+		return 0;
+	}
+}
+
 void
 evdev_device_remove(struct evdev_device *device)
 {

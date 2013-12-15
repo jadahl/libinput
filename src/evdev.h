@@ -152,6 +152,10 @@ evdev_device_get_output(struct evdev_device *device);
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6]);
 
+int
+evdev_device_has_capability(struct evdev_device *device,
+			    enum libinput_device_capability capability);
+
 void
 evdev_device_remove(struct evdev_device *device);
 

@@ -667,4 +667,15 @@ void
 libinput_device_calibrate(struct libinput_device *device,
 			  float calibration[6]);
 
+/**
+ * @ingroup device
+ *
+ * Check if the given device has the specified capability
+ *
+ * @return 1 if the given device has the capability or 0 if not
+ */
+int
+libinput_device_has_capability(struct libinput_device *device,
+			       enum libinput_device_capability capability);
+
 #endif /* LIBINPUT_H */
