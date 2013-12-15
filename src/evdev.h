@@ -71,6 +71,7 @@ struct evdev_device {
 	struct evdev_dispatch *dispatch;
 	char *output_name;
 	char *devnode;
+	char *sysname;
 	char *devname;
 	int fd;
 	struct {
@@ -132,6 +133,7 @@ struct evdev_dispatch {
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    const char *devnode,
+		    const char *sysname,
 		    int fd);
 
 struct evdev_dispatch *
@@ -148,6 +150,9 @@ evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size);
 
 const char *
 evdev_device_get_output(struct evdev_device *device);
+
+const char *
+evdev_device_get_sysname(struct evdev_device *device);
 
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6]);

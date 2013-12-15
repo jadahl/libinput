@@ -639,6 +639,17 @@ libinput_device_get_user_data(struct libinput_device *device);
 /**
  * @ingroup device
  *
+ * Get the system name of the device.
+ *
+ * @param device A previously obtained device
+ * @return System name of the device
+ */
+const char *
+libinput_device_get_sysname(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
  * A device may be mapped to a single output, or all available outputs. If a
  * device is mapped to a single output only, a relative device may not move
  * beyond the boundaries of this output. An absolute device has its input

@@ -928,6 +928,12 @@ libinput_device_get_user_data(struct libinput_device *device)
 }
 
 LIBINPUT_EXPORT const char *
+libinput_device_get_sysname(struct libinput_device *device)
+{
+	return evdev_device_get_sysname((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT const char *
 libinput_device_get_output_name(struct libinput_device *device)
 {
 	return evdev_device_get_output((struct evdev_device *) device);

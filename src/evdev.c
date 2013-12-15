@@ -617,6 +617,7 @@ register_device_capabilities(struct evdev_device *device)
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    const char *devnode,
+		    const char *sysname,
 		    int fd)
 {
 	struct libinput *libinput = seat->libinput;
@@ -633,6 +634,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->is_mt = 0;
 	device->mtdev = NULL;
 	device->devnode = strdup(devnode);
+	device->sysname = strdup(sysname);
 	device->mt.slot = -1;
 	device->rel.dx = 0;
 	device->rel.dy = 0;
@@ -684,6 +686,12 @@ const char *
 evdev_device_get_output(struct evdev_device *device)
 {
 	return device->output_name;
+}
+
+const char *
+evdev_device_get_sysname(struct evdev_device *device)
+{
+	return device->sysname;
 }
 
 void
@@ -749,5 +757,6 @@ evdev_device_destroy(struct evdev_device *device)
 
 	free(device->devname);
 	free(device->devnode);
+	free(device->sysname);
 	free(device);
 }

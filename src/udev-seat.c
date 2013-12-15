@@ -45,6 +45,7 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	struct libinput *libinput = &input->base;
 	struct evdev_device *device;
 	const char *devnode;
+	const char *sysname;
 	const char *device_seat, *seat_name, *output_name;
 	const char *calibration_values;
 	int fd;
@@ -58,6 +59,7 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 		return 0;
 
 	devnode = udev_device_get_devnode(udev_device);
+	sysname = udev_device_get_sysname(udev_device);
 
 	/* Search for matching logical seat */
 	seat_name = udev_device_get_property_value(udev_device, "WL_SEAT");
@@ -78,7 +80,7 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 		return 0;
 	}
 
-	device = evdev_device_create(&seat->base, devnode, fd);
+	device = evdev_device_create(&seat->base, devnode, sysname, fd);
 	if (device == EVDEV_UNHANDLED_DEVICE) {
 		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
