@@ -164,6 +164,45 @@ struct libinput_event_pointer_axis;
 struct libinput_event_touch_touch;
 
 /**
+ * @defgroup fixed_point Fixed point utilities
+ */
+
+/**
+ * @ingroup fixed_point
+ *
+ * Convert li_fixed_t to a double
+ *
+ * @param f fixed point number
+ * @return Converted double
+ */
+static inline double
+li_fixed_to_double (li_fixed_t f)
+{
+	union {
+		double d;
+		int64_t i;
+	} u;
+
+	u.i = ((1023LL + 44LL) << 52) + (1LL << 51) + f;
+
+	return u.d - (3LL << 43);
+}
+
+/**
+ * @ingroup fixed_point
+ *
+ * Convert li_fixed_t to a int. The fraction part is discarded.
+ *
+ * @param f fixed point number
+ * @return Converted int
+ */
+static inline int
+li_fixed_to_int(li_fixed_t f)
+{
+	return f / 256;
+}
+
+/**
  * @defgroup event Acessing and destruction of events
  */
 
