@@ -499,14 +499,12 @@ evdev_configure_device(struct evdev_device *device)
 			ioctl(device->fd, EVIOCGABS(ABS_X), &absinfo);
 			device->abs.min_x = absinfo.minimum;
 			device->abs.max_x = absinfo.maximum;
-			device->caps |= EVDEV_MOTION_ABS;
 			has_abs = 1;
 		}
 		if (TEST_BIT(abs_bits, ABS_Y)) {
 			ioctl(device->fd, EVIOCGABS(ABS_Y), &absinfo);
 			device->abs.min_y = absinfo.minimum;
 			device->abs.max_y = absinfo.maximum;
-			device->caps |= EVDEV_MOTION_ABS;
 			has_abs = 1;
 		}
                 /* We only handle the slotted Protocol B in weston.
@@ -587,8 +585,7 @@ evdev_configure_device(struct evdev_device *device)
 		return 0;
 	}
 
-	if ((device->caps & EVDEV_MOTION_ABS || has_rel) &&
-	    (device->caps & EVDEV_BUTTON))
+	if ((has_abs || has_rel) && (device->caps & EVDEV_BUTTON))
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
 	if ((device->caps & EVDEV_KEYBOARD))
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
