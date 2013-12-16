@@ -140,7 +140,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		goto handled;
 	case EVDEV_ABSOLUTE_MOTION:
 		transform_absolute(device, &cx, &cy);
-		if (device->caps & EVDEV_TOUCH) {
+		if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
 			touch_notify_touch(base,
 					   time,
 					   slot,
@@ -473,7 +473,8 @@ evdev_configure_device(struct evdev_device *device)
 	unsigned long abs_bits[NBITS(ABS_MAX)];
 	unsigned long rel_bits[NBITS(REL_MAX)];
 	unsigned long key_bits[NBITS(KEY_MAX)];
-	int has_key, has_abs, has_rel, has_mt, has_button, has_keyboard;
+	int has_key, has_abs, has_rel, has_mt;
+	int has_button, has_keyboard, has_touch;
 	unsigned int i;
 
 	has_key = 0;
@@ -482,7 +483,7 @@ evdev_configure_device(struct evdev_device *device)
 	has_mt = 0;
 	has_button = 0;
 	has_keyboard = 0;
-	device->caps = 0;
+	has_touch = 0;
 
 	ioctl(device->fd, EVIOCGBIT(0, sizeof(ev_bits)), ev_bits);
 	if (TEST_BIT(ev_bits, EV_ABS)) {
@@ -523,16 +524,13 @@ evdev_configure_device(struct evdev_device *device)
 			device->abs.min_y = absinfo.minimum;
 			device->abs.max_y = absinfo.maximum;
 			device->is_mt = 1;
-			device->caps |= EVDEV_TOUCH;
+			has_touch = 1;
 			has_mt = 1;
 
 			if (!TEST_BIT(abs_bits, ABS_MT_SLOT)) {
 				device->mtdev = mtdev_new_open(device->fd);
-				if (!device->mtdev) {
-					/* mtdev required but failed to open. */
-					device->caps = 0;
+				if (!device->mtdev)
 					return 0;
-				}
 				device->mt.slot = device->mtdev->caps.slot.value;
 			} else {
 				ioctl(device->fd, EVIOCGABS(ABS_MT_SLOT),
@@ -564,13 +562,11 @@ evdev_configure_device(struct evdev_device *device)
 				break;
 			}
 		}
-		if (TEST_BIT(key_bits, BTN_TOUCH)) {
-			device->caps |= EVDEV_TOUCH;
-		}
+		if (TEST_BIT(key_bits, BTN_TOUCH))
+			has_touch = 1;
 		for (i = BTN_MISC; i < BTN_JOYSTICK; i++) {
 			if (TEST_BIT(key_bits, i)) {
 				has_button = 1;
-				device->caps &= ~EVDEV_TOUCH;
 				break;
 			}
 		}
@@ -581,16 +577,14 @@ evdev_configure_device(struct evdev_device *device)
 	/* This rule tries to catch accelerometer devices and opt out. We may
 	 * want to adjust the protocol later adding a proper event for dealing
 	 * with accelerometers and implement here accordingly */
-	if (has_abs && !has_key && !device->is_mt) {
-		device->caps = 0;
+	if (has_abs && !has_key && !device->is_mt)
 		return 0;
-	}
 
 	if ((has_abs || has_rel) && has_button)
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
 	if (has_keyboard)
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
-	if ((device->caps & EVDEV_TOUCH))
+	if (has_touch)
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
 
 	return 0;
