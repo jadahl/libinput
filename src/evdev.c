@@ -466,7 +466,7 @@ evdev_device_dispatch(void *data)
 }
 
 static int
-evdev_handle_device(struct evdev_device *device)
+evdev_configure_device(struct evdev_device *device)
 {
 	struct input_absinfo absinfo;
 	unsigned long ev_bits[NBITS(EV_MAX)];
@@ -527,6 +527,7 @@ evdev_handle_device(struct evdev_device *device)
 				device->mtdev = mtdev_new_open(device->fd);
 				if (!device->mtdev) {
 					/* mtdev required but failed to open. */
+					device->caps = 0;
 					return 0;
 				}
 				device->mt.slot = device->mtdev->caps.slot.value;
@@ -579,15 +580,10 @@ evdev_handle_device(struct evdev_device *device)
 	 * want to adjust the protocol later adding a proper event for dealing
 	 * with accelerometers and implement here accordingly */
 	if (has_abs && !has_key && !device->is_mt) {
+		device->caps = 0;
 		return 0;
 	}
 
-	return 1;
-}
-
-static void
-evdev_configure_device(struct evdev_device *device)
-{
 	if ((device->caps & (EVDEV_MOTION_ABS | EVDEV_MOTION_REL)) &&
 	    (device->caps & EVDEV_BUTTON))
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
@@ -595,6 +591,8 @@ evdev_configure_device(struct evdev_device *device)
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
 	if ((device->caps & EVDEV_TOUCH))
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
+
+	return 0;
 }
 
 static void
@@ -646,12 +644,13 @@ evdev_device_create(struct libinput_seat *seat,
 	devname[sizeof(devname) - 1] = '\0';
 	device->devname = strdup(devname);
 
-	if (!evdev_handle_device(device)) {
+	if (evdev_configure_device(device) == -1)
+		goto err;
+
+	if (device->seat_caps == 0) {
 		evdev_device_destroy(device);
 		return NULL;
 	}
-
-	evdev_configure_device(device);
 
 	/* If the dispatch was not set up use the fallback. */
 	if (device->dispatch == NULL)
