@@ -147,7 +147,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 					   li_fixed_from_int(cx),
 					   li_fixed_from_int(cy),
 					   LIBINPUT_TOUCH_TYPE_DOWN);
-		} else {
+		} else if (device->seat_caps & EVDEV_DEVICE_POINTER) {
 			pointer_notify_motion_absolute(base,
 						       time,
 						       li_fixed_from_int(cx),
