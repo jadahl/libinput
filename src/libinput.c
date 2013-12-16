@@ -384,10 +384,21 @@ LIBINPUT_EXPORT void
 libinput_destroy(struct libinput *libinput)
 {
 	struct libinput_event *event;
+	struct libinput_device *device, *next_device;
+	struct libinput_seat *seat, *next_seat;
 
 	while ((event = libinput_get_event(libinput)))
 	       free(event);
 	free(libinput->events);
+
+	list_for_each_safe(seat, next_seat, &libinput->seat_list, link) {
+		list_for_each_safe(device, next_device,
+				   &seat->devices_list,
+				   link)
+			libinput_device_unref(device);
+
+		libinput_seat_unref(seat);
+	}
 
 	close(libinput->epoll_fd);
 	free(libinput);
