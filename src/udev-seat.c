@@ -198,6 +198,8 @@ evdev_udev_handler(void *data)
 						 device->devname, device->devnode);
 					close_restricted(libinput, device->fd);
 					evdev_device_remove(device);
+					if (list_empty(&seat->base.devices_list))
+						notify_removed_seat(&seat->base);
 					libinput_seat_unref(&seat->base);
 					break;
 				}
@@ -219,6 +221,15 @@ udev_input_remove_devices(struct udev_input *input)
 				   &seat->base.devices_list, base.link) {
 			close_restricted(&input->base, device->fd);
 			evdev_device_remove(device);
+			if (list_empty(&seat->base.devices_list)) {
+				notify_removed_seat(&seat->base);
+				/* seat is referenced by the event, so make
+				   sure it's dropped from the seat list now,
+				   to be freed whenever the device is
+				   removed */
+				list_remove(&seat->base.link);
+				list_init(&seat->base.link);
+			}
 			libinput_seat_unref(&seat->base);
 		}
 	}
