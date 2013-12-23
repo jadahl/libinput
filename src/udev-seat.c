@@ -68,8 +68,13 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 
 	seat = udev_seat_get_named(input, seat_name);
 
-	if (seat == NULL)
-		return -1;
+	if (seat)
+		libinput_seat_ref(&seat->base);
+	else {
+		seat = udev_seat_create(input, seat_name);
+		if (!seat)
+			return -1;
+	}
 
 	/* Use non-blocking mode so that we can loop on read on
 	 * evdev_device_data() until all events on the fd are
@@ -77,18 +82,18 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
 	if (fd < 0) {
 		log_info("opening input device '%s' failed (%s).\n", devnode, strerror(-fd));
-		return 0;
+		goto error;
 	}
 
 	device = evdev_device_create(&seat->base, devnode, sysname, fd);
 	if (device == EVDEV_UNHANDLED_DEVICE) {
 		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
-		return 0;
+		goto error;
 	} else if (device == NULL) {
 		close_restricted(libinput, fd);
 		log_info("failed to create input device '%s'.\n", devnode);
-		return 0;
+		goto error;
 	}
 
 	calibration_values =
@@ -117,6 +122,10 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	if (output_name)
 		device->output_name = strdup(output_name);
 
+	return 0;
+error:
+	if (seat)
+		libinput_seat_unref(&seat->base);
 	return 0;
 }
 
@@ -189,6 +198,7 @@ evdev_udev_handler(void *data)
 						 device->devname, device->devnode);
 					close_restricted(libinput, device->fd);
 					evdev_device_remove(device);
+					libinput_seat_unref(&seat->base);
 					break;
 				}
 		}
@@ -202,13 +212,14 @@ static void
 udev_input_remove_devices(struct udev_input *input)
 {
 	struct evdev_device *device, *next;
-	struct udev_seat *seat;
+	struct udev_seat *seat, *tmp;
 
-	list_for_each(seat, &input->base.seat_list, base.link) {
+	list_for_each_safe(seat, tmp, &input->base.seat_list, base.link) {
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
 			close_restricted(&input->base, device->fd);
 			evdev_device_remove(device);
+			libinput_seat_unref(&seat->base);
 		}
 	}
 }
@@ -278,16 +289,12 @@ udev_input_enable(struct libinput *libinput)
 static void
 udev_input_destroy(struct libinput *input)
 {
-	struct libinput_seat *seat, *next;
 	struct udev_input *udev_input = (struct udev_input*)input;
 
 	if (input == NULL)
 		return;
 
 	udev_input_disable(input);
-	list_for_each_safe(seat, next, &input->seat_list, link) {
-		libinput_seat_unref(seat);
-	}
 	udev_unref(udev_input->udev);
 	free(udev_input->seat_id);
 }
@@ -325,12 +332,7 @@ udev_seat_get_named(struct udev_input *input, const char *seat_name)
 			return seat;
 	}
 
-	seat = udev_seat_create(input, seat_name);
-
-	if (!seat)
-		return NULL;
-
-	return seat;
+	return NULL;
 }
 
 static const struct libinput_interface_backend interface_backend = {

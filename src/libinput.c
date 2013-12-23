@@ -478,6 +478,10 @@ libinput_event_destroy(struct libinput_event *event)
 		break;
 	}
 
+	if (libinput_event_get_type(event) == LIBINPUT_EVENT_ADDED_SEAT ||
+	    libinput_event_get_type(event) == LIBINPUT_EVENT_REMOVED_SEAT)
+		libinput_seat_unref(((struct libinput_event_added_seat*)event)->seat);
+
 	free(event);
 }
 
@@ -647,6 +651,8 @@ notify_added_seat(struct libinput_seat *seat)
 	if (!added_seat_event)
 		return;
 
+	libinput_seat_ref(seat);
+
 	*added_seat_event = (struct libinput_event_added_seat) {
 		.seat = seat,
 	};
@@ -664,6 +670,8 @@ notify_removed_seat(struct libinput_seat *seat)
 	removed_seat_event = malloc(sizeof *removed_seat_event);
 	if (!removed_seat_event)
 		return;
+
+	libinput_seat_ref(seat);
 
 	*removed_seat_event = (struct libinput_event_removed_seat) {
 		.seat = seat,
