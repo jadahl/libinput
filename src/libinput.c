@@ -372,6 +372,13 @@ libinput_init(struct libinput *libinput,
 	if (libinput->epoll_fd < 0)
 		return -1;
 
+	libinput->events_len = 4;
+	libinput->events = zalloc(libinput->events_len * sizeof(*libinput->events));
+	if (!libinput->events) {
+		close(libinput->epoll_fd);
+		return -1;
+	}
+
 	libinput->interface = interface;
 	libinput->user_data = user_data;
 	list_init(&libinput->source_destroy_list);
@@ -869,10 +876,7 @@ libinput_post_event(struct libinput *libinput,
 
 	events_count++;
 	if (events_count > events_len) {
-		if (events_len == 0)
-			events_len = 4;
-		else
-			events_len *= 2;
+		events_len *= 2;
 		events = realloc(events, events_len * sizeof *events);
 		if (!events) {
 			fprintf(stderr, "Failed to reallocate event ring "
