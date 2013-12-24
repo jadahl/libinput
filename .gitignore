@@ -21,8 +21,6 @@ missing
 stamp-h1
 src/.libs/
 src/.deps/
-src/Makefile
-src/Makefile.in
 src/libinput-version.h
 doc/libinput.doxygen
 doc/html
