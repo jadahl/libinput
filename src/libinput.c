@@ -400,6 +400,9 @@ libinput_destroy(struct libinput *libinput)
 	struct libinput_device *device, *next_device;
 	struct libinput_seat *seat, *next_seat;
 
+	if (libinput == NULL)
+		return;
+
 	while ((event = libinput_get_event(libinput)))
 	       libinput_event_destroy(event);
 	free(libinput->events);
