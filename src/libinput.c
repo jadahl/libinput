@@ -887,7 +887,7 @@ libinput_post_event(struct libinput *libinput,
 			move_len = libinput->events_len - libinput->events_out;
 			new_out = events_len - move_len;
 			memmove(events + new_out,
-				libinput->events + libinput->events_out,
+				events + libinput->events_out,
 				move_len * sizeof *events);
 			libinput->events_out = new_out;
 		}
