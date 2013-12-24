@@ -24,3 +24,4 @@ stamp-h1
 src/libinput-version.h
 doc/libinput.doxygen
 doc/html
+tags
