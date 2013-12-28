@@ -166,6 +166,20 @@ struct libinput_event_pointer_axis;
 struct libinput_event_touch_touch;
 
 /**
+ * @defgroup configuration Configuration interface
+ */
+
+/**
+ * @ingroup configuration
+ *
+ * Configuration keys and their associated types.
+ */
+enum libinput_config_key {
+	/** Single finger tap (type: int) */
+	LIBINPUT_CONFIG_KEY_TOUCHPAD_TAP_1F_BUTTON = 600,
+};
+
+/**
  * @defgroup fixed_point Fixed point utilities
  */
 
@@ -424,6 +438,19 @@ struct libinput_interface {
 					      int *width,
 					      int *height,
 					      void *user_data);
+
+	/**
+	 * Get the configured value.
+	 *
+	 * @param key The configuration key
+	 * @param value A pointer to allocated memory big enough for the type
+	 * associated with the configuration key.
+	 *
+	 * @return 1 if the value is written, 0 if not
+	 */
+	int (*get_config)(enum libinput_config_key key,
+			  void *value, size_t len,
+			  void *user_data);
 };
 
 /**

@@ -85,6 +85,11 @@ open_restricted(struct libinput *libinput,
 void
 close_restricted(struct libinput *libinput, int fd);
 
+int
+config_get_int(struct libinput *libinput,
+	       enum libinput_config_key key,
+	       int *value);
+
 void
 libinput_seat_init(struct libinput_seat *seat,
 		   struct libinput *libinput,

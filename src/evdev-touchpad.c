@@ -285,13 +285,25 @@ filter_motion(struct touchpad_dispatch *touchpad,
 	*dy = motion.dy;
 }
 
+static int
+get_single_tap_button(struct touchpad_dispatch *touchpad)
+{
+	int single_tap_button = DEFAULT_TOUCHPAD_SINGLE_TAP_BUTTON;
+
+	config_get_int(touchpad->device->base.seat->libinput,
+		       LIBINPUT_CONFIG_KEY_TOUCHPAD_TAP_1F_BUTTON,
+		       &single_tap_button);
+
+	return single_tap_button;
+}
+
 static void
 notify_button_pressed(struct touchpad_dispatch *touchpad, uint32_t time)
 {
 	pointer_notify_button(
 		&touchpad->device->base,
 		time,
-		DEFAULT_TOUCHPAD_SINGLE_TAP_BUTTON,
+		get_single_tap_button(touchpad),
 		LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
 }
 
@@ -301,7 +313,7 @@ notify_button_released(struct touchpad_dispatch *touchpad, uint32_t time)
 	pointer_notify_button(
 		&touchpad->device->base,
 		time,
-		DEFAULT_TOUCHPAD_SINGLE_TAP_BUTTON,
+		get_single_tap_button(touchpad),
 		LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
 }
 

@@ -131,6 +131,17 @@ static void
 libinput_post_event(struct libinput *libinput,
 		    struct libinput_event *event);
 
+int
+config_get_int(struct libinput *libinput,
+	       enum libinput_config_key key,
+	       int *value)
+{
+	return libinput->interface->get_config(key,
+					       value,
+					       sizeof *value,
+					       libinput->user_data);
+}
+
 LIBINPUT_EXPORT enum libinput_event_type
 libinput_event_get_type(struct libinput_event *event)
 {
