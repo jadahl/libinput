@@ -824,6 +824,8 @@ touchpad_init(struct touchpad_dispatch *touchpad,
 	/* Configure */
 	touchpad->fsm.enable = !has_buttonpad;
 
+	device->seat_caps |= EVDEV_DEVICE_TOUCHPAD;
+
 	return 0;
 }
 
