@@ -57,6 +57,23 @@ enum libinput_device_capability {
 
 /**
  * @ingroup device
+ */
+enum libinput_device_info {
+	/** Device system name (type: char *) */
+	LIBINPUT_DEVICE_INFO_SYS_NAME = 0,
+	/** Name of the output associated with the device (type: char *) */
+	LIBINPUT_DEVICE_INFO_OUTPUT_NAME,
+
+	/** Touchpad device supports two finger scroll (type: int) */
+	LIBINPUT_DEVICE_INFO_TOUCHPAD_TWO_FINGER_SCROLL = 600,
+	/** Touchpad device supports pinch gesture (type: int) */
+	LIBINPUT_DEVICE_INFO_TOUCHPAD_PINCH,
+	/** Touchpad device max tap finger count (type: int) */
+	LIBINPUT_DEVICE_INFO_TOUCHPAD_TAP_FINGERS,
+};
+
+/**
+ * @ingroup device
  *
  * Logical state of a key. Note that the logical state may not represent
  * the physical state of the key.
@@ -683,6 +700,22 @@ libinput_device_set_user_data(struct libinput_device *device, void *user_data);
  */
 void *
 libinput_device_get_user_data(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
+ * Get device information.
+ *
+ * @param device A previously obtained device
+ * @param info The type of information
+ * @param out A pointer to the memory the result will be written to
+ * @param len Number of bytes available
+ * @return 0 on success or -1 on error
+ */
+int
+libinput_device_get_info(struct libinput_device *device,
+			 enum libinput_device_info info,
+			 void *out, size_t len);
 
 /**
  * @ingroup device

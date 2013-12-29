@@ -952,6 +952,62 @@ libinput_device_get_user_data(struct libinput_device *device)
 	return device->user_data;
 }
 
+static int
+get_info_string(struct libinput_device *device,
+		enum libinput_device_info info,
+		char *out, size_t len)
+{
+	const char *string;
+	size_t string_len;
+
+	switch (info) {
+	case LIBINPUT_DEVICE_INFO_SYS_NAME:
+		string = evdev_device_get_sysname(
+			(struct evdev_device *) device);
+		break;
+	case LIBINPUT_DEVICE_INFO_OUTPUT_NAME:
+		string = evdev_device_get_output(
+			(struct evdev_device *) device);
+		break;
+	default:
+		return -1;
+	}
+
+	if (!string)
+		return -1;
+
+	string_len = strlen(string);
+	if (string_len == 0)
+		return -1;
+
+	string_len = MIN(string_len + 1, len) - 1;
+	memcpy(out, string, string_len);
+	out[string_len] = '\0';
+
+	return 0;
+}
+
+LIBINPUT_EXPORT int
+libinput_device_get_info(struct libinput_device *device,
+			 enum libinput_device_info info,
+			 void *out, size_t len)
+{
+	int ret;
+
+	ret = evdev_device_get_info((struct evdev_device *) device,
+				    info, out, len);
+	if (ret != 0)
+		return ret == 1 ? 0 : -1;
+
+	switch (info) {
+	case LIBINPUT_DEVICE_INFO_SYS_NAME:
+	case LIBINPUT_DEVICE_INFO_OUTPUT_NAME:
+		return get_info_string(device, info, out, len);
+	default:
+		return -1;
+	}
+}
+
 LIBINPUT_EXPORT const char *
 libinput_device_get_sysname(struct libinput_device *device)
 {

@@ -34,6 +34,7 @@
 
 #include "evdev.h"
 #include "filter.h"
+#include "libinput.h"
 #include "libinput-private.h"
 
 /* Default values */
@@ -729,9 +730,41 @@ touchpad_destroy(struct evdev_dispatch *dispatch)
 	free(dispatch);
 }
 
+static int
+touchpad_get_info(struct evdev_dispatch *dispatch,
+		  enum libinput_device_info info,
+		  void *out, size_t len)
+{
+	int value;
+
+	switch (info) {
+	case LIBINPUT_DEVICE_INFO_TOUCHPAD_TWO_FINGER_SCROLL:
+		/* TODO: Get the proper value. */
+		value = 1;
+		break;
+	case LIBINPUT_DEVICE_INFO_TOUCHPAD_PINCH:
+		value = 0;
+		break;
+	case LIBINPUT_DEVICE_INFO_TOUCHPAD_TAP_FINGERS:
+		value = 1;
+		break;
+	default:
+		return 0;
+	}
+
+	/* Only have int values so far. */
+	if (len != sizeof(int))
+		return -1;
+
+	*((int *) out) = value;
+
+	return 1;
+}
+
 struct evdev_dispatch_interface touchpad_interface = {
 	touchpad_process,
-	touchpad_destroy
+	touchpad_destroy,
+	touchpad_get_info
 };
 
 static int

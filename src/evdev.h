@@ -110,6 +110,10 @@ struct evdev_dispatch_interface {
 
 	/* Destroy an event dispatch handler and free all its resources. */
 	void (*destroy)(struct evdev_dispatch *dispatch);
+
+	int (*get_info)(struct evdev_dispatch *dispatch,
+			enum libinput_device_info info,
+			void *out, size_t len);
 };
 
 struct evdev_dispatch {
@@ -133,6 +137,11 @@ evdev_device_led_update(struct evdev_device *device, enum libinput_led leds);
 
 int
 evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size);
+
+int
+evdev_device_get_info(struct evdev_device *device,
+		      enum libinput_device_info info,
+		      void *out, size_t len);
 
 const char *
 evdev_device_get_output(struct evdev_device *device);

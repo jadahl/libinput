@@ -396,9 +396,18 @@ fallback_destroy(struct evdev_dispatch *dispatch)
 	free(dispatch);
 }
 
+static int
+fallback_get_info(struct evdev_dispatch *dispatch,
+		  enum libinput_device_info info,
+		  void *out, size_t len)
+{
+	return 0;
+}
+
 struct evdev_dispatch_interface fallback_interface = {
 	fallback_process,
-	fallback_destroy
+	fallback_destroy,
+	fallback_get_info
 };
 
 static struct evdev_dispatch *
@@ -658,6 +667,15 @@ evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size)
 {
 	memset(keys, 0, size);
 	return ioctl(device->fd, EVIOCGKEY(size), keys);
+}
+
+int
+evdev_device_get_info(struct evdev_device *device,
+		      enum libinput_device_info info,
+		      void *out, size_t len)
+{
+	return device->dispatch->interface->get_info(device->dispatch,
+						     info, out, len);
 }
 
 const char *
