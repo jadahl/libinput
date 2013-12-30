@@ -388,7 +388,7 @@ libinput_destroy(struct libinput *libinput)
 	struct libinput_seat *seat, *next_seat;
 
 	while ((event = libinput_get_event(libinput)))
-	       free(event);
+	       libinput_event_destroy(event);
 	free(libinput->events);
 
 	list_for_each_safe(seat, next_seat, &libinput->seat_list, link) {
