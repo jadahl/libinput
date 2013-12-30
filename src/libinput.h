@@ -466,11 +466,11 @@ libinput_get_fd(struct libinput *libinput);
  * and processes them internally. Use libinput_get_event() to retrieve the
  * events.
  *
+ * Dispatching does not necessarily queue libinput events.
+ *
  * @param libinput A previously initialized libinput context
  *
  * @return 0 on success, or a negative errno on failure
- * @retval -EAGAIN libinput_dispatch completed successfully but no events
- * are ready to read with libinput_get_event()
  */
 int
 libinput_dispatch(struct libinput *libinput);
