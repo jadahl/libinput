@@ -276,7 +276,6 @@ udev_input_destroy(struct udev_input *input)
 
 	udev_input_disable(input);
 	list_for_each_safe(seat, next, &input->base.seat_list, link) {
-		notify_removed_seat(seat);
 		libinput_seat_unref(seat);
 	}
 	udev_unref(input->udev);
