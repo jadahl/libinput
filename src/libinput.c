@@ -380,6 +380,12 @@ libinput_init(struct libinput *libinput,
 	return 0;
 }
 
+static void
+libinput_device_destroy(struct libinput_device *device);
+
+static void
+libinput_seat_destroy(struct libinput_seat *seat);
+
 LIBINPUT_EXPORT void
 libinput_destroy(struct libinput *libinput)
 {
@@ -395,9 +401,9 @@ libinput_destroy(struct libinput *libinput)
 		list_for_each_safe(device, next_device,
 				   &seat->devices_list,
 				   link)
-			libinput_device_unref(device);
+			libinput_device_destroy(device);
 
-		libinput_seat_unref(seat);
+		libinput_seat_destroy(seat);
 	}
 
 	close(libinput->epoll_fd);
@@ -481,14 +487,19 @@ libinput_seat_ref(struct libinput_seat *seat)
 	seat->refcount++;
 }
 
+static void
+libinput_seat_destroy(struct libinput_seat *seat)
+{
+	free(seat->name);
+	udev_seat_destroy((struct udev_seat *) seat);
+}
+
 LIBINPUT_EXPORT void
 libinput_seat_unref(struct libinput_seat *seat)
 {
 	seat->refcount--;
-	if (seat->refcount == 0) {
-		free(seat->name);
-		udev_seat_destroy((struct udev_seat *) seat);
-	}
+	if (seat->refcount == 0)
+		libinput_seat_destroy(seat);
 }
 
 LIBINPUT_EXPORT void
@@ -523,12 +534,18 @@ libinput_device_ref(struct libinput_device *device)
 	device->refcount++;
 }
 
+static void
+libinput_device_destroy(struct libinput_device *device)
+{
+	evdev_device_destroy((struct evdev_device *) device);
+}
+
 LIBINPUT_EXPORT void
 libinput_device_unref(struct libinput_device *device)
 {
 	device->refcount--;
 	if (device->refcount == 0)
-		evdev_device_destroy((struct evdev_device *) device);
+		libinput_device_destroy(device);
 }
 
 LIBINPUT_EXPORT int

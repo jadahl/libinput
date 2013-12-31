@@ -528,7 +528,8 @@ libinput_suspend(struct libinput *libinput);
 /**
  * @ingroup base
  *
- * Destroy the libinput context.
+ * Destroy the libinput context. After this, object references associated with
+ * the destroyed context are invalid and may not be interacted with.
  *
  * @param libinput A previously initialized libinput context
  */
