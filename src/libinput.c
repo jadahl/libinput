@@ -393,6 +393,16 @@ libinput_device_destroy(struct libinput_device *device);
 static void
 libinput_seat_destroy(struct libinput_seat *seat);
 
+static void
+libinput_drop_destroyed_sources(struct libinput *libinput)
+{
+	struct libinput_source *source, *next;
+
+	list_for_each_safe(source, next, &libinput->source_destroy_list, link)
+		free(source);
+	list_init(&libinput->source_destroy_list);
+}
+
 LIBINPUT_EXPORT void
 libinput_destroy(struct libinput *libinput)
 {
@@ -405,6 +415,9 @@ libinput_destroy(struct libinput *libinput)
 
 	while ((event = libinput_get_event(libinput)))
 	       libinput_event_destroy(event);
+
+	libinput_drop_destroyed_sources(libinput);
+
 	free(libinput->events);
 
 	list_for_each_safe(seat, next_seat, &libinput->seat_list, link) {
@@ -569,7 +582,7 @@ libinput_get_fd(struct libinput *libinput)
 LIBINPUT_EXPORT int
 libinput_dispatch(struct libinput *libinput)
 {
-	struct libinput_source *source, *next;
+	struct libinput_source *source;
 	struct epoll_event ep[32];
 	int i, count;
 
@@ -585,9 +598,7 @@ libinput_dispatch(struct libinput *libinput)
 		source->dispatch(source->user_data);
 	}
 
-	list_for_each_safe(source, next, &libinput->source_destroy_list, link)
-		free(source);
-	list_init(&libinput->source_destroy_list);
+	libinput_drop_destroyed_sources(libinput);
 
 	return 0;
 }
