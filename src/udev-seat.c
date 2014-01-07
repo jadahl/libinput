@@ -305,7 +305,6 @@ udev_input_destroy(struct libinput *input)
 	if (input == NULL)
 		return;
 
-	udev_input_disable(input);
 	udev_unref(udev_input->udev);
 	free(udev_input->seat_id);
 }

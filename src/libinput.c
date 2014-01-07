@@ -414,6 +414,8 @@ libinput_destroy(struct libinput *libinput)
 	if (libinput == NULL)
 		return;
 
+	libinput_suspend(libinput);
+
 	libinput->interface_backend->destroy(libinput);
 
 	while ((event = libinput_get_event(libinput)))
