@@ -1275,3 +1275,38 @@ libinput_config_status_to_str(enum libinput_config_status status)
 
 	return str;
 }
+
+LIBINPUT_EXPORT int
+libinput_device_config_tap_get_finger_count(struct libinput_device *device)
+{
+	return device->config.tap ? device->config.tap->count(device) : 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_tap_set_enabled(struct libinput_device *device,
+				       int enable)
+{
+	if (enable &&
+	    libinput_device_config_tap_get_finger_count(device) == 0)
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+
+	return device->config.tap->set_enabled(device, enable);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_tap_get_enabled(struct libinput_device *device)
+{
+	if (libinput_device_config_tap_get_finger_count(device) == 0)
+		return 0;
+
+	return device->config.tap->get_enabled(device);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_tap_get_default_enabled(struct libinput_device *device)
+{
+	if (libinput_device_config_tap_get_finger_count(device) == 0)
+		return 0;
+
+	return device->config.tap->get_default(device);
+}

@@ -81,12 +81,25 @@ struct libinput_seat {
 	uint32_t button_count[KEY_CNT];
 };
 
+struct libinput_device_config_tap {
+	int (*count)(struct libinput_device *device);
+	enum libinput_config_status (*set_enabled)(struct libinput_device *device,
+						   int enable);
+	int (*get_enabled)(struct libinput_device *device);
+	int (*get_default)(struct libinput_device *device);
+};
+
+struct libinput_device_config {
+	struct libinput_device_config_tap *tap;
+};
+
 struct libinput_device {
 	struct libinput_seat *seat;
 	struct list link;
 	void *user_data;
 	int terminated;
 	int refcount;
+	struct libinput_device_config config;
 };
 
 typedef void (*libinput_source_dispatch_t)(void *data);
