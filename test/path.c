@@ -189,11 +189,121 @@ START_TEST(path_added_device)
 }
 END_TEST
 
+START_TEST(path_suspend)
+{
+	struct libinput *li;
+	struct libevdev *evdev;
+	struct libevdev_uinput *uinput;
+	int rc;
+	void *userdata = &rc;
+
+	evdev = libevdev_new();
+	ck_assert(evdev != NULL);
+
+	libevdev_set_name(evdev, "test device");
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_LEFT, NULL);
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_RIGHT, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_X, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_Y, NULL);
+
+	rc = libevdev_uinput_create_from_device(evdev,
+						LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+	libevdev_free(evdev);
+
+	li = libinput_create_from_path(&simple_interface, userdata,
+				       libevdev_uinput_get_devnode(uinput));
+	ck_assert(li != NULL);
+
+	libinput_suspend(li);
+	libinput_resume(li);
+
+	libevdev_uinput_destroy(uinput);
+	libinput_destroy(li);
+}
+END_TEST
+
+START_TEST(path_double_suspend)
+{
+	struct libinput *li;
+	struct libevdev *evdev;
+	struct libevdev_uinput *uinput;
+	int rc;
+	void *userdata = &rc;
+
+	evdev = libevdev_new();
+	ck_assert(evdev != NULL);
+
+	libevdev_set_name(evdev, "test device");
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_LEFT, NULL);
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_RIGHT, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_X, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_Y, NULL);
+
+	rc = libevdev_uinput_create_from_device(evdev,
+						LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+	libevdev_free(evdev);
+
+	li = libinput_create_from_path(&simple_interface, userdata,
+				       libevdev_uinput_get_devnode(uinput));
+	ck_assert(li != NULL);
+
+	libinput_suspend(li);
+	libinput_suspend(li);
+	libinput_resume(li);
+
+	libevdev_uinput_destroy(uinput);
+	libinput_destroy(li);
+}
+END_TEST
+
+START_TEST(path_double_resume)
+{
+	struct libinput *li;
+	struct libevdev *evdev;
+	struct libevdev_uinput *uinput;
+	int rc;
+	void *userdata = &rc;
+
+	evdev = libevdev_new();
+	ck_assert(evdev != NULL);
+
+	libevdev_set_name(evdev, "test device");
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_LEFT, NULL);
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_RIGHT, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_X, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_Y, NULL);
+
+	rc = libevdev_uinput_create_from_device(evdev,
+						LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+	libevdev_free(evdev);
+
+	li = libinput_create_from_path(&simple_interface, userdata,
+				       libevdev_uinput_get_devnode(uinput));
+	ck_assert(li != NULL);
+
+	libinput_suspend(li);
+	libinput_resume(li);
+	libinput_resume(li);
+
+	libevdev_uinput_destroy(uinput);
+	libinput_destroy(li);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("path:create", path_create_NULL, LITEST_ANY, LITEST_ANY);
 	litest_add("path:create", path_create_invalid, LITEST_ANY, LITEST_ANY);
 	litest_add("path:create", path_create_destroy, LITEST_ANY, LITEST_ANY);
+	litest_add("path:suspend", path_suspend, LITEST_ANY, LITEST_ANY);
+	litest_add("path:suspend", path_double_suspend, LITEST_ANY, LITEST_ANY);
+	litest_add("path:suspend", path_double_resume, LITEST_ANY, LITEST_ANY);
 	litest_add("path:seat events", path_added_seat, LITEST_ANY, LITEST_ANY);
 	litest_add("path:device events", path_added_device, LITEST_ANY, LITEST_ANY);
 
