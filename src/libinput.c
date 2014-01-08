@@ -504,6 +504,7 @@ libinput_seat_destroy(struct libinput_seat *seat)
 LIBINPUT_EXPORT void
 libinput_seat_unref(struct libinput_seat *seat)
 {
+	assert(seat->refcount > 0);
 	seat->refcount--;
 	if (seat->refcount == 0)
 		libinput_seat_destroy(seat);
@@ -550,6 +551,7 @@ libinput_device_destroy(struct libinput_device *device)
 LIBINPUT_EXPORT void
 libinput_device_unref(struct libinput_device *device)
 {
+	assert(device->refcount > 0);
 	device->refcount--;
 	if (device->refcount == 0)
 		libinput_device_destroy(device);
