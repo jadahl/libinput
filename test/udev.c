@@ -261,6 +261,68 @@ START_TEST(udev_removed_seat)
 }
 END_TEST
 
+START_TEST(udev_double_suspend)
+{
+	struct libinput *li;
+	struct libinput_event *event;
+	struct udev *udev;
+	int fd;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_create_from_udev(&simple_interface, NULL, udev, "seat0");
+	ck_assert(li != NULL);
+
+	fd = libinput_get_fd(li);
+	ck_assert_int_ge(fd, 0);
+
+	/* expect at least one event */
+	ck_assert_int_ge(libinput_dispatch(li), 0);
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+
+	libinput_suspend(li);
+	libinput_suspend(li);
+	libinput_resume(li);
+
+	libinput_event_destroy(event);
+	libinput_destroy(li);
+	udev_unref(udev);
+}
+END_TEST
+
+START_TEST(udev_double_resume)
+{
+	struct libinput *li;
+	struct libinput_event *event;
+	struct udev *udev;
+	int fd;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_create_from_udev(&simple_interface, NULL, udev, "seat0");
+	ck_assert(li != NULL);
+
+	fd = libinput_get_fd(li);
+	ck_assert_int_ge(fd, 0);
+
+	/* expect at least one event */
+	ck_assert_int_ge(libinput_dispatch(li), 0);
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+
+	libinput_suspend(li);
+	libinput_resume(li);
+	libinput_resume(li);
+
+	libinput_event_destroy(event);
+	libinput_destroy(li);
+	udev_unref(udev);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add_no_device("udev:create", udev_create_NULL);
@@ -269,6 +331,9 @@ int main (int argc, char **argv) {
 
 	litest_add_no_device("udev:seat events", udev_added_seat_default);
 	litest_add_no_device("udev:seat events", udev_removed_seat);
+
+	litest_add("udev:suspend", udev_double_suspend, LITEST_ANY, LITEST_ANY);
+	litest_add("udev:suspend", udev_double_resume, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
