@@ -204,6 +204,9 @@ udev_input_enable(struct udev_input *input)
 	struct udev *udev = input->udev;
 	int fd;
 
+	if (input->udev_monitor)
+		return 0;
+
 	input->udev_monitor = udev_monitor_new_from_netlink(udev, "udev");
 	if (!input->udev_monitor) {
 		log_info("udev: failed to create the udev monitor\n");
@@ -216,6 +219,7 @@ udev_input_enable(struct udev_input *input)
 	if (udev_monitor_enable_receiving(input->udev_monitor)) {
 		log_info("udev: failed to bind the udev monitor\n");
 		udev_monitor_unref(input->udev_monitor);
+		input->udev_monitor = NULL;
 		return -1;
 	}
 
@@ -226,6 +230,7 @@ udev_input_enable(struct udev_input *input)
 						     input);
 	if (!input->udev_monitor_source) {
 		udev_monitor_unref(input->udev_monitor);
+		input->udev_monitor = NULL;
 		return -1;
 	}
 
