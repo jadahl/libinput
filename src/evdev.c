@@ -574,23 +574,6 @@ evdev_configure_device(struct evdev_device *device)
 	return 0;
 }
 
-static void
-register_device_capabilities(struct evdev_device *device)
-{
-	if (device->seat_caps & EVDEV_DEVICE_POINTER) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_POINTER);
-	}
-	if (device->seat_caps & EVDEV_DEVICE_KEYBOARD) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_KEYBOARD);
-	}
-	if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
-		device_register_capability(&device->base,
-					   LIBINPUT_DEVICE_CAP_TOUCH);
-	}
-}
-
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    const char *devnode,
@@ -644,7 +627,6 @@ evdev_device_create(struct libinput_seat *seat,
 
 	list_insert(seat->devices_list.prev, &device->base.link);
 	notify_added_device(&device->base);
-	register_device_capabilities(device);
 
 	return device;
 
@@ -698,19 +680,6 @@ evdev_device_has_capability(struct evdev_device *device,
 void
 evdev_device_remove(struct evdev_device *device)
 {
-	if (device->seat_caps & EVDEV_DEVICE_POINTER) {
-		device_unregister_capability(&device->base,
-					     LIBINPUT_DEVICE_CAP_POINTER);
-	}
-	if (device->seat_caps & EVDEV_DEVICE_KEYBOARD) {
-		device_unregister_capability(&device->base,
-					     LIBINPUT_DEVICE_CAP_KEYBOARD);
-	}
-	if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
-		device_unregister_capability(&device->base,
-					     LIBINPUT_DEVICE_CAP_TOUCH);
-	}
-
 	if (device->source)
 		libinput_remove_source(device->base.seat->libinput,
 				       device->source);

@@ -72,16 +72,6 @@ struct libinput_event_removed_device {
 	struct libinput_device *device;
 };
 
-struct libinput_event_device_register_capability {
-	struct libinput_event base;
-	enum libinput_device_capability capability;
-};
-
-struct libinput_event_device_unregister_capability {
-	struct libinput_event base;
-	enum libinput_device_capability capability;
-};
-
 struct libinput_event_keyboard_key {
 	struct libinput_event base;
 	uint32_t time;
@@ -166,20 +156,6 @@ libinput_event_removed_device_get_device(
 	struct libinput_event_removed_device *event)
 {
 	return event->device;
-}
-
-LIBINPUT_EXPORT enum libinput_device_capability
-libinput_event_device_register_capability_get_capability(
-	struct libinput_event_device_register_capability *event)
-{
-	return event->capability;
-}
-
-LIBINPUT_EXPORT enum libinput_device_capability
-libinput_event_device_unregister_capability_get_capability(
-	struct libinput_event_device_unregister_capability *event)
-{
-	return event->capability;
 }
 
 LIBINPUT_EXPORT uint32_t
@@ -448,8 +424,6 @@ libinput_event_get_class(struct libinput_event *event)
 	case LIBINPUT_EVENT_REMOVED_DEVICE:
 		return LIBINPUT_EVENT_CLASS_BASE;
 
-	case LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY:
-	case LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY:
 	case LIBINPUT_EVENT_KEYBOARD_KEY:
 	case LIBINPUT_EVENT_POINTER_MOTION:
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
@@ -718,40 +692,6 @@ notify_removed_device(struct libinput_device *device)
 	post_base_event(device->seat->libinput,
 			LIBINPUT_EVENT_REMOVED_DEVICE,
 			&removed_device_event->base);
-}
-
-void
-device_register_capability(struct libinput_device *device,
-			   enum libinput_device_capability capability)
-{
-	struct libinput_event_device_register_capability *capability_event;
-
-	capability_event = malloc(sizeof *capability_event);
-
-	*capability_event = (struct libinput_event_device_register_capability) {
-		.capability = capability,
-	};
-
-	post_device_event(device,
-			  LIBINPUT_EVENT_DEVICE_REGISTER_CAPABILITY,
-			  &capability_event->base);
-}
-
-void
-device_unregister_capability(struct libinput_device *device,
-			     enum libinput_device_capability capability)
-{
-	struct libinput_event_device_unregister_capability *capability_event;
-
-	capability_event = malloc(sizeof *capability_event);
-
-	*capability_event = (struct libinput_event_device_unregister_capability) {
-		.capability = capability,
-	};
-
-	post_device_event(device,
-			  LIBINPUT_EVENT_DEVICE_UNREGISTER_CAPABILITY,
-			  &capability_event->base);
 }
 
 void
