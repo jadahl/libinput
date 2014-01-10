@@ -2,6 +2,7 @@
 *.pc
 *.la
 *.lo
+*.swp
 Makefile
 Makefile.in
 aclocal.m4
