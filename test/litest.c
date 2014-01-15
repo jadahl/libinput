@@ -267,7 +267,7 @@ litest_run(int argc, char **argv) {
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "", opts, &option_index);
+		c = getopt_long(argc, argv, "l", opts, &option_index);
 		if (c == -1)
 			break;
 		switch(c) {
