@@ -164,7 +164,7 @@ START_TEST(udev_added_seat_default)
 		seat = libinput_device_get_seat(device);
 		ck_assert(seat != NULL);
 
-		seat_name = libinput_seat_get_name(seat);
+		seat_name = libinput_seat_get_logical_name(seat);
 		default_seat_found = !strcmp(seat_name, "default");
 		libinput_event_destroy(event);
 	}

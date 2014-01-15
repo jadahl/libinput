@@ -153,7 +153,7 @@ START_TEST(path_added_seat)
 	seat = libinput_device_get_seat(device);
 	ck_assert(seat != NULL);
 
-	seat_name = libinput_seat_get_name(seat);
+	seat_name = libinput_seat_get_logical_name(seat);
 	ck_assert_int_eq(strcmp(seat_name, "default"), 0);
 
 	libinput_event_destroy(event);
