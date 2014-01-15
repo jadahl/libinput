@@ -323,6 +323,64 @@ START_TEST(udev_double_resume)
 }
 END_TEST
 
+static void
+process_events_count_devices(struct libinput *li, int *device_count)
+{
+	struct libinput_event *event;
+
+	while ((event = libinput_get_event(li))) {
+		switch (libinput_event_get_type(event)) {
+		case LIBINPUT_EVENT_ADDED_DEVICE:
+			(*device_count)++;
+			break;
+		case LIBINPUT_EVENT_REMOVED_DEVICE:
+			(*device_count)--;
+			break;
+		default:
+			break;
+		}
+		libinput_event_destroy(event);
+	}
+}
+
+START_TEST(udev_suspend_resume)
+{
+	struct libinput *li;
+	struct udev *udev;
+	int fd;
+	int num_devices = 0;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_create_from_udev(&simple_interface, NULL, udev, "seat0");
+	ck_assert(li != NULL);
+
+	fd = libinput_get_fd(li);
+	ck_assert_int_ge(fd, 0);
+
+	/* Check that at least one device was discovered after creation. */
+	ck_assert_int_ge(libinput_dispatch(li), 0);
+	process_events_count_devices(li, &num_devices);
+	ck_assert_int_gt(num_devices, 0);
+
+	/* Check that after a suspend, no devices are left. */
+	libinput_suspend(li);
+	ck_assert_int_ge(libinput_dispatch(li), 0);
+	process_events_count_devices(li, &num_devices);
+	ck_assert_int_eq(num_devices, 0);
+
+	/* Check that after a resume, at least one device is discovered. */
+	libinput_resume(li);
+	ck_assert_int_ge(libinput_dispatch(li), 0);
+	process_events_count_devices(li, &num_devices);
+	ck_assert_int_gt(num_devices, 0);
+
+	libinput_destroy(li);
+	udev_unref(udev);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add_no_device("udev:create", udev_create_NULL);
@@ -334,6 +392,7 @@ int main (int argc, char **argv) {
 
 	litest_add("udev:suspend", udev_double_suspend, LITEST_ANY, LITEST_ANY);
 	litest_add("udev:suspend", udev_double_resume, LITEST_ANY, LITEST_ANY);
+	litest_add("udev:suspend", udev_suspend_resume, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
