@@ -54,16 +54,6 @@ struct libinput_event {
 	union libinput_event_target target;
 };
 
-struct libinput_event_added_seat {
-	struct libinput_event base;
-	struct libinput_seat *seat;
-};
-
-struct libinput_event_removed_seat {
-	struct libinput_event base;
-	struct libinput_seat *seat;
-};
-
 struct libinput_event_added_device {
 	struct libinput_event base;
 	struct libinput_device *device;
@@ -138,18 +128,6 @@ LIBINPUT_EXPORT struct libinput*
 libinput_event_get_context(struct libinput_event *event)
 {
 	return event->libinput;
-}
-
-LIBINPUT_EXPORT struct libinput_seat *
-libinput_event_added_seat_get_seat(struct libinput_event_added_seat *event)
-{
-	return event->seat;
-}
-
-LIBINPUT_EXPORT struct libinput_seat *
-libinput_event_removed_seat_get_seat(struct libinput_event_removed_seat *event)
-{
-	return event->seat;
 }
 
 LIBINPUT_EXPORT struct libinput_device *
@@ -429,8 +407,6 @@ libinput_event_get_class(struct libinput_event *event)
 	case LIBINPUT_EVENT_NONE:
 		return LIBINPUT_EVENT_CLASS_NONE;
 
-	case LIBINPUT_EVENT_ADDED_SEAT:
-	case LIBINPUT_EVENT_REMOVED_SEAT:
 	case LIBINPUT_EVENT_ADDED_DEVICE:
 	case LIBINPUT_EVENT_REMOVED_DEVICE:
 		return LIBINPUT_EVENT_CLASS_BASE;
@@ -465,10 +441,6 @@ libinput_event_destroy(struct libinput_event *event)
 		libinput_device_unref(event->target.device);
 		break;
 	}
-
-	if (libinput_event_get_type(event) == LIBINPUT_EVENT_ADDED_SEAT ||
-	    libinput_event_get_type(event) == LIBINPUT_EVENT_REMOVED_SEAT)
-		libinput_seat_unref(((struct libinput_event_added_seat*)event)->seat);
 
 	free(event);
 }
@@ -630,46 +602,6 @@ post_device_event(struct libinput_device *device,
 	init_event_base(event, device->seat->libinput, type,
 			(union libinput_event_target) { .device = device });
 	libinput_post_event(device->seat->libinput, event);
-}
-
-void
-notify_added_seat(struct libinput_seat *seat)
-{
-	struct libinput_event_added_seat *added_seat_event;
-
-	added_seat_event = malloc(sizeof *added_seat_event);
-	if (!added_seat_event)
-		return;
-
-	libinput_seat_ref(seat);
-
-	*added_seat_event = (struct libinput_event_added_seat) {
-		.seat = seat,
-	};
-
-	post_base_event(seat->libinput,
-			LIBINPUT_EVENT_ADDED_SEAT,
-			&added_seat_event->base);
-}
-
-void
-notify_removed_seat(struct libinput_seat *seat)
-{
-	struct libinput_event_removed_seat *removed_seat_event;
-
-	removed_seat_event = malloc(sizeof *removed_seat_event);
-	if (!removed_seat_event)
-		return;
-
-	libinput_seat_ref(seat);
-
-	*removed_seat_event = (struct libinput_event_removed_seat) {
-		.seat = seat,
-	};
-
-	post_base_event(seat->libinput,
-			LIBINPUT_EVENT_REMOVED_SEAT,
-			&removed_seat_event->base);
 }
 
 void

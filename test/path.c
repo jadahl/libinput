@@ -134,7 +134,8 @@ START_TEST(path_added_seat)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
-	struct libinput_event_added_seat *seat_event;
+	struct libinput_event_added_device *device_event;
+	struct libinput_device *device;
 	struct libinput_seat *seat;
 	const char *seat_name;
 	enum libinput_event_type type;
@@ -145,10 +146,11 @@ START_TEST(path_added_seat)
 	ck_assert(event != NULL);
 
 	type = libinput_event_get_type(event);
-	ck_assert_int_eq(type, LIBINPUT_EVENT_ADDED_SEAT);
+	ck_assert_int_eq(type, LIBINPUT_EVENT_ADDED_DEVICE);
 
-	seat_event = (struct libinput_event_added_seat*)event;
-	seat = libinput_event_added_seat_get_seat(seat_event);
+	device_event = (struct libinput_event_added_device*)event;
+	device = libinput_event_added_device_get_device(device_event);
+	seat = libinput_device_get_seat(device);
 	ck_assert(seat != NULL);
 
 	seat_name = libinput_seat_get_name(seat);
