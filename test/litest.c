@@ -267,13 +267,17 @@ litest_run(int argc, char **argv) {
 		int c;
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "l", opts, &option_index);
+		c = getopt_long(argc, argv, "", opts, &option_index);
 		if (c == -1)
 			break;
 		switch(c) {
 			case 'l':
 				litest_list_tests(&all_tests);
 				return 0;
+			default:
+				fprintf(stderr, "usage: %s [--list]\n", argv[0]);
+				return 1;
+
 		}
 	}
 
