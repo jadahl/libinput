@@ -72,6 +72,9 @@ START_TEST(path_create_NULL)
 
 	ck_assert_int_eq(open_func_count, 0);
 	ck_assert_int_eq(close_func_count, 0);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
@@ -91,6 +94,9 @@ START_TEST(path_create_invalid)
 
 	libinput_destroy(li);
 	ck_assert_int_eq(close_func_count, 0);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
@@ -126,6 +132,9 @@ START_TEST(path_create_destroy)
 	libevdev_uinput_destroy(uinput);
 	libinput_destroy(li);
 	ck_assert_int_eq(close_func_count, 1);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
@@ -241,6 +250,9 @@ START_TEST(path_suspend)
 
 	libevdev_uinput_destroy(uinput);
 	libinput_destroy(li);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
@@ -277,6 +289,9 @@ START_TEST(path_double_suspend)
 
 	libevdev_uinput_destroy(uinput);
 	libinput_destroy(li);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
@@ -313,6 +328,9 @@ START_TEST(path_double_resume)
 
 	libevdev_uinput_destroy(uinput);
 	libinput_destroy(li);
+
+	open_func_count = 0;
+	close_func_count = 0;
 }
 END_TEST
 
