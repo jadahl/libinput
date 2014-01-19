@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <libinput.h>
 #include <libudev.h>
+#include <stdio.h>
 #include <unistd.h>
 
 #include "litest.h"
@@ -42,9 +43,16 @@ static void close_restricted(int fd, void *data)
 	close(fd);
 }
 
+static int
+new_device(struct libinput_device *device, void *user_data)
+{
+	return 0;
+}
+
 const struct libinput_interface simple_interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
+	.new_device = new_device,
 };
 
 
@@ -330,9 +338,6 @@ process_events_count_devices(struct libinput *li, int *device_count)
 
 	while ((event = libinput_get_event(li))) {
 		switch (libinput_event_get_type(event)) {
-		case LIBINPUT_EVENT_ADDED_DEVICE:
-			(*device_count)++;
-			break;
 		case LIBINPUT_EVENT_REMOVED_DEVICE:
 			(*device_count)--;
 			break;
@@ -342,6 +347,23 @@ process_events_count_devices(struct libinput *li, int *device_count)
 		libinput_event_destroy(event);
 	}
 }
+
+static int
+suspend_resume_test_new_device(struct libinput_device *device, void *user_data)
+{
+	int *num_devices = user_data;
+
+	(*num_devices)++;
+
+	return 0;
+}
+
+const struct libinput_interface suspend_resume_test_interface = {
+	.open_restricted = open_restricted,
+	.close_restricted = close_restricted,
+	.new_device = suspend_resume_test_new_device,
+};
+
 
 START_TEST(udev_suspend_resume)
 {
@@ -353,7 +375,8 @@ START_TEST(udev_suspend_resume)
 	udev = udev_new();
 	ck_assert(udev != NULL);
 
-	li = libinput_create_from_udev(&simple_interface, NULL, udev, "seat0");
+	li = libinput_create_from_udev(&suspend_resume_test_interface,
+				       &num_devices, udev, "seat0");
 	ck_assert(li != NULL);
 
 	fd = libinput_get_fd(li);

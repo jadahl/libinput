@@ -620,13 +620,15 @@ evdev_device_create(struct libinput_seat *seat,
 	if (device->dispatch == NULL)
 		goto err;
 
+	if (notify_new_device(&device->base) != 0)
+		goto err;
+
 	device->source =
 		libinput_add_fd(libinput, fd, evdev_device_dispatch, device);
 	if (!device->source)
 		goto err;
 
 	list_insert(seat->devices_list.prev, &device->base.link);
-	notify_added_device(&device->base);
 
 	return device;
 

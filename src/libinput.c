@@ -431,7 +431,6 @@ libinput_event_get_class(struct libinput_event *event)
 
 	case LIBINPUT_EVENT_ADDED_SEAT:
 	case LIBINPUT_EVENT_REMOVED_SEAT:
-	case LIBINPUT_EVENT_ADDED_DEVICE:
 	case LIBINPUT_EVENT_REMOVED_DEVICE:
 		return LIBINPUT_EVENT_CLASS_BASE;
 
@@ -672,22 +671,12 @@ notify_removed_seat(struct libinput_seat *seat)
 			&removed_seat_event->base);
 }
 
-void
-notify_added_device(struct libinput_device *device)
+int
+notify_new_device(struct libinput_device *device)
 {
-	struct libinput_event_added_device *added_device_event;
+	struct libinput *libinput = device->seat->libinput;
 
-	added_device_event = malloc(sizeof *added_device_event);
-	if (!added_device_event)
-		return;
-
-	*added_device_event = (struct libinput_event_added_device) {
-		.device = device,
-	};
-
-	post_base_event(device->seat->libinput,
-			LIBINPUT_EVENT_ADDED_DEVICE,
-			&added_device_event->base);
+	return libinput->interface->new_device(device, libinput->user_data);
 }
 
 void

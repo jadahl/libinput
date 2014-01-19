@@ -48,9 +48,16 @@ static void close_restricted(int fd, void *data)
 	close(fd);
 }
 
+static int
+new_device(struct libinput_device *device, void *user_dta)
+{
+	return 0;
+}
+
 const struct libinput_interface simple_interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
+	.new_device = new_device,
 };
 
 
@@ -158,34 +165,55 @@ START_TEST(path_added_seat)
 }
 END_TEST
 
+static int
+new_device_test(struct libinput_device *device, void *user_data)
+{
+	int *device_count = user_data;
+
+	(*device_count)++;
+
+	return 0;
+}
+
+const struct libinput_interface new_device_test_interface = {
+	.open_restricted = open_restricted,
+	.close_restricted = close_restricted,
+	.new_device = new_device_test,
+};
+
 START_TEST(path_added_device)
 {
-	struct litest_device *dev = litest_current_device();
-	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
-	struct libinput_event_added_device *device_event = NULL;
-	struct libinput_device *device;
+	struct libinput *li;
+	struct libevdev *evdev;
+	struct libevdev_uinput *uinput;
+	int rc;
+	int device_count = 0;
+
+	evdev = libevdev_new();
+	ck_assert(evdev != NULL);
+
+	libevdev_set_name(evdev, "test device");
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_LEFT, NULL);
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_RIGHT, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_X, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_Y, NULL);
+
+	rc = libevdev_uinput_create_from_device(evdev,
+						LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+	libevdev_free(evdev);
+
+	li = libinput_create_from_path(&new_device_test_interface,
+				       &device_count,
+				       libevdev_uinput_get_devnode(uinput));
 
 	libinput_dispatch(li);
 
-	while ((event = libinput_get_event(li))) {
-		enum libinput_event_type type;
-		type = libinput_event_get_type(event);
+	ck_assert_int_ge(device_count, 1);
 
-		if (type == LIBINPUT_EVENT_ADDED_DEVICE) {
-			device_event = (struct libinput_event_added_device*)event;
-			break;
-		}
-
-		libinput_event_destroy(event);
-	}
-
-	ck_assert(device_event != NULL);
-
-	device = libinput_event_added_device_get_device(device_event);
-	ck_assert(device != NULL);
-
-	libinput_event_destroy(event);
+	libevdev_uinput_destroy(uinput);
+	libinput_destroy(li);
 }
 END_TEST
 

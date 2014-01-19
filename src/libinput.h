@@ -126,7 +126,6 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_NONE = 0,
 	LIBINPUT_EVENT_ADDED_SEAT,
 	LIBINPUT_EVENT_REMOVED_SEAT,
-	LIBINPUT_EVENT_ADDED_DEVICE,
 	LIBINPUT_EVENT_REMOVED_DEVICE,
 
 	LIBINPUT_EVENT_KEYBOARD_KEY = 300,
@@ -410,6 +409,22 @@ struct libinput_interface {
 	 * libinput_create_from_udev()
 	 */
 	void (*close_restricted)(int fd, void *user_data);
+
+	/**
+	 * A device was added to the context.
+	 *
+	 * This function is called after the device has been created
+	 * internally, but before any events has been read. This allows
+	 * for configuration of initial values that are used for processing.
+	 *
+	 * The callee must return 0 to allow for the device to be added to
+	 * the device pool.
+	 *
+	 * @return 0 if the device is to be allowed to be added, -errno on
+	 * error, or 1 if the device should be ignored anyway.
+	 */
+	int (*new_device)(struct libinput_device *device,
+			  void *user_data);
 
 	void (*get_current_screen_dimensions)(struct libinput_device *device,
 					      int *width,

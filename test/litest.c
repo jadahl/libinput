@@ -314,9 +314,16 @@ close_restricted(int fd, void *userdata)
 	close(fd);
 }
 
+static int
+new_device(struct libinput_device *device, void *user_data)
+{
+	return 0;
+}
+
 const struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
+	.new_device = new_device,
 };
 
 struct litest_device *

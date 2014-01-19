@@ -112,8 +112,8 @@ notify_added_seat(struct libinput_seat *seat);
 void
 notify_removed_seat(struct libinput_seat *seat);
 
-void
-notify_added_device(struct libinput_device *device);
+int
+notify_new_device(struct libinput_device *device);
 
 void
 notify_removed_device(struct libinput_device *device);
