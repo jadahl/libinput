@@ -79,12 +79,14 @@ extern struct litest_test_device litest_keyboard_device;
 extern struct litest_test_device litest_synaptics_clickpad_device;
 extern struct litest_test_device litest_trackpoint_device;
 extern struct litest_test_device litest_bcm5974_device;
+extern struct litest_test_device litest_mouse_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
 	&litest_keyboard_device,
 	&litest_trackpoint_device,
 	&litest_bcm5974_device,
+	&litest_mouse_device,
 	NULL,
 };
 

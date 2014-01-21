@@ -10,6 +10,7 @@ liblitest_la_SOURCES = \
 	litest-int.h \
 	litest-bcm5974.c \
 	litest-keyboard.c \
+	litest-mouse.c \
 	litest-synaptics.c \
 	litest-trackpoint.c \
 	litest.c
