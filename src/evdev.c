@@ -321,20 +321,11 @@ evdev_process_relative(struct evdev_device *device,
 		break;
 	case REL_WHEEL:
 		evdev_flush_pending_event(device, time);
-		switch (e->value) {
-		case -1:
-			/* Scroll down */
-		case 1:
-			/* Scroll up */
-			pointer_notify_axis(
-				base,
-				time,
-				LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
-				-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
-			break;
-		default:
-			break;
-		}
+		pointer_notify_axis(
+			base,
+			time,
+			LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
+			-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
 		break;
 	case REL_HWHEEL:
 		evdev_flush_pending_event(device, time);
