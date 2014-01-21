@@ -13,6 +13,7 @@ liblitest_la_SOURCES = \
 	litest-mouse.c \
 	litest-synaptics.c \
 	litest-trackpoint.c \
+	litest-wacom-touch.c \
 	litest.c
 
 run_tests = test-udev test-path

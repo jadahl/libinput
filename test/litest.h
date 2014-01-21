@@ -40,6 +40,7 @@ enum litest_device_type {
 	LITEST_KEYBOARD,
 	LITEST_TRACKPOINT,
 	LITEST_MOUSE,
+	LITEST_WACOM_TOUCH,
 };
 
 enum litest_device_feature {
@@ -51,6 +52,7 @@ enum litest_device_feature {
 	LITEST_KEYS = 1 << 3,
 	LITEST_POINTER = 1 << 4,
 	LITEST_WHEEL = 1 << 5,
+	LITEST_TOUCH = 1 << 6,
 };
 
 struct litest_device {

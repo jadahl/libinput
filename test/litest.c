@@ -80,6 +80,7 @@ extern struct litest_test_device litest_synaptics_clickpad_device;
 extern struct litest_test_device litest_trackpoint_device;
 extern struct litest_test_device litest_bcm5974_device;
 extern struct litest_test_device litest_mouse_device;
+extern struct litest_test_device litest_wacom_touch_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -87,6 +88,7 @@ struct litest_test_device* devices[] = {
 	&litest_trackpoint_device,
 	&litest_bcm5974_device,
 	&litest_mouse_device,
+	&litest_wacom_touch_device,
 	NULL,
 };
 
@@ -316,9 +318,20 @@ close_restricted(int fd, void *userdata)
 	close(fd);
 }
 
+static void
+get_current_screen_dimensions(struct libinput_device *device,
+			      int *width,
+			      int *height,
+			      void *user_data)
+{
+	*width = 1024;
+	*height = 768;
+}
+
 const struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
+	.get_current_screen_dimensions = get_current_screen_dimensions,
 };
 
 struct litest_device *
