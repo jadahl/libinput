@@ -425,11 +425,6 @@ struct libinput_interface {
 	 */
 	int (*new_device)(struct libinput_device *device,
 			  void *user_data);
-
-	void (*get_current_screen_dimensions)(struct libinput_device *device,
-					      int *width,
-					      int *height,
-					      void *user_data);
 };
 
 /**
@@ -787,5 +782,19 @@ libinput_device_calibrate(struct libinput_device *device,
 int
 libinput_device_has_capability(struct libinput_device *device,
 			       enum libinput_device_capability capability);
+
+/**
+ * @ingroup device
+ *
+ * Set the screen size of the output associated with the given device.
+ *
+ * @param device The device
+ * @param width The output screen width
+ * @param height The output screen height
+ */
+void
+libinput_device_set_output_size(struct libinput_device *device,
+				uint32_t width,
+				uint32_t height);
 
 #endif /* LIBINPUT_H */

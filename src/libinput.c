@@ -547,6 +547,9 @@ libinput_device_init(struct libinput_device *device,
 {
 	device->seat = seat;
 	device->refcount = 1;
+
+	device->output_width = 0;
+	device->output_height = 0;
 }
 
 LIBINPUT_EXPORT void
@@ -997,4 +1000,13 @@ libinput_device_has_capability(struct libinput_device *device,
 {
 	return evdev_device_has_capability((struct evdev_device *) device,
 					   capability);
+}
+
+LIBINPUT_EXPORT void
+libinput_device_set_output_size(struct libinput_device *device,
+				uint32_t width,
+				uint32_t height)
+{
+	device->output_width = width;
+	device->output_height = height;
 }
