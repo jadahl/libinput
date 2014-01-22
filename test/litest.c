@@ -461,3 +461,15 @@ int litest_scale(const struct litest_device *d, unsigned int axis, int val)
 	max = d->interface->max[axis];
 	return (max - min) * val/100.0 + min;
 }
+
+void
+litest_drain_events(struct libinput *li)
+{
+	struct libinput_event *event;
+
+	libinput_dispatch(li);
+	while ((event = libinput_get_event(li))) {
+		libinput_event_destroy(event);
+		libinput_dispatch(li);
+	}
+}

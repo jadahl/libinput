@@ -90,5 +90,6 @@ void litest_touch_move_to(struct litest_device *d,
 void litest_button_click(struct litest_device *d,
 			 unsigned int button,
 			 bool is_press);
+void litest_drain_events(struct libinput *li);
 
 #endif /* LITEST_H */
