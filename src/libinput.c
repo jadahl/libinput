@@ -431,22 +431,8 @@ libinput_event_destroy(struct libinput_event *event)
 	if (event == NULL)
 		return;
 
-	switch (libinput_event_get_type(event)) {
-	case LIBINPUT_EVENT_NONE:
-		abort(); /* not used as actual event type */
-	case LIBINPUT_EVENT_DEVICE_ADDED:
-	case LIBINPUT_EVENT_DEVICE_REMOVED:
-		break;
-	case LIBINPUT_EVENT_KEYBOARD_KEY:
-	case LIBINPUT_EVENT_POINTER_MOTION:
-	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
-	case LIBINPUT_EVENT_POINTER_BUTTON:
-	case LIBINPUT_EVENT_POINTER_AXIS:
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
-	case LIBINPUT_EVENT_TOUCH_FRAME:
+	if (event->device)
 		libinput_device_unref(event->device);
-		break;
-	}
 
 	free(event);
 }
@@ -850,22 +836,8 @@ libinput_post_event(struct libinput *libinput,
 		libinput->events_len = events_len;
 	}
 
-	switch (libinput_event_get_type(event)) {
-	case LIBINPUT_EVENT_NONE:
-		abort(); /* not used as actual event type */
-	case LIBINPUT_EVENT_DEVICE_ADDED:
-	case LIBINPUT_EVENT_DEVICE_REMOVED:
-		break;
-	case LIBINPUT_EVENT_KEYBOARD_KEY:
-	case LIBINPUT_EVENT_POINTER_MOTION:
-	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
-	case LIBINPUT_EVENT_POINTER_BUTTON:
-	case LIBINPUT_EVENT_POINTER_AXIS:
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
-	case LIBINPUT_EVENT_TOUCH_FRAME:
+	if (event->device)
 		libinput_device_ref(event->device);
-		break;
-	}
 
 	libinput->events_count = events_count;
 	events[libinput->events_in] = event;
