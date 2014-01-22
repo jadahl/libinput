@@ -48,7 +48,6 @@ struct libinput_event {
 
 struct libinput_event_device_notify {
 	struct libinput_event base;
-	struct libinput_device *device;
 };
 
 struct libinput_event_keyboard {
@@ -611,10 +610,6 @@ notify_added_device(struct libinput_device *device)
 	if (!added_device_event)
 		return;
 
-	*added_device_event = (struct libinput_event_device_notify) {
-		.device = device,
-	};
-
 	post_base_event(device,
 			LIBINPUT_EVENT_DEVICE_ADDED,
 			&added_device_event->base);
@@ -628,10 +623,6 @@ notify_removed_device(struct libinput_device *device)
 	removed_device_event = zalloc(sizeof *removed_device_event);
 	if (!removed_device_event)
 		return;
-
-	*removed_device_event = (struct libinput_event_device_notify) {
-		.device = device,
-	};
 
 	post_base_event(device,
 			LIBINPUT_EVENT_DEVICE_REMOVED,
