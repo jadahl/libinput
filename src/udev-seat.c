@@ -83,19 +83,23 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	 * read.  mtdev_get() also expects this. */
 	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
 	if (fd < 0) {
-		log_info("opening input device '%s' failed (%s).\n", devnode, strerror(-fd));
-		goto error;
+		log_info("opening input device '%s' failed (%s).\n",
+			 devnode, strerror(-fd));
+		libinput_seat_unref(&seat->base);
+		return 0;
 	}
 
 	device = evdev_device_create(&seat->base, devnode, sysname, fd);
+	libinput_seat_unref(&seat->base);
+
 	if (device == EVDEV_UNHANDLED_DEVICE) {
 		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
-		goto error;
+		return 0;
 	} else if (device == NULL) {
 		close_restricted(libinput, fd);
 		log_info("failed to create input device '%s'.\n", devnode);
-		goto error;
+		return 0;
 	}
 
 	calibration_values =
@@ -124,10 +128,6 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	if (output_name)
 		device->output_name = strdup(output_name);
 
-	return 0;
-error:
-	if (seat)
-		libinput_seat_unref(&seat->base);
 	return 0;
 }
 
@@ -200,7 +200,6 @@ evdev_udev_handler(void *data)
 						 device->devname, device->devnode);
 					close_restricted(libinput, device->fd);
 					evdev_device_remove(device);
-					libinput_seat_unref(&seat->base);
 					break;
 				}
 		}
@@ -230,7 +229,6 @@ udev_input_remove_devices(struct udev_input *input)
 				list_remove(&seat->base.link);
 				list_init(&seat->base.link);
 			}
-			libinput_seat_unref(&seat->base);
 		}
 		libinput_seat_unref(&seat->base);
 	}

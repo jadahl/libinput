@@ -40,19 +40,11 @@ path_input_disable(struct libinput *libinput)
 {
 	struct path_input *input = (struct path_input*)libinput;
 	struct evdev_device *device = input->device;
-	struct path_seat *seat, *tmp;
 
 	if (device) {
 		close_restricted(libinput, device->fd);
 		evdev_device_remove(device);
 		input->device = NULL;
-	}
-
-	/* should only be one seat anyway */
-	list_for_each_safe(seat, tmp, &libinput->seat_list, base.link) {
-		list_remove(&seat->base.link);
-		list_init(&seat->base.link);
-		libinput_seat_unref(&seat->base);
 	}
 }
 
@@ -155,16 +147,15 @@ path_input_enable(struct libinput *libinput)
 
 	device = evdev_device_create(&seat->base, devnode, syspath, fd);
 	free(syspath);
+	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
 		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
-		libinput_seat_unref(&seat->base);
 		return -1;
 	} else if (device == NULL) {
 		close_restricted(libinput, fd);
 		log_info("failed to create input device '%s'.\n", devnode);
-		libinput_seat_unref(&seat->base);
 		return -1;
 	}
 

@@ -624,6 +624,8 @@ evdev_device_create(struct libinput_seat *seat,
 	devname[sizeof(devname) - 1] = '\0';
 	device->devname = strdup(devname);
 
+	libinput_seat_ref(seat);
+
 	if (evdev_configure_device(device) == -1)
 		goto err;
 
@@ -718,6 +720,8 @@ evdev_device_destroy(struct evdev_device *device)
 	dispatch = device->dispatch;
 	if (dispatch)
 		dispatch->interface->destroy(dispatch);
+
+	libinput_seat_unref(device->base.seat);
 
 	free(device->devname);
 	free(device->devnode);
