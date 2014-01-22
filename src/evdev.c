@@ -628,8 +628,7 @@ evdev_device_create(struct libinput_seat *seat,
 		goto err;
 
 	if (device->seat_caps == 0) {
-		evdev_device_destroy(device);
-		return NULL;
+		goto err;
 	}
 
 	/* If the dispatch was not set up use the fallback. */
