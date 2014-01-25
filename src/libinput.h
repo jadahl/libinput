@@ -120,7 +120,21 @@ enum libinput_touch_type {
  */
 enum libinput_event_type {
 	LIBINPUT_EVENT_NONE = 0,
+
+	/**
+	 * Signals that a device has been added to the context. The device will
+	 * not be read until the next time the user calls libinput_dispatch()
+	 * and data is available.
+	 *
+	 * This allows setting up initial device configuration before any events
+	 * are created.
+	 */
 	LIBINPUT_EVENT_DEVICE_ADDED,
+
+	/**
+	 * Signals that a device has been removed. No more events from the
+	 * associated device will be in the queue or be queued after this event.
+	 */
 	LIBINPUT_EVENT_DEVICE_REMOVED,
 
 	LIBINPUT_EVENT_KEYBOARD_KEY = 300,
