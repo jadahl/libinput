@@ -87,19 +87,19 @@ libinput_event_get_type(struct libinput_event *event)
 	return event->type;
 }
 
-LIBINPUT_EXPORT struct libinput*
+LIBINPUT_EXPORT struct libinput *
 libinput_event_get_context(struct libinput_event *event)
 {
 	return event->device->seat->libinput;
 }
 
-LIBINPUT_EXPORT struct libinput_device*
+LIBINPUT_EXPORT struct libinput_device *
 libinput_event_get_device(struct libinput_event *event)
 {
 	return event->device;
 }
 
-LIBINPUT_EXPORT struct libinput_event_pointer*
+LIBINPUT_EXPORT struct libinput_event_pointer *
 libinput_event_get_pointer_event(struct libinput_event *event)
 {
 	switch (event->type) {
@@ -113,7 +113,7 @@ libinput_event_get_pointer_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 	case LIBINPUT_EVENT_POINTER_AXIS:
-		return (struct libinput_event_pointer*)event;
+		return (struct libinput_event_pointer *) event;
 	case LIBINPUT_EVENT_TOUCH_TOUCH:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		break;
@@ -122,7 +122,7 @@ libinput_event_get_pointer_event(struct libinput_event *event)
 	return NULL;
 }
 
-LIBINPUT_EXPORT struct libinput_event_keyboard*
+LIBINPUT_EXPORT struct libinput_event_keyboard *
 libinput_event_get_keyboard_event(struct libinput_event *event)
 {
 	switch (event->type) {
@@ -132,7 +132,7 @@ libinput_event_get_keyboard_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_DEVICE_REMOVED:
 		break;
 	case LIBINPUT_EVENT_KEYBOARD_KEY:
-		return (struct libinput_event_keyboard*)event;
+		return (struct libinput_event_keyboard *) event;
 	case LIBINPUT_EVENT_POINTER_MOTION:
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 	case LIBINPUT_EVENT_POINTER_BUTTON:
@@ -145,7 +145,7 @@ libinput_event_get_keyboard_event(struct libinput_event *event)
 	return NULL;
 }
 
-LIBINPUT_EXPORT struct libinput_event_touch*
+LIBINPUT_EXPORT struct libinput_event_touch *
 libinput_event_get_touch_event(struct libinput_event *event)
 {
 	switch (event->type) {
@@ -161,13 +161,13 @@ libinput_event_get_touch_event(struct libinput_event *event)
 		break;
 	case LIBINPUT_EVENT_TOUCH_TOUCH:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
-		return (struct libinput_event_touch*)event;
+		return (struct libinput_event_touch *) event;
 	}
 
 	return NULL;
 }
 
-LIBINPUT_EXPORT struct libinput_event_device_notify*
+LIBINPUT_EXPORT struct libinput_event_device_notify *
 libinput_event_get_device_notify_event(struct libinput_event *event)
 {
 	switch (event->type) {
@@ -175,7 +175,7 @@ libinput_event_get_device_notify_event(struct libinput_event *event)
 		abort(); /* not used as actual event type */
 	case LIBINPUT_EVENT_DEVICE_ADDED:
 	case LIBINPUT_EVENT_DEVICE_REMOVED:
-		return (struct libinput_event_device_notify*)event;
+		return (struct libinput_event_device_notify *) event;
 	case LIBINPUT_EVENT_KEYBOARD_KEY:
 	case LIBINPUT_EVENT_POINTER_MOTION:
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:

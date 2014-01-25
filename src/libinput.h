@@ -228,7 +228,7 @@ libinput_event_get_type(struct libinput_event *event);
  * @param event The libinput event
  * @return The libinput context for this event.
  */
-struct libinput*
+struct libinput *
 libinput_event_get_context(struct libinput_event *event);
 
 /**
@@ -244,7 +244,7 @@ libinput_event_get_context(struct libinput_event *event);
  * @return The device associated with this event
  */
 
-struct libinput_device*
+struct libinput_device *
 libinput_event_get_device(struct libinput_event *event);
 
 /**
@@ -255,7 +255,7 @@ libinput_event_get_device(struct libinput_event *event);
  *
  * @return A pointer event, or NULL for other events
  */
-struct libinput_event_pointer*
+struct libinput_event_pointer *
 libinput_event_get_pointer_event(struct libinput_event *event);
 
 /**
@@ -266,7 +266,7 @@ libinput_event_get_pointer_event(struct libinput_event *event);
  *
  * @return A keyboard event, or NULL for other events
  */
-struct libinput_event_keyboard*
+struct libinput_event_keyboard *
 libinput_event_get_keyboard_event(struct libinput_event *event);
 
 /**
@@ -277,7 +277,7 @@ libinput_event_get_keyboard_event(struct libinput_event *event);
  *
  * @return A touch event, or NULL for other events
  */
-struct libinput_event_touch*
+struct libinput_event_touch *
 libinput_event_get_touch_event(struct libinput_event *event);
 
 /**
@@ -288,7 +288,7 @@ libinput_event_get_touch_event(struct libinput_event *event);
  *
  * @return A device event, or NULL for other events
  */
-struct libinput_event_device_notify*
+struct libinput_event_device_notify *
 libinput_event_get_device_notify_event(struct libinput_event *event);
 
 /**
