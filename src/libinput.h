@@ -395,8 +395,11 @@ libinput_event_pointer_get_dy(
 /**
  * @ingroup event_pointer
  *
- * Return the absolute x coordinate of the device, scaled to screen
- * coordinates.
+ * Return the current absolute x coordinate of the pointer device. If the output
+ * screen has been set, the coordinate is in screen coordinate space, otherwise
+ * the coordinate is in a device specific coordinate space. See
+ * libinput_device_set_output_size() for how to set output screen size.
+ *
  * The axes' positive direction is device-specific. For pointer events that
  * are not of type LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function
  * returns 0.
@@ -404,7 +407,7 @@ libinput_event_pointer_get_dy(
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
- * @return the current absolute x coordinate scaled to screen coordinates.
+ * @return the current absolute x coordinate
  */
 li_fixed_t
 libinput_event_pointer_get_absolute_x(
@@ -413,7 +416,11 @@ libinput_event_pointer_get_absolute_x(
 /**
  * @ingroup event_pointer
  *
- * Return the absolute y coordinate of the device, scaled to screen coordinates.
+ * Return the current absolute y coordinate of the pointer device. If the output
+ * screen has been set, the coordinate is in screen coordinate space, otherwise
+ * the coordinate is in a device specific coordinate space. See
+ * libinput_device_set_output_size() for how to set output screen size.
+ *
  * The axes' positive direction is device-specific. For pointer events that
  * are not of type LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function
  * returns 0.
@@ -421,7 +428,7 @@ libinput_event_pointer_get_absolute_x(
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
- * @return the current absolute y coordinate scaled to screen coordinates.
+ * @return the current absolute y coordinate
  */
 li_fixed_t
 libinput_event_pointer_get_absolute_y(
@@ -531,9 +538,14 @@ libinput_event_touch_get_slot(
 /**
  * @ingroup event_touch
  *
+ * Return the current absolute x coordinate of the touch device. If the output
+ * screen has been set, the coordinate is in screen coordinate space, otherwise
+ * the coordinate is in a device specific coordinate space. See
+ * libinput_device_set_output_size() for how to set output screen size.
+ *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
- * @return the absolute X coordinate on this touch device, scaled to screen coordinates.
+ * @return the current absolute x coordinate
  */
 li_fixed_t
 libinput_event_touch_get_x(
@@ -542,9 +554,14 @@ libinput_event_touch_get_x(
 /**
  * @ingroup event_touch
  *
+ * Return the current absolute y coordinate of the touch device. If the output
+ * screen has been set, the coordinate is in screen coordinate space, otherwise
+ * the coordinate is in a device specific coordinate space. See
+ * libinput_device_set_output_size() for how to set output screen size.
+ *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
- * @return the absolute X coordinate on this touch device, scaled to screen coordinates.
+ * @return the current absolute y coordinate
  */
 li_fixed_t
 libinput_event_touch_get_y(
@@ -586,11 +603,6 @@ struct libinput_interface {
 	 * libinput_create_from_udev()
 	 */
 	void (*close_restricted)(int fd, void *user_data);
-
-	void (*get_current_screen_dimensions)(struct libinput_device *device,
-					      int *width,
-					      int *height,
-					      void *user_data);
 };
 
 /**
@@ -992,5 +1004,19 @@ libinput_device_calibrate(struct libinput_device *device,
 int
 libinput_device_has_capability(struct libinput_device *device,
 			       enum libinput_device_capability capability);
+
+/**
+ * @ingroup device
+ *
+ * Set the screen size of the output associated with the given device.
+ *
+ * @param device The device
+ * @param width The output screen width
+ * @param height The output screen height
+ */
+void
+libinput_device_set_output_size(struct libinput_device *device,
+				uint32_t width,
+				uint32_t height);
 
 #endif /* LIBINPUT_H */

@@ -227,15 +227,9 @@ evdev_process_touch(struct evdev_device *device,
 		    struct input_event *e,
 		    uint32_t time)
 {
-	struct libinput *libinput = device->base.seat->libinput;
-	int screen_width;
-	int screen_height;
-
-	libinput->interface->get_current_screen_dimensions(
-		&device->base,
-		&screen_width,
-		&screen_height,
-		libinput->user_data);
+	int screen_width = device->base.output_width;
+	int screen_height = device->base.output_height;
+	int32_t x, y;
 
 	switch (e->code) {
 	case ABS_MT_SLOT:
@@ -252,16 +246,22 @@ evdev_process_touch(struct evdev_device *device,
 			device->pending_event = EVDEV_ABSOLUTE_MT_UP;
 		break;
 	case ABS_MT_POSITION_X:
-		device->mt.slots[device->mt.slot].x =
-			(e->value - device->abs.min_x) * screen_width /
-			(device->abs.max_x - device->abs.min_x);
+		x = e->value - device->abs.min_x;
+		if (screen_width) {
+			x *= screen_width /
+				(device->abs.max_x - device->abs.min_x);
+		}
+		device->mt.slots[device->mt.slot].x = x;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MT_MOTION;
 		break;
 	case ABS_MT_POSITION_Y:
-		device->mt.slots[device->mt.slot].y =
-			(e->value - device->abs.min_y) * screen_height /
-			(device->abs.max_y - device->abs.min_y);
+		y = e->value - device->abs.min_y;
+		if (screen_height) {
+			y *= screen_height /
+				(device->abs.max_y - device->abs.min_y);
+		}
+		device->mt.slots[device->mt.slot].y = y;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MT_MOTION;
 		break;
@@ -272,28 +272,25 @@ static inline void
 evdev_process_absolute_motion(struct evdev_device *device,
 			      struct input_event *e)
 {
-	struct libinput *libinput = device->base.seat->libinput;
-	int screen_width;
-	int screen_height;
-
-	libinput->interface->get_current_screen_dimensions(
-		&device->base,
-		&screen_width,
-		&screen_height,
-		libinput->user_data);
+	int screen_width = device->base.output_width;
+	int screen_height = device->base.output_height;
 
 	switch (e->code) {
 	case ABS_X:
-		device->abs.x =
-			(e->value - device->abs.min_x) * screen_width /
-			(device->abs.max_x - device->abs.min_x);
+		device->abs.x = e->value - device->abs.min_x;
+	        if (screen_width) {
+			device->abs.x *= screen_width /
+				(device->abs.max_x - device->abs.min_x);
+		}
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MOTION;
 		break;
 	case ABS_Y:
-		device->abs.y =
-			(e->value - device->abs.min_y) * screen_height /
-			(device->abs.max_y - device->abs.min_y);
+		device->abs.y = (e->value - device->abs.min_y);
+		if (screen_height) {
+			device->abs.y *= screen_height /
+				(device->abs.max_y - device->abs.min_y);
+		}
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MOTION;
 		break;

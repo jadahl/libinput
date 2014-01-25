@@ -68,6 +68,9 @@ struct libinput_device {
 	void *user_data;
 	int terminated;
 	int refcount;
+
+	uint32_t output_width;
+	uint32_t output_height;
 };
 
 typedef void (*libinput_source_dispatch_t)(void *data);
