@@ -119,6 +119,11 @@ enum libinput_touch_type {
  * Event type for events returned by libinput_get_event().
  */
 enum libinput_event_type {
+	/**
+	 * This is not a real event type, and is only used to tell the user that
+	 * no new event is available in the queue. See
+	 * libinput_next_event_type().
+	 */
 	LIBINPUT_EVENT_NONE = 0,
 
 	/**
