@@ -44,6 +44,8 @@ static const char *device;
 static const char *seat = "seat0";
 static struct udev *udev;
 uint32_t start_time;
+static const uint32_t screen_width = 100;
+static const uint32_t screen_height = 100;
 
 static void
 usage(void)
@@ -123,20 +125,9 @@ close_restricted(int fd, void *user_data)
 	close(fd);
 }
 
-static void get_current_screen_dimensions(struct libinput_device *device,
-					  int *width,
-					  int *height,
-					  void *user_data)
-{
-	/* display absdata in % of the screen */
-	*width = 100;
-	*height = 100;
-}
-
 const static struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
-	.get_current_screen_dimensions = get_current_screen_dimensions,
 };
 
 static int
@@ -257,8 +248,10 @@ static void
 print_absmotion_event(struct libinput_event *ev)
 {
 	struct libinput_event_pointer *p = libinput_event_get_pointer_event(ev);
-	li_fixed_t x = libinput_event_pointer_get_absolute_x(p),
-		   y = libinput_event_pointer_get_absolute_y(p);
+	li_fixed_t x = libinput_event_pointer_get_absolute_x_transformed(
+		p, screen_width);
+	li_fixed_t y = libinput_event_pointer_get_absolute_y_transformed(
+		p, screen_height);
 
 	print_event_time(libinput_event_pointer_get_time(p));
 	printf("%6.2f/%6.2f\n",
@@ -318,8 +311,8 @@ static void
 print_touch_event(struct libinput_event *ev)
 {
 	struct libinput_event_touch *t = libinput_event_get_touch_event(ev);
-	li_fixed_t x = libinput_event_touch_get_x(t),
-		   y = libinput_event_touch_get_y(t);
+	li_fixed_t x = libinput_event_touch_get_x_transformed(t, screen_width),
+		   y = libinput_event_touch_get_y_transformed(t, screen_height);
 	const char *type;
 
 	switch (libinput_event_touch_get_touch_type(t)) {

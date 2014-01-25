@@ -146,6 +146,16 @@ int
 evdev_device_has_capability(struct evdev_device *device,
 			    enum libinput_device_capability capability);
 
+li_fixed_t
+evdev_device_transform_x(struct evdev_device *device,
+			 li_fixed_t x,
+			 uint32_t width);
+
+li_fixed_t
+evdev_device_transform_y(struct evdev_device *device,
+			 li_fixed_t y,
+			 uint32_t height);
+
 void
 evdev_device_remove(struct evdev_device *device);
 

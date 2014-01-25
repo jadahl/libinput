@@ -318,20 +318,9 @@ close_restricted(int fd, void *userdata)
 	close(fd);
 }
 
-static void
-get_current_screen_dimensions(struct libinput_device *device,
-			      int *width,
-			      int *height,
-			      void *user_data)
-{
-	*width = 1024;
-	*height = 768;
-}
-
 const struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
-	.get_current_screen_dimensions = get_current_screen_dimensions,
 };
 
 struct litest_device *

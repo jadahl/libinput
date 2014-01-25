@@ -245,6 +245,28 @@ libinput_event_pointer_get_absolute_y(
 	return event->y;
 }
 
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_get_absolute_x_transformed(
+	struct libinput_event_pointer *event,
+	uint32_t width)
+{
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_device_transform_x(device, event->x, width);
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_pointer_get_absolute_y_transformed(
+	struct libinput_event_pointer *event,
+	uint32_t height)
+{
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_device_transform_y(device, event->y, height);
+}
+
 LIBINPUT_EXPORT uint32_t
 libinput_event_pointer_get_button(
 	struct libinput_event_pointer *event)
@@ -292,6 +314,28 @@ libinput_event_touch_get_x(
 	struct libinput_event_touch *event)
 {
 	return event->x;
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_touch_get_x_transformed(
+	struct libinput_event_touch *event,
+	uint32_t width)
+{
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_device_transform_x(device, event->x, width);
+}
+
+LIBINPUT_EXPORT li_fixed_t
+libinput_event_touch_get_y_transformed(
+	struct libinput_event_touch *event,
+	uint32_t height)
+{
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_device_transform_y(device, event->y, height);
 }
 
 LIBINPUT_EXPORT li_fixed_t

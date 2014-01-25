@@ -395,16 +395,19 @@ libinput_event_pointer_get_dy(
 /**
  * @ingroup event_pointer
  *
- * Return the absolute x coordinate of the device, scaled to screen
- * coordinates.
- * The axes' positive direction is device-specific. For pointer events that
- * are not of type LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function
- * returns 0.
+ * Return the current absolute x coordinate of the pointer event.
+ *
+ * The coordinate is in a device specific coordinate space; to get the
+ * corresponding output screen coordinate, use
+ * libinput_event_pointer_get_x_transformed().
+ *
+ * For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
- * @return the current absolute x coordinate scaled to screen coordinates.
+ * @return the current absolute x coordinate
  */
 li_fixed_t
 libinput_event_pointer_get_absolute_x(
@@ -413,19 +416,67 @@ libinput_event_pointer_get_absolute_x(
 /**
  * @ingroup event_pointer
  *
- * Return the absolute y coordinate of the device, scaled to screen coordinates.
- * The axes' positive direction is device-specific. For pointer events that
- * are not of type LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function
- * returns 0.
+ * Return the current absolute y coordinate of the pointer event.
+ *
+ * The coordinate is in a device specific coordinate space; to get the
+ * corresponding output screen coordinate, use
+ * libinput_event_pointer_get_y_transformed().
+ *
+ * For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
- * @return the current absolute y coordinate scaled to screen coordinates.
+ * @return the current absolute y coordinate
  */
 li_fixed_t
 libinput_event_pointer_get_absolute_y(
 	struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
+ * Return the current absolute x coordinate of the pointer event, transformed to
+ * screen coordinates.
+ *
+ * For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this function is
+ * undefined.
+ *
+ * @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ *
+ * @param event The libinput pointer event
+ * @param width The current output screen width
+ * @return the current absolute x coordinate transformed to a screen coordinate
+ */
+li_fixed_t
+libinput_event_pointer_get_absolute_x_transformed(
+	struct libinput_event_pointer *event,
+	uint32_t width);
+
+/**
+ * @ingroup event_pointer
+ *
+ * Return the current absolute y coordinate of the pointer event, transformed to
+ * screen coordinates.
+ *
+ * For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this function is
+ * undefined.
+ *
+ * @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ *
+ * @param event The libinput pointer event
+ * @param height The current output screen height
+ * @return the current absolute y coordinate transformed to a screen coordinate
+ */
+li_fixed_t
+libinput_event_pointer_get_absolute_y_transformed(
+	struct libinput_event_pointer *event,
+	uint32_t height);
 
 /**
  * @ingroup event_pointer
@@ -531,9 +582,16 @@ libinput_event_touch_get_slot(
 /**
  * @ingroup event_touch
  *
+ * Return the current absolute x coordinate of the touch event.
+ *
+ * The coordinate is in a device specific coordinate space; to get the
+ * corresponding output screen coordinate, use
+ * libinput_event_touch_get_x_transformed().
+ *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
- * @return the absolute X coordinate on this touch device, scaled to screen coordinates.
+ * @param event The libinput touch event
+ * @return the current absolute x coordinate
  */
 li_fixed_t
 libinput_event_touch_get_x(
@@ -542,13 +600,52 @@ libinput_event_touch_get_x(
 /**
  * @ingroup event_touch
  *
+ * Return the current absolute y coordinate of the touch event.
+ *
+ * The coordinate is in a device specific coordinate space; to get the
+ * corresponding output screen coordinate, use
+ * libinput_event_touch_get_y_transformed().
+ *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
- * @return the absolute X coordinate on this touch device, scaled to screen coordinates.
+ * @param event The libinput touch event
+ * @return the current absolute y coordinate
  */
 li_fixed_t
 libinput_event_touch_get_y(
 	struct libinput_event_touch *event);
+
+/**
+ * @ingroup event_touch
+ *
+ * Return the current absolute x coordinate of the touch event, transformed to
+ * screen coordinates.
+ *
+ * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ *
+ * @param event The libinput touch event
+ * @param width The current output screen width
+ * @return the current absolute x coordinate transformed to a screen coordinate
+ */
+li_fixed_t
+libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
+				       uint32_t width);
+
+/**
+ * @ingroup event_touch
+ *
+ * Return the current absolute y coordinate of the touch event, transformed to
+ * screen coordinates.
+ *
+ * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ *
+ * @param event The libinput touch event
+ * @param height The current output screen height
+ * @return the current absolute y coordinate transformed to a screen coordinate
+ */
+li_fixed_t
+libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
+				       uint32_t height);
 
 /**
  * @ingroup event_touch
@@ -586,11 +683,6 @@ struct libinput_interface {
 	 * libinput_create_from_udev()
 	 */
 	void (*close_restricted)(int fd, void *user_data);
-
-	void (*get_current_screen_dimensions)(struct libinput_device *device,
-					      int *width,
-					      int *height,
-					      void *user_data);
 };
 
 /**

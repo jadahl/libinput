@@ -86,6 +86,24 @@ transform_absolute(struct evdev_device *device, int32_t *x, int32_t *y)
 	}
 }
 
+li_fixed_t
+evdev_device_transform_x(struct evdev_device *device,
+			 li_fixed_t x,
+			 uint32_t width)
+{
+	return (x - device->abs.min_x) * width /
+		(device->abs.max_x - device->abs.min_x);
+}
+
+li_fixed_t
+evdev_device_transform_y(struct evdev_device *device,
+			 li_fixed_t y,
+			 uint32_t height)
+{
+	return (y - device->abs.min_y) * height /
+		(device->abs.max_y - device->abs.min_y);
+}
+
 static void
 evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 {
@@ -242,16 +260,6 @@ evdev_process_touch(struct evdev_device *device,
 		    struct input_event *e,
 		    uint32_t time)
 {
-	struct libinput *libinput = device->base.seat->libinput;
-	int screen_width;
-	int screen_height;
-
-	libinput->interface->get_current_screen_dimensions(
-		&device->base,
-		&screen_width,
-		&screen_height,
-		libinput->user_data);
-
 	switch (e->code) {
 	case ABS_MT_SLOT:
 		evdev_flush_pending_event(device, time);
@@ -267,16 +275,12 @@ evdev_process_touch(struct evdev_device *device,
 			device->pending_event = EVDEV_ABSOLUTE_MT_UP;
 		break;
 	case ABS_MT_POSITION_X:
-		device->mt.slots[device->mt.slot].x =
-			(e->value - device->abs.min_x) * screen_width /
-			(device->abs.max_x - device->abs.min_x);
+		device->mt.slots[device->mt.slot].x = e->value;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MT_MOTION;
 		break;
 	case ABS_MT_POSITION_Y:
-		device->mt.slots[device->mt.slot].y =
-			(e->value - device->abs.min_y) * screen_height /
-			(device->abs.max_y - device->abs.min_y);
+		device->mt.slots[device->mt.slot].y = e->value;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MT_MOTION;
 		break;
@@ -287,28 +291,14 @@ static inline void
 evdev_process_absolute_motion(struct evdev_device *device,
 			      struct input_event *e)
 {
-	struct libinput *libinput = device->base.seat->libinput;
-	int screen_width;
-	int screen_height;
-
-	libinput->interface->get_current_screen_dimensions(
-		&device->base,
-		&screen_width,
-		&screen_height,
-		libinput->user_data);
-
 	switch (e->code) {
 	case ABS_X:
-		device->abs.x =
-			(e->value - device->abs.min_x) * screen_width /
-			(device->abs.max_x - device->abs.min_x);
+		device->abs.x = e->value;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MOTION;
 		break;
 	case ABS_Y:
-		device->abs.y =
-			(e->value - device->abs.min_y) * screen_height /
-			(device->abs.max_y - device->abs.min_y);
+		device->abs.y = e->value;
 		if (device->pending_event == EVDEV_NONE)
 			device->pending_event = EVDEV_ABSOLUTE_MOTION;
 		break;
