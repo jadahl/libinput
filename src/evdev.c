@@ -586,7 +586,7 @@ evdev_configure_device(struct evdev_device *device)
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
 	if (has_keyboard)
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
-	if (has_touch)
+	if (has_touch && !has_button)
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
 
 	return 0;
