@@ -105,31 +105,43 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 				      device->rel.dy);
 		device->rel.dx = 0;
 		device->rel.dy = 0;
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_MT_DOWN:
+		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+			break;
+
 		touch_notify_touch(base,
 				   time,
 				   slot,
 				   li_fixed_from_int(device->mt.slots[slot].x),
 				   li_fixed_from_int(device->mt.slots[slot].y),
 				   LIBINPUT_TOUCH_TYPE_DOWN);
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_MT_MOTION:
+		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+			break;
+
 		touch_notify_touch(base,
 				   time,
 				   slot,
 				   li_fixed_from_int(device->mt.slots[slot].x),
 				   li_fixed_from_int(device->mt.slots[slot].y),
 				   LIBINPUT_TOUCH_TYPE_MOTION);
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_MT_UP:
+		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+			break;
+
 		touch_notify_touch(base,
 				   time,
 				   slot,
 				   0, 0,
 				   LIBINPUT_TOUCH_TYPE_UP);
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_TOUCH_DOWN:
+		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+			break;
+
 		transform_absolute(device, &cx, &cy);
 		touch_notify_touch(base,
 				   time,
@@ -137,7 +149,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 				   li_fixed_from_int(cx),
 				   li_fixed_from_int(cy),
 				   LIBINPUT_TOUCH_TYPE_DOWN);
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_MOTION:
 		transform_absolute(device, &cx, &cy);
 		if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
@@ -153,17 +165,20 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 						       li_fixed_from_int(cx),
 						       li_fixed_from_int(cy));
 		}
-		goto handled;
+		break;
 	case EVDEV_ABSOLUTE_TOUCH_UP:
+		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+			break;
+
 		touch_notify_touch(base,
 				   time,
 				   0, 0, 0, LIBINPUT_TOUCH_TYPE_UP);
-		goto handled;
+		break;
+	default:
+		assert(0 && "Unknown pending event type");
+		break;
 	}
 
-	assert(0 && "Unknown pending event type");
-
-handled:
 	device->pending_event = EVDEV_NONE;
 }
 
@@ -362,6 +377,9 @@ evdev_process_absolute(struct evdev_device *device,
 static inline int
 evdev_need_touch_frame(struct evdev_device *device)
 {
+	if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
+		return 0;
+
 	switch (device->pending_event) {
 	case EVDEV_NONE:
 	case EVDEV_RELATIVE_MOTION:
@@ -371,11 +389,8 @@ evdev_need_touch_frame(struct evdev_device *device)
 	case EVDEV_ABSOLUTE_MT_UP:
 	case EVDEV_ABSOLUTE_TOUCH_DOWN:
 	case EVDEV_ABSOLUTE_TOUCH_UP:
-		return 1;
 	case EVDEV_ABSOLUTE_MOTION:
-		if (device->seat_caps & EVDEV_DEVICE_TOUCH)
-			return 1;
-		break;
+		return 1;
 	}
 
 	return 0;
