@@ -187,6 +187,28 @@ START_TEST(path_added_device)
 }
 END_TEST
 
+START_TEST(path_device_sysname)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_event *ev;
+	struct libinput_device *device;
+	const char *sysname;
+
+	libinput_dispatch(dev->libinput);
+
+	while ((ev = libinput_get_event(dev->libinput))) {
+		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_DEVICE_ADDED)
+			continue;
+
+		device = libinput_event_get_device(ev);
+		sysname = libinput_device_get_sysname(device);
+		ck_assert(sysname != NULL && strlen(sysname) > 1);
+		ck_assert(strchr(sysname, '/') == NULL);
+		ck_assert_int_eq(strncmp(sysname, "event", 5), 0);
+	}
+}
+END_TEST
+
 START_TEST(path_suspend)
 {
 	struct libinput *li;
@@ -304,6 +326,7 @@ int main (int argc, char **argv) {
 	litest_add("path:suspend", path_double_resume, LITEST_ANY, LITEST_ANY);
 	litest_add("path:seat events", path_added_seat, LITEST_ANY, LITEST_ANY);
 	litest_add("path:device events", path_added_device, LITEST_ANY, LITEST_ANY);
+	litest_add("path:device events", path_device_sysname, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

@@ -294,6 +294,39 @@ START_TEST(udev_suspend_resume)
 }
 END_TEST
 
+START_TEST(udev_device_sysname)
+{
+	struct libinput *li;
+	struct libinput_event *ev;
+	struct libinput_device *device;
+	const char *sysname;
+	struct udev *udev;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_create_from_udev(&simple_interface, NULL, udev, "seat0");
+	ck_assert(li != NULL);
+
+	libinput_dispatch(li);
+
+	while ((ev = libinput_get_event(li))) {
+		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_DEVICE_ADDED)
+			continue;
+
+		device = libinput_event_get_device(ev);
+		sysname = libinput_device_get_sysname(device);
+		ck_assert(sysname != NULL && strlen(sysname) > 1);
+		ck_assert(strchr(sysname, '/') == NULL);
+		ck_assert_int_eq(strncmp(sysname, "event", 5), 0);
+		libinput_event_destroy(ev);
+	}
+
+	libinput_destroy(li);
+	udev_unref(udev);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add_no_device("udev:create", udev_create_NULL);
@@ -305,6 +338,7 @@ int main (int argc, char **argv) {
 	litest_add("udev:suspend", udev_double_suspend, LITEST_ANY, LITEST_ANY);
 	litest_add("udev:suspend", udev_double_resume, LITEST_ANY, LITEST_ANY);
 	litest_add("udev:suspend", udev_suspend_resume, LITEST_ANY, LITEST_ANY);
+	litest_add("udev:device events", udev_device_sysname, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
