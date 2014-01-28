@@ -87,5 +87,6 @@ AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 src/libinput.pc
 		 src/libinput-version.h
-		 test/Makefile])
+		 test/Makefile
+		 tools/Makefile])
 AC_OUTPUT
