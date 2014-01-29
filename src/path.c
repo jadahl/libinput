@@ -136,6 +136,12 @@ path_input_enable(struct libinput *libinput)
 	free(seat_name);
 	free(seat_logical_name);
 
+	if (!seat) {
+		log_info("failed to create seat for device '%s'.\n", devnode);
+		free(sysname);
+		return -1;
+	}
+
 	device = evdev_device_create(&seat->base, devnode, sysname);
 	free(sysname);
 	libinput_seat_unref(&seat->base);
