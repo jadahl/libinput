@@ -130,7 +130,8 @@ path_input_enable(struct libinput *libinput)
 
 	fd = open_restricted(libinput, input->path, O_RDWR|O_NONBLOCK);
 	if (fd < 0) {
-		log_info("opening input device '%s' failed.\n", devnode);
+		log_info("opening input device '%s' failed (%s).\n",
+			 devnode, strerror(-fd));
 		return -1;
 	}
 
