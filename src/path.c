@@ -39,11 +39,24 @@ static void
 path_input_disable(struct libinput *libinput)
 {
 	struct path_input *input = (struct path_input*)libinput;
-	struct evdev_device *device = input->device;
+	struct path_seat *seat, *tmp;
+	struct evdev_device *device, *next;
 
-	if (device) {
-		evdev_device_remove(device);
-		input->device = NULL;
+	list_for_each_safe(seat, tmp, &input->base.seat_list, base.link) {
+		libinput_seat_ref(&seat->base);
+		list_for_each_safe(device, next,
+				   &seat->base.devices_list, base.link) {
+			evdev_device_remove(device);
+			if (list_empty(&seat->base.devices_list)) {
+				/* if the seat may be referenced by the
+				   client, so make sure it's dropped from
+				   the seat list now, to be freed whenever
+				 * the device is removed */
+				list_remove(&seat->base.link);
+				list_init(&seat->base.link);
+			}
+		}
+		libinput_seat_unref(&seat->base);
 	}
 }
 
@@ -70,6 +83,22 @@ path_seat_create(struct path_input *input,
 	list_insert(&input->base.seat_list, &seat->base.link);
 
 	return seat;
+}
+
+static struct path_seat*
+path_seat_get_named(struct path_input *input,
+		    const char *seat_name_physical,
+		    const char *seat_name_logical)
+{
+	struct path_seat *seat;
+
+	list_for_each(seat, &input->base.seat_list, base.link) {
+		if (strcmp(seat->base.physical_name, seat_name_physical) == 0 &&
+		    strcmp(seat->base.logical_name, seat_name_logical) == 0)
+			return seat;
+	}
+
+	return NULL;
 }
 
 static int
@@ -113,48 +142,64 @@ out:
 	return rc;
 }
 
-static int
-path_input_enable(struct libinput *libinput)
+static struct libinput_device *
+path_device_enable(struct path_input *input, const char *devnode)
 {
-	struct path_input *input = (struct path_input*)libinput;
 	struct path_seat *seat;
-	struct evdev_device *device;
-	const char *devnode = input->path;
+	struct evdev_device *device = NULL;
 	char *sysname;
 	char *seat_name, *seat_logical_name;
-
-	if (input->device)
-		return 0;
 
 	if (path_get_udev_properties(devnode, &sysname,
 				     &seat_name, &seat_logical_name) == -1) {
 		log_info("failed to obtain sysname for device '%s'.\n", devnode);
-		return -1;
+		return NULL;
 	}
 
-	seat = path_seat_create(input, seat_name, seat_logical_name);
-	free(seat_name);
-	free(seat_logical_name);
+	seat = path_seat_get_named(input, seat_name, seat_logical_name);
 
-	if (!seat) {
-		log_info("failed to create seat for device '%s'.\n", devnode);
-		free(sysname);
-		return -1;
+	if (seat) {
+		libinput_seat_ref(&seat->base);
+	} else {
+		seat = path_seat_create(input, seat_name, seat_logical_name);
+		if (!seat) {
+			log_info("failed to create seat for device '%s'.\n", devnode);
+			goto out;
+		}
 	}
 
 	device = evdev_device_create(&seat->base, devnode, sysname);
-	free(sysname);
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
+		device = NULL;
 		log_info("not using input device '%s'.\n", devnode);
-		return -1;
+		goto out;
 	} else if (device == NULL) {
 		log_info("failed to create input device '%s'.\n", devnode);
-		return -1;
+		goto out;
 	}
 
-	input->device = device;
+out:
+	free(sysname);
+	free(seat_name);
+	free(seat_logical_name);
+
+	return device ? &device->base : NULL;
+}
+
+static int
+path_input_enable(struct libinput *libinput)
+{
+	struct path_input *input = (struct path_input*)libinput;
+	struct path_device *dev;
+
+	list_for_each(dev, &input->path_list, link) {
+		if (path_device_enable(input, dev->path) == NULL) {
+			path_input_disable(libinput);
+			return -1;
+		}
+	}
 
 	return 0;
 }
@@ -163,7 +208,13 @@ static void
 path_input_destroy(struct libinput *input)
 {
 	struct path_input *path_input = (struct path_input*)input;
-	free(path_input->path);
+	struct path_device *dev, *tmp;
+
+	list_for_each_safe(dev, tmp, &path_input->path_list, link) {
+		free(dev->path);
+		free(dev);
+	}
+
 }
 
 static const struct libinput_interface_backend interface_backend = {
@@ -178,6 +229,7 @@ libinput_create_from_path(const struct libinput_interface *interface,
 			  const char *path)
 {
 	struct path_input *input;
+	struct path_device *dev;
 
 	if (!interface || !path)
 		return NULL;
@@ -186,13 +238,29 @@ libinput_create_from_path(const struct libinput_interface *interface,
 	if (!input)
 		return NULL;
 
-	if (libinput_init(&input->base, interface,
-			  &interface_backend, user_data) != 0) {
+	dev = zalloc(sizeof *dev);
+	if (!dev) {
 		free(input);
 		return NULL;
 	}
 
-	input->path = strdup(path);
+	if (libinput_init(&input->base, interface,
+			  &interface_backend, user_data) != 0) {
+		free(input);
+		free(dev);
+		return NULL;
+	}
+
+	list_init(&input->path_list);
+
+	dev->path = strdup(path);
+	if (!dev->path) {
+		free(input);
+		free(dev);
+		return NULL;
+	}
+
+	list_insert(&input->path_list, &dev->link);
 
 	if (path_input_enable(&input->base) < 0) {
 		libinput_destroy(&input->base);
