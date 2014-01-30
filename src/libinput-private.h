@@ -57,6 +57,7 @@ struct libinput_seat {
 	struct list devices_list;
 	void *user_data;
 	int refcount;
+	uint32_t slot_map;
 	char *physical_name;
 	char *logical_name;
 	libinput_seat_destroy_func destroy;
@@ -155,6 +156,7 @@ void
 touch_notify_touch(struct libinput_device *device,
 		   uint32_t time,
 		   int32_t slot,
+		   int32_t seat_slot,
 		   li_fixed_t x,
 		   li_fixed_t y,
 		   enum libinput_touch_type touch_type);

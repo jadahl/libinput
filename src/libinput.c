@@ -72,6 +72,7 @@ struct libinput_event_touch {
 	struct libinput_event base;
 	uint32_t time;
 	int32_t slot;
+	int32_t seat_slot;
 	li_fixed_t x;
 	li_fixed_t y;
 	enum libinput_touch_type touch_type;
@@ -355,6 +356,12 @@ LIBINPUT_EXPORT int32_t
 libinput_event_touch_get_slot(struct libinput_event_touch *event)
 {
 	return event->slot;
+}
+
+LIBINPUT_EXPORT int32_t
+libinput_event_touch_get_seat_slot(struct libinput_event_touch *event)
+{
+	return event->seat_slot;
 }
 
 LIBINPUT_EXPORT li_fixed_t
@@ -836,6 +843,7 @@ void
 touch_notify_touch(struct libinput_device *device,
 		   uint32_t time,
 		   int32_t slot,
+		   int32_t seat_slot,
 		   li_fixed_t x,
 		   li_fixed_t y,
 		   enum libinput_touch_type touch_type)
@@ -849,6 +857,7 @@ touch_notify_touch(struct libinput_device *device,
 	*touch_event = (struct libinput_event_touch) {
 		.time = time,
 		.slot = slot,
+		.seat_slot = seat_slot,
 		.x = x,
 		.y = y,
 		.touch_type = touch_type,

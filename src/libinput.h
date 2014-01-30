@@ -580,6 +580,22 @@ libinput_event_touch_get_slot(struct libinput_event_touch *event);
 /**
  * @ingroup event_touch
  *
+ * Get the seat slot of the touch event. A seat slot is a non-negative seat
+ * wide unique identifier of an active touch point.
+ *
+ * Events from single touch devices will be represented as one individual
+ * touch point per device.
+ *
+ * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ *
+ * @return The seat slot of the touch event
+ */
+int32_t
+libinput_event_touch_get_seat_slot(struct libinput_event_touch *event);
+
+/**
+ * @ingroup event_touch
+ *
  * Return the current absolute x coordinate of the touch event.
  *
  * The coordinate is in a device specific coordinate space; to get the
