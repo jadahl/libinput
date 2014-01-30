@@ -44,13 +44,11 @@ udev_seat_get_named(struct udev_input *input, const char *seat_name);
 static int
 device_added(struct udev_device *udev_device, struct udev_input *input)
 {
-	struct libinput *libinput = &input->base;
 	struct evdev_device *device;
 	const char *devnode;
 	const char *sysname;
 	const char *device_seat, *seat_name, *output_name;
 	const char *calibration_values;
-	int fd;
 	struct udev_seat *seat;
 
 	device_seat = udev_device_get_property_value(udev_device, "ID_SEAT");
@@ -78,26 +76,13 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 			return -1;
 	}
 
-	/* Use non-blocking mode so that we can loop on read on
-	 * evdev_device_data() until all events on the fd are
-	 * read.  mtdev_get() also expects this. */
-	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
-	if (fd < 0) {
-		log_info("opening input device '%s' failed (%s).\n",
-			 devnode, strerror(-fd));
-		libinput_seat_unref(&seat->base);
-		return 0;
-	}
-
-	device = evdev_device_create(&seat->base, devnode, sysname, fd);
+	device = evdev_device_create(&seat->base, devnode, sysname);
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
-		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
 		return 0;
 	} else if (device == NULL) {
-		close_restricted(libinput, fd);
 		log_info("failed to create input device '%s'.\n", devnode);
 		return 0;
 	}
@@ -169,7 +154,6 @@ static void
 evdev_udev_handler(void *data)
 {
 	struct udev_input *input = data;
-	struct libinput *libinput = &input->base;
 	struct udev_device *udev_device;
 	struct evdev_device *device, *next;
 	const char *action;
@@ -198,7 +182,6 @@ evdev_udev_handler(void *data)
 				if (!strcmp(device->devnode, devnode)) {
 					log_info("input device %s, %s removed\n",
 						 device->devname, device->devnode);
-					close_restricted(libinput, device->fd);
 					evdev_device_remove(device);
 					break;
 				}
@@ -219,7 +202,6 @@ udev_input_remove_devices(struct udev_input *input)
 		libinput_seat_ref(&seat->base);
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
-			close_restricted(&input->base, device->fd);
 			evdev_device_remove(device);
 			if (list_empty(&seat->base.devices_list)) {
 				/* if the seat may be referenced by the

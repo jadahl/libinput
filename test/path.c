@@ -89,7 +89,7 @@ START_TEST(path_create_invalid)
 	li = libinput_create_from_path(&simple_interface, NULL, path);
 	ck_assert(li == NULL);
 
-	ck_assert_int_eq(open_func_count, 1);
+	ck_assert_int_eq(open_func_count, 0);
 	ck_assert_int_eq(close_func_count, 0);
 
 	libinput_destroy(li);

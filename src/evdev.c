@@ -600,12 +600,22 @@ evdev_configure_device(struct evdev_device *device)
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    const char *devnode,
-		    const char *sysname,
-		    int fd)
+		    const char *sysname)
 {
 	struct libinput *libinput = seat->libinput;
 	struct evdev_device *device;
 	char devname[256] = "unknown";
+	int fd;
+
+	/* Use non-blocking mode so that we can loop on read on
+	 * evdev_device_data() until all events on the fd are
+	 * read.  mtdev_get() also expects this. */
+	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
+	if (fd < 0) {
+		log_info("opening input device '%s' failed (%s).\n",
+			 devnode, strerror(-fd));
+		return NULL;
+	}
 
 	device = zalloc(sizeof *device);
 	if (device == NULL)
@@ -655,6 +665,8 @@ evdev_device_create(struct libinput_seat *seat,
 	return device;
 
 err:
+	if (fd >= 0)
+		close_restricted(libinput, fd);
 	evdev_device_destroy(device);
 	return NULL;
 }
@@ -710,7 +722,7 @@ evdev_device_remove(struct evdev_device *device)
 
 	if (device->mtdev)
 		mtdev_close_delete(device->mtdev);
-	close(device->fd);
+	close_restricted(device->base.seat->libinput, device->fd);
 	list_remove(&device->base.link);
 
 	notify_removed_device(&device->base);

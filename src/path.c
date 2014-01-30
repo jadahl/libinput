@@ -42,7 +42,6 @@ path_input_disable(struct libinput *libinput)
 	struct evdev_device *device = input->device;
 
 	if (device) {
-		close_restricted(libinput, device->fd);
 		evdev_device_remove(device);
 		input->device = NULL;
 	}
@@ -122,22 +121,13 @@ path_input_enable(struct libinput *libinput)
 	struct evdev_device *device;
 	const char *devnode = input->path;
 	char *sysname;
-	int fd;
 	char *seat_name, *seat_logical_name;
 
 	if (input->device)
 		return 0;
 
-	fd = open_restricted(libinput, devnode, O_RDWR|O_NONBLOCK);
-	if (fd < 0) {
-		log_info("opening input device '%s' failed (%s).\n",
-			 devnode, strerror(-fd));
-		return -1;
-	}
-
 	if (path_get_udev_properties(devnode, &sysname,
 				     &seat_name, &seat_logical_name) == -1) {
-		close_restricted(libinput, fd);
 		log_info("failed to obtain sysname for device '%s'.\n", devnode);
 		return -1;
 	}
@@ -146,16 +136,14 @@ path_input_enable(struct libinput *libinput)
 	free(seat_name);
 	free(seat_logical_name);
 
-	device = evdev_device_create(&seat->base, devnode, sysname, fd);
+	device = evdev_device_create(&seat->base, devnode, sysname);
 	free(sysname);
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
-		close_restricted(libinput, fd);
 		log_info("not using input device '%s'.\n", devnode);
 		return -1;
 	} else if (device == NULL) {
-		close_restricted(libinput, fd);
 		log_info("failed to create input device '%s'.\n", devnode);
 		return -1;
 	}
