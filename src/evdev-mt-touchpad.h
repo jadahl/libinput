@@ -199,6 +199,7 @@ struct tp_dispatch {
 	enum touchpad_event queued;
 
 	struct {
+		struct libinput_device_config_tap config;
 		bool enabled;
 		struct libinput_timer timer;
 		enum tp_tap_state state;

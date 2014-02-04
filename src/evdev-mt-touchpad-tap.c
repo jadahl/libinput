@@ -467,13 +467,13 @@ tp_tap_handle_event(struct tp_dispatch *tp,
 	struct libinput *libinput = tp->device->base.seat->libinput;
 	enum tp_tap_state current;
 
-	if (!tp->tap.enabled)
-		return;
-
 	current = tp->tap.state;
 
 	switch(tp->tap.state) {
 	case TAP_STATE_IDLE:
+		if (!tp->tap.enabled)
+			break;
+
 		tp_tap_idle_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH:
@@ -612,16 +612,73 @@ tp_tap_handle_timeout(uint64_t time, void *data)
 	}
 }
 
+static int
+tp_tap_config_count(struct libinput_device *device)
+{
+	struct evdev_dispatch *dispatch;
+	struct tp_dispatch *tp;
+
+	dispatch = ((struct evdev_device *) device)->dispatch;
+	tp = container_of(dispatch, tp, base);
+
+	return min(tp->ntouches, 3); /* we only do up to 3 finger tap */
+}
+
+static enum libinput_config_status
+tp_tap_config_set_enabled(struct libinput_device *device, int enabled)
+{
+	struct evdev_dispatch *dispatch;
+	struct tp_dispatch *tp;
+
+	dispatch = ((struct evdev_device *) device)->dispatch;
+	tp = container_of(dispatch, tp, base);
+
+	tp->tap.enabled = enabled;
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static int
+tp_tap_config_is_enabled(struct libinput_device *device)
+{
+	struct evdev_dispatch *dispatch;
+	struct tp_dispatch *tp;
+
+	dispatch = ((struct evdev_device *) device)->dispatch;
+	tp = container_of(dispatch, tp, base);
+
+	return tp->tap.enabled;
+}
+
+static int
+tp_tap_config_get_default(struct libinput_device *device)
+{
+	/**
+	 * Tapping is disabled by default for two reasons:
+	 * * if you don't know that tapping is a thing (or enabled by
+	 *   default), you get spurious mouse events that make the desktop
+	 *   feel buggy.
+	 * * if you do know what tapping is and you want it, you
+	 *   usually know where to enable it, or at least you can search for
+	 *   it.
+	 */
+	return false;
+}
+
 int
 tp_init_tap(struct tp_dispatch *tp)
 {
+	tp->tap.config.count = tp_tap_config_count;
+	tp->tap.config.set_enabled = tp_tap_config_set_enabled;
+	tp->tap.config.get_enabled = tp_tap_config_is_enabled;
+	tp->tap.config.get_default = tp_tap_config_get_default;
+	tp->device->base.config.tap = &tp->tap.config;
+
 	tp->tap.state = TAP_STATE_IDLE;
 
 	libinput_timer_init(&tp->tap.timer,
 			    tp->device->base.seat->libinput,
 			    tp_tap_handle_timeout, tp);
-
-	tp->tap.enabled = 1; /* FIXME */
 
 	return 0;
 }
