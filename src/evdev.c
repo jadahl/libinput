@@ -544,7 +544,7 @@ evdev_configure_device(struct evdev_device *device)
 			if (!TEST_BIT(abs_bits, ABS_MT_SLOT)) {
 				device->mtdev = mtdev_new_open(device->fd);
 				if (!device->mtdev)
-					return 0;
+					return -1;
 				device->mt.slot = device->mtdev->caps.slot.value;
 			} else {
 				ioctl(device->fd, EVIOCGABS(ABS_MT_SLOT),
