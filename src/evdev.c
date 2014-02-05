@@ -668,6 +668,10 @@ err:
 	if (fd >= 0)
 		close_restricted(libinput, fd);
 	evdev_device_destroy(device);
+
+	if (device->seat_caps == 0)
+		return EVDEV_UNHANDLED_DEVICE;
+
 	return NULL;
 }
 
