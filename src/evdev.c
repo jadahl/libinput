@@ -606,6 +606,7 @@ evdev_device_create(struct libinput_seat *seat,
 	struct evdev_device *device;
 	char devname[256] = "unknown";
 	int fd;
+	int unhandled_device = 0;
 
 	/* Use non-blocking mode so that we can loop on read on
 	 * evdev_device_data() until all events on the fd are
@@ -645,6 +646,7 @@ evdev_device_create(struct libinput_seat *seat,
 		goto err;
 
 	if (device->seat_caps == 0) {
+		unhandled_device = 1;
 		goto err;
 	}
 
@@ -668,7 +670,8 @@ err:
 	if (fd >= 0)
 		close_restricted(libinput, fd);
 	evdev_device_destroy(device);
-	return NULL;
+
+	return unhandled_device ? EVDEV_UNHANDLED_DEVICE :  NULL;
 }
 
 int
