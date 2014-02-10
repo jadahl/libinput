@@ -203,14 +203,6 @@ udev_input_remove_devices(struct udev_input *input)
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
 			evdev_device_remove(device);
-			if (list_empty(&seat->base.devices_list)) {
-				/* if the seat may be referenced by the
-				   client, so make sure it's dropped from
-				   the seat list now, to be freed whenever
-				 * the device is removed */
-				list_remove(&seat->base.link);
-				list_init(&seat->base.link);
-			}
 		}
 		libinput_seat_unref(&seat->base);
 	}
@@ -311,7 +303,6 @@ udev_seat_create(struct udev_input *input,
 	libinput_seat_init(&seat->base, &input->base,
 			   device_seat, seat_name,
 			   udev_seat_destroy);
-	list_insert(&input->base.seat_list, &seat->base.link);
 
 	return seat;
 }

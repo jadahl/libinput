@@ -327,6 +327,80 @@ START_TEST(udev_device_sysname)
 }
 END_TEST
 
+START_TEST(udev_seat_recycle)
+{
+	struct udev *udev;
+	struct libinput *li;
+	struct libinput_event *ev;
+	struct libinput_device *device;
+	struct libinput_seat *saved_seat = NULL;
+	struct libinput_seat *seat;
+	int data = 0;
+	int found = 0;
+	void *user_data;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_udev_create_for_seat(&simple_interface, NULL, udev, "seat0");
+	ck_assert(li != NULL);
+
+	libinput_dispatch(li);
+	while ((ev = libinput_get_event(li))) {
+		switch (libinput_event_get_type(ev)) {
+		case LIBINPUT_EVENT_DEVICE_ADDED:
+			if (saved_seat)
+				break;
+
+			device = libinput_event_get_device(ev);
+			ck_assert(device != NULL);
+			saved_seat = libinput_device_get_seat(device);
+			libinput_seat_set_user_data(saved_seat, &data);
+			libinput_seat_ref(saved_seat);
+			break;
+		default:
+			break;
+		}
+
+		libinput_event_destroy(ev);
+	}
+
+	ck_assert(saved_seat != NULL);
+
+	libinput_suspend(li);
+
+	litest_drain_events(li);
+
+	libinput_resume(li);
+
+	libinput_dispatch(li);
+	while ((ev = libinput_get_event(li))) {
+		switch (libinput_event_get_type(ev)) {
+		case LIBINPUT_EVENT_DEVICE_ADDED:
+			device = libinput_event_get_device(ev);
+			ck_assert(device != NULL);
+
+			seat = libinput_device_get_seat(device);
+			user_data = libinput_seat_get_user_data(seat);
+			if (user_data == &data) {
+				found = 1;
+				ck_assert(seat == saved_seat);
+			}
+			break;
+		default:
+			break;
+		}
+
+		libinput_event_destroy(ev);
+	}
+
+	ck_assert(found == 1);
+
+	libinput_destroy(li);
+	udev_unref(udev);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add_no_device("udev:create", udev_create_NULL);
@@ -339,6 +413,7 @@ int main (int argc, char **argv) {
 	litest_add("udev:suspend", udev_double_resume, LITEST_ANY, LITEST_ANY);
 	litest_add("udev:suspend", udev_suspend_resume, LITEST_ANY, LITEST_ANY);
 	litest_add("udev:device events", udev_device_sysname, LITEST_ANY, LITEST_ANY);
+	litest_add("udev:seat", udev_seat_recycle, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

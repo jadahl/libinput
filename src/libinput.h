@@ -1069,6 +1069,11 @@ libinput_device_get_output_name(struct libinput_device *device);
  *
  * Get the seat associated with this input device.
  *
+ * A seat can be uniquely identified by the physical and logical seat name.
+ * There will ever be only one seat instance with a given physical and logical
+ * seat name pair at any given time, but if no external reference is kept, it
+ * may be destroyed if no device belonging to it is left.
+ *
  * @param device A previously obtained device
  * @return The seat this input device belongs to
  */

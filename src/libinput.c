@@ -508,6 +508,7 @@ libinput_seat_init(struct libinput_seat *seat,
 	seat->logical_name = strdup(logical_name);
 	seat->destroy = destroy;
 	list_init(&seat->devices_list);
+	list_insert(&libinput->seat_list, &seat->link);
 }
 
 LIBINPUT_EXPORT void

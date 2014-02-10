@@ -778,6 +778,100 @@ START_TEST(path_add_device_suspend_resume_remove_device)
 }
 END_TEST
 
+START_TEST(path_seat_recycle)
+{
+	struct libinput *li;
+	struct libevdev *evdev;
+	struct libevdev_uinput *uinput;
+	int rc;
+	void *userdata = &rc;
+	struct libinput_event *ev;
+	struct libinput_device *device;
+	struct libinput_seat *saved_seat = NULL;
+	struct libinput_seat *seat;
+	int data = 0;
+	int found = 0;
+	void *user_data;
+
+	evdev = libevdev_new();
+	ck_assert(evdev != NULL);
+
+	libevdev_set_name(evdev, "test device");
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_LEFT, NULL);
+	libevdev_enable_event_code(evdev, EV_KEY, BTN_RIGHT, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_X, NULL);
+	libevdev_enable_event_code(evdev, EV_REL, REL_Y, NULL);
+
+	rc = libevdev_uinput_create_from_device(evdev,
+						LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+	libevdev_free(evdev);
+
+	li = libinput_path_create_context(&simple_interface, userdata);
+	ck_assert(li != NULL);
+
+	device = libinput_path_add_device(li,
+					  libevdev_uinput_get_devnode(uinput));
+	ck_assert(device != NULL);
+
+	libinput_dispatch(li);
+	while ((ev = libinput_get_event(li))) {
+		switch (libinput_event_get_type(ev)) {
+		case LIBINPUT_EVENT_DEVICE_ADDED:
+			if (saved_seat)
+				break;
+
+			device = libinput_event_get_device(ev);
+			ck_assert(device != NULL);
+			saved_seat = libinput_device_get_seat(device);
+			libinput_seat_set_user_data(saved_seat, &data);
+			libinput_seat_ref(saved_seat);
+			break;
+		default:
+			break;
+		}
+
+		libinput_event_destroy(ev);
+	}
+
+	ck_assert(saved_seat != NULL);
+
+	libinput_suspend(li);
+
+	litest_drain_events(li);
+
+	libinput_resume(li);
+
+	libinput_dispatch(li);
+	while ((ev = libinput_get_event(li))) {
+		switch (libinput_event_get_type(ev)) {
+		case LIBINPUT_EVENT_DEVICE_ADDED:
+			device = libinput_event_get_device(ev);
+			ck_assert(device != NULL);
+
+			seat = libinput_device_get_seat(device);
+			user_data = libinput_seat_get_user_data(seat);
+			if (user_data == &data) {
+				found = 1;
+				ck_assert(seat == saved_seat);
+			}
+			break;
+		default:
+			break;
+		}
+
+		libinput_event_destroy(ev);
+	}
+
+	ck_assert(found == 1);
+
+	libinput_destroy(li);
+
+	libevdev_uinput_destroy(uinput);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("path:create", path_create_NULL, LITEST_ANY, LITEST_ANY);
@@ -796,6 +890,8 @@ int main (int argc, char **argv) {
 	litest_add("path:device events", path_add_invalid_path, LITEST_ANY, LITEST_ANY);
 	litest_add("path:device events", path_remove_device, LITEST_ANY, LITEST_ANY);
 	litest_add("path:device events", path_double_remove_device, LITEST_ANY, LITEST_ANY);
+	litest_add("path:seat", path_seat_recycle,
+		   LITEST_DISABLE_DEVICE, LITEST_DISABLE_DEVICE);
 
 	return litest_run(argc, argv);
 }

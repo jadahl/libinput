@@ -49,14 +49,6 @@ path_disable_device(struct libinput *libinput,
 			continue;
 
 		evdev_device_remove(device);
-		if (list_empty(&seat->devices_list)) {
-			/* if the seat may be referenced by the
-			   client, so make sure it's dropped from
-			   the seat list now, to be freed whenever
-			 * the device is removed */
-			list_remove(&seat->link);
-			list_init(&seat->link);
-		}
 		break;
 	}
 }
@@ -97,7 +89,6 @@ path_seat_create(struct path_input *input,
 
 	libinput_seat_init(&seat->base, &input->base, seat_name,
 			   seat_logical_name, path_seat_destroy);
-	list_insert(&input->base.seat_list, &seat->base.link);
 
 	return seat;
 }
