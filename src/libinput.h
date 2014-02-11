@@ -555,12 +555,12 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
 /**
  * @ingroup event_touch
  *
- * Get the currently active slot on this device. See the kernel's multitouch
+ * Get the slot of this touch event. See the kernel's multitouch
  * protocol B documentation for more information.
  *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
- * @return The currently active slot on this multitouch device
+ * @return The slot of this touch event
  */
 uint32_t
 libinput_event_touch_get_slot(struct libinput_event_touch *event);
