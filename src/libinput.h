@@ -323,8 +323,7 @@ libinput_event_get_device_notify_event(struct libinput_event *event);
  * @return The event time for this event
  */
 uint32_t
-libinput_event_keyboard_get_time(
-	struct libinput_event_keyboard *event);
+libinput_event_keyboard_get_time(struct libinput_event_keyboard *event);
 
 /**
  * @ingroup event_keyboard
@@ -332,8 +331,7 @@ libinput_event_keyboard_get_time(
  * @return The keycode that triggered this key event
  */
 uint32_t
-libinput_event_keyboard_get_key(
-	struct libinput_event_keyboard *event);
+libinput_event_keyboard_get_key(struct libinput_event_keyboard *event);
 
 /**
  * @ingroup event_keyboard
@@ -341,8 +339,7 @@ libinput_event_keyboard_get_key(
  * @return The state change of the key
  */
 enum libinput_keyboard_key_state
-libinput_event_keyboard_get_key_state(
-	struct libinput_event_keyboard *event);
+libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event);
 
 /**
  * @defgroup event_pointer Pointer events
@@ -357,8 +354,7 @@ libinput_event_keyboard_get_key_state(
  * @return The event time for this event
  */
 uint32_t
-libinput_event_pointer_get_time(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_time(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -373,8 +369,7 @@ libinput_event_pointer_get_time(
  * @return the relative x movement since the last event
  */
 li_fixed_t
-libinput_event_pointer_get_dx(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -389,8 +384,7 @@ libinput_event_pointer_get_dx(
  * @return the relative y movement since the last event
  */
 li_fixed_t
-libinput_event_pointer_get_dy(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -410,8 +404,7 @@ libinput_event_pointer_get_dy(
  * @return the current absolute x coordinate
  */
 li_fixed_t
-libinput_event_pointer_get_absolute_x(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -431,8 +424,7 @@ libinput_event_pointer_get_absolute_x(
  * @return the current absolute y coordinate
  */
 li_fixed_t
-libinput_event_pointer_get_absolute_y(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -491,8 +483,7 @@ libinput_event_pointer_get_absolute_y_transformed(
  * @return the button triggering this event
  */
 uint32_t
-libinput_event_pointer_get_button(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_button(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -507,8 +498,7 @@ libinput_event_pointer_get_button(
  * @return the button state triggering this event
  */
 enum libinput_pointer_button_state
-libinput_event_pointer_get_button_state(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_button_state(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -523,8 +513,7 @@ libinput_event_pointer_get_button_state(
  * @return the axis triggering this event
  */
 enum libinput_pointer_axis
-libinput_event_pointer_get_axis(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
@@ -547,8 +536,7 @@ libinput_event_pointer_get_axis(
  * @return the axis value of this event
  */
 li_fixed_t
-libinput_event_pointer_get_axis_value(
-	struct libinput_event_pointer *event);
+libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
 
 /**
  * @defgroup event_touch Touch events
@@ -562,8 +550,7 @@ libinput_event_pointer_get_axis_value(
  * @return The event time for this event
  */
 uint32_t
-libinput_event_touch_get_time(
-	struct libinput_event_touch *event);
+libinput_event_touch_get_time(struct libinput_event_touch *event);
 
 /**
  * @ingroup event_touch
@@ -576,8 +563,7 @@ libinput_event_touch_get_time(
  * @return The currently active slot on this multitouch device
  */
 uint32_t
-libinput_event_touch_get_slot(
-	struct libinput_event_touch *event);
+libinput_event_touch_get_slot(struct libinput_event_touch *event);
 
 /**
  * @ingroup event_touch
@@ -594,8 +580,7 @@ libinput_event_touch_get_slot(
  * @return the current absolute x coordinate
  */
 li_fixed_t
-libinput_event_touch_get_x(
-	struct libinput_event_touch *event);
+libinput_event_touch_get_x(struct libinput_event_touch *event);
 
 /**
  * @ingroup event_touch
@@ -612,8 +597,7 @@ libinput_event_touch_get_x(
  * @return the current absolute y coordinate
  */
 li_fixed_t
-libinput_event_touch_get_y(
-	struct libinput_event_touch *event);
+libinput_event_touch_get_y(struct libinput_event_touch *event);
 
 /**
  * @ingroup event_touch
@@ -655,8 +639,7 @@ libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
  * @return the type of touch that occured on the device
  */
 enum libinput_touch_type
-libinput_event_touch_get_touch_type(
-	struct libinput_event_touch *event);
+libinput_event_touch_get_touch_type(struct libinput_event_touch *event);
 
 /**
  * @defgroup base Initialization and manipulation of libinput contexts
@@ -703,9 +686,9 @@ struct libinput_interface {
  */
 struct libinput *
 libinput_udev_create_for_seat(const struct libinput_interface *interface,
-			  void *user_data,
-			  struct udev *udev,
-			  const char *seat_id);
+			      void *user_data,
+			      struct udev *udev,
+			      const char *seat_id);
 
 /**
  * @ingroup base

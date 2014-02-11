@@ -190,57 +190,49 @@ libinput_event_get_device_notify_event(struct libinput_event *event)
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_keyboard_get_time(
-	struct libinput_event_keyboard *event)
+libinput_event_keyboard_get_time(struct libinput_event_keyboard *event)
 {
 	return event->time;
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_keyboard_get_key(
-	struct libinput_event_keyboard *event)
+libinput_event_keyboard_get_key(struct libinput_event_keyboard *event)
 {
 	return event->key;
 }
 
 LIBINPUT_EXPORT enum libinput_keyboard_key_state
-libinput_event_keyboard_get_key_state(
-	struct libinput_event_keyboard *event)
+libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event)
 {
 	return event->state;
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_pointer_get_time(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_time(struct libinput_event_pointer *event)
 {
 	return event->time;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_pointer_get_dx(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_dx(struct libinput_event_pointer *event)
 {
 	return event->x;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_pointer_get_dy(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_dy(struct libinput_event_pointer *event)
 {
 	return event->y;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_pointer_get_absolute_x(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event)
 {
 	return event->x;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_pointer_get_absolute_y(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event)
 {
 	return event->y;
 }
@@ -268,58 +260,50 @@ libinput_event_pointer_get_absolute_y_transformed(
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_pointer_get_button(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_button(struct libinput_event_pointer *event)
 {
 	return event->button;
 }
 
 LIBINPUT_EXPORT enum libinput_pointer_button_state
-libinput_event_pointer_get_button_state(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_button_state(struct libinput_event_pointer *event)
 {
 	return event->state;
 }
 
 LIBINPUT_EXPORT enum libinput_pointer_axis
-libinput_event_pointer_get_axis(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_axis(struct libinput_event_pointer *event)
 {
 	return event->axis;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_pointer_get_axis_value(
-	struct libinput_event_pointer *event)
+libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event)
 {
 	return event->value;
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_touch_get_time(
-	struct libinput_event_touch *event)
+libinput_event_touch_get_time(struct libinput_event_touch *event)
 {
 	return event->time;
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_event_touch_get_slot(
-	struct libinput_event_touch *event)
+libinput_event_touch_get_slot(struct libinput_event_touch *event)
 {
 	return event->slot;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_touch_get_x(
-	struct libinput_event_touch *event)
+libinput_event_touch_get_x(struct libinput_event_touch *event)
 {
 	return event->x;
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_touch_get_x_transformed(
-	struct libinput_event_touch *event,
-	uint32_t width)
+libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
+				       uint32_t width)
 {
 	struct evdev_device *device =
 		(struct evdev_device *) event->base.device;
@@ -328,9 +312,8 @@ libinput_event_touch_get_x_transformed(
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_touch_get_y_transformed(
-	struct libinput_event_touch *event,
-	uint32_t height)
+libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
+				       uint32_t height)
 {
 	struct evdev_device *device =
 		(struct evdev_device *) event->base.device;
@@ -339,15 +322,13 @@ libinput_event_touch_get_y_transformed(
 }
 
 LIBINPUT_EXPORT li_fixed_t
-libinput_event_touch_get_y(
-	struct libinput_event_touch *event)
+libinput_event_touch_get_y(struct libinput_event_touch *event)
 {
 	return event->y;
 }
 
 LIBINPUT_EXPORT enum libinput_touch_type
-libinput_event_touch_get_touch_type(
-	struct libinput_event_touch *event)
+libinput_event_touch_get_touch_type(struct libinput_event_touch *event)
 {
 	return event->touch_type;
 }
