@@ -163,7 +163,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		transform_absolute(device, &cx, &cy);
 		touch_notify_touch(base,
 				   time,
-				   slot,
+				   -1,
 				   li_fixed_from_int(cx),
 				   li_fixed_from_int(cy),
 				   LIBINPUT_TOUCH_TYPE_DOWN);
@@ -173,7 +173,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		if (device->seat_caps & EVDEV_DEVICE_TOUCH) {
 			touch_notify_touch(base,
 					   time,
-					   slot,
+					   -1,
 					   li_fixed_from_int(cx),
 					   li_fixed_from_int(cy),
 					   LIBINPUT_TOUCH_TYPE_DOWN);
@@ -190,7 +190,9 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 
 		touch_notify_touch(base,
 				   time,
-				   0, 0, 0, LIBINPUT_TOUCH_TYPE_UP);
+				   -1,
+				   0, 0,
+				   LIBINPUT_TOUCH_TYPE_UP);
 		break;
 	default:
 		assert(0 && "Unknown pending event type");

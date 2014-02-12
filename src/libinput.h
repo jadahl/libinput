@@ -558,6 +558,9 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
  * Get the slot of this touch event. See the kernel's multitouch
  * protocol B documentation for more information.
  *
+ * If the touch event has no assigned slot, for example if it is from a
+ * single touch device, this function returns -1.
+ *
  * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
  *
  * @return The slot of this touch event
