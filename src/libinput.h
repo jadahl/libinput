@@ -562,7 +562,7 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
  *
  * @return The slot of this touch event
  */
-uint32_t
+int32_t
 libinput_event_touch_get_slot(struct libinput_event_touch *event);
 
 /**

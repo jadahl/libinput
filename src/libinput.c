@@ -71,7 +71,7 @@ struct libinput_event_pointer {
 struct libinput_event_touch {
 	struct libinput_event base;
 	uint32_t time;
-	uint32_t slot;
+	int32_t slot;
 	li_fixed_t x;
 	li_fixed_t y;
 	enum libinput_touch_type touch_type;
@@ -289,7 +289,7 @@ libinput_event_touch_get_time(struct libinput_event_touch *event)
 	return event->time;
 }
 
-LIBINPUT_EXPORT uint32_t
+LIBINPUT_EXPORT int32_t
 libinput_event_touch_get_slot(struct libinput_event_touch *event)
 {
 	return event->slot;
