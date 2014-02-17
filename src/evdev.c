@@ -91,7 +91,7 @@ evdev_device_transform_x(struct evdev_device *device,
 			 li_fixed_t x,
 			 uint32_t width)
 {
-	return (x - li_fixed_from_int(device->abs.min_x)) * width /
+	return ((uint64_t)x - li_fixed_from_int(device->abs.min_x)) * width /
 		(device->abs.max_x - device->abs.min_x + 1);
 }
 
@@ -100,7 +100,7 @@ evdev_device_transform_y(struct evdev_device *device,
 			 li_fixed_t y,
 			 uint32_t height)
 {
-	return (y - li_fixed_from_int(device->abs.min_y)) * height /
+	return ((uint64_t)y - li_fixed_from_int(device->abs.min_y)) * height /
 		(device->abs.max_y - device->abs.min_y + 1);
 }
 
