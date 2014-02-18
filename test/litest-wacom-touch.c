@@ -54,8 +54,8 @@ litest_wacom_touch_touch_down(struct litest_device *d,
 
 	down[0].value = litest_scale(d, ABS_X, x);
 	down[1].value = litest_scale(d, ABS_Y, y);
-	down[5].value = litest_scale(d, ABS_X, x);
-	down[6].value = litest_scale(d, ABS_Y, y);
+	down[4].value = litest_scale(d, ABS_X, x);
+	down[5].value = litest_scale(d, ABS_Y, y);
 
 	ARRAY_FOR_EACH(down, ev)
 		litest_event(d, ev->type, ev->code, ev->value);
