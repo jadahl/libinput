@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <mtdev-plumbing.h>
 #include <assert.h>
+#include <time.h>
 
 #include "libinput.h"
 #include "evdev.h"
@@ -639,6 +640,8 @@ evdev_device_create(struct libinput_seat *seat,
 	rc = libevdev_new_from_fd(fd, &device->evdev);
 	if (rc != 0)
 		return NULL;
+
+	libevdev_set_clock_id(device->evdev, CLOCK_MONOTONIC);
 
 	device->seat_caps = 0;
 	device->is_mt = 0;
