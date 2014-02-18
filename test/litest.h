@@ -41,6 +41,7 @@ enum litest_device_type {
 	LITEST_TRACKPOINT,
 	LITEST_MOUSE,
 	LITEST_WACOM_TOUCH,
+	LITEST_GENERIC_HIGHRES_TOUCH,
 };
 
 enum litest_device_feature {

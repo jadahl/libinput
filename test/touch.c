@@ -62,9 +62,47 @@ START_TEST(touch_frame_events)
 }
 END_TEST
 
-int main (int argc, char **argv) {
+START_TEST(touch_abs_transform)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *libinput = dev->libinput;
+	struct libinput_event *ev;
+	struct libinput_event_touch *tev;
+	li_fixed_t fx, fy;
+	bool tested = false;
 
+	litest_touch_down(dev, 0, 100, 100);
+
+	libinput_dispatch(libinput);
+
+	while ((ev = libinput_get_event(libinput))) {
+		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_TOUCH_TOUCH)
+			continue;
+
+		tev = libinput_event_get_touch_event(ev);
+		if (libinput_event_touch_get_touch_type(tev) !=
+		    LIBINPUT_TOUCH_TYPE_DOWN)
+			continue;
+
+		fx = libinput_event_touch_get_x_transformed(tev, 1920);
+		ck_assert_int_eq(li_fixed_to_int(fx), 1919);
+		fy = libinput_event_touch_get_y_transformed(tev, 720);
+		ck_assert_int_eq(li_fixed_to_int(fy), 719);
+
+		tested = true;
+	}
+
+	ck_assert(tested);
+}
+END_TEST
+
+
+int
+main(int argc, char **argv)
+{
 	litest_add("touch:frame", touch_frame_events, LITEST_TOUCH, LITEST_ANY);
+	litest_add("touch:abs-transform", touch_abs_transform,
+		   LITEST_TOUCH, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
