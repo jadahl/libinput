@@ -153,13 +153,26 @@ pointer_notify_axis(struct libinput_device *device,
 		    li_fixed_t value);
 
 void
-touch_notify_touch(struct libinput_device *device,
-		   uint32_t time,
-		   int32_t slot,
-		   int32_t seat_slot,
-		   li_fixed_t x,
-		   li_fixed_t y,
-		   enum libinput_touch_type touch_type);
+touch_notify_touch_down(struct libinput_device *device,
+			uint32_t time,
+			int32_t slot,
+			int32_t seat_slot,
+			li_fixed_t x,
+			li_fixed_t y);
+
+void
+touch_notify_touch_motion(struct libinput_device *device,
+			  uint32_t time,
+			  int32_t slot,
+			  int32_t seat_slot,
+			  li_fixed_t x,
+			  li_fixed_t y);
+
+void
+touch_notify_touch_up(struct libinput_device *device,
+		      uint32_t time,
+		      int32_t slot,
+		      int32_t seat_slot);
 
 void
 touch_notify_frame(struct libinput_device *device,

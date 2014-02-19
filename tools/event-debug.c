@@ -199,8 +199,17 @@ print_event_header(struct libinput_event *ev)
 	case LIBINPUT_EVENT_POINTER_AXIS:
 		type = "POINTER_AXIS";
 		break;
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
-		type = "TOUCH_TOUCH";
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+		type = "TOUCH_DOWN";
+		break;
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+		type = "TOUCH_MOTION";
+		break;
+	case LIBINPUT_EVENT_TOUCH_UP:
+		type = "TOUCH_UP";
+		break;
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
+		type = "TOUCH_CANCEL";
 		break;
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		type = "TOUCH_FRAME";
@@ -309,7 +318,7 @@ print_axis_event(struct libinput_event *ev)
 }
 
 static void
-print_touch_frame_event(struct libinput_event *ev)
+print_touch_event_without_coords(struct libinput_event *ev)
 {
 	struct libinput_event_touch *t = libinput_event_get_touch_event(ev);
 
@@ -318,26 +327,15 @@ print_touch_frame_event(struct libinput_event *ev)
 }
 
 static void
-print_touch_event(struct libinput_event *ev)
+print_touch_event_with_coords(struct libinput_event *ev)
 {
 	struct libinput_event_touch *t = libinput_event_get_touch_event(ev);
 	li_fixed_t x = libinput_event_touch_get_x_transformed(t, screen_width),
 		   y = libinput_event_touch_get_y_transformed(t, screen_height);
-	const char *type;
-
-	switch (libinput_event_touch_get_touch_type(t)) {
-	case LIBINPUT_TOUCH_TYPE_DOWN: type = "down"; break;
-	case LIBINPUT_TOUCH_TYPE_UP: type = "up"; break;
-	case LIBINPUT_TOUCH_TYPE_MOTION: type = "motion"; break;
-	case LIBINPUT_TOUCH_TYPE_CANCEL: type = "cancel"; break;
-	default:
-		abort();
-	}
 
 	print_event_time(libinput_event_touch_get_time(t));
 
-	printf("%6s %d (%d) %5.2f/%5.2f\n",
-	       type,
+	printf("%d (%d) %5.2f/%5.2f\n",
 	       libinput_event_touch_get_slot(t),
 	       libinput_event_touch_get_seat_slot(t),
 	       li_fixed_to_double(x),
@@ -376,11 +374,20 @@ handle_and_print_events(struct libinput *li)
 		case LIBINPUT_EVENT_POINTER_AXIS:
 			print_axis_event(ev);
 			break;
-		case LIBINPUT_EVENT_TOUCH_TOUCH:
-			print_touch_event(ev);
+		case LIBINPUT_EVENT_TOUCH_DOWN:
+			print_touch_event_with_coords(ev);
+			break;
+		case LIBINPUT_EVENT_TOUCH_MOTION:
+			print_touch_event_with_coords(ev);
+			break;
+		case LIBINPUT_EVENT_TOUCH_UP:
+			print_touch_event_without_coords(ev);
+			break;
+		case LIBINPUT_EVENT_TOUCH_CANCEL:
+			print_touch_event_without_coords(ev);
 			break;
 		case LIBINPUT_EVENT_TOUCH_FRAME:
-			print_touch_frame_event(ev);
+			print_touch_event_without_coords(ev);
 			break;
 		}
 

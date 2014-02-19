@@ -75,7 +75,6 @@ struct libinput_event_touch {
 	int32_t seat_slot;
 	li_fixed_t x;
 	li_fixed_t y;
-	enum libinput_touch_type touch_type;
 };
 
 static void
@@ -177,7 +176,10 @@ libinput_event_get_pointer_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 	case LIBINPUT_EVENT_POINTER_AXIS:
 		return (struct libinput_event_pointer *) event;
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+	case LIBINPUT_EVENT_TOUCH_UP:
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		break;
 	}
@@ -200,7 +202,10 @@ libinput_event_get_keyboard_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 	case LIBINPUT_EVENT_POINTER_AXIS:
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+	case LIBINPUT_EVENT_TOUCH_UP:
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		break;
 	}
@@ -222,7 +227,10 @@ libinput_event_get_touch_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 	case LIBINPUT_EVENT_POINTER_AXIS:
 		break;
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+	case LIBINPUT_EVENT_TOUCH_UP:
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		return (struct libinput_event_touch *) event;
 	}
@@ -244,7 +252,10 @@ libinput_event_get_device_notify_event(struct libinput_event *event)
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 	case LIBINPUT_EVENT_POINTER_AXIS:
-	case LIBINPUT_EVENT_TOUCH_TOUCH:
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+	case LIBINPUT_EVENT_TOUCH_UP:
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
 		break;
 	}
@@ -394,12 +405,6 @@ LIBINPUT_EXPORT li_fixed_t
 libinput_event_touch_get_y(struct libinput_event_touch *event)
 {
 	return event->y;
-}
-
-LIBINPUT_EXPORT enum libinput_touch_type
-libinput_event_touch_get_touch_type(struct libinput_event_touch *event)
-{
-	return event->touch_type;
 }
 
 struct libinput_source *
@@ -840,13 +845,12 @@ pointer_notify_axis(struct libinput_device *device,
 }
 
 void
-touch_notify_touch(struct libinput_device *device,
-		   uint32_t time,
-		   int32_t slot,
-		   int32_t seat_slot,
-		   li_fixed_t x,
-		   li_fixed_t y,
-		   enum libinput_touch_type touch_type)
+touch_notify_touch_down(struct libinput_device *device,
+			uint32_t time,
+			int32_t slot,
+			int32_t seat_slot,
+			li_fixed_t x,
+			li_fixed_t y)
 {
 	struct libinput_event_touch *touch_event;
 
@@ -860,11 +864,60 @@ touch_notify_touch(struct libinput_device *device,
 		.seat_slot = seat_slot,
 		.x = x,
 		.y = y,
-		.touch_type = touch_type,
 	};
 
 	post_device_event(device,
-			  LIBINPUT_EVENT_TOUCH_TOUCH,
+			  LIBINPUT_EVENT_TOUCH_DOWN,
+			  &touch_event->base);
+}
+
+void
+touch_notify_touch_motion(struct libinput_device *device,
+			  uint32_t time,
+			  int32_t slot,
+			  int32_t seat_slot,
+			  li_fixed_t x,
+			  li_fixed_t y)
+{
+	struct libinput_event_touch *touch_event;
+
+	touch_event = zalloc(sizeof *touch_event);
+	if (!touch_event)
+		return;
+
+	*touch_event = (struct libinput_event_touch) {
+		.time = time,
+		.slot = slot,
+		.seat_slot = seat_slot,
+		.x = x,
+		.y = y,
+	};
+
+	post_device_event(device,
+			  LIBINPUT_EVENT_TOUCH_MOTION,
+			  &touch_event->base);
+}
+
+void
+touch_notify_touch_up(struct libinput_device *device,
+		      uint32_t time,
+		      int32_t slot,
+		      int32_t seat_slot)
+{
+	struct libinput_event_touch *touch_event;
+
+	touch_event = zalloc(sizeof *touch_event);
+	if (!touch_event)
+		return;
+
+	*touch_event = (struct libinput_event_touch) {
+		.time = time,
+		.slot = slot,
+		.seat_slot = seat_slot,
+	};
+
+	post_device_event(device,
+			  LIBINPUT_EVENT_TOUCH_UP,
 			  &touch_event->base);
 }
 

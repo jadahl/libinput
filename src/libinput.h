@@ -108,21 +108,6 @@ enum libinput_pointer_axis {
 };
 
 /**
- * @ingroup device
- *
- * Logical touch state of a touch point. A touch point usually follows the
- * sequence down, motion, up, with the number of motion events being zero or
- * greater. If a touch point was used for gesture interpretation internally
- * and will not generate any further events, the touchpoint is cancelled.
- */
-enum libinput_touch_type {
-	LIBINPUT_TOUCH_TYPE_DOWN = 0,
-	LIBINPUT_TOUCH_TYPE_UP = 1,
-	LIBINPUT_TOUCH_TYPE_MOTION = 2,
-	LIBINPUT_TOUCH_TYPE_CANCEL = 4
-};
-
-/**
  * @ingroup base
  *
  * Event type for events returned by libinput_get_event().
@@ -158,7 +143,10 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_POINTER_BUTTON,
 	LIBINPUT_EVENT_POINTER_AXIS,
 
-	LIBINPUT_EVENT_TOUCH_TOUCH = 500,
+	LIBINPUT_EVENT_TOUCH_DOWN = 500,
+	LIBINPUT_EVENT_TOUCH_UP,
+	LIBINPUT_EVENT_TOUCH_MOTION,
+	LIBINPUT_EVENT_TOUCH_CANCEL,
 	/**
 	 * Signals the end of a set of touchpoints at one device sample
 	 * time. This event has no coordinate information attached.
@@ -181,7 +169,9 @@ struct libinput_event_pointer;
  *
  * Touch event representing a touch down, move or up, as well as a touch
  * cancel and touch frame events. Valid event types for this event are @ref
- * LIBINPUT_EVENT_TOUCH_TOUCH and @ref LIBINPUT_EVENT_TOUCH_FRAME.
+ * LIBINPUT_EVENT_TOUCH_DOWN, @ref LIBINPUT_EVENT_TOUCH_MOTION, @ref
+ * LIBINPUT_EVENT_TOUCH_UP, @ref LIBINPUT_EVENT_TOUCH_CANCEL and @ref
+ * LIBINPUT_EVENT_TOUCH_FRAME.
  */
 struct libinput_event_touch;
 
@@ -570,7 +560,8 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
  * If the touch event has no assigned slot, for example if it is from a
  * single touch device, this function returns -1.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should not be called for LIBINPUT_EVENT_TOUCH_CANCEL or
+ * LIBINPUT_EVENT_TOUCH_FRAME.
  *
  * @return The slot of this touch event
  */
@@ -586,7 +577,8 @@ libinput_event_touch_get_slot(struct libinput_event_touch *event);
  * Events from single touch devices will be represented as one individual
  * touch point per device.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should not be called for LIBINPUT_EVENT_TOUCH_CANCEL or
+ * LIBINPUT_EVENT_TOUCH_FRAME.
  *
  * @return The seat slot of the touch event
  */
@@ -602,7 +594,8 @@ libinput_event_touch_get_seat_slot(struct libinput_event_touch *event);
  * corresponding output screen coordinate, use
  * libinput_event_touch_get_x_transformed().
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
+ * LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @return the current absolute x coordinate
@@ -619,7 +612,10 @@ libinput_event_touch_get_x(struct libinput_event_touch *event);
  * corresponding output screen coordinate, use
  * libinput_event_touch_get_y_transformed().
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * For LIBINPUT_EVENT_TOUCH_UP 0 is returned.
+ *
+ * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
+ * LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @return the current absolute y coordinate
@@ -633,7 +629,8 @@ libinput_event_touch_get_y(struct libinput_event_touch *event);
  * Return the current absolute x coordinate of the touch event, transformed to
  * screen coordinates.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
+ * LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @param width The current output screen width
@@ -649,7 +646,8 @@ libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
  * Return the current absolute y coordinate of the touch event, transformed to
  * screen coordinates.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
+ * LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @param height The current output screen height
@@ -658,16 +656,6 @@ libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
 li_fixed_t
 libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
 				       uint32_t height);
-
-/**
- * @ingroup event_touch
- *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_FRAME.
- *
- * @return the type of touch that occured on the device
- */
-enum libinput_touch_type
-libinput_event_touch_get_touch_type(struct libinput_event_touch *event);
 
 /**
  * @defgroup base Initialization and manipulation of libinput contexts
