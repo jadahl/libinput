@@ -336,7 +336,7 @@ print_touch_event(struct libinput_event *ev)
 
 	print_event_time(libinput_event_touch_get_time(t));
 
-	printf("%6s %u %5.2f/%5.2f\n",
+	printf("%6s %d %5.2f/%5.2f\n",
 	       type,
 	       libinput_event_touch_get_slot(t),
 	       li_fixed_to_double(x),
