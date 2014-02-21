@@ -155,8 +155,8 @@ path_device_enable(struct path_input *input, const char *devnode)
 {
 	struct path_seat *seat;
 	struct evdev_device *device = NULL;
-	char *sysname;
-	char *seat_name, *seat_logical_name;
+	char *sysname = NULL;
+	char *seat_name = NULL, *seat_logical_name = NULL;
 
 	if (path_get_udev_properties(devnode, &sysname,
 				     &seat_name, &seat_logical_name) == -1) {
