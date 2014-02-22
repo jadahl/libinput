@@ -451,12 +451,22 @@ litest_create(enum litest_device_type which,
 
 }
 
+struct libinput *
+litest_create_context(void)
+{
+	struct libinput *libinput =
+		libinput_path_create_context(&interface, NULL);
+	ck_assert_notnull(libinput);
+	return libinput;
+}
+
 struct litest_device *
-litest_create_device_with_overrides(enum litest_device_type which,
-				    const char *name_override,
-				    struct input_id *id_override,
-				    const struct input_absinfo *abs_override,
-				    const int *events_override)
+litest_add_device_with_overrides(struct libinput *libinput,
+				 enum litest_device_type which,
+				 const char *name_override,
+				 struct input_id *id_override,
+				 const struct input_absinfo *abs_override,
+				 const int *events_override)
 {
 	struct litest_device *d;
 	int fd;
@@ -477,9 +487,7 @@ litest_create_device_with_overrides(enum litest_device_type which,
 	rc = libevdev_new_from_fd(fd, &d->evdev);
 	ck_assert_int_eq(rc, 0);
 
-	d->libinput = libinput_path_create_context(&interface, NULL);
-	ck_assert(d->libinput != NULL);
-
+	d->libinput = libinput;
 	d->libinput_device = libinput_path_add_device(d->libinput, path);
 	ck_assert(d->libinput_device != NULL);
 	libinput_device_ref(d->libinput_device);
@@ -491,6 +499,24 @@ litest_create_device_with_overrides(enum litest_device_type which,
 		d->interface->max[ABS_Y] = libevdev_get_abs_maximum(d->evdev, ABS_Y);
 	}
 	return d;
+}
+
+struct litest_device *
+litest_create_device_with_overrides(enum litest_device_type which,
+				    const char *name_override,
+				    struct input_id *id_override,
+				    const struct input_absinfo *abs_override,
+				    const int *events_override)
+{
+	struct litest_device *dev =
+		litest_add_device_with_overrides(litest_create_context(),
+						 which,
+						 name_override,
+						 id_override,
+						 abs_override,
+						 events_override);
+	dev->owns_context = true;
+	return dev;
 }
 
 struct litest_device *
@@ -520,7 +546,8 @@ litest_delete_device(struct litest_device *d)
 		return;
 
 	libinput_device_unref(d->libinput_device);
-	libinput_destroy(d->libinput);
+	if (d->owns_context)
+		libinput_destroy(d->libinput);
 	libevdev_free(d->evdev);
 	libevdev_uinput_destroy(d->uinput);
 	memset(d,0, sizeof(*d));

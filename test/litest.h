@@ -61,9 +61,12 @@ struct litest_device {
 	struct libevdev *evdev;
 	struct libevdev_uinput *uinput;
 	struct libinput *libinput;
+	bool owns_context;
 	struct libinput_device *libinput_device;
 	struct litest_device_interface *interface;
 };
+
+struct libinput *litest_create_context(void);
 
 void litest_add(const char *name, void *func,
 		enum litest_device_feature required_feature,
@@ -83,6 +86,14 @@ litest_create_device_with_overrides(enum litest_device_type which,
 				    struct input_id *id_override,
 				    const struct input_absinfo *abs_override,
 				    const int *events_override);
+struct litest_device *
+litest_add_device_with_overrides(struct libinput *libinput,
+				 enum litest_device_type which,
+				 const char *name_override,
+				 struct input_id *id_override,
+				 const struct input_absinfo *abs_override,
+				 const int *events_override);
+
 struct litest_device *litest_current_device(void);
 void litest_delete_device(struct litest_device *d);
 int litest_handle_events(struct litest_device *d);
@@ -117,5 +128,9 @@ struct libevdev_uinput * litest_create_uinput_abs_device(const char *name,
 							 struct input_id *id,
 							 const struct input_absinfo *abs,
 							 ...);
+
+#ifndef ck_assert_notnull
+#define ck_assert_notnull(ptr) ck_assert_ptr_ne(ptr, NULL)
+#endif
 
 #endif /* LITEST_H */
