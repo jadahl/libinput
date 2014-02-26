@@ -8,9 +8,9 @@ m4_define([libinput_version],
 
 AC_INIT([libinput],
         [libinput_version],
-        [http://nobugtracker],
+        [https://bugs.freedesktop.org/enter_bug.cgi?product=Wayland&component=libinput&version=libinput_version],
         [libinput],
-        [http://nohomepage])
+        [http://www.freedesktop.org/wiki/Software/libinput/])
 
 AC_SUBST([LIBINPUT_VERSION_MAJOR], [libinput_major_version])
 AC_SUBST([LIBINPUT_VERSION_MINOR], [libinput_minor_version])
