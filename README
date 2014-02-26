@@ -1,9 +1,19 @@
-This library does processing on input device events while providing an API
-to the the user used for delegating more useful input events.
+libinput
+
+libinput is a library that handles input devices for display servers and other
+applications that need to directly deal with input devices.
+
+It provides device detection, device handling, input device event processing
+and abstraction so minimize the amount of custom input code the user of
+libinput need to provide the common set of functionality that users expect.
 
 Input event processing includes scaling touch coordinates, generating
 pointer events from touchpads, pointer acceleration, etc.
 
-It is based on the input code from the weston Wayland reference compositor.
+libinput originates from weston, the Wayland reference compositor.
 
-It has no other dependencies than libmtdev and supports only evdev devices.
+The source code of libinput can be found at:
+http://cgit.freedesktop.org/wayland/libinput
+
+For more information, visit:
+http://www.freedesktop.org/wiki/Software/libinput/
