@@ -442,7 +442,6 @@ libinput_remove_source(struct libinput *libinput,
 		       struct libinput_source *source)
 {
 	epoll_ctl(libinput->epoll_fd, EPOLL_CTL_DEL, source->fd, NULL);
-	close(source->fd);
 	source->fd = -1;
 	list_insert(&libinput->source_destroy_list, &source->link);
 }

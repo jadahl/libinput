@@ -714,6 +714,7 @@ touchpad_destroy(struct evdev_dispatch *dispatch)
 	struct libinput *libinput = touchpad->device->base.seat->libinput;
 
 	touchpad->filter->interface->destroy(touchpad->filter);
+	close(touchpad->fsm.timer.fd);
 	libinput_remove_source(libinput, touchpad->fsm.timer.source);
 	free(touchpad->fsm.events);
 	free(dispatch);
