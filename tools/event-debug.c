@@ -110,12 +110,6 @@ static int
 open_restricted(const char *path, int flags, void *user_data)
 {
 	int fd = open(path, flags);
-	int clockid = CLOCK_MONOTONIC;
-
-	if (fd >= 0 && ioctl(fd, EVIOCSCLOCKID, &clockid) < 0)
-		fprintf(stderr, "Changing clock on %s failed, timestamps "
-				"will be off\n", path);
-
 	return fd < 0 ? -errno : fd;
 }
 
