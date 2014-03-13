@@ -691,6 +691,13 @@ struct libinput_interface {
  * the given seat ID. New devices or devices removed will appear as events
  * during libinput_dispatch.
  *
+ * libinput_udev_create_for_seat() succeeds even if no input device is
+ * available in this seat, or if devices are available but fail to open in
+ * @ref libinput_interface::open_restricted. Devices that do not have the
+ * minimum capabilities to be recognized as pointer, keyboard or touch
+ * device are ignored. Such devices and those that failed to open
+ * ignored until the next call to libinput_resume().
+ *
  * @param interface The callback interface
  * @param user_data Caller-specific data passed to the various callback
  * interfaces.
