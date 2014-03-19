@@ -57,10 +57,12 @@ struct libinput_seat {
 	struct list devices_list;
 	void *user_data;
 	int refcount;
-	uint32_t slot_map;
+	libinput_seat_destroy_func destroy;
+
 	char *physical_name;
 	char *logical_name;
-	libinput_seat_destroy_func destroy;
+
+	uint32_t slot_map;
 };
 
 struct libinput_device {
