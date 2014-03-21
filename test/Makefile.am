@@ -17,7 +17,7 @@ liblitest_la_SOURCES = \
 	litest-generic-highres-touch.c \
 	litest.c
 
-run_tests = test-udev test-path test-pointer test-touch test-log
+run_tests = test-udev test-path test-pointer test-touch test-log test-touchpad
 build_tests = test-build-linker test-build-pedantic-c99 test-build-std-gnuc90
 
 noinst_PROGRAMS = $(build_tests) $(run_tests)
@@ -47,6 +47,11 @@ test_log_SOURCES = log.c
 test_log_CFLAGS = $(AM_CPPFLAGS)
 test_log_LDADD = $(TEST_LIBS)
 test_log_LDFLAGS = -static
+
+test_touchpad_SOURCES = touchpad.c
+test_touchpad_CFLAGS = $(AM_CPPFLAGS)
+test_touchpad_LDADD = $(TEST_LIBS)
+test_touchpad_LDFLAGS = -static
 
 # build-test only
 test_build_pedantic_c99_SOURCES = build-pedantic.c
