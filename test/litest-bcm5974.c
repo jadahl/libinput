@@ -42,6 +42,8 @@ litest_bcm5974_touch_down(struct litest_device *d,
 	static int tracking_id;
 	struct input_event *ev;
 	struct input_event down[] = {
+		{ .type = EV_KEY, .code = BTN_TOOL_FINGER, .value = 1 },
+		{ .type = EV_KEY, .code = BTN_TOUCH, .value = 1 },
 		{ .type = EV_ABS, .code = ABS_X, .value = x  },
 		{ .type = EV_ABS, .code = ABS_Y, .value = y },
 		{ .type = EV_ABS, .code = ABS_PRESSURE, .value = 30  },
@@ -52,10 +54,10 @@ litest_bcm5974_touch_down(struct litest_device *d,
 		{ .type = EV_SYN, .code = SYN_REPORT, .value = 0 },
 	};
 
-	down[0].value = litest_scale(d, ABS_X, x);
-	down[1].value = litest_scale(d, ABS_Y, y);
-	down[5].value = litest_scale(d, ABS_X, x);
-	down[6].value = litest_scale(d, ABS_Y, y);
+	down[2].value = litest_scale(d, ABS_X, x);
+	down[3].value = litest_scale(d, ABS_Y, y);
+	down[7].value = litest_scale(d, ABS_X, x);
+	down[8].value = litest_scale(d, ABS_Y, y);
 
 	ARRAY_FOR_EACH(down, ev)
 		litest_event(d, ev->type, ev->code, ev->value);
