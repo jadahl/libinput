@@ -23,6 +23,10 @@
 #ifndef LIBINPUT_H
 #define LIBINPUT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <libudev.h>
@@ -1210,5 +1214,9 @@ libinput_device_calibrate(struct libinput_device *device,
 int
 libinput_device_has_capability(struct libinput_device *device,
 			       enum libinput_device_capability capability);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LIBINPUT_H */
