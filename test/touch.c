@@ -167,12 +167,54 @@ START_TEST(touch_many_slots)
 }
 END_TEST
 
+START_TEST(touch_double_touch_down_up)
+{
+	struct libinput *libinput;
+	struct litest_device *dev;
+	struct libinput_event *ev;
+	bool got_down = false;
+	bool got_up = false;
+
+	dev = litest_current_device();
+	libinput = dev->libinput;
+
+	litest_touch_down(dev, 0, 0, 0);
+	litest_touch_down(dev, 0, 0, 0);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 0);
+
+	libinput_dispatch(libinput);
+
+	while ((ev = libinput_get_event(libinput))) {
+		switch (libinput_event_get_type(ev)) {
+		case LIBINPUT_EVENT_TOUCH_DOWN:
+			ck_assert(!got_down);
+			got_down = true;
+			break;
+		case LIBINPUT_EVENT_TOUCH_UP:
+			ck_assert(got_down);
+			ck_assert(!got_up);
+			got_up = true;
+			break;
+		default:
+			break;
+		}
+
+		libinput_dispatch(libinput);
+	}
+
+	ck_assert(got_down);
+	ck_assert(got_up);
+}
+END_TEST
+
 int
 main(int argc, char **argv)
 {
 	litest_add("touch:frame", touch_frame_events, LITEST_TOUCH, LITEST_ANY);
 	litest_add_no_device("touch:abs-transform", touch_abs_transform);
 	litest_add_no_device("touch:many-slots", touch_many_slots);
+	litest_add("touch:double-touch-down-up", touch_double_touch_down_up, LITEST_TOUCH, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
