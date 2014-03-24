@@ -75,6 +75,9 @@ fi
 if test "x$build_tests" = "xyes" -a "x$HAVE_CHECK" = "xno"; then
        AC_MSG_ERROR([Cannot build tests, check is missing])
 fi
+if test "x$build_tests" = "xyes"; then
+	AC_PROG_CXX
+fi
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
 
