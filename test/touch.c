@@ -113,11 +113,66 @@ START_TEST(touch_abs_transform)
 END_TEST
 
 
+START_TEST(touch_many_slots)
+{
+	struct libinput *libinput;
+	struct litest_device *dev;
+	struct libinput_event *ev;
+	int slot;
+	const int num_tps = 100;
+	int slot_count = 0;
+	enum libinput_event_type type;
+
+	struct input_absinfo abs[] = {
+		{ ABS_MT_SLOT, 0, num_tps - 1, 0, 0, 0 },
+		{ .value = -1 },
+	};
+
+	dev = litest_create_device_with_overrides(LITEST_WACOM_TOUCH,
+						  "Multi-touch device",
+						  NULL, abs, NULL);
+	libinput = dev->libinput;
+
+	for (slot = 0; slot < num_tps; ++slot)
+		litest_touch_down(dev, slot, 0, 0);
+	for (slot = 0; slot < num_tps; ++slot)
+		litest_touch_up(dev, slot);
+
+	libinput_dispatch(libinput);
+	while ((ev = libinput_get_event(libinput))) {
+		type = libinput_event_get_type(ev);
+
+		if (type == LIBINPUT_EVENT_TOUCH_DOWN)
+			slot_count++;
+		else if (type == LIBINPUT_EVENT_TOUCH_UP)
+			break;
+
+		libinput_dispatch(libinput);
+	}
+
+	ck_assert_notnull(ev);
+	ck_assert_int_gt(slot_count, 0);
+
+	libinput_dispatch(libinput);
+	do {
+		type = libinput_event_get_type(ev);
+		ck_assert_int_ne(type, LIBINPUT_EVENT_TOUCH_DOWN);
+		if (type == LIBINPUT_EVENT_TOUCH_UP)
+			slot_count--;
+
+		libinput_dispatch(libinput);
+	} while ((ev = libinput_get_event(libinput)));
+
+	ck_assert_int_eq(slot_count, 0);
+}
+END_TEST
+
 int
 main(int argc, char **argv)
 {
 	litest_add("touch:frame", touch_frame_events, LITEST_TOUCH, LITEST_ANY);
 	litest_add_no_device("touch:abs-transform", touch_abs_transform);
+	litest_add_no_device("touch:many-slots", touch_many_slots);
 
 	return litest_run(argc, argv);
 }
