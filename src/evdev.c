@@ -132,6 +132,12 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
 			break;
 
+		if (device->mt.slots[slot].seat_slot != -1) {
+			log_bug("%s: Driver sent multiple touch down for the "
+				"same slot", device->devnode);
+			break;
+		}
+
 		seat_slot = ffs(~seat->slot_map) - 1;
 		device->mt.slots[slot].seat_slot = seat_slot;
 
@@ -162,6 +168,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 			break;
 
 		seat_slot = device->mt.slots[slot].seat_slot;
+		device->mt.slots[slot].seat_slot = -1;
 
 		if (seat_slot == -1)
 			break;
@@ -173,6 +180,12 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 	case EVDEV_ABSOLUTE_TOUCH_DOWN:
 		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
 			break;
+
+		if (device->abs.seat_slot != -1) {
+			log_bug("%s: Driver sent multiple touch down for the "
+				"same slot", device->devnode);
+			break;
+		}
 
 		seat_slot = ffs(~seat->slot_map) - 1;
 		device->abs.seat_slot = seat_slot;
@@ -209,6 +222,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint32_t time)
 			break;
 
 		seat_slot = device->abs.seat_slot;
+		device->abs.seat_slot = -1;
 
 		if (seat_slot == -1)
 			break;
@@ -711,6 +725,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->sysname = strdup(sysname);
 	device->rel.dx = 0;
 	device->rel.dy = 0;
+	device->abs.seat_slot = -1;
 	device->dispatch = NULL;
 	device->fd = fd;
 	device->pending_event = EVDEV_NONE;
