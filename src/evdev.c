@@ -543,6 +543,7 @@ evdev_device_dispatch(void *data)
 static int
 evdev_configure_device(struct evdev_device *device)
 {
+	struct libevdev *evdev = device->evdev;
 	const struct input_absinfo *absinfo;
 	int has_abs, has_rel, has_mt;
 	int has_button, has_keyboard, has_touch;
@@ -555,14 +556,14 @@ evdev_configure_device(struct evdev_device *device)
 	has_keyboard = 0;
 	has_touch = 0;
 
-	if (libevdev_has_event_type(device->evdev, EV_ABS)) {
+	if (libevdev_has_event_type(evdev, EV_ABS)) {
 
-		if ((absinfo = libevdev_get_abs_info(device->evdev, ABS_X))) {
+		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
 			device->abs.min_x = absinfo->minimum;
 			device->abs.max_x = absinfo->maximum;
 			has_abs = 1;
 		}
-		if ((absinfo = libevdev_get_abs_info(device->evdev, ABS_Y))) {
+		if ((absinfo = libevdev_get_abs_info(evdev, ABS_Y))) {
 			device->abs.min_y = absinfo->minimum;
 			device->abs.max_y = absinfo->maximum;
 			has_abs = 1;
@@ -570,19 +571,20 @@ evdev_configure_device(struct evdev_device *device)
                 /* We only handle the slotted Protocol B in weston.
                    Devices with ABS_MT_POSITION_* but not ABS_MT_SLOT
                    require mtdev for conversion. */
-		if (libevdev_has_event_code(device->evdev, EV_ABS, ABS_MT_POSITION_X) &&
-		    libevdev_has_event_code(device->evdev, EV_ABS, ABS_MT_POSITION_Y)) {
-			absinfo = libevdev_get_abs_info(device->evdev, ABS_MT_POSITION_X);
+		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
+		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
+			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
 			device->abs.min_x = absinfo->minimum;
 			device->abs.max_x = absinfo->maximum;
-			absinfo = libevdev_get_abs_info(device->evdev, ABS_MT_POSITION_Y);
+			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
 			device->abs.min_y = absinfo->minimum;
 			device->abs.max_y = absinfo->maximum;
 			device->is_mt = 1;
 			has_touch = 1;
 			has_mt = 1;
 
-			if (!libevdev_has_event_code(device->evdev, EV_ABS, ABS_MT_SLOT)) {
+			if (!libevdev_has_event_code(evdev,
+						     EV_ABS, ABS_MT_SLOT)) {
 				device->mtdev = mtdev_new_open(device->fd);
 				if (!device->mtdev)
 					return -1;
@@ -592,13 +594,13 @@ evdev_configure_device(struct evdev_device *device)
 			}
 		}
 	}
-	if (libevdev_has_event_code(device->evdev, EV_REL, REL_X) ||
-	    libevdev_has_event_code(device->evdev, EV_REL, REL_Y))
+	if (libevdev_has_event_code(evdev, EV_REL, REL_X) ||
+	    libevdev_has_event_code(evdev, EV_REL, REL_Y))
 			has_rel = 1;
 
-	if (libevdev_has_event_type(device->evdev, EV_KEY)) {
-		if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOOL_FINGER) &&
-		    !libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOOL_PEN) &&
+	if (libevdev_has_event_type(evdev, EV_KEY)) {
+		if (libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_FINGER) &&
+		    !libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_PEN) &&
 		    (has_abs || has_mt)) {
 			device->dispatch = evdev_mt_touchpad_create(device);
 			log_info("input device '%s', %s is a touchpad\n",
@@ -607,21 +609,21 @@ evdev_configure_device(struct evdev_device *device)
 		for (i = KEY_ESC; i < KEY_MAX; i++) {
 			if (i >= BTN_MISC && i < KEY_OK)
 				continue;
-			if (libevdev_has_event_code(device->evdev, EV_KEY, i)) {
+			if (libevdev_has_event_code(evdev, EV_KEY, i)) {
 				has_keyboard = 1;
 				break;
 			}
 		}
-		if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOUCH))
+		if (libevdev_has_event_code(evdev, EV_KEY, BTN_TOUCH))
 			has_touch = 1;
 		for (i = BTN_MISC; i < BTN_JOYSTICK; i++) {
-			if (libevdev_has_event_code(device->evdev, EV_KEY, i)) {
+			if (libevdev_has_event_code(evdev, EV_KEY, i)) {
 				has_button = 1;
 				break;
 			}
 		}
 	}
-	if (libevdev_has_event_type(device->evdev, EV_LED))
+	if (libevdev_has_event_type(evdev, EV_LED))
 		has_keyboard = 1;
 
 	if ((has_abs || has_rel) && has_button) {
