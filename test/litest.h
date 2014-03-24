@@ -36,6 +36,7 @@
 enum litest_device_type {
 	LITEST_NO_DEVICE = -1,
 	LITEST_SYNAPTICS_CLICKPAD,
+	LITEST_SYNAPTICS_TOUCHPAD,
 	LITEST_BCM5974,
 	LITEST_KEYBOARD,
 	LITEST_TRACKPOINT,
@@ -54,6 +55,7 @@ enum litest_device_feature {
 	LITEST_POINTER = 1 << 4,
 	LITEST_WHEEL = 1 << 5,
 	LITEST_TOUCH = 1 << 6,
+	LITEST_SINGLE_TOUCH = 1 << 7,
 };
 
 struct litest_device {

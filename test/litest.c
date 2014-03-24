@@ -77,6 +77,7 @@ void litest_generic_device_teardown(void)
 
 extern struct litest_test_device litest_keyboard_device;
 extern struct litest_test_device litest_synaptics_clickpad_device;
+extern struct litest_test_device litest_synaptics_touchpad_device;
 extern struct litest_test_device litest_trackpoint_device;
 extern struct litest_test_device litest_bcm5974_device;
 extern struct litest_test_device litest_mouse_device;
@@ -85,6 +86,7 @@ extern struct litest_test_device litest_generic_highres_touch_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
+	&litest_synaptics_touchpad_device,
 	&litest_keyboard_device,
 	&litest_trackpoint_device,
 	&litest_bcm5974_device,
@@ -423,8 +425,12 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		{ .type = EV_SYN, .code = SYN_REPORT, .value = 0 },
 	};
 
-	ARRAY_FOR_EACH(up, ev)
-		litest_event(d, ev->type, ev->code, ev->value);
+	if (d->interface->touch_up) {
+		d->interface->touch_up(d, slot);
+	} else {
+		ARRAY_FOR_EACH(up, ev)
+			litest_event(d, ev->type, ev->code, ev->value);
+	}
 }
 
 void
