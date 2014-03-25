@@ -1090,3 +1090,27 @@ libinput_device_has_capability(struct libinput_device *device,
 	return evdev_device_has_capability((struct evdev_device *) device,
 					   capability);
 }
+
+LIBINPUT_EXPORT struct libinput_event *
+libinput_event_device_notify_get_base_event(struct libinput_event_device_notify *event)
+{
+	return &event->base;
+}
+
+LIBINPUT_EXPORT struct libinput_event *
+libinput_event_keyboard_get_base_event(struct libinput_event_keyboard *event)
+{
+	return &event->base;
+}
+
+LIBINPUT_EXPORT struct libinput_event *
+libinput_event_pointer_get_base_event(struct libinput_event_pointer *event)
+{
+	return &event->base;
+}
+
+LIBINPUT_EXPORT struct libinput_event *
+libinput_event_touch_get_base_event(struct libinput_event_touch *event)
+{
+	return &event->base;
+}

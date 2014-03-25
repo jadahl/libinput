@@ -275,6 +275,8 @@ libinput_event_get_device(struct libinput_event *event);
  * Return the pointer event that is this input event. If the event type does
  * not match the pointer event types, this function returns NULL.
  *
+ * The inverse of this function is libinput_event_pointer_get_base_event().
+ *
  * @return A pointer event, or NULL for other events
  */
 struct libinput_event_pointer *
@@ -285,6 +287,8 @@ libinput_event_get_pointer_event(struct libinput_event *event);
  *
  * Return the keyboard event that is this input event. If the event type does
  * not match the keyboard event types, this function returns NULL.
+ *
+ * The inverse of this function is libinput_event_keyboard_get_base_event().
  *
  * @return A keyboard event, or NULL for other events
  */
@@ -297,6 +301,8 @@ libinput_event_get_keyboard_event(struct libinput_event *event);
  * Return the touch event that is this input event. If the event type does
  * not match the touch event types, this function returns NULL.
  *
+ * The inverse of this function is libinput_event_touch_get_base_event().
+ *
  * @return A touch event, or NULL for other events
  */
 struct libinput_event_touch *
@@ -308,10 +314,21 @@ libinput_event_get_touch_event(struct libinput_event *event);
  * Return the device event that is this input event. If the event type does
  * not match the device event types, this function returns NULL.
  *
+ * The inverse of this function is
+ * libinput_event_device_notify_get_base_event().
+ *
  * @return A device event, or NULL for other events
  */
 struct libinput_event_device_notify *
 libinput_event_get_device_notify_event(struct libinput_event *event);
+
+/**
+ * @ingroup event
+ *
+ * @return The generic libinput_event of this event
+ */
+struct libinput_event *
+libinput_event_device_notify_get_base_event(struct libinput_event_device_notify *event);
 
 /**
  * @defgroup event_keyboard Keyboard events
@@ -343,6 +360,15 @@ libinput_event_keyboard_get_key(struct libinput_event_keyboard *event);
  */
 enum libinput_keyboard_key_state
 libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event);
+
+
+/**
+ * @ingroup event_keyboard
+ *
+ * @return The generic libinput_event of this event
+ */
+struct libinput_event *
+libinput_event_keyboard_get_base_event(struct libinput_event_keyboard *event);
 
 /**
  * @defgroup event_pointer Pointer events
@@ -542,6 +568,15 @@ li_fixed_t
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
 
 /**
+ * @ingroup event_pointer
+ *
+ * @return The generic libinput_event of this event
+ */
+struct libinput_event *
+libinput_event_pointer_get_base_event(struct libinput_event_pointer *event);
+
+
+/**
  * @defgroup event_touch Touch events
  *
  * Events from absolute touch devices.
@@ -660,6 +695,14 @@ libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
 li_fixed_t
 libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
 				       uint32_t height);
+
+/**
+ * @ingroup event_touch
+ *
+ * @return The generic libinput_event of this event
+ */
+struct libinput_event *
+libinput_event_touch_get_base_event(struct libinput_event_touch *event);
 
 /**
  * @defgroup base Initialization and manipulation of libinput contexts
