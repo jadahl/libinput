@@ -772,7 +772,7 @@ tp_init(struct tp_dispatch *tp,
 	tp->hysteresis.margin_y =
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
 
-	if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT) ||
+	if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE) ||
 	    libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT))
 		tp->buttons.has_buttons = true;
 
