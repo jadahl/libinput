@@ -155,4 +155,7 @@ tp_tap_handle_timeout(struct tp_dispatch *tp, uint32_t time);
 int
 tp_init_tap(struct tp_dispatch *tp);
 
+void
+tp_destroy_tap(struct tp_dispatch *tp);
+
 #endif

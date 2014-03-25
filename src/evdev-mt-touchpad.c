@@ -690,6 +690,8 @@ tp_destroy(struct evdev_dispatch *dispatch)
 	struct tp_dispatch *tp =
 		(struct tp_dispatch*)dispatch;
 
+	tp_destroy_tap(tp);
+
 	if (tp->filter)
 		tp->filter->interface->destroy(tp->filter);
 	free(tp->touches);
@@ -760,6 +762,7 @@ tp_init(struct tp_dispatch *tp,
 
 	tp->base.interface = &tp_interface;
 	tp->device = device;
+	tp->tap.timer_fd = -1;
 
 	if (tp_init_slots(tp, device) != 0)
 		return -1;
