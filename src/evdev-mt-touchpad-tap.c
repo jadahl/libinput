@@ -26,8 +26,10 @@
 #endif
 
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <sys/timerfd.h>
@@ -559,7 +561,7 @@ tp_tap_timeout_handler(void *data)
 		/* This will only happen if the application made the fd
 		 * non-blocking, but this function should only be called
 		 * upon the timeout, so lets continue anyway. */
-		fprintf(stderr, "timerfd read error: %m\n");
+		log_error("timerfd read error: %s\n", strerror(errno));
 
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	now = ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
