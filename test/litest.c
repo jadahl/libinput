@@ -643,7 +643,7 @@ litest_touch_move_to(struct litest_device *d,
 }
 
 void
-litest_click(struct litest_device *d, unsigned int button, bool is_press)
+litest_button_click(struct litest_device *d, unsigned int button, bool is_press)
 {
 
 	struct input_event *ev;
