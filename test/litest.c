@@ -418,7 +418,7 @@ litest_create(enum litest_device_type which,
 		dev++;
 	}
 
-	if (!dev)
+	if (!*dev)
 		ck_abort_msg("Invalid device type %d\n", which);
 
 	d = zalloc(sizeof(*d));
