@@ -600,7 +600,7 @@ evdev_configure_device(struct evdev_device *device)
 		if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOOL_FINGER) &&
 		    !libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOOL_PEN) &&
 		    (has_abs || has_mt)) {
-			device->dispatch = evdev_touchpad_create(device);
+			device->dispatch = evdev_mt_touchpad_create(device);
 		}
 		for (i = KEY_ESC; i < KEY_MAX; i++) {
 			if (i >= BTN_MISC && i < KEY_OK)

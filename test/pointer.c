@@ -186,7 +186,7 @@ END_TEST
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_POINTER, LITEST_ANY);
-	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
 
 	return litest_run(argc, argv);
