@@ -256,6 +256,7 @@ tp_process_absolute_st(struct tp_dispatch *tp,
 		t->x = e->value;
 		t->millis = time;
 		t->dirty = true;
+		tp->queued |= TOUCHPAD_EVENT_MOTION;
 		break;
 	case ABS_Y:
 		t->y = e->value;
