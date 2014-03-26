@@ -76,8 +76,10 @@ START_TEST(touch_abs_transform)
 	libinput_dispatch(libinput);
 
 	while ((ev = libinput_get_event(libinput))) {
-		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_TOUCH_DOWN)
+		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_TOUCH_DOWN) {
+			libinput_event_destroy(ev);
 			continue;
+		}
 
 		tev = libinput_event_get_touch_event(ev);
 		fx = libinput_event_touch_get_x_transformed(tev, 1920);
@@ -86,6 +88,8 @@ START_TEST(touch_abs_transform)
 		ck_assert_int_eq(li_fixed_to_int(fy), 719);
 
 		tested = true;
+
+		libinput_event_destroy(ev);
 	}
 
 	ck_assert(tested);
