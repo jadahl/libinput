@@ -18,7 +18,14 @@ liblitest_la_SOURCES = \
 	litest-wacom-touch.c \
 	litest.c
 
-run_tests = test-udev test-path test-pointer test-touch test-log test-touchpad
+run_tests = \
+	    test-udev \
+	    test-path \
+	    test-pointer \
+	    test-touch \
+	    test-log \
+	    test-touchpad \
+	    test-misc
 build_tests = \
 	test-build-cxx \
 	test-build-linker \
@@ -57,6 +64,11 @@ test_touchpad_SOURCES = touchpad.c
 test_touchpad_CFLAGS = $(AM_CPPFLAGS)
 test_touchpad_LDADD = $(TEST_LIBS)
 test_touchpad_LDFLAGS = -static
+
+test_misc_SOURCES = misc.c
+test_misc_CFLAGS = $(AM_CPPFLAGS)
+test_misc_LDADD = $(TEST_LIBS)
+test_misc_LDFLAGS = -static
 
 # build-test only
 test_build_pedantic_c99_SOURCES = build-pedantic.c
