@@ -98,38 +98,27 @@ static struct litest_device_interface interface = {
 void
 litest_create_synaptics_touchpad(struct litest_device *d)
 {
-	struct libevdev *dev;
 	struct input_absinfo abs[] = {
 		{ ABS_X, 1472, 5472, 75 },
 		{ ABS_Y, 1408, 4448, 129 },
 		{ ABS_PRESSURE, 0, 255, 0 },
 		{ ABS_TOOL_WIDTH, 0, 15, 0 },
+		{ .value = -1 },
 	};
-	struct input_absinfo *a;
-	int rc;
+	struct input_id id = {
+		.bustype = 0x11,
+		.vendor = 0x2,
+		.product = 0x7,
+	};
 
 	d->interface = &interface;
-
-	dev = libevdev_new();
-	ck_assert(dev != NULL);
-
-	libevdev_set_name(dev, "SynPS/2 Synaptics TouchPad");
-	libevdev_set_id_bustype(dev, 0x11);
-	libevdev_set_id_vendor(dev, 0x2);
-	libevdev_set_id_product(dev, 0x7);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_LEFT, NULL);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_RIGHT, NULL);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_TOOL_FINGER, NULL);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_TOUCH, NULL);
-
-	ARRAY_FOR_EACH(abs, a)
-		libevdev_enable_event_code(dev, EV_ABS, a->value, a);
-
-	rc = libevdev_uinput_create_from_device(dev,
-						LIBEVDEV_UINPUT_OPEN_MANAGED,
-						&d->uinput);
-	ck_assert_int_eq(rc, 0);
-	libevdev_free(dev);
+	d->uinput = litest_create_uinput_abs_device("SynPS/2 Synaptics TouchPad", &id,
+						    abs,
+						    EV_KEY, BTN_LEFT,
+						    EV_KEY, BTN_RIGHT,
+						    EV_KEY, BTN_TOOL_FINGER,
+						    EV_KEY, BTN_TOUCH,
+						    -1, -1);
 }
 
 struct litest_test_device litest_synaptics_touchpad_device = {

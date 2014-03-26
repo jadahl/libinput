@@ -40,28 +40,20 @@ static struct litest_device_interface interface = {
 static void
 litest_create_trackpoint(struct litest_device *d)
 {
-	struct libevdev *dev;
-	int rc;
+	struct input_id id = {
+		.bustype = 0x11,
+		.vendor = 0x2,
+		.product = 0xa,
+	};
 
 	d->interface = &interface;
-	dev = libevdev_new();
-	ck_assert(dev != NULL);
-
-	libevdev_set_name(dev, "TPPS/2 IBM TrackPoint");
-	libevdev_set_id_bustype(dev, 0x11);
-	libevdev_set_id_vendor(dev, 0x2);
-	libevdev_set_id_product(dev, 0xa);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_LEFT, NULL);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_RIGHT, NULL);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_MIDDLE, NULL);
-	libevdev_enable_event_code(dev, EV_REL, REL_X, NULL);
-	libevdev_enable_event_code(dev, EV_REL, REL_Y, NULL);
-
-	rc = libevdev_uinput_create_from_device(dev,
-						LIBEVDEV_UINPUT_OPEN_MANAGED,
-						&d->uinput);
-	ck_assert_int_eq(rc, 0);
-	libevdev_free(dev);
+	d->uinput = litest_create_uinput_device("TPPS/2 IBM TrackPoint", &id,
+						EV_KEY, BTN_LEFT,
+						EV_KEY, BTN_RIGHT,
+						EV_KEY, BTN_MIDDLE,
+						EV_REL, REL_X,
+						EV_REL, REL_Y,
+						-1, -1);
 }
 
 struct litest_test_device litest_trackpoint_device = {

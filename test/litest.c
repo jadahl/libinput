@@ -490,3 +490,91 @@ litest_drain_events(struct libinput *li)
 		libinput_dispatch(li);
 	}
 }
+
+static struct libevdev_uinput *
+litest_create_uinput_abs_device_v(const char *name,
+				  struct input_id *id,
+				  const struct input_absinfo *abs,
+				  va_list args)
+{
+	struct libevdev_uinput *uinput;
+	struct libevdev *dev;
+	int type, code;
+	int rc;
+	const struct input_absinfo default_abs = {
+		.value = 0,
+		.minimum = 0,
+		.maximum = 0xffff,
+		.fuzz = 0,
+		.flat = 0,
+		.resolution = 100
+	};
+
+	dev = libevdev_new();
+	ck_assert(dev != NULL);
+
+	libevdev_set_name(dev, name);
+	if (id) {
+		libevdev_set_id_bustype(dev, id->bustype);
+		libevdev_set_id_vendor(dev, id->vendor);
+		libevdev_set_id_product(dev, id->product);
+	}
+
+	while (abs && abs->value != -1) {
+		rc = libevdev_enable_event_code(dev, EV_ABS,
+						abs->value, abs);
+		ck_assert_int_eq(rc, 0);
+		abs++;
+	}
+
+	while ((type = va_arg(args, int)) != -1 &&
+	       (code = va_arg(args, int)) != -1) {
+		if (type == INPUT_PROP_MAX) {
+			rc = libevdev_enable_property(dev, code);
+		} else {
+			if (type != EV_SYN)
+				ck_assert(!libevdev_has_event_code(dev, type, code));
+			rc = libevdev_enable_event_code(dev, type, code,
+							type == EV_ABS ? &default_abs : NULL);
+		}
+		ck_assert_int_eq(rc, 0);
+	}
+
+	rc = libevdev_uinput_create_from_device(dev,
+					        LIBEVDEV_UINPUT_OPEN_MANAGED,
+						&uinput);
+	ck_assert_int_eq(rc, 0);
+
+	libevdev_free(dev);
+
+	return uinput;
+}
+
+struct libevdev_uinput *
+litest_create_uinput_abs_device(const char *name,
+				struct input_id *id,
+				const struct input_absinfo *abs,
+				...)
+{
+	struct libevdev_uinput *uinput;
+	va_list args;
+
+	va_start(args, abs);
+	uinput = litest_create_uinput_abs_device_v(name, id, abs, args);
+	va_end(args);
+
+	return uinput;
+}
+
+struct libevdev_uinput *
+litest_create_uinput_device(const char *name, struct input_id *id, ...)
+{
+	struct libevdev_uinput *uinput;
+	va_list args;
+
+	va_start(args, id);
+	uinput = litest_create_uinput_abs_device_v(name, id, NULL, args);
+	va_end(args);
+
+	return uinput;
+}

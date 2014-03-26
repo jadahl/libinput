@@ -94,7 +94,6 @@ static struct litest_device_interface interface = {
 void
 litest_create_wacom_touch(struct litest_device *d)
 {
-	struct libevdev *dev;
 	struct input_absinfo abs[] = {
 		{ ABS_X, 0, 2776, 75 },
 		{ ABS_Y, 0, 1569, 129 },
@@ -102,30 +101,20 @@ litest_create_wacom_touch(struct litest_device *d)
 		{ ABS_MT_POSITION_X, 0, 2776, 0, 0, 10 },
 		{ ABS_MT_POSITION_Y, 0, 1569, 0, 0, 9 },
 		{ ABS_MT_TRACKING_ID, 0, 65535, 0 },
+		{ .value = -1 },
 	};
-	struct input_absinfo *a;
-	int rc;
+	struct input_id id = {
+		.bustype = 0x3,
+		.vendor = 0x56a,
+		.product = 0xe6,
+	};
 
 	d->interface = &interface;
-
-	dev = libevdev_new();
-	ck_assert(dev != NULL);
-
-	libevdev_set_name(dev, "Wacom ISDv4 E6 Finger");
-	libevdev_set_id_bustype(dev, 0x3);
-	libevdev_set_id_vendor(dev, 0x56a);
-	libevdev_set_id_product(dev, 0xe6);
-	libevdev_enable_event_code(dev, EV_KEY, BTN_TOUCH, NULL);
-	libevdev_enable_property(dev, INPUT_PROP_DIRECT);
-
-	ARRAY_FOR_EACH(abs, a)
-		libevdev_enable_event_code(dev, EV_ABS, a->value, a);
-
-	rc = libevdev_uinput_create_from_device(dev,
-						LIBEVDEV_UINPUT_OPEN_MANAGED,
-						&d->uinput);
-	ck_assert_int_eq(rc, 0);
-	libevdev_free(dev);
+	d->uinput = litest_create_uinput_abs_device("Wacom ISDv4 E6 Finger", &id,
+						    abs,
+						    EV_KEY, BTN_TOUCH,
+						    INPUT_PROP_MAX, INPUT_PROP_DIRECT,
+						    -1, -1);
 }
 
 struct litest_test_device litest_wacom_touch_device = {

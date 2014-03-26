@@ -100,4 +100,12 @@ void litest_button_click(struct litest_device *d,
 			 bool is_press);
 void litest_drain_events(struct libinput *li);
 
+struct libevdev_uinput * litest_create_uinput_device(const char *name,
+						     struct input_id *id,
+						     ...);
+struct libevdev_uinput * litest_create_uinput_abs_device(const char *name,
+							 struct input_id *id,
+							 const struct input_absinfo *abs,
+							 ...);
+
 #endif /* LITEST_H */
