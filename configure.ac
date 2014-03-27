@@ -73,10 +73,15 @@ if test "x$build_tests" = "xauto"; then
 		build_tests="yes"
 	fi
 fi
-if test "x$build_tests" = "xyes" -a "x$HAVE_CHECK" = "xno"; then
-       AC_MSG_ERROR([Cannot build tests, check is missing])
+if test "x$build_tests" = "xyes"; then
+	if test "x$HAVE_CHECK" = "xno"; then
+		AC_MSG_ERROR([Cannot build tests, check is missing])
+	fi
+
+	AC_PATH_PROG(VALGRIND, [valgrind])
 fi
 
+AM_CONDITIONAL(HAVE_VALGRIND, [test "x$VALGRIND" != "x"])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
 
 AC_CONFIG_FILES([Makefile

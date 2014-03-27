@@ -74,4 +74,17 @@ test_build_linker_LDADD = $(top_builddir)/src/libinput.la
 test_build_cxx_SOURCES = build-cxx.cc
 test_build_cxx_CXXFLAGS = -Wall -Wextra -Wno-unused-parameter $(AM_CXXFLAGS)
 
+if HAVE_VALGRIND
+VALGRIND_FLAGS=--leak-check=full \
+	       --quiet \
+	       --error-exitcode=3 \
+	       --suppressions=$(srcdir)/valgrind.suppressions
+
+valgrind:
+	$(MAKE) check-TESTS LOG_COMPILER="$(VALGRIND)" LOG_FLAGS="$(VALGRIND_FLAGS)"
+
+check: valgrind
+
 endif
+endif
+EXTRA_DIST=valgrind.suppressions
