@@ -26,6 +26,7 @@ AM_SILENT_RULES([yes])
 
 # Check for programs
 AC_PROG_CC_C99
+AC_PROG_CXX # Only used by build C++ test
 
 # Initialize libtool
 LT_PREREQ([2.2])
@@ -74,9 +75,6 @@ if test "x$build_tests" = "xauto"; then
 fi
 if test "x$build_tests" = "xyes" -a "x$HAVE_CHECK" = "xno"; then
        AC_MSG_ERROR([Cannot build tests, check is missing])
-fi
-if test "x$build_tests" = "xyes"; then
-	AC_PROG_CXX
 fi
 
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
