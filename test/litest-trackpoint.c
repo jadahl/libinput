@@ -61,6 +61,5 @@ struct litest_test_device litest_trackpoint_device = {
 	.features = LITEST_POINTER | LITEST_BUTTON,
 	.shortname = "trackpoint",
 	.setup = litest_trackpoint_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_trackpoint,
 };

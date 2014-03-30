@@ -119,7 +119,8 @@ litest_add_tcase_for_device(struct suite *suite,
 	t->name = strdup(test_name);
 	t->tc = tcase_create(test_name);
 	list_insert(&suite->tests, &t->node);
-	tcase_add_checked_fixture(t->tc, dev->setup, dev->teardown);
+	tcase_add_checked_fixture(t->tc, dev->setup,
+				  dev->teardown ? dev->teardown : litest_generic_device_teardown);
 	tcase_add_test(t->tc, func);
 	suite_add_tcase(suite->suite, t->tc);
 }

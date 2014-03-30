@@ -131,6 +131,5 @@ struct litest_test_device litest_bcm5974_device = {
 	.features = LITEST_TOUCHPAD | LITEST_CLICKPAD | LITEST_BUTTON,
 	.shortname = "bcm5974",
 	.setup = litest_bcm5974_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_bcm5974,
 };

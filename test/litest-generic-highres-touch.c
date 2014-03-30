@@ -123,6 +123,5 @@ struct litest_test_device litest_generic_highres_touch_device = {
 	.features = LITEST_TOUCH,
 	.shortname = "generic-highres-touch",
 	.setup = litest_generic_highres_touch_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_generic_highres_touch,
 };

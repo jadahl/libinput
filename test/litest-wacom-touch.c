@@ -122,6 +122,5 @@ struct litest_test_device litest_wacom_touch_device = {
 	.features = LITEST_TOUCH,
 	.shortname = "wacom-touch",
 	.setup = litest_wacom_touch_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_wacom_touch,
 };

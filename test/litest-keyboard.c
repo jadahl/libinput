@@ -109,6 +109,5 @@ struct litest_test_device litest_keyboard_device = {
 	.features = LITEST_KEYS,
 	.shortname = "default keyboard",
 	.setup = litest_keyboard_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_keyboard,
 };

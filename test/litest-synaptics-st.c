@@ -126,6 +126,5 @@ struct litest_test_device litest_synaptics_touchpad_device = {
 	.features = LITEST_TOUCHPAD | LITEST_BUTTON | LITEST_SINGLE_TOUCH,
 	.shortname = "synaptics ST",
 	.setup = litest_synaptics_touchpad_setup,
-	.teardown = litest_generic_device_teardown,
 	.create = litest_create_synaptics_touchpad,
 };
