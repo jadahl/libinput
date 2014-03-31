@@ -37,29 +37,31 @@ static void litest_trackpoint_setup(void)
 static struct litest_device_interface interface = {
 };
 
-static void
-litest_create_trackpoint(struct litest_device *d)
-{
-	struct input_id id = {
-		.bustype = 0x11,
-		.vendor = 0x2,
-		.product = 0xa,
-	};
+static struct input_id input_id = {
+	.bustype = 0x11,
+	.vendor = 0x2,
+	.product = 0xa,
+};
 
-	d->interface = &interface;
-	d->uinput = litest_create_uinput_device("TPPS/2 IBM TrackPoint", &id,
-						EV_KEY, BTN_LEFT,
-						EV_KEY, BTN_RIGHT,
-						EV_KEY, BTN_MIDDLE,
-						EV_REL, REL_X,
-						EV_REL, REL_Y,
-						-1, -1);
-}
+static int events[] = {
+	EV_KEY, BTN_LEFT,
+	EV_KEY, BTN_RIGHT,
+	EV_KEY, BTN_MIDDLE,
+	EV_REL, REL_X,
+	EV_REL, REL_Y,
+	-1, -1,
+};
 
 struct litest_test_device litest_trackpoint_device = {
 	.type = LITEST_TRACKPOINT,
 	.features = LITEST_POINTER | LITEST_BUTTON,
 	.shortname = "trackpoint",
 	.setup = litest_trackpoint_setup,
-	.create = litest_create_trackpoint,
+	.interface = &interface,
+
+	.name = "TPPS/2 IBM TrackPoint",
+	.id = &input_id,
+	.absinfo = NULL,
+	.events = events,
+
 };

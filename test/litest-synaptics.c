@@ -100,8 +100,6 @@ struct litest_test_device litest_synaptics_clickpad_device = {
 	.features = LITEST_TOUCHPAD | LITEST_CLICKPAD | LITEST_BUTTON,
 	.shortname = "synaptics",
 	.setup = litest_synaptics_clickpad_setup,
-	.teardown = NULL,
-	.create = NULL,
 	.interface = &interface,
 
 	.name = "SynPS/2 Synaptics TouchPad",
