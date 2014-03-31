@@ -73,6 +73,11 @@ void litest_add_no_device(const char *name, void *func);
 
 int litest_run(int argc, char **argv);
 struct litest_device * litest_create_device(enum litest_device_type which);
+struct libevdev_uinput *
+litest_create_uinput_device_from_description(const char *name,
+					     const struct input_id *id,
+					     const struct input_absinfo *abs,
+					     const int *events);
 struct litest_device *litest_current_device(void);
 void litest_delete_device(struct litest_device *d);
 int litest_handle_events(struct litest_device *d);
