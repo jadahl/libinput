@@ -328,38 +328,148 @@ const struct libinput_interface interface = {
 	.close_restricted = close_restricted,
 };
 
-struct litest_device *
-litest_create_device(enum litest_device_type which)
-{
-	struct litest_device *d = zalloc(sizeof(*d));
-	int fd;
-	int rc;
-	const char *path;
-	struct litest_test_device **dev;
 
-	ck_assert(d != NULL);
+static struct input_absinfo *
+merge_absinfo(const struct input_absinfo *orig,
+	      const struct input_absinfo *override)
+{
+	struct input_absinfo *abs;
+	int nelem, i;
+	size_t sz = ABS_MAX + 1;
+
+	if (!orig)
+		return NULL;
+
+	abs = calloc(sz, sizeof(*abs));
+	ck_assert(abs != NULL);
+
+	nelem = 0;
+	while (orig[nelem].value != -1) {
+		abs[nelem] = orig[nelem];
+		nelem++;
+		ck_assert_int_lt(nelem, sz);
+	}
+
+	/* just append, if the same axis is present twice, libevdev will
+	   only use the last value anyway */
+	i = 0;
+	while (override && override[i].value != -1) {
+		abs[nelem++] = override[i++];
+		ck_assert_int_lt(nelem, sz);
+	}
+
+	ck_assert_int_lt(nelem, sz);
+	abs[nelem].value = -1;
+
+	return abs;
+}
+
+static int*
+merge_events(const int *orig, const int *override)
+{
+	int *events;
+	int nelem, i;
+	size_t sz = KEY_MAX * 3;
+
+	if (!orig)
+		return NULL;
+
+	events = calloc(sz, sizeof(int));
+	ck_assert(events != NULL);
+
+	nelem = 0;
+	while (orig[nelem] != -1) {
+		events[nelem] = orig[nelem];
+		nelem++;
+		ck_assert_int_lt(nelem, sz);
+	}
+
+	/* just append, if the same axis is present twice, libevdev will
+	 * ignore the double definition anyway */
+	i = 0;
+	while (override && override[i] != -1) {
+		events[nelem++] = override[i++];
+		ck_assert_int_le(nelem, sz);
+	}
+
+	ck_assert_int_lt(nelem, sz);
+	events[nelem] = -1;
+
+	return events;
+}
+
+
+static struct litest_device *
+litest_create(enum litest_device_type which,
+	      const char *name_override,
+	      struct input_id *id_override,
+	      const struct input_absinfo *abs_override,
+	      const int *events_override)
+{
+	struct litest_device *d = NULL;
+	struct litest_test_device **dev;
+	const char *name;
+	const struct input_id *id;
+	struct input_absinfo *abs;
+	int *events;
 
 	dev = devices;
 	while (*dev) {
-		if ((*dev)->type == which) {
-			if ((*dev)->create)
-				(*dev)->create(d);
-			else {
-				d->uinput = litest_create_uinput_device_from_description((*dev)->name,
-											 (*dev)->id,
-											 (*dev)->absinfo,
-											 (*dev)->events);
-				d->interface = (*dev)->interface;
-			}
+		if ((*dev)->type == which)
 			break;
-		}
 		dev++;
 	}
 
-	if (!dev) {
+	if (!dev)
 		ck_abort_msg("Invalid device type %d\n", which);
-		return NULL;
+
+	d = zalloc(sizeof(*d));
+	ck_assert(d != NULL);
+
+	/* device has custom create method */
+	if ((*dev)->create) {
+		(*dev)->create(d);
+		if (abs_override || events_override)
+			ck_abort_msg("Custom create cannot"
+				     "be overridden");
+
+		return d;
 	}
+
+	abs = merge_absinfo((*dev)->absinfo, abs_override);
+	events = merge_events((*dev)->events, events_override);
+	name = name_override ? name_override : (*dev)->name;
+	id = id_override ? id_override : (*dev)->id;
+
+	d->uinput = litest_create_uinput_device_from_description(name,
+								 id,
+								 abs,
+								 events);
+	d->interface = (*dev)->interface;
+	free(abs);
+	free(events);
+
+	return d;
+
+}
+
+struct litest_device *
+litest_create_device_with_overrides(enum litest_device_type which,
+				    const char *name_override,
+				    struct input_id *id_override,
+				    const struct input_absinfo *abs_override,
+				    const int *events_override)
+{
+	struct litest_device *d;
+	int fd;
+	int rc;
+	const char *path;
+
+	d = litest_create(which,
+			  name_override,
+			  id_override,
+			  abs_override,
+			  events_override);
 
 	path = libevdev_uinput_get_devnode(d->uinput);
 	ck_assert(path != NULL);
@@ -383,6 +493,12 @@ litest_create_device(enum litest_device_type which)
 		d->interface->max[ABS_Y] = libevdev_get_abs_maximum(d->evdev, ABS_Y);
 	}
 	return d;
+}
+
+struct litest_device *
+litest_create_device(enum litest_device_type which)
+{
+	return litest_create_device_with_overrides(which, NULL, NULL, NULL, NULL);
 }
 
 int
