@@ -22,6 +22,7 @@
 
 #include <config.h>
 
+#include <stdio.h>
 #include <check.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -183,11 +184,95 @@ START_TEST(pointer_scroll_wheel)
 }
 END_TEST
 
+START_TEST(pointer_seat_button_count)
+{
+	const int num_devices = 4;
+	struct litest_device *devices[num_devices];
+	struct libinput *libinput;
+	struct libinput_event *ev;
+	struct libinput_event_pointer *tev;
+	int i;
+	int seat_button_count;
+	int expected_seat_button_count = 0;
+	char device_name[255];
+
+	libinput = litest_create_context();
+	for (i = 0; i < num_devices; ++i) {
+		sprintf(device_name, "Generic mouse (%d)", i);
+		devices[i] = litest_add_device_with_overrides(libinput,
+							      LITEST_MOUSE,
+							      device_name,
+							      NULL, NULL, NULL);
+	}
+
+	for (i = 0; i < num_devices; ++i)
+		litest_button_click(devices[i], BTN_LEFT, true);
+
+	libinput_dispatch(libinput);
+	while ((ev = libinput_get_event(libinput))) {
+		if (libinput_event_get_type(ev) !=
+		    LIBINPUT_EVENT_POINTER_BUTTON) {
+			libinput_dispatch(libinput);
+			continue;
+		}
+
+		tev = libinput_event_get_pointer_event(ev);
+		ck_assert_notnull(tev);
+		ck_assert_int_eq(libinput_event_pointer_get_button(tev),
+				 BTN_LEFT);
+		ck_assert_int_eq(libinput_event_pointer_get_button_state(tev),
+				 LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
+
+		++expected_seat_button_count;
+		seat_button_count =
+			libinput_event_pointer_get_seat_button_count(tev);
+		ck_assert_int_eq(expected_seat_button_count, seat_button_count);
+
+		libinput_dispatch(libinput);
+	}
+
+	ck_assert_int_eq(seat_button_count, num_devices);
+
+	for (i = 0; i < num_devices; ++i)
+		litest_button_click(devices[i], BTN_LEFT, false);
+
+	libinput_dispatch(libinput);
+	while ((ev = libinput_get_event(libinput))) {
+		if (libinput_event_get_type(ev) !=
+		    LIBINPUT_EVENT_POINTER_BUTTON) {
+			libinput_dispatch(libinput);
+			continue;
+		}
+
+		tev = libinput_event_get_pointer_event(ev);
+		ck_assert_notnull(tev);
+		ck_assert_int_eq(libinput_event_pointer_get_button(tev),
+				 BTN_LEFT);
+		ck_assert_int_eq(libinput_event_pointer_get_button_state(tev),
+				 LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+
+		--expected_seat_button_count;
+		seat_button_count =
+			libinput_event_pointer_get_seat_button_count(tev);
+		ck_assert_int_eq(expected_seat_button_count, seat_button_count);
+
+		libinput_dispatch(libinput);
+	}
+
+	ck_assert_int_eq(seat_button_count, 0);
+
+	for (i = 0; i < num_devices; ++i)
+		litest_delete_device(devices[i]);
+	libinput_destroy(libinput);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_POINTER, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
+	litest_add_no_device("pointer:seat button count", pointer_seat_button_count);
 
 	return litest_run(argc, argv);
 }

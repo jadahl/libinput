@@ -19,13 +19,14 @@ liblitest_la_SOURCES = \
 	litest.c
 
 run_tests = \
-	    test-udev \
-	    test-path \
-	    test-pointer \
-	    test-touch \
-	    test-log \
-	    test-touchpad \
-	    test-misc
+	test-udev \
+	test-path \
+	test-pointer \
+	test-touch \
+	test-log \
+	test-touchpad \
+	test-misc \
+	test-keyboard
 build_tests = \
 	test-build-cxx \
 	test-build-linker \
@@ -69,6 +70,11 @@ test_misc_SOURCES = misc.c
 test_misc_CFLAGS = $(AM_CPPFLAGS)
 test_misc_LDADD = $(TEST_LIBS)
 test_misc_LDFLAGS = -static
+
+test_keyboard_SOURCES = keyboard.c
+test_keyboard_CFLAGS = $(AM_CPPFLAGS)
+test_keyboard_LDADD = $(TEST_LIBS)
+test_keyboard_LDFLAGS = -static
 
 # build-test only
 test_build_pedantic_c99_SOURCES = build-pedantic.c

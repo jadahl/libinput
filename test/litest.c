@@ -683,6 +683,12 @@ litest_button_click(struct litest_device *d, unsigned int button, bool is_press)
 		litest_event(d, ev->type, ev->code, ev->value);
 }
 
+void
+litest_keyboard_key(struct litest_device *d, unsigned int key, bool is_press)
+{
+	litest_button_click(d, key, is_press);
+}
+
 int litest_scale(const struct litest_device *d, unsigned int axis, int val)
 {
 	int min, max;
