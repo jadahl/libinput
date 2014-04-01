@@ -287,9 +287,10 @@ print_button_event(struct libinput_event *ev)
 	print_event_time(libinput_event_pointer_get_time(p));
 
 	state = libinput_event_pointer_get_button_state(p);
-	printf("%3d %s\n",
+	printf("%3d %s, seat count: %u\n",
 	       libinput_event_pointer_get_button(p),
-	       state == LIBINPUT_POINTER_BUTTON_STATE_PRESSED ? "pressed" : "released");
+	       state == LIBINPUT_POINTER_BUTTON_STATE_PRESSED ? "pressed" : "released",
+	       libinput_event_pointer_get_seat_button_count(p));
 }
 
 static void

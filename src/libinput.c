@@ -54,6 +54,7 @@ struct libinput_event_keyboard {
 	struct libinput_event base;
 	uint32_t time;
 	uint32_t key;
+	uint32_t seat_key_count;
 	enum libinput_keyboard_key_state state;
 };
 
@@ -63,6 +64,7 @@ struct libinput_event_pointer {
 	li_fixed_t x;
 	li_fixed_t y;
 	uint32_t button;
+	uint32_t seat_button_count;
 	enum libinput_pointer_button_state state;
 	enum libinput_pointer_axis axis;
 	li_fixed_t value;
@@ -282,6 +284,13 @@ libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event)
 }
 
 LIBINPUT_EXPORT uint32_t
+libinput_event_keyboard_get_seat_key_count(
+	struct libinput_event_keyboard *event)
+{
+	return event->seat_key_count;
+}
+
+LIBINPUT_EXPORT uint32_t
 libinput_event_pointer_get_time(struct libinput_event_pointer *event)
 {
 	return event->time;
@@ -343,6 +352,13 @@ LIBINPUT_EXPORT enum libinput_pointer_button_state
 libinput_event_pointer_get_button_state(struct libinput_event_pointer *event)
 {
 	return event->state;
+}
+
+LIBINPUT_EXPORT uint32_t
+libinput_event_pointer_get_seat_button_count(
+	struct libinput_event_pointer *event)
+{
+	return event->seat_button_count;
 }
 
 LIBINPUT_EXPORT enum libinput_pointer_axis
@@ -672,6 +688,48 @@ libinput_dispatch(struct libinput *libinput)
 	return 0;
 }
 
+static uint32_t
+update_seat_key_count(struct libinput_seat *seat,
+		      int32_t key,
+		      enum libinput_keyboard_key_state state)
+{
+	assert(key >= 0 && key <= KEY_MAX);
+
+	switch (state) {
+	case LIBINPUT_KEYBOARD_KEY_STATE_PRESSED:
+		return ++seat->button_count[key];
+	case LIBINPUT_KEYBOARD_KEY_STATE_RELEASED:
+		/* We might not have received the first PRESSED event. */
+		if (seat->button_count[key] == 0)
+			return 0;
+
+		return --seat->button_count[key];
+	}
+
+	return 0;
+}
+
+static uint32_t
+update_seat_button_count(struct libinput_seat *seat,
+			 int32_t button,
+			 enum libinput_pointer_button_state state)
+{
+	assert(button >= 0 && button <= KEY_MAX);
+
+	switch (state) {
+	case LIBINPUT_POINTER_BUTTON_STATE_PRESSED:
+		return ++seat->button_count[button];
+	case LIBINPUT_POINTER_BUTTON_STATE_RELEASED:
+		/* We might not have received the first PRESSED event. */
+		if (seat->button_count[button] == 0)
+			return 0;
+
+		return --seat->button_count[button];
+	}
+
+	return 0;
+}
+
 static void
 init_event_base(struct libinput_event *event,
 		struct libinput_device *device,
@@ -735,15 +793,19 @@ keyboard_notify_key(struct libinput_device *device,
 		    enum libinput_keyboard_key_state state)
 {
 	struct libinput_event_keyboard *key_event;
+	uint32_t seat_key_count;
 
 	key_event = zalloc(sizeof *key_event);
 	if (!key_event)
 		return;
 
+	seat_key_count = update_seat_key_count(device->seat, key, state);
+
 	*key_event = (struct libinput_event_keyboard) {
 		.time = time,
 		.key = key,
 		.state = state,
+		.seat_key_count = seat_key_count,
 	};
 
 	post_device_event(device,
@@ -804,15 +866,21 @@ pointer_notify_button(struct libinput_device *device,
 		      enum libinput_pointer_button_state state)
 {
 	struct libinput_event_pointer *button_event;
+	int32_t seat_button_count;
 
 	button_event = zalloc(sizeof *button_event);
 	if (!button_event)
 		return;
 
+	seat_button_count = update_seat_button_count(device->seat,
+						     button,
+						     state);
+
 	*button_event = (struct libinput_event_pointer) {
 		.time = time,
 		.button = button,
 		.state = state,
+		.seat_button_count = seat_button_count,
 	};
 
 	post_device_event(device,

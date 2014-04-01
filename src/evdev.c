@@ -258,6 +258,9 @@ evdev_process_key(struct evdev_device *device, struct input_event *e, int time)
 	if (e->value == 2)
 		return;
 
+	if (e->code > KEY_MAX)
+		return;
+
 	if (e->code == BTN_TOUCH) {
 		if (!device->is_mt)
 			evdev_process_touch_button(device, time, e->value);
@@ -284,6 +287,11 @@ evdev_process_key(struct evdev_device *device, struct input_event *e, int time)
 		break;
 
 	default:
+		/* Only let KEY_* codes pass through. */
+		if (!(e->code <= KEY_MICMUTE ||
+		      (e->code >= KEY_OK && e->code <= KEY_LIGHTS_TOGGLE)))
+			break;
+
 		keyboard_notify_key(
 			&device->base,
 			time,

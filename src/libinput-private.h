@@ -23,6 +23,8 @@
 #ifndef LIBINPUT_PRIVATE_H
 #define LIBINPUT_PRIVATE_H
 
+#include <linux/input.h>
+
 #include "libinput.h"
 #include "libinput-util.h"
 
@@ -63,6 +65,8 @@ struct libinput_seat {
 	char *logical_name;
 
 	uint32_t slot_map;
+
+	uint32_t button_count[KEY_CNT];
 };
 
 struct libinput_device {

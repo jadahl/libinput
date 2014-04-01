@@ -371,6 +371,22 @@ struct libinput_event *
 libinput_event_keyboard_get_base_event(struct libinput_event_keyboard *event);
 
 /**
+ * @ingroup event_keyboard
+ *
+ * For the key of a LIBINPUT_EVENT_KEYBOARD_KEY event, return the total number
+ * of keys pressed on all devices on the associated seat after the event was
+ * triggered.
+ *
+ " @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_KEYBOARD_KEY. For other events, this function returns 0.
+ *
+ * @return the seat wide pressed key count for the key of this event
+ */
+uint32_t
+libinput_event_keyboard_get_seat_key_count(
+	struct libinput_event_keyboard *event);
+
+/**
  * @defgroup event_pointer Pointer events
  *
  * Pointer events reflect motion, button and scroll events, as well as
@@ -528,6 +544,22 @@ libinput_event_pointer_get_button(struct libinput_event_pointer *event);
  */
 enum libinput_pointer_button_state
 libinput_event_pointer_get_button_state(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
+ * For the button of a LIBINPUT_EVENT_POINTER_BUTTON event, return the total
+ * number of buttons pressed on all devices on the associated seat after the
+ * the event was triggered.
+ *
+ " @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_BUTTON. For other events, this function returns 0.
+ *
+ * @return the seat wide pressed button count for the key of this event
+ */
+uint32_t
+libinput_event_pointer_get_seat_button_count(
+	struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer
