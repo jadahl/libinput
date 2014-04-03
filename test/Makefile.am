@@ -16,7 +16,6 @@ liblitest_la_SOURCES = \
 	litest-synaptics-st.c \
 	litest-trackpoint.c \
 	litest-wacom-touch.c \
-	litest-generic-highres-touch.c \
 	litest.c
 
 run_tests = test-udev test-path test-pointer test-touch test-log test-touchpad

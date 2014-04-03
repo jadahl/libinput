@@ -64,12 +64,26 @@ END_TEST
 
 START_TEST(touch_abs_transform)
 {
-	struct litest_device *dev = litest_current_device();
-	struct libinput *libinput = dev->libinput;
+	struct litest_device *dev;
+	struct libinput *libinput;
 	struct libinput_event *ev;
 	struct libinput_event_touch *tev;
 	li_fixed_t fx, fy;
 	bool tested = false;
+
+	struct input_absinfo abs[] = {
+		{ ABS_X, 0, 32767, 75, 0, 0 },
+		{ ABS_Y, 0, 32767, 129, 0, 0 },
+		{ ABS_MT_POSITION_X, 0, 32767, 0, 0, 10 },
+		{ ABS_MT_POSITION_Y, 0, 32767, 0, 0, 9 },
+		{ .value = -1 },
+	};
+
+	dev = litest_create_device_with_overrides(LITEST_WACOM_TOUCH,
+						  "Highres touch device",
+						  NULL, abs, NULL);
+
+	libinput = dev->libinput;
 
 	litest_touch_down(dev, 0, 100, 100);
 
@@ -101,8 +115,7 @@ int
 main(int argc, char **argv)
 {
 	litest_add("touch:frame", touch_frame_events, LITEST_TOUCH, LITEST_ANY);
-	litest_add("touch:abs-transform", touch_abs_transform,
-		   LITEST_TOUCH, LITEST_ANY);
+	litest_add_no_device("touch:abs-transform", touch_abs_transform);
 
 	return litest_run(argc, argv);
 }

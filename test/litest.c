@@ -82,7 +82,6 @@ extern struct litest_test_device litest_trackpoint_device;
 extern struct litest_test_device litest_bcm5974_device;
 extern struct litest_test_device litest_mouse_device;
 extern struct litest_test_device litest_wacom_touch_device;
-extern struct litest_test_device litest_generic_highres_touch_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -92,7 +91,6 @@ struct litest_test_device* devices[] = {
 	&litest_bcm5974_device,
 	&litest_mouse_device,
 	&litest_wacom_touch_device,
-	&litest_generic_highres_touch_device,
 	NULL,
 };
 
