@@ -142,6 +142,7 @@ tp_button_set_state(struct tp_dispatch *tp, struct tp_touch *t,
 		break;
 	case BUTTON_STATE_AREA:
 		t->button.curr = BUTTON_EVENT_IN_AREA;
+		tp_set_pointer(tp, t);
 		break;
 	case BUTTON_STATE_BOTTOM:
 		break;
@@ -597,4 +598,10 @@ tp_post_button_events(struct tp_dispatch *tp, uint32_t time)
 
 
 	return rc;
+}
+
+int
+tp_button_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	return t->button.state == BUTTON_STATE_AREA;
 }

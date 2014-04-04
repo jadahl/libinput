@@ -200,6 +200,9 @@ struct tp_dispatch {
 void
 tp_get_delta(struct tp_touch *t, double *dx, double *dy);
 
+void
+tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
+
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint32_t time);
 
@@ -228,5 +231,8 @@ tp_post_button_events(struct tp_dispatch *tp, uint32_t time);
 
 int
 tp_button_handle_state(struct tp_dispatch *tp, uint32_t time);
+
+int
+tp_button_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
 
 #endif
