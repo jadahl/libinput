@@ -51,7 +51,7 @@ static double
 tp_accel_profile(struct motion_filter *filter,
 		 void *data,
 		 double velocity,
-		 uint32_t time)
+		 uint64_t time)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch *) data;
@@ -80,7 +80,7 @@ tp_motion_history_offset(struct tp_touch *t, int offset)
 
 static void
 tp_filter_motion(struct tp_dispatch *tp,
-	         double *dx, double *dy, uint32_t time)
+	         double *dx, double *dy, uint64_t time)
 {
 	struct motion_params motion;
 
@@ -206,7 +206,7 @@ tp_get_delta(struct tp_touch *t, double *dx, double *dy)
 static void
 tp_process_absolute(struct tp_dispatch *tp,
 		    const struct input_event *e,
-		    uint32_t time)
+		    uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 
@@ -238,7 +238,7 @@ tp_process_absolute(struct tp_dispatch *tp,
 static void
 tp_process_absolute_st(struct tp_dispatch *tp,
 		       const struct input_event *e,
-		       uint32_t time)
+		       uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 
@@ -261,7 +261,7 @@ tp_process_absolute_st(struct tp_dispatch *tp,
 static void
 tp_process_fake_touch(struct tp_dispatch *tp,
 		      const struct input_event *e,
-		      uint32_t time)
+		      uint64_t time)
 {
 	struct tp_touch *t;
 	unsigned int fake_touches;
@@ -309,7 +309,7 @@ tp_process_fake_touch(struct tp_dispatch *tp,
 static void
 tp_process_key(struct tp_dispatch *tp,
 	       const struct input_event *e,
-	       uint32_t time)
+	       uint64_t time)
 {
 	switch (e->code) {
 		case BTN_LEFT:
@@ -381,7 +381,7 @@ tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t)
 }
 
 static void
-tp_process_state(struct tp_dispatch *tp, uint32_t time)
+tp_process_state(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	struct tp_touch *first = tp_get_touch(tp, 0);
@@ -415,7 +415,7 @@ tp_process_state(struct tp_dispatch *tp, uint32_t time)
 }
 
 static void
-tp_post_process_state(struct tp_dispatch *tp, uint32_t time)
+tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 
@@ -438,7 +438,7 @@ tp_post_process_state(struct tp_dispatch *tp, uint32_t time)
 }
 
 static void
-tp_post_twofinger_scroll(struct tp_dispatch *tp, uint32_t time)
+tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	int nchanged = 0;
@@ -497,7 +497,7 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint32_t time)
 }
 
 static int
-tp_post_scroll_events(struct tp_dispatch *tp, uint32_t time)
+tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	int nfingers_down = 0;
@@ -533,7 +533,7 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint32_t time)
 }
 
 static void
-tp_post_events(struct tp_dispatch *tp, uint32_t time)
+tp_post_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 	double dx, dy;
@@ -574,7 +574,7 @@ static void
 tp_process(struct evdev_dispatch *dispatch,
 	   struct evdev_device *device,
 	   struct input_event *e,
-	   uint32_t time)
+	   uint64_t time)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch *)dispatch;
