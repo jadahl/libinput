@@ -107,6 +107,8 @@ START_TEST(touch_abs_transform)
 	}
 
 	ck_assert(tested);
+
+	litest_delete_device(dev);
 }
 END_TEST
 
