@@ -601,6 +601,8 @@ evdev_configure_device(struct evdev_device *device)
 		    !libevdev_has_event_code(device->evdev, EV_KEY, BTN_TOOL_PEN) &&
 		    (has_abs || has_mt)) {
 			device->dispatch = evdev_mt_touchpad_create(device);
+			log_info("input device '%s', %s is a touchpad\n",
+				 device->devname, device->devnode);
 		}
 		for (i = KEY_ESC; i < KEY_MAX; i++) {
 			if (i >= BTN_MISC && i < KEY_OK)
@@ -622,12 +624,24 @@ evdev_configure_device(struct evdev_device *device)
 	if (libevdev_has_event_type(device->evdev, EV_LED))
 		has_keyboard = 1;
 
-	if ((has_abs || has_rel) && has_button)
+	if ((has_abs || has_rel) && has_button) {
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
-	if (has_keyboard)
+		log_info("input device '%s', %s is a pointer caps =%s%s%s\n",
+			 device->devname, device->devnode,
+			 has_abs ? " absolute-motion" : "",
+			 has_rel ? " relative-motion": "",
+			 has_button ? " button" : "");
+	}
+	if (has_keyboard) {
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
-	if (has_touch && !has_button)
+		log_info("input device '%s', %s is a keyboard\n",
+			 device->devname, device->devnode);
+	}
+	if (has_touch && !has_button) {
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
+		log_info("input device '%s', %s is a touch device\n",
+			 device->devname, device->devnode);
+	}
 
 	return 0;
 }
