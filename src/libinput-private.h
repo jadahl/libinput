@@ -80,6 +80,7 @@ struct libinput_source;
 #define log_debug(...) log_msg(LIBINPUT_LOG_PRIORITY_DEBUG, __VA_ARGS__)
 #define log_info(...) log_msg(LIBINPUT_LOG_PRIORITY_INFO, __VA_ARGS__)
 #define log_error(...) log_msg(LIBINPUT_LOG_PRIORITY_ERROR, __VA_ARGS__)
+#define log_bug(...) log_msg(LIBINPUT_LOG_PRIORITY_ERROR, "BUG: "__VA_ARGS__)
 
 void
 log_msg(enum libinput_log_priority priority, const char *format, ...);
