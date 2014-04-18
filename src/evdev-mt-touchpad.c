@@ -152,7 +152,7 @@ tp_get_touch(struct tp_dispatch *tp, unsigned int slot)
 static inline void
 tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	struct tp_touch *tmp;
+	struct tp_touch *tmp = NULL;
 
 	if (t->state != TOUCH_UPDATE) {
 		tp_motion_history_reset(t);
