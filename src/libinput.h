@@ -59,7 +59,7 @@ enum libinput_log_priority {
  *
  * Capabilities on a device. A device may have one or more capabilities
  * at a time, and capabilities may appear or disappear during the
- * lifteime of the device.
+ * lifetime of the device.
  */
 enum libinput_device_capability {
 	LIBINPUT_DEVICE_CAP_KEYBOARD = 0,
