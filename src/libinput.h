@@ -816,7 +816,7 @@ libinput_path_create_context(const struct libinput_interface *interface,
  * @ingroup base
  *
  * Add a device to a libinput context initialized with
- * libinput_path_create_from_device(). If successful, the device will be
+ * libinput_path_create_context(). If successful, the device will be
  * added to the internal list and re-opened on libinput_resume(). The device
  * can be removed with libinput_path_remove_device().
  *
@@ -840,7 +840,7 @@ libinput_path_add_device(struct libinput *libinput,
  * @ingroup base
  *
  * Remove a device from a libinput context initialized with
- * libinput_path_create_from_device() or added to such a context with
+ * libinput_path_create_context() or added to such a context with
  * libinput_path_add_device().
  *
  * Events already processed from this input device are kept in the queue,
