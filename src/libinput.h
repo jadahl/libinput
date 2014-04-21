@@ -830,7 +830,7 @@ libinput_path_create_context(const struct libinput_interface *interface,
  * @return The newly initiated device on success, or NULL on failure.
  *
  * @note It is an application bug to call this function on a libinput
- * context initialize with libinput_udev_create_for_seat().
+ * context initialized with libinput_udev_create_for_seat().
  */
 struct libinput_device *
 libinput_path_add_device(struct libinput *libinput,
@@ -852,7 +852,7 @@ libinput_path_add_device(struct libinput *libinput,
  * @param device A libinput device
  *
  * @note It is an application bug to call this function on a libinput
- * context initialize with libinput_udev_create_for_seat().
+ * context initialized with libinput_udev_create_for_seat().
  */
 void
 libinput_path_remove_device(struct libinput_device *device);
