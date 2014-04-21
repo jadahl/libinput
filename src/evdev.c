@@ -641,7 +641,7 @@ evdev_configure_device(struct evdev_device *device)
 	}
 	if (libevdev_has_event_code(evdev, EV_REL, REL_X) ||
 	    libevdev_has_event_code(evdev, EV_REL, REL_Y))
-			has_rel = 1;
+		has_rel = 1;
 
 	if (libevdev_has_event_type(evdev, EV_KEY)) {
 		if (libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_FINGER) &&
