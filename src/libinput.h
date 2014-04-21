@@ -822,7 +822,7 @@ libinput_path_create_context(const struct libinput_interface *interface,
  *
  * If the device was successfully initialized, it is returned in the device
  * argument. The lifetime of the returned device pointer is limited until
- * the next linput_dispatch(), use libinput_device_ref() to keep a permanent
+ * the next libinput_dispatch(), use libinput_device_ref() to keep a permanent
  * reference.
  *
  * @param libinput A previously initialized libinput context
