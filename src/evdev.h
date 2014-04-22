@@ -31,8 +31,6 @@
 
 #include "libinput-private.h"
 
-#define MAX_SLOTS 16
-
 enum evdev_event_type {
 	EVDEV_NONE,
 	EVDEV_ABSOLUTE_TOUCH_DOWN,
@@ -48,6 +46,11 @@ enum evdev_device_seat_capability {
 	EVDEV_DEVICE_POINTER = (1 << 0),
 	EVDEV_DEVICE_KEYBOARD = (1 << 1),
 	EVDEV_DEVICE_TOUCH = (1 << 2)
+};
+
+struct mt_slot {
+	int32_t seat_slot;
+	int32_t x, y;
 };
 
 struct evdev_device {
@@ -74,10 +77,8 @@ struct evdev_device {
 
 	struct {
 		int slot;
-		struct {
-			int32_t seat_slot;
-			int32_t x, y;
-		} slots[MAX_SLOTS];
+		struct mt_slot *slots;
+		size_t slots_len;
 	} mt;
 	struct mtdev *mtdev;
 

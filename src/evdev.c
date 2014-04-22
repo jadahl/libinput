@@ -547,6 +547,10 @@ evdev_configure_device(struct evdev_device *device)
 	const struct input_absinfo *absinfo;
 	int has_abs, has_rel, has_mt;
 	int has_button, has_keyboard, has_touch;
+	struct mt_slot *slots;
+	int num_slots;
+	int active_slot;
+	int slot;
 	unsigned int i;
 
 	has_rel = 0;
@@ -588,10 +592,29 @@ evdev_configure_device(struct evdev_device *device)
 				device->mtdev = mtdev_new_open(device->fd);
 				if (!device->mtdev)
 					return -1;
-				device->mt.slot = device->mtdev->caps.slot.value;
+
+				num_slots = device->mtdev->caps.slot.maximum;
+				if (device->mtdev->caps.slot.minimum < 0 ||
+				    num_slots <= 0)
+					return -1;
+				active_slot = device->mtdev->caps.slot.value;
 			} else {
-				device->mt.slot = libevdev_get_current_slot(device->evdev);
+				num_slots = libevdev_get_num_slots(device->evdev);
+				active_slot = libevdev_get_current_slot(evdev);
 			}
+
+			slots = calloc(num_slots, sizeof(struct mt_slot));
+			if (!slots)
+				return -1;
+
+			for (slot = 0; slot < num_slots; ++slot) {
+				slots[slot].seat_slot = -1;
+				slots[slot].x = 0;
+				slots[slot].y = 0;
+			}
+			device->mt.slots = slots;
+			device->mt.slots_len = num_slots;
+			device->mt.slot = active_slot;
 		}
 	}
 	if (libevdev_has_event_code(evdev, EV_REL, REL_X) ||
@@ -686,7 +709,6 @@ evdev_device_create(struct libinput_seat *seat,
 	device->mtdev = NULL;
 	device->devnode = strdup(devnode);
 	device->sysname = strdup(sysname);
-	device->mt.slot = -1;
 	device->rel.dx = 0;
 	device->rel.dy = 0;
 	device->dispatch = NULL;
@@ -802,6 +824,7 @@ evdev_device_destroy(struct evdev_device *device)
 
 	libinput_seat_unref(device->base.seat);
 	libevdev_free(device->evdev);
+	free(device->mt.slots);
 	free(device->devnode);
 	free(device->sysname);
 	free(device);
