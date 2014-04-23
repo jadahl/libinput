@@ -36,6 +36,8 @@ build_tests = \
 noinst_PROGRAMS = $(build_tests) $(run_tests)
 TESTS = $(run_tests)
 
+.NOTPARALLEL:
+
 test_udev_SOURCES = udev.c
 test_udev_CFLAGS = $(TEST_CFLAGS)
 test_udev_LDADD = $(TEST_LIBS)
