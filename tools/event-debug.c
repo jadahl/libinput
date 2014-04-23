@@ -437,9 +437,11 @@ mainloop(struct libinput *li)
 	close(fds[1].fd);
 }
 
-static void log_handler(enum libinput_log_priority priority,
-			void *user_data,
-			const char *format, va_list args)
+static void
+log_handler(enum libinput_log_priority priority,
+	    void *user_data,
+	    const char *format,
+	    va_list args)
 {
 	vprintf(format, args);
 }
