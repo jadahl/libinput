@@ -55,6 +55,7 @@ START_TEST(keyboard_seat_key_count)
 	while ((ev = libinput_get_event(libinput))) {
 		if (libinput_event_get_type(ev) !=
 		    LIBINPUT_EVENT_KEYBOARD_KEY) {
+			libinput_event_destroy(ev);
 			libinput_dispatch(libinput);
 			continue;
 		}
@@ -70,6 +71,7 @@ START_TEST(keyboard_seat_key_count)
 			libinput_event_keyboard_get_seat_key_count(kev);
 		ck_assert_int_eq(expected_key_button_count, seat_key_count);
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 
@@ -82,6 +84,7 @@ START_TEST(keyboard_seat_key_count)
 	while ((ev = libinput_get_event(libinput))) {
 		if (libinput_event_get_type(ev) !=
 		    LIBINPUT_EVENT_KEYBOARD_KEY) {
+			libinput_event_destroy(ev);
 			libinput_dispatch(libinput);
 			continue;
 		}
@@ -97,6 +100,7 @@ START_TEST(keyboard_seat_key_count)
 			libinput_event_keyboard_get_seat_key_count(kev);
 		ck_assert_int_eq(expected_key_button_count, seat_key_count);
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 

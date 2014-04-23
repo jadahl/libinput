@@ -147,6 +147,7 @@ START_TEST(touch_many_slots)
 		else if (type == LIBINPUT_EVENT_TOUCH_UP)
 			break;
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 
@@ -160,10 +161,13 @@ START_TEST(touch_many_slots)
 		if (type == LIBINPUT_EVENT_TOUCH_UP)
 			slot_count--;
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	} while ((ev = libinput_get_event(libinput)));
 
 	ck_assert_int_eq(slot_count, 0);
+
+	litest_delete_device(dev);
 }
 END_TEST
 
@@ -200,6 +204,7 @@ START_TEST(touch_double_touch_down_up)
 			break;
 		}
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 

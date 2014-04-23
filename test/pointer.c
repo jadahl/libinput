@@ -212,6 +212,7 @@ START_TEST(pointer_seat_button_count)
 	while ((ev = libinput_get_event(libinput))) {
 		if (libinput_event_get_type(ev) !=
 		    LIBINPUT_EVENT_POINTER_BUTTON) {
+			libinput_event_destroy(ev);
 			libinput_dispatch(libinput);
 			continue;
 		}
@@ -228,6 +229,7 @@ START_TEST(pointer_seat_button_count)
 			libinput_event_pointer_get_seat_button_count(tev);
 		ck_assert_int_eq(expected_seat_button_count, seat_button_count);
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 
@@ -240,6 +242,7 @@ START_TEST(pointer_seat_button_count)
 	while ((ev = libinput_get_event(libinput))) {
 		if (libinput_event_get_type(ev) !=
 		    LIBINPUT_EVENT_POINTER_BUTTON) {
+			libinput_event_destroy(ev);
 			libinput_dispatch(libinput);
 			continue;
 		}
@@ -256,6 +259,7 @@ START_TEST(pointer_seat_button_count)
 			libinput_event_pointer_get_seat_button_count(tev);
 		ck_assert_int_eq(expected_seat_button_count, seat_button_count);
 
+		libinput_event_destroy(ev);
 		libinput_dispatch(libinput);
 	}
 
