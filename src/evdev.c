@@ -390,7 +390,7 @@ evdev_process_relative(struct evdev_device *device,
 		pointer_notify_axis(
 			base,
 			time,
-			LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
+			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 			-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
 		break;
 	case REL_HWHEEL:
@@ -403,7 +403,7 @@ evdev_process_relative(struct evdev_device *device,
 			pointer_notify_axis(
 				base,
 				time,
-				LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				e->value * DEFAULT_AXIS_STEP_DISTANCE);
 			break;
 		default:

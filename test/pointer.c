@@ -181,8 +181,8 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	ck_assert(ptrev != NULL);
 	ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev),
 			 which == REL_WHEEL ?
-				LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL :
-				LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL);
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL :
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev), expected);
 	libinput_event_destroy(event);
 }

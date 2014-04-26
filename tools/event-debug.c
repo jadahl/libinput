@@ -305,10 +305,10 @@ print_axis_event(struct libinput_event *ev)
 	double val;
 
 	switch (axis) {
-	case LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL:
+	case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
 		ax = "vscroll";
 		break;
-	case LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL:
+	case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
 		ax = "hscroll";
 		break;
 	default:

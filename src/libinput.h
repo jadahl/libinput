@@ -164,8 +164,14 @@ enum libinput_button_state {
  * Axes on a device that are not x or y coordinates.
  */
 enum libinput_pointer_axis {
-	LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL = 0,
-	LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL = 1
+	LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL = 0,
+	LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL = 1,
+
+
+	/** @deprecated Use @ref LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL instead */
+	LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+	/** @deprecated Use @ref LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL instead */
+	LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL
 };
 
 /**
@@ -595,8 +601,8 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  *
  * Return the axis value of the given axis. The interpretation of the value
  * is dependent on the axis. For the two scrolling axes
- * LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL and
- * LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL, the value of the event is in
+ * LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
+ * LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, the value of the event is in
  * relative scroll units, with the positive direction being down or right,
  * respectively. The dimension of a scroll unit is equal to one unit of
  * motion in the respective axis, where applicable (e.g. touchpad two-finger

@@ -466,11 +466,11 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	/* Require at least three px scrolling to start */
 	if (dy <= -3.0 || dy >= 3.0) {
 		tp->scroll.state = SCROLL_STATE_SCROLLING;
-		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL);
+		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
 	}
 	if (dx <= -3.0 || dx >= 3.0) {
 		tp->scroll.state = SCROLL_STATE_SCROLLING;
-		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL);
+		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 	}
 
 	if (tp->scroll.state == SCROLL_STATE_NONE)
@@ -481,18 +481,18 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 		t->is_pointer = false;
 
 	if (dy != 0.0 &&
-	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL))) {
+	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))) {
 		pointer_notify_axis(&tp->device->base,
 				    time,
-				    LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
+				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 				    dy);
 	}
 
 	if (dx != 0.0 &&
-	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL))) {
+	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))) {
 		pointer_notify_axis(&tp->device->base,
 				    time,
-				    LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
+				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				    dx);
 	}
 }
@@ -504,15 +504,15 @@ tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
 		return;
 
 	/* terminate scrolling with a zero scroll event */
-	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL))
+	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
 		pointer_notify_axis(&tp->device->base,
 				    time,
-				    LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
+				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 				    0);
-	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL))
+	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
 		pointer_notify_axis(&tp->device->base,
 				    time,
-				    LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
+				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				    0);
 
 	tp->scroll.state = SCROLL_STATE_NONE;
