@@ -721,6 +721,8 @@ tp_init_slots(struct tp_dispatch *tp,
 	}
 	tp->touches = calloc(tp->ntouches,
 			     sizeof(struct tp_touch));
+	if (!tp->touches)
+		return -1;
 
 	return 0;
 }
