@@ -1388,3 +1388,43 @@ libinput_device_config_send_events_get_default_mode(struct libinput_device *devi
 {
 	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 }
+
+
+LIBINPUT_EXPORT int
+libinput_device_config_accel_is_available(struct libinput_device *device)
+{
+	return device->config.accel ?
+		device->config.accel->available(device) : 0;
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_accel_set_speed(struct libinput_device *device,
+				       double speed)
+{
+	if (!libinput_device_config_accel_is_available(device))
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+
+	if (speed < -1.0 || speed > 1.0)
+		return LIBINPUT_CONFIG_STATUS_INVALID;
+
+	return device->config.accel->set_speed(device, speed);
+}
+
+LIBINPUT_EXPORT double
+libinput_device_config_accel_get_speed(struct libinput_device *device)
+{
+	if (!libinput_device_config_accel_is_available(device))
+		return 0;
+
+	return device->config.accel->get_speed(device);
+}
+
+LIBINPUT_EXPORT double
+libinput_device_config_accel_get_default_speed(struct libinput_device *device)
+{
+	if (!libinput_device_config_accel_is_available(device))
+		return 0;
+
+	return device->config.accel->get_default_speed(device);
+}
+

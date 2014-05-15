@@ -1783,6 +1783,65 @@ libinput_device_config_send_events_get_mode(struct libinput_device *device);
 enum libinput_config_send_events_mode
 libinput_device_config_send_events_get_default_mode(struct libinput_device *device);
 
+/**
+ * @ingroup config
+ *
+ * Check if a device uses libinput-internal pointer-acceleration.
+ *
+ * @param device The device to configure
+ *
+ * @return 0 if the device is not accelerated, nonzero if it is accelerated
+ */
+int
+libinput_device_config_accel_is_available(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Set the pointer acceleration speed of this pointer device within a range
+ * of [-1, 1], where 0 is the default acceleration for this device, -1 is
+ * the slowest acceleration and 1 is the maximum acceleration available on
+ * this device. The actual pointer acceleration mechanism is
+ * implementation-dependent, as is the number of steps available within the
+ * range. libinput picks the semantically closest acceleration step if the
+ * requested value does not match a discreet setting.
+ *
+ * @param device The device to configure
+ * @param speed The normalized speed, in a range of [-1, 1]
+ *
+ * @return A config status code
+ */
+enum libinput_config_status
+libinput_device_config_accel_set_speed(struct libinput_device *device,
+				       double speed);
+
+/**
+ * @ingroup config
+ *
+ * Get the current pointer acceleration setting for this pointer device. The
+ * returned value is normalized to a range of [-1, 1].
+ * See libinput_device_config_accel_set_speed() for details.
+ *
+ * @param device The device to configure
+ *
+ * @return The current speed, range -1 to 1
+ */
+double
+libinput_device_config_accel_get_speed(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Return the default speed setting for this device, normalized to a range
+ * of [-1, 1].
+ * See libinput_device_config_accel_set_speed() for details.
+ *
+ * @param device The device to configure
+ * @return The default speed setting for this device.
+ */
+double
+libinput_device_config_accel_get_default_speed(struct libinput_device *device);
+
 #ifdef __cplusplus
 }
 #endif

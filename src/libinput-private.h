@@ -109,10 +109,19 @@ struct libinput_device_config_send_events {
 	enum libinput_config_send_events_mode (*get_default_mode)(struct libinput_device *device);
 };
 
+struct libinput_device_config_accel {
+	int (*available)(struct libinput_device *device);
+	enum libinput_config_status (*set_speed)(struct libinput_device *device,
+						 double speed);
+	double (*get_speed)(struct libinput_device *device);
+	double (*get_default_speed)(struct libinput_device *device);
+};
+
 struct libinput_device_config {
 	struct libinput_device_config_tap *tap;
 	struct libinput_device_config_calibration *calibration;
 	struct libinput_device_config_send_events *sendevents;
+	struct libinput_device_config_accel *accel;
 };
 
 struct libinput_device {
