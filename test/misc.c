@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libinput.h>
+#include <libinput-util.h>
 #include <unistd.h>
 
 #include "litest.h"
@@ -409,6 +410,27 @@ START_TEST(device_ids)
 }
 END_TEST
 
+START_TEST(config_status_string)
+{
+	const char *strs[3];
+	const char *invalid;
+	size_t i, j;
+
+	strs[0] = libinput_config_status_to_str(LIBINPUT_CONFIG_STATUS_SUCCESS);
+	strs[1] = libinput_config_status_to_str(LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+	strs[2] = libinput_config_status_to_str(LIBINPUT_CONFIG_STATUS_INVALID);
+
+	for (i = 0; i < ARRAY_LENGTH(strs) - 1; i++)
+		for (j = i + 1; j < ARRAY_LENGTH(strs); j++)
+			ck_assert_str_ne(strs[i], strs[j]);
+
+	invalid = libinput_config_status_to_str(LIBINPUT_CONFIG_STATUS_INVALID + 1);
+	ck_assert(invalid == NULL);
+	invalid = libinput_config_status_to_str(LIBINPUT_CONFIG_STATUS_SUCCESS - 1);
+	ck_assert(invalid == NULL);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_no_device("events:conversion", event_conversion_pointer);
@@ -417,6 +439,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_touch);
 	litest_add_no_device("context:refcount", context_ref_counting);
 	litest_add("device:id", device_ids, LITEST_ANY, LITEST_ANY);
+	litest_add_no_device("config:status string", config_status_string);
 
 	return litest_run(argc, argv);
 }

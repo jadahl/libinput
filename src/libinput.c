@@ -1255,3 +1255,23 @@ libinput_event_touch_get_base_event(struct libinput_event_touch *event)
 {
 	return &event->base;
 }
+
+LIBINPUT_EXPORT const char *
+libinput_config_status_to_str(enum libinput_config_status status)
+{
+	const char *str = NULL;
+
+	switch(status) {
+	case LIBINPUT_CONFIG_STATUS_SUCCESS:
+		str = "Success";
+		break;
+	case LIBINPUT_CONFIG_STATUS_UNSUPPORTED:
+		str = "Unsupported configuration option";
+		break;
+	case LIBINPUT_CONFIG_STATUS_INVALID:
+		str = "Invalid argument range";
+		break;
+	}
+
+	return str;
+}
