@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h>
@@ -38,7 +39,15 @@ filter_dispatch(struct motion_filter *filter,
 }
 
 /*
- * Pointer acceleration filter
+ * Default parameters for pointer acceleration profiles.
+ */
+
+#define DEFAULT_CONSTANT_ACCELERATION 10.0
+#define DEFAULT_THRESHOLD 4.0
+#define DEFAULT_ACCELERATION 2.0
+
+/*
+ * Pointer acceleration filter constants
  */
 
 #define MAX_VELOCITY_DIFF	1.0
@@ -339,4 +348,40 @@ motion_filter_destroy(struct motion_filter *filter)
 		return;
 
 	filter->interface->destroy(filter);
+}
+
+static inline double
+calc_penumbral_gradient(double x)
+{
+	x *= 2.0;
+	x -= 1.0;
+	return 0.5 + (x * sqrt(1.0 - x * x) + asin(x)) / M_PI;
+}
+
+double
+pointer_accel_profile_smooth_simple(struct motion_filter *filter,
+				    void *data,
+				    double velocity,
+				    uint64_t time)
+{
+	double threshold = DEFAULT_THRESHOLD;
+	double accel = DEFAULT_ACCELERATION;
+	double smooth_accel_coefficient;
+
+	velocity *= DEFAULT_CONSTANT_ACCELERATION;
+
+	if (velocity < 1.0)
+		return calc_penumbral_gradient(0.5 + velocity * 0.5) * 2.0 - 1.0;
+	if (threshold < 1.0)
+		threshold = 1.0;
+	if (velocity <= threshold)
+		return 1;
+	velocity /= threshold;
+	if (velocity >= accel) {
+		return accel;
+	} else {
+		smooth_accel_coefficient =
+			calc_penumbral_gradient(velocity / accel);
+		return 1.0 + (smooth_accel_coefficient * (accel - 1.0));
+	}
 }

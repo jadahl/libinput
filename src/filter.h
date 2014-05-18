@@ -62,4 +62,18 @@ create_pointer_accelator_filter(accel_profile_func_t filter);
 void
 motion_filter_destroy(struct motion_filter *filter);
 
+/*
+ * Pointer acceleration profiles.
+ */
+
+/*
+ * Profile similar which is similar to nonaccelerated but with a smooth
+ * transition between accelerated and non-accelerated.
+ */
+double
+pointer_accel_profile_smooth_simple(struct motion_filter *filter,
+				    void *data,
+				    double velocity,
+				    uint64_t time);
+
 #endif /* FILTER_H */

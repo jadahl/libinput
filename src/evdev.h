@@ -90,6 +90,10 @@ struct evdev_device {
 	enum evdev_device_seat_capability seat_caps;
 
 	int is_mt;
+
+	struct {
+		struct motion_filter *filter;
+	} pointer;
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)

@@ -32,9 +32,11 @@
 #include <mtdev-plumbing.h>
 #include <assert.h>
 #include <time.h>
+#include <math.h>
 
 #include "libinput.h"
 #include "evdev.h"
+#include "filter.h"
 #include "libinput-private.h"
 
 #define DEFAULT_AXIS_STEP_DISTANCE li_fixed_from_int(10)
@@ -112,8 +114,10 @@ evdev_device_transform_y(struct evdev_device *device,
 static void
 evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 {
+	struct motion_params motion;
 	int32_t cx, cy;
 	li_fixed_t x, y;
+	li_fixed_t dx, dy;
 	int slot;
 	int seat_slot;
 	struct libinput_device *base = &device->base;
@@ -125,12 +129,20 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 	case EVDEV_NONE:
 		return;
 	case EVDEV_RELATIVE_MOTION:
-		pointer_notify_motion(base,
-				      time,
-				      device->rel.dx,
-				      device->rel.dy);
+		motion.dx = li_fixed_to_double(device->rel.dx);
+		motion.dy = li_fixed_to_double(device->rel.dy);
 		device->rel.dx = 0;
 		device->rel.dy = 0;
+
+		/* Apply pointer acceleration. */
+		filter_dispatch(device->pointer.filter, &motion, device, time);
+
+		dx = li_fixed_from_double(motion.dx);
+		dy = li_fixed_from_double(motion.dy);
+		if (dx == 0 && dy == 0)
+			break;
+
+		pointer_notify_motion(base, time, dx, dy);
 		break;
 	case EVDEV_ABSOLUTE_MT_DOWN:
 		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
@@ -567,6 +579,18 @@ evdev_device_dispatch(void *data)
 }
 
 static int
+configure_pointer_acceleration(struct evdev_device *device)
+{
+	device->pointer.filter =
+		create_pointer_accelator_filter(
+			pointer_accel_profile_smooth_simple);
+	if (!device->pointer.filter)
+		return -1;
+
+	return 0;
+}
+
+static int
 evdev_configure_device(struct evdev_device *device)
 {
 	struct libevdev *evdev = device->evdev;
@@ -676,7 +700,11 @@ evdev_configure_device(struct evdev_device *device)
 		has_keyboard = 1;
 
 	if ((has_abs || has_rel) && has_button) {
+		if (configure_pointer_acceleration(device) == -1)
+			return -1;
+
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
+
 		log_info("input device '%s', %s is a pointer caps =%s%s%s\n",
 			 device->devname, device->devnode,
 			 has_abs ? " absolute-motion" : "",
@@ -849,6 +877,7 @@ evdev_device_destroy(struct evdev_device *device)
 	if (dispatch)
 		dispatch->interface->destroy(dispatch);
 
+	motion_filter_destroy(device->pointer.filter);
 	libinput_seat_unref(device->base.seat);
 	libevdev_free(device->evdev);
 	free(device->mt.slots);
