@@ -365,8 +365,8 @@ tp_process_button(struct tp_dispatch *tp,
 
 	/* Ignore other buttons on clickpads */
 	if (tp->buttons.is_clickpad && e->code != BTN_LEFT) {
-		log_bug("received %s button event on a clickpad (kernel bug?)\n",
-			libevdev_event_code_get_name(EV_KEY, e->code));
+		log_bug_kernel("received %s button event on a clickpad\n",
+			       libevdev_event_code_get_name(EV_KEY, e->code));
 		return 0;
 	}
 
@@ -416,10 +416,10 @@ tp_init_buttons(struct tp_dispatch *tp,
 	if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE) ||
 	    libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT)) {
 		if (tp->buttons.is_clickpad)
-			log_bug("clickpad advertising right button (kernel bug?)\n");
+			log_bug_kernel("clickpad advertising right button\n");
 	} else {
 		if (!tp->buttons.is_clickpad)
-			log_bug("non clickpad without right button (kernel bug)?\n");
+			log_bug_kernel("non clickpad without right button?\n");
 	}
 
 	width = abs(device->abs.max_x - device->abs.min_x);

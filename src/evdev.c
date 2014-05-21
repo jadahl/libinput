@@ -149,8 +149,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 			break;
 
 		if (device->mt.slots[slot].seat_slot != -1) {
-			log_bug("%s: Driver sent multiple touch down for the "
-				"same slot", device->devnode);
+			log_bug_kernel("%s: Driver sent multiple touch down for the "
+				       "same slot", device->devnode);
 			break;
 		}
 
@@ -198,8 +198,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 			break;
 
 		if (device->abs.seat_slot != -1) {
-			log_bug("%s: Driver sent multiple touch down for the "
-				"same slot", device->devnode);
+			log_bug_kernel("%s: Driver sent multiple touch down for the "
+				       "same slot", device->devnode);
 			break;
 		}
 
