@@ -46,6 +46,24 @@ enum touch_state {
 	TOUCH_END
 };
 
+enum button_event {
+       BUTTON_EVENT_IN_BOTTOM_R = 30,
+       BUTTON_EVENT_IN_BOTTOM_L,
+       BUTTON_EVENT_IN_AREA,
+       BUTTON_EVENT_UP,
+       BUTTON_EVENT_PRESS,
+       BUTTON_EVENT_RELEASE,
+       BUTTON_EVENT_TIMEOUT,
+};
+
+enum button_state {
+       BUTTON_STATE_NONE,
+       BUTTON_STATE_AREA,
+       BUTTON_STATE_BOTTOM,
+       BUTTON_STATE_BOTTOM_NEW,
+       BUTTON_STATE_BOTTOM_TO_AREA,
+};
+
 enum scroll_state {
 	SCROLL_STATE_NONE,
 	SCROLL_STATE_SCROLLING
@@ -77,10 +95,9 @@ struct tp_touch {
 	bool dirty;
 	bool fake;				/* a fake touch */
 	bool is_pointer;			/* the pointer-controlling touch */
-	bool is_pinned;				/* holds the phys. button */
 	int32_t x;
 	int32_t y;
-	uint32_t millis;
+	uint64_t millis;
 
 	struct {
 		struct tp_motion samples[TOUCHPAD_HISTORY_LENGTH];
@@ -92,6 +109,24 @@ struct tp_touch {
 		int32_t center_x;
 		int32_t center_y;
 	} hysteresis;
+
+	/* A pinned touchpoint is the one that pressed the physical button
+	 * on a clickpad. After the release, it won't move until the center
+	 * moves more than a threshold away from the original coordinates
+	 */
+	struct {
+		bool is_pinned;
+		int32_t center_x;
+		int32_t center_y;
+	} pinned;
+
+	/* Software-button state and timeout if applicable */
+	struct {
+		enum button_state state;
+		/* We use button_event here so we can use == on events */
+		enum button_event curr;
+		uint64_t timeout;
+	} button;
 };
 
 struct tp_dispatch {
@@ -119,9 +154,28 @@ struct tp_dispatch {
 	} accel;
 
 	struct {
-		bool has_buttons;		/* true for physical LMR buttons */
+		bool is_clickpad;		/* true for clickpads */
+		bool use_clickfinger;		/* number of fingers decides button number */
+		bool click_pending;
 		uint32_t state;
 		uint32_t old_state;
+		uint32_t motion_dist;		/* for pinned touches */
+		unsigned int active;		/* currently active button, for release event */
+
+		/* Only used for clickpads. The software button area is always
+		 * a horizontal strip across the touchpad. Depending on the
+		 * rightbutton_left_edge value, the buttons are split according to the
+		 * edge settings.
+		 */
+		struct {
+			int32_t top_edge;
+			int32_t rightbutton_left_edge;
+		} area;
+
+		unsigned int timeout;		/* current timeout in ms */
+
+		int timer_fd;
+		struct libinput_source *source;
 	} buttons;				/* physical buttons */
 
 	struct {
@@ -146,16 +200,39 @@ struct tp_dispatch {
 void
 tp_get_delta(struct tp_touch *t, double *dx, double *dy);
 
+void
+tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
+
 int
-tp_tap_handle_state(struct tp_dispatch *tp, uint32_t time);
+tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time);
 
 unsigned int
-tp_tap_handle_timeout(struct tp_dispatch *tp, uint32_t time);
+tp_tap_handle_timeout(struct tp_dispatch *tp, uint64_t time);
 
 int
 tp_init_tap(struct tp_dispatch *tp);
 
 void
 tp_destroy_tap(struct tp_dispatch *tp);
+
+int
+tp_init_buttons(struct tp_dispatch *tp, struct evdev_device *device);
+
+void
+tp_destroy_buttons(struct tp_dispatch *tp);
+
+int
+tp_process_button(struct tp_dispatch *tp,
+		  const struct input_event *e,
+		  uint64_t time);
+
+int
+tp_post_button_events(struct tp_dispatch *tp, uint64_t time);
+
+int
+tp_button_handle_state(struct tp_dispatch *tp, uint64_t time);
+
+int
+tp_button_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
 
 #endif
