@@ -31,6 +31,8 @@ libinput_la_CFLAGS = $(MTDEV_CFLAGS)	\
 		     $(LIBEVDEV_CFLAGS)	\
 		     $(GCC_CFLAGS)
 
+libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION)
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libinput.pc
 
