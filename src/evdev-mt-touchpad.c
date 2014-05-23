@@ -463,21 +463,18 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 
 	tp_filter_motion(tp, &dx, &dy, time);
 
-	if (tp->scroll.state == SCROLL_STATE_NONE) {
-		/* Require at least one px scrolling to start */
-		if (dx <= -1.0 || dx >= 1.0) {
-			tp->scroll.state = SCROLL_STATE_SCROLLING;
-			tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL);
-		}
-
-		if (dy <= -1.0 || dy >= 1.0) {
-			tp->scroll.state = SCROLL_STATE_SCROLLING;
-			tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL);
-		}
-
-		if (tp->scroll.state == SCROLL_STATE_NONE)
-			return;
+	/* Require at least three px scrolling to start */
+	if (dy <= -3.0 || dy >= 3.0) {
+		tp->scroll.state = SCROLL_STATE_SCROLLING;
+		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL);
 	}
+	if (dx <= -3.0 || dx >= 3.0) {
+		tp->scroll.state = SCROLL_STATE_SCROLLING;
+		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL);
+	}
+
+	if (tp->scroll.state == SCROLL_STATE_NONE)
+		return;
 
 	/* Stop spurious MOTION events at the end of scrolling */
 	tp_for_each_touch(tp, t)
