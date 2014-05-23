@@ -536,11 +536,11 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 
 	if (nfingers_down != 2) {
 		tp_stop_scroll_events(tp, time);
-	} else {
-		tp_post_twofinger_scroll(tp, time);
-		return 1;
+		return 0;
 	}
-	return 0;
+
+	tp_post_twofinger_scroll(tp, time);
+	return 1;
 }
 
 static void
