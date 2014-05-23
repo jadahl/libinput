@@ -479,6 +479,10 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 			return;
 	}
 
+	/* Stop spurious MOTION events at the end of scrolling */
+	tp_for_each_touch(tp, t)
+		t->is_pointer = false;
+
 	if (dy != 0.0 &&
 	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL))) {
 		pointer_notify_axis(&tp->device->base,

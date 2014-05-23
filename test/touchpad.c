@@ -74,8 +74,8 @@ START_TEST(touchpad_2fg_no_motion)
 	litest_touch_down(dev, 1, 70, 20);
 	litest_touch_move_to(dev, 0, 20, 20, 80, 80, 5);
 	litest_touch_move_to(dev, 1, 70, 20, 80, 50, 5);
-	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
 
