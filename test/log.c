@@ -74,6 +74,7 @@ END_TEST
 START_TEST(log_handler_invoked)
 {
 	struct libinput *li;
+	enum libinput_log_priority pri = libinput_log_get_priority();
 
 	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
 	libinput_log_set_handler(simple_log_handler, NULL);
@@ -86,12 +87,14 @@ START_TEST(log_handler_invoked)
 	log_handler_called = 0;
 
 	libinput_destroy(li);
+	libinput_log_set_priority(pri);
 }
 END_TEST
 
 START_TEST(log_userdata_NULL)
 {
 	struct libinput *li;
+	enum libinput_log_priority pri = libinput_log_get_priority();
 
 	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
 	libinput_log_set_handler(simple_log_handler, NULL);
@@ -104,12 +107,15 @@ START_TEST(log_userdata_NULL)
 	log_handler_called = 0;
 
 	libinput_destroy(li);
+
+	libinput_log_set_priority(pri);
 }
 END_TEST
 
 START_TEST(log_userdata)
 {
 	struct libinput *li;
+	enum libinput_log_priority pri = libinput_log_get_priority();
 
 	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
 	libinput_log_set_handler(simple_log_handler, &li);
@@ -122,12 +128,14 @@ START_TEST(log_userdata)
 	log_handler_called = 0;
 
 	libinput_destroy(li);
+	libinput_log_set_priority(pri);
 }
 END_TEST
 
 START_TEST(log_handler_NULL)
 {
 	struct libinput *li;
+	enum libinput_log_priority pri = libinput_log_get_priority();
 
 	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
 	libinput_log_set_handler(NULL, NULL);
@@ -141,12 +149,14 @@ START_TEST(log_handler_NULL)
 	libinput_log_set_handler(simple_log_handler, NULL);
 
 	libinput_destroy(li);
+	libinput_log_set_priority(pri);
 }
 END_TEST
 
 START_TEST(log_priority)
 {
 	struct libinput *li;
+	enum libinput_log_priority pri = libinput_log_get_priority();
 
 	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_ERROR);
 	libinput_log_set_handler(simple_log_handler, NULL);
@@ -164,6 +174,7 @@ START_TEST(log_priority)
 	log_handler_called = 0;
 
 	libinput_destroy(li);
+	libinput_log_set_priority(pri);
 }
 END_TEST
 
