@@ -500,6 +500,28 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	}
 }
 
+static void
+tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
+{
+	if (tp->scroll.state == SCROLL_STATE_NONE)
+		return;
+
+	/* terminate scrolling with a zero scroll event */
+	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL))
+		pointer_notify_axis(&tp->device->base,
+				    time,
+				    LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
+				    0);
+	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL))
+		pointer_notify_axis(&tp->device->base,
+				    time,
+				    LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
+				    0);
+
+	tp->scroll.state = SCROLL_STATE_NONE;
+	tp->scroll.direction = 0;
+}
+
 static int
 tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 {
@@ -513,22 +535,7 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 	}
 
 	if (nfingers_down != 2) {
-		/* terminate scrolling with a zero scroll event to notify
-		 * caller that it really ended now */
-		if (tp->scroll.state != SCROLL_STATE_NONE) {
-			tp->scroll.state = SCROLL_STATE_NONE;
-			tp->scroll.direction = 0;
-			if (tp->scroll.direction & LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL)
-				pointer_notify_axis(&tp->device->base,
-						    time,
-						    LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
-						    0);
-			if (tp->scroll.direction & LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL)
-				pointer_notify_axis(&tp->device->base,
-						    time,
-						    LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
-						    0);
-		}
+		tp_stop_scroll_events(tp, time);
 	} else {
 		tp_post_twofinger_scroll(tp, time);
 		return 1;
