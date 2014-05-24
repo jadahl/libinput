@@ -84,8 +84,8 @@ tp_filter_motion(struct tp_dispatch *tp,
 {
 	struct motion_params motion;
 
-	motion.dx = *dx;
-	motion.dy = *dy;
+	motion.dx = *dx * tp->accel.x_scale_coeff;
+	motion.dy = *dy * tp->accel.y_scale_coeff;
 
 	filter_dispatch(tp->filter, &motion, tp, time);
 
@@ -686,10 +686,41 @@ tp_init_slots(struct tp_dispatch *tp,
 	return 0;
 }
 
+static void
+calculate_scale_coefficients(struct tp_dispatch *tp)
+{
+	int res_x, res_y;
+
+	if (tp->has_mt) {
+		res_x = libevdev_get_abs_resolution(tp->device->evdev,
+						    ABS_MT_POSITION_X);
+		res_y = libevdev_get_abs_resolution(tp->device->evdev,
+						    ABS_MT_POSITION_Y);
+	} else {
+		res_x = libevdev_get_abs_resolution(tp->device->evdev,
+						    ABS_X);
+		res_y = libevdev_get_abs_resolution(tp->device->evdev,
+						    ABS_Y);
+	}
+
+	if (res_x <= 0 || res_y <= 0) {
+		tp->accel.x_scale_coeff = 1.0;
+		tp->accel.y_scale_coeff = 1.0;
+	} else if (res_x > res_y) {
+		tp->accel.x_scale_coeff = res_y / (double) res_x;
+		tp->accel.y_scale_coeff = 1.0f;
+	} else {
+		tp->accel.y_scale_coeff = res_x / (double) res_y;
+		tp->accel.x_scale_coeff = 1.0f;
+	}
+}
+
 static int
 tp_init_accel(struct tp_dispatch *touchpad, double diagonal)
 {
 	struct motion_filter *accel;
+
+	calculate_scale_coefficients(touchpad);
 
 	touchpad->accel.constant_factor =
 		DEFAULT_CONSTANT_ACCEL_NUMERATOR / diagonal;
