@@ -183,28 +183,15 @@ calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 	struct pointer_tracker *tracker;
 	double velocity;
 	double result = 0.0;
-	double initial_velocity;
+	double initial_velocity = 0.0;
 	double velocity_diff;
 	unsigned int offset;
 
 	unsigned int dir = tracker_by_offset(accel, 0)->dir;
 
-	/* Find first velocity */
-	for (offset = 1; offset < NUM_POINTER_TRACKERS; offset++) {
-		tracker = tracker_by_offset(accel, offset);
-
-		if (time <= tracker->time)
-			continue;
-
-		result = initial_velocity =
-			calculate_tracker_velocity(tracker, time);
-		if (initial_velocity > 0.0)
-			break;
-	}
-
 	/* Find least recent vector within a timelimit, maximum velocity diff
 	 * and direction threshold. */
-	for (; offset < NUM_POINTER_TRACKERS; offset++) {
+	for (offset = 1; offset < NUM_POINTER_TRACKERS; offset++) {
 		tracker = tracker_by_offset(accel, offset);
 
 		/* Stop if too far away in time */
@@ -219,12 +206,16 @@ calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 
 		velocity = calculate_tracker_velocity(tracker, time);
 
-		/* Stop if velocity differs too much from initial */
-		velocity_diff = fabs(initial_velocity - velocity);
-		if (velocity_diff > MAX_VELOCITY_DIFF)
-			break;
+		if (initial_velocity == 0.0) {
+			result = initial_velocity = velocity;
+		} else {
+			/* Stop if velocity differs too much from initial */
+			velocity_diff = fabs(initial_velocity - velocity);
+			if (velocity_diff > MAX_VELOCITY_DIFF)
+				break;
 
-		result = velocity;
+			result = velocity;
+		}
 	}
 
 	return result;
