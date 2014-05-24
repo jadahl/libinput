@@ -103,8 +103,7 @@ get_direction(int dx, int dy)
 			dir = SE | S | SW;
 		else if (dy < 0)
 			dir = NE | N | NW;
-	}
-	else {
+	} else {
 		/* Calculate r within the interval  [0 to 8)
 		 *
 		 * r = [0 .. 2π] where 0 is North
