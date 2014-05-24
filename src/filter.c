@@ -105,9 +105,9 @@ get_direction(int dx, int dy)
 		else if (dx < 0 && dy < 0)
 			dir = N | NW | W;
 		else if (dx > 0)
-			dir = NW | W | SW;
-		else if (dx < 0)
 			dir = NE | E | SE;
+		else if (dx < 0)
+			dir = NW | W | SW;
 		else if (dy > 0)
 			dir = SE | S | SW;
 		else if (dy < 0)
