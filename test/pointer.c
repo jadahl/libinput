@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libinput.h>
+#include <math.h>
 #include <unistd.h>
 
 #include "libinput-util.h"
@@ -38,7 +39,17 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
+	double ev_dx, ev_dy;
+	double expected_dir;
+	double expected_length;
+	double actual_dir;
+	double actual_length;
 
+	/* Send two deltas, as the first one may be eaten up by an
+	 * acceleration filter. */
+	litest_event(dev, EV_REL, REL_X, dx);
+	litest_event(dev, EV_REL, REL_Y, dy);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_REL, REL_X, dx);
 	litest_event(dev, EV_REL, REL_Y, dy);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
@@ -51,10 +62,25 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 
 	ptrev = libinput_event_get_pointer_event(event);
 	ck_assert(ptrev != NULL);
-	ck_assert_int_eq(libinput_event_pointer_get_dx(ptrev), li_fixed_from_int(dx));
-	ck_assert_int_eq(libinput_event_pointer_get_dy(ptrev), li_fixed_from_int(dy));
+
+	expected_length = sqrt(dx*dx + dy*dy);
+	expected_dir = atan2(dx, dy);
+
+	ev_dx = li_fixed_to_double(libinput_event_pointer_get_dx(ptrev));
+	ev_dy = li_fixed_to_double(libinput_event_pointer_get_dy(ptrev));
+	actual_length = sqrt(ev_dx*ev_dx + ev_dy*ev_dy);
+	actual_dir = atan2(ev_dx, ev_dy);
+
+	/* Check the length of the motion vector (tolerate 1.0 indifference). */
+	ck_assert(fabs(expected_length - actual_length) < 1.0);
+
+	/* Check the direction of the motion vector (tolerate 2π/4 radians
+	 * indifference). */
+	ck_assert(fabs(expected_dir - actual_dir) < M_PI_2);
 
 	libinput_event_destroy(event);
+
+	litest_drain_events(dev->libinput);
 }
 
 START_TEST(pointer_motion_relative)
