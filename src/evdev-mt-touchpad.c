@@ -621,8 +621,7 @@ tp_destroy(struct evdev_dispatch *dispatch)
 	tp_destroy_tap(tp);
 	tp_destroy_buttons(tp);
 
-	if (tp->filter)
-		tp->filter->interface->destroy(tp->filter);
+	motion_filter_destroy(tp->filter);
 	free(tp->touches);
 	free(tp);
 }

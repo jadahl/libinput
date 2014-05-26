@@ -331,3 +331,12 @@ create_pointer_accelator_filter(accel_profile_func_t profile)
 
 	return &filter->base;
 }
+
+void
+motion_filter_destroy(struct motion_filter *filter)
+{
+	if (!filter)
+		return;
+
+	filter->interface->destroy(filter);
+}
