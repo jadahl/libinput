@@ -158,6 +158,11 @@ START_TEST(event_conversion_pointer)
 	li = libinput_path_create_context(&simple_interface, NULL);
 	libinput_path_add_device(li, libevdev_uinput_get_devnode(uinput));
 
+	/* Queue at least two relative motion events as the first one may
+	 * be absorbed by the pointer acceleration filter. */
+	libevdev_uinput_write_event(uinput, EV_REL, REL_X, -1);
+	libevdev_uinput_write_event(uinput, EV_REL, REL_Y, -1);
+	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
 	libevdev_uinput_write_event(uinput, EV_REL, REL_X, -1);
 	libevdev_uinput_write_event(uinput, EV_REL, REL_Y, -1);
 	libevdev_uinput_write_event(uinput, EV_KEY, BTN_LEFT, 1);
