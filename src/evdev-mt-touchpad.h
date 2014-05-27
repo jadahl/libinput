@@ -49,6 +49,9 @@ enum touch_state {
 enum button_event {
        BUTTON_EVENT_IN_BOTTOM_R = 30,
        BUTTON_EVENT_IN_BOTTOM_L,
+       BUTTON_EVENT_IN_TOP_R,
+       BUTTON_EVENT_IN_TOP_M,
+       BUTTON_EVENT_IN_TOP_L,
        BUTTON_EVENT_IN_AREA,
        BUTTON_EVENT_UP,
        BUTTON_EVENT_PRESS,
@@ -62,6 +65,10 @@ enum button_state {
        BUTTON_STATE_BOTTOM,
        BUTTON_STATE_BOTTOM_NEW,
        BUTTON_STATE_BOTTOM_TO_AREA,
+       BUTTON_STATE_TOP,
+       BUTTON_STATE_TOP_NEW,
+       BUTTON_STATE_TOP_TO_IGNORE,
+       BUTTON_STATE_IGNORE,
 };
 
 enum scroll_state {
@@ -158,6 +165,7 @@ struct tp_dispatch {
 
 	struct {
 		bool is_clickpad;		/* true for clickpads */
+		bool has_topbuttons;
 		bool use_clickfinger;		/* number of fingers decides button number */
 		bool click_pending;
 		uint32_t state;
@@ -165,15 +173,20 @@ struct tp_dispatch {
 		uint32_t motion_dist;		/* for pinned touches */
 		unsigned int active;		/* currently active button, for release event */
 
-		/* Only used for clickpads. The software button area is always
-		 * a horizontal strip across the touchpad. Depending on the
-		 * rightbutton_left_edge value, the buttons are split according to the
-		 * edge settings.
+		/* Only used for clickpads. The software button areas are
+		 * always 2 horizontal stripes across the touchpad.
+		 * The buttons are split according to the edge settings.
 		 */
 		struct {
 			int32_t top_edge;
 			int32_t rightbutton_left_edge;
 		} bottom_area;
+
+		struct {
+			int32_t bottom_edge;
+			int32_t rightbutton_left_edge;
+			int32_t leftbutton_right_edge;
+		} top_area;
 
 		unsigned int timeout;		/* current timeout in ms */
 

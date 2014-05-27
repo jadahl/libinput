@@ -31,6 +31,10 @@
 
 #include "evdev-mt-touchpad.h"
 
+#ifndef INPUT_PROP_TOPBUTTONPAD
+#define INPUT_PROP_TOPBUTTONPAD 0x04
+#endif
+
 #define DEFAULT_BUTTON_MOTION_THRESHOLD 0.02 /* 2% of size */
 #define DEFAULT_BUTTON_ENTER_TIMEOUT 100 /* ms */
 #define DEFAULT_BUTTON_LEAVE_TIMEOUT 300 /* ms */
@@ -56,6 +60,10 @@ button_state_to_str(enum button_state state) {
 	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM);
 	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM_NEW);
 	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM_TO_AREA);
+	CASE_RETURN_STRING(BUTTON_STATE_TOP);
+	CASE_RETURN_STRING(BUTTON_STATE_TOP_NEW);
+	CASE_RETURN_STRING(BUTTON_STATE_TOP_TO_IGNORE);
+	CASE_RETURN_STRING(BUTTON_STATE_IGNORE);
 	}
 	return NULL;
 }
@@ -65,6 +73,9 @@ button_event_to_str(enum button_event event) {
 	switch(event) {
 	CASE_RETURN_STRING(BUTTON_EVENT_IN_BOTTOM_R);
 	CASE_RETURN_STRING(BUTTON_EVENT_IN_BOTTOM_L);
+	CASE_RETURN_STRING(BUTTON_EVENT_IN_TOP_R);
+	CASE_RETURN_STRING(BUTTON_EVENT_IN_TOP_M);
+	CASE_RETURN_STRING(BUTTON_EVENT_IN_TOP_L);
 	CASE_RETURN_STRING(BUTTON_EVENT_IN_AREA);
 	CASE_RETURN_STRING(BUTTON_EVENT_UP);
 	CASE_RETURN_STRING(BUTTON_EVENT_PRESS);
@@ -92,6 +103,34 @@ is_inside_bottom_left_area(struct tp_dispatch *tp, struct tp_touch *t)
 {
 	return is_inside_bottom_button_area(tp, t) &&
 	       !is_inside_bottom_right_area(tp, t);
+}
+
+static inline bool
+is_inside_top_button_area(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	return t->y <= tp->buttons.top_area.bottom_edge;
+}
+
+static inline bool
+is_inside_top_right_area(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	return is_inside_top_button_area(tp, t) &&
+	       t->x > tp->buttons.top_area.rightbutton_left_edge;
+}
+
+static inline bool
+is_inside_top_left_area(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	return is_inside_top_button_area(tp, t) &&
+	       t->x < tp->buttons.top_area.leftbutton_right_edge;
+}
+
+static inline bool
+is_inside_top_middle_area(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	return is_inside_top_button_area(tp, t) &&
+	       t->x >= tp->buttons.top_area.leftbutton_right_edge &&
+	       t->x <= tp->buttons.top_area.rightbutton_left_edge;
 }
 
 static void
@@ -153,6 +192,18 @@ tp_button_set_state(struct tp_dispatch *tp, struct tp_touch *t,
 	case BUTTON_STATE_BOTTOM_TO_AREA:
 		tp_button_set_leave_timer(tp, t);
 		break;
+	case BUTTON_STATE_TOP:
+		break;
+	case BUTTON_STATE_TOP_NEW:
+		t->button.curr = event;
+		tp_button_set_enter_timer(tp, t);
+		break;
+	case BUTTON_STATE_TOP_TO_IGNORE:
+		tp_button_set_leave_timer(tp, t);
+		break;
+	case BUTTON_STATE_IGNORE:
+		t->button.curr = 0;
+		break;
 	}
 }
 
@@ -165,6 +216,11 @@ tp_button_none_handle_event(struct tp_dispatch *tp,
 	case BUTTON_EVENT_IN_BOTTOM_R:
 	case BUTTON_EVENT_IN_BOTTOM_L:
 		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW, event);
+		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
+		tp_button_set_state(tp, t, BUTTON_STATE_TOP_NEW, event);
 		break;
 	case BUTTON_EVENT_IN_AREA:
 		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
@@ -187,6 +243,9 @@ tp_button_area_handle_event(struct tp_dispatch *tp,
 	switch (event) {
 	case BUTTON_EVENT_IN_BOTTOM_R:
 	case BUTTON_EVENT_IN_BOTTOM_L:
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
 	case BUTTON_EVENT_IN_AREA:
 		break;
 	case BUTTON_EVENT_UP:
@@ -211,6 +270,9 @@ tp_button_bottom_handle_event(struct tp_dispatch *tp,
 			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
 					    event);
 		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
 	case BUTTON_EVENT_IN_AREA:
 		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_TO_AREA, event);
 		break;
@@ -236,6 +298,9 @@ tp_button_bottom_new_handle_event(struct tp_dispatch *tp,
 			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
 					    event);
 		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
 	case BUTTON_EVENT_IN_AREA:
 		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
 		break;
@@ -268,6 +333,9 @@ tp_button_bottom_to_area_handle_event(struct tp_dispatch *tp,
 			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
 					    event);
 		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
 	case BUTTON_EVENT_IN_AREA:
 		break;
 	case BUTTON_EVENT_UP:
@@ -278,6 +346,125 @@ tp_button_bottom_to_area_handle_event(struct tp_dispatch *tp,
 		break;
 	case BUTTON_EVENT_TIMEOUT:
 		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
+		break;
+	}
+}
+
+static void
+tp_button_top_handle_event(struct tp_dispatch *tp,
+			    struct tp_touch *t,
+			    enum button_event event)
+{
+	switch (event) {
+	case BUTTON_EVENT_IN_BOTTOM_R:
+	case BUTTON_EVENT_IN_BOTTOM_L:
+		tp_button_set_state(tp, t, BUTTON_STATE_TOP_TO_IGNORE, event);
+		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
+		if (event != t->button.curr)
+			tp_button_set_state(tp, t, BUTTON_STATE_TOP_NEW,
+					    event);
+		break;
+	case BUTTON_EVENT_IN_AREA:
+		tp_button_set_state(tp, t, BUTTON_STATE_TOP_TO_IGNORE, event);
+		break;
+	case BUTTON_EVENT_UP:
+		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
+		break;
+	case BUTTON_EVENT_PRESS:
+	case BUTTON_EVENT_RELEASE:
+	case BUTTON_EVENT_TIMEOUT:
+		break;
+	}
+}
+
+static void
+tp_button_top_new_handle_event(struct tp_dispatch *tp,
+				struct tp_touch *t,
+				enum button_event event)
+{
+	switch(event) {
+	case BUTTON_EVENT_IN_BOTTOM_R:
+	case BUTTON_EVENT_IN_BOTTOM_L:
+		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
+		break;
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
+		if (event != t->button.curr)
+			tp_button_set_state(tp, t, BUTTON_STATE_TOP_NEW,
+					    event);
+		break;
+	case BUTTON_EVENT_IN_AREA:
+		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
+		break;
+	case BUTTON_EVENT_UP:
+		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
+		break;
+	case BUTTON_EVENT_PRESS:
+		tp_button_set_state(tp, t, BUTTON_STATE_TOP, event);
+		break;
+	case BUTTON_EVENT_RELEASE:
+		break;
+	case BUTTON_EVENT_TIMEOUT:
+		tp_button_set_state(tp, t, BUTTON_STATE_TOP, event);
+		break;
+	}
+}
+
+static void
+tp_button_top_to_ignore_handle_event(struct tp_dispatch *tp,
+				      struct tp_touch *t,
+				      enum button_event event)
+{
+	switch(event) {
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
+		if (event == t->button.curr)
+			tp_button_set_state(tp, t, BUTTON_STATE_TOP,
+					    event);
+		else
+			tp_button_set_state(tp, t, BUTTON_STATE_TOP_NEW,
+					    event);
+		break;
+	case BUTTON_EVENT_IN_BOTTOM_R:
+	case BUTTON_EVENT_IN_BOTTOM_L:
+	case BUTTON_EVENT_IN_AREA:
+		break;
+	case BUTTON_EVENT_UP:
+		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
+		break;
+	case BUTTON_EVENT_PRESS:
+	case BUTTON_EVENT_RELEASE:
+		break;
+	case BUTTON_EVENT_TIMEOUT:
+		tp_button_set_state(tp, t, BUTTON_STATE_IGNORE, event);
+		break;
+	}
+}
+
+static void
+tp_button_ignore_handle_event(struct tp_dispatch *tp,
+			    struct tp_touch *t,
+			    enum button_event event)
+{
+	switch (event) {
+	case BUTTON_EVENT_IN_BOTTOM_R:
+	case BUTTON_EVENT_IN_BOTTOM_L:
+	case BUTTON_EVENT_IN_TOP_R:
+	case BUTTON_EVENT_IN_TOP_M:
+	case BUTTON_EVENT_IN_TOP_L:
+	case BUTTON_EVENT_IN_AREA:
+		break;
+	case BUTTON_EVENT_UP:
+		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
+		break;
+	case BUTTON_EVENT_PRESS:
+	case BUTTON_EVENT_RELEASE:
+	case BUTTON_EVENT_TIMEOUT:
 		break;
 	}
 }
@@ -306,6 +493,18 @@ tp_button_handle_event(struct tp_dispatch *tp,
 	case BUTTON_STATE_BOTTOM_TO_AREA:
 		tp_button_bottom_to_area_handle_event(tp, t, event);
 		break;
+	case BUTTON_STATE_TOP:
+		tp_button_top_handle_event(tp, t, event);
+		break;
+	case BUTTON_STATE_TOP_NEW:
+		tp_button_top_new_handle_event(tp, t, event);
+		break;
+	case BUTTON_STATE_TOP_TO_IGNORE:
+		tp_button_top_to_ignore_handle_event(tp, t, event);
+		break;
+	case BUTTON_STATE_IGNORE:
+		tp_button_ignore_handle_event(tp, t, event);
+		break;
 	}
 
 	if (current != t->button.state)
@@ -331,6 +530,12 @@ tp_button_handle_state(struct tp_dispatch *tp, uint64_t time)
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_R, time);
 			else if (is_inside_bottom_left_area(tp, t))
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_L, time);
+			else if (is_inside_top_right_area(tp, t))
+				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_R, time);
+			else if (is_inside_top_middle_area(tp, t))
+				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_M, time);
+			else if (is_inside_top_left_area(tp, t))
+				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_L, time);
 			else
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_AREA, time);
 		}
@@ -412,6 +617,8 @@ tp_init_buttons(struct tp_dispatch *tp,
 
 	tp->buttons.is_clickpad = libevdev_has_property(device->evdev,
 							INPUT_PROP_BUTTONPAD);
+	tp->buttons.has_topbuttons = libevdev_has_property(device->evdev,
+						        INPUT_PROP_TOPBUTTONPAD);
 
 	if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE) ||
 	    libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT)) {
@@ -434,8 +641,16 @@ tp_init_buttons(struct tp_dispatch *tp,
 	if (tp->buttons.is_clickpad && !tp->buttons.use_clickfinger) {
 		tp->buttons.bottom_area.top_edge = height * .8 + device->abs.min_y;
 		tp->buttons.bottom_area.rightbutton_left_edge = width/2 + device->abs.min_x;
-		tp->buttons.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 
+		if (tp->buttons.has_topbuttons) {
+			tp->buttons.top_area.bottom_edge = height * .08 + device->abs.min_y;
+			tp->buttons.top_area.rightbutton_left_edge = width * .58 + device->abs.min_x;
+			tp->buttons.top_area.leftbutton_right_edge = width * .42 + device->abs.min_x;
+		} else {
+			tp->buttons.top_area.bottom_edge = INT_MIN;
+		}
+
+		tp->buttons.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 		if (tp->buttons.timer_fd == -1)
 			return -1;
 
@@ -448,6 +663,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 			return -1;
 	} else {
 		tp->buttons.bottom_area.top_edge = INT_MAX;
+		tp->buttons.top_area.bottom_edge = INT_MIN;
 	}
 
 	return 0;
@@ -540,7 +756,7 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 {
 	uint32_t current, old, button;
 	enum libinput_pointer_button_state state;
-	enum { AREA = 0x01, LEFT = 0x02, RIGHT = 0x04 };
+	enum { AREA = 0x01, LEFT = 0x02, MIDDLE = 0x04, RIGHT = 0x08 };
 
 	current = tp->buttons.state;
 	old = tp->buttons.old_state;
@@ -558,9 +774,14 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 				button |= AREA;
 				break;
 			case BUTTON_EVENT_IN_BOTTOM_L:
+			case BUTTON_EVENT_IN_TOP_L:
 				button |= LEFT;
 				break;
+			case BUTTON_EVENT_IN_TOP_M:
+				button |= MIDDLE;
+				break;
 			case BUTTON_EVENT_IN_BOTTOM_R:
+			case BUTTON_EVENT_IN_TOP_R:
 				button |= RIGHT;
 				break;
 			default:
@@ -568,24 +789,18 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 			}
 		}
 
-		switch (button) {
-		case 0:
+		if (button == 0) {
 			/* No touches, wait for a touch before processing */
 			tp->buttons.click_pending = true;
 			return 0;
-		case RIGHT:
-		case RIGHT | AREA:
-			/* Some touches in right, no touches in left */
-			button = BTN_RIGHT;
-			break;
-		case LEFT | RIGHT:
-		case LEFT | RIGHT | AREA:
-			/* Some touches in left and some in right */
-			button = BTN_MIDDLE;
-			break;
-		default:
-			button = BTN_LEFT;
 		}
+
+		if ((button & MIDDLE) || ((button & LEFT) && (button & RIGHT)))
+			button = BTN_MIDDLE;
+		else if (button & RIGHT)
+			button = BTN_RIGHT;
+		else
+			button = BTN_LEFT;
 
 		tp->buttons.active = button;
 		state = LIBINPUT_POINTER_BUTTON_STATE_PRESSED;
