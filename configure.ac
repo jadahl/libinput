@@ -74,6 +74,21 @@ else
 fi
 AM_CONDITIONAL([HAVE_DOXYGEN], [test "x$have_doxygen" = "xyes"])
 
+AC_ARG_ENABLE(event-gui,
+	      AS_HELP_STRING([--enable-event-gui], [Build the GUI event viewer (default=auto)]),
+	      [build_eventgui="$enableval"],
+	      [build_eventgui="auto"])
+PKG_CHECK_EXISTS([cairo glib-2.0 gtk+-3.0], [HAVE_GUILIBS="yes"], [HAVE_GUILIBS="no"])
+
+if test "x$build_eventgui" = "xauto"; then
+	build_eventgui="$HAVE_GUILIBS"
+fi
+if test "x$build_eventgui" = "xyes"; then
+	PKG_CHECK_MODULES(CAIRO, [cairo])
+	PKG_CHECK_MODULES(GTK, [glib-2.0 gtk+-3.0])
+fi
+AM_CONDITIONAL(BUILD_EVENTGUI, [test "x$build_eventgui" = "xyes"])
+
 AC_ARG_ENABLE(tests,
 	      AS_HELP_STRING([--enable-tests], [Build the tests (default=auto)]),
 	      [build_tests="$enableval"],
