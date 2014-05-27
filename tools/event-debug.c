@@ -474,6 +474,7 @@ main(int argc, char **argv)
 
 	mainloop(li);
 
+	libinput_destroy(li);
 	if (udev)
 		udev_unref(udev);
 
