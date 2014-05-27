@@ -173,7 +173,7 @@ struct tp_dispatch {
 		struct {
 			int32_t top_edge;
 			int32_t rightbutton_left_edge;
-		} area;
+		} bottom_area;
 
 		unsigned int timeout;		/* current timeout in ms */
 

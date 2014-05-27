@@ -75,23 +75,23 @@ button_event_to_str(enum button_event event) {
 }
 
 static inline bool
-is_inside_button_area(struct tp_dispatch *tp, struct tp_touch *t)
+is_inside_bottom_button_area(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	return t->y >= tp->buttons.area.top_edge;
+	return t->y >= tp->buttons.bottom_area.top_edge;
 }
 
 static inline bool
-is_inside_right_area(struct tp_dispatch *tp, struct tp_touch *t)
+is_inside_bottom_right_area(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	return is_inside_button_area(tp, t) &&
-	       t->x > tp->buttons.area.rightbutton_left_edge;
+	return is_inside_bottom_button_area(tp, t) &&
+	       t->x > tp->buttons.bottom_area.rightbutton_left_edge;
 }
 
 static inline bool
-is_inside_left_area(struct tp_dispatch *tp, struct tp_touch *t)
+is_inside_bottom_left_area(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	return is_inside_button_area(tp, t) &&
-	       !is_inside_right_area(tp, t);
+	return is_inside_bottom_button_area(tp, t) &&
+	       !is_inside_bottom_right_area(tp, t);
 }
 
 static void
@@ -327,9 +327,9 @@ tp_button_handle_state(struct tp_dispatch *tp, uint64_t time)
 		if (t->state == TOUCH_END) {
 			tp_button_handle_event(tp, t, BUTTON_EVENT_UP, time);
 		} else if (t->dirty) {
-			if (is_inside_right_area(tp, t))
+			if (is_inside_bottom_right_area(tp, t))
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_R, time);
-			else if (is_inside_left_area(tp, t))
+			else if (is_inside_bottom_left_area(tp, t))
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_L, time);
 			else
 				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_AREA, time);
@@ -432,8 +432,8 @@ tp_init_buttons(struct tp_dispatch *tp,
 		tp->buttons.use_clickfinger = true;
 
 	if (tp->buttons.is_clickpad && !tp->buttons.use_clickfinger) {
-		tp->buttons.area.top_edge = height * .8 + device->abs.min_y;
-		tp->buttons.area.rightbutton_left_edge = width/2 + device->abs.min_x;
+		tp->buttons.bottom_area.top_edge = height * .8 + device->abs.min_y;
+		tp->buttons.bottom_area.rightbutton_left_edge = width/2 + device->abs.min_x;
 		tp->buttons.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 
 		if (tp->buttons.timer_fd == -1)
@@ -447,7 +447,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 		if (tp->buttons.source == NULL)
 			return -1;
 	} else {
-		tp->buttons.area.top_edge = INT_MAX;
+		tp->buttons.bottom_area.top_edge = INT_MAX;
 	}
 
 	return 0;
