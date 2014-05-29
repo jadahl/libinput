@@ -672,7 +672,8 @@ evdev_configure_device(struct evdev_device *device)
 		has_rel = 1;
 
 	if (libevdev_has_event_type(evdev, EV_KEY)) {
-		if (libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_FINGER) &&
+		if (!libevdev_has_property(evdev, INPUT_PROP_DIRECT) &&
+		    libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_FINGER) &&
 		    !libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_PEN) &&
 		    (has_abs || has_mt)) {
 			device->dispatch = evdev_mt_touchpad_create(device);
