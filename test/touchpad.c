@@ -219,8 +219,6 @@ START_TEST(touchpad_1fg_clickfinger)
 {
 	struct litest_device *dev = litest_create_device(LITEST_BCM5974);
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
-	struct libinput_event_pointer *ptrev;
 
 	litest_drain_events(li);
 
@@ -246,8 +244,6 @@ START_TEST(touchpad_2fg_clickfinger)
 {
 	struct litest_device *dev = litest_create_device(LITEST_BCM5974);
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
-	struct libinput_event_pointer *ptrev;
 
 	litest_drain_events(li);
 
@@ -275,9 +271,6 @@ START_TEST(touchpad_btn_left)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
-	struct libinput_event_pointer *ptrev;
-	enum libinput_pointer_button_state btnstate;
 
 	litest_drain_events(li);
 
@@ -319,7 +312,6 @@ START_TEST(clickpad_click_n_drag)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
-	struct libinput_event_pointer *ptrev;
 
 	litest_drain_events(li);
 
