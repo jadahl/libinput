@@ -42,7 +42,7 @@
 #define DEFAULT_AXIS_STEP_DISTANCE li_fixed_from_int(10)
 
 #ifndef KEY_LIGHTS_TOGGLE
-#define KEY_LIGHTS_TOGGLE 0x160
+#define KEY_LIGHTS_TOGGLE 0x21e
 #endif
 
 void
