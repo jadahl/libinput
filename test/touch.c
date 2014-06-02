@@ -68,7 +68,7 @@ START_TEST(touch_abs_transform)
 	struct libinput *libinput;
 	struct libinput_event *ev;
 	struct libinput_event_touch *tev;
-	li_fixed_t fx, fy;
+	double fx, fy;
 	bool tested = false;
 
 	struct input_absinfo abs[] = {
@@ -97,9 +97,9 @@ START_TEST(touch_abs_transform)
 
 		tev = libinput_event_get_touch_event(ev);
 		fx = libinput_event_touch_get_x_transformed(tev, 1920);
-		ck_assert_int_eq(li_fixed_to_int(fx), 1919);
+		ck_assert_int_eq(fx, 1919.0);
 		fy = libinput_event_touch_get_y_transformed(tev, 720);
-		ck_assert_int_eq(li_fixed_to_int(fy), 719);
+		ck_assert_int_eq(fy, 719.0);
 
 		tested = true;
 

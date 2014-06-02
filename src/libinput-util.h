@@ -76,29 +76,6 @@ int list_empty(const struct list *list);
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 
-/*
- * This fixed point implementation is a verbatim copy from wayland-util.h from
- * the Wayland project, with the wl_ prefix renamed li_.
- */
-
-static inline li_fixed_t li_fixed_from_int(int i)
-{
-	return i * 256;
-}
-
-static inline li_fixed_t
-li_fixed_from_double(double d)
-{
-	union {
-		double d;
-		int64_t i;
-	} u;
-
-	u.d = d + (3LL << (51 - 8));
-
-	return u.i;
-}
-
 #define LIBINPUT_EXPORT __attribute__ ((visibility("default")))
 
 static inline void *

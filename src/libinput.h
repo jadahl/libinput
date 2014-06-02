@@ -79,13 +79,6 @@ extern "C" {
  */
 
 /**
- * @ingroup fixed_point
- *
- * libinput 24.8 fixed point real number.
- */
-typedef int32_t li_fixed_t;
-
-/**
  * Log priority for internal logging messages.
  */
 enum libinput_log_priority {
@@ -218,45 +211,6 @@ struct libinput_event_pointer;
  * LIBINPUT_EVENT_TOUCH_FRAME.
  */
 struct libinput_event_touch;
-
-/**
- * @defgroup fixed_point Fixed point utilities
- */
-
-/**
- * @ingroup fixed_point
- *
- * Convert li_fixed_t to a double
- *
- * @param f fixed point number
- * @return Converted double
- */
-static inline double
-li_fixed_to_double (li_fixed_t f)
-{
-	union {
-		double d;
-		int64_t i;
-	} u;
-
-	u.i = ((1023LL + 44LL) << 52) + (1LL << 51) + f;
-
-	return u.d - (3LL << 43);
-}
-
-/**
- * @ingroup fixed_point
- *
- * Convert li_fixed_t to a int. The fraction part is discarded.
- *
- * @param f fixed point number
- * @return Converted int
- */
-static inline int
-li_fixed_to_int(li_fixed_t f)
-{
-	return f / 256;
-}
 
 /**
  * @defgroup event Acessing and destruction of events
@@ -453,7 +407,7 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event);
  *
  * @return the relative x movement since the last event
  */
-li_fixed_t
+double
 libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
 
 /**
@@ -468,7 +422,7 @@ libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
  *
  * @return the relative y movement since the last event
  */
-li_fixed_t
+double
 libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
 
 /**
@@ -488,7 +442,7 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
  *
  * @return the current absolute x coordinate
  */
-li_fixed_t
+double
 libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event);
 
 /**
@@ -508,7 +462,7 @@ libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event);
  *
  * @return the current absolute y coordinate
  */
-li_fixed_t
+double
 libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event);
 
 /**
@@ -528,7 +482,7 @@ libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event);
  * @param width The current output screen width
  * @return the current absolute x coordinate transformed to a screen coordinate
  */
-li_fixed_t
+double
 libinput_event_pointer_get_absolute_x_transformed(
 	struct libinput_event_pointer *event,
 	uint32_t width);
@@ -550,7 +504,7 @@ libinput_event_pointer_get_absolute_x_transformed(
  * @param height The current output screen height
  * @return the current absolute y coordinate transformed to a screen coordinate
  */
-li_fixed_t
+double
 libinput_event_pointer_get_absolute_y_transformed(
 	struct libinput_event_pointer *event,
 	uint32_t height);
@@ -636,7 +590,7 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  *
  * @return the axis value of this event
  */
-li_fixed_t
+double
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
 
 /**
@@ -711,7 +665,7 @@ libinput_event_touch_get_seat_slot(struct libinput_event_touch *event);
  * @param event The libinput touch event
  * @return the current absolute x coordinate
  */
-li_fixed_t
+double
 libinput_event_touch_get_x(struct libinput_event_touch *event);
 
 /**
@@ -731,7 +685,7 @@ libinput_event_touch_get_x(struct libinput_event_touch *event);
  * @param event The libinput touch event
  * @return the current absolute y coordinate
  */
-li_fixed_t
+double
 libinput_event_touch_get_y(struct libinput_event_touch *event);
 
 /**
@@ -747,7 +701,7 @@ libinput_event_touch_get_y(struct libinput_event_touch *event);
  * @param width The current output screen width
  * @return the current absolute x coordinate transformed to a screen coordinate
  */
-li_fixed_t
+double
 libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
 				       uint32_t width);
 
@@ -764,7 +718,7 @@ libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
  * @param height The current output screen height
  * @return the current absolute y coordinate transformed to a screen coordinate
  */
-li_fixed_t
+double
 libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
 				       uint32_t height);
 

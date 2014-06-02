@@ -140,14 +140,14 @@ keyboard_notify_key(struct libinput_device *device,
 void
 pointer_notify_motion(struct libinput_device *device,
 		      uint32_t time,
-		      li_fixed_t dx,
-		      li_fixed_t dy);
+		      double dx,
+		      double dy);
 
 void
 pointer_notify_motion_absolute(struct libinput_device *device,
 			       uint32_t time,
-			       li_fixed_t x,
-			       li_fixed_t y);
+			       double x,
+			       double y);
 
 void
 pointer_notify_button(struct libinput_device *device,
@@ -159,23 +159,23 @@ void
 pointer_notify_axis(struct libinput_device *device,
 		    uint32_t time,
 		    enum libinput_pointer_axis axis,
-		    li_fixed_t value);
+		    double value);
 
 void
 touch_notify_touch_down(struct libinput_device *device,
 			uint32_t time,
 			int32_t slot,
 			int32_t seat_slot,
-			li_fixed_t x,
-			li_fixed_t y);
+			double x,
+			double y);
 
 void
 touch_notify_touch_motion(struct libinput_device *device,
 			  uint32_t time,
 			  int32_t slot,
 			  int32_t seat_slot,
-			  li_fixed_t x,
-			  li_fixed_t y);
+			  double x,
+			  double y);
 
 void
 touch_notify_touch_up(struct libinput_device *device,

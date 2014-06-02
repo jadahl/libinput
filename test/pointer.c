@@ -66,8 +66,8 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	expected_length = sqrt(dx*dx + dy*dy);
 	expected_dir = atan2(dx, dy);
 
-	ev_dx = li_fixed_to_double(libinput_event_pointer_get_dx(ptrev));
-	ev_dy = li_fixed_to_double(libinput_event_pointer_get_dy(ptrev));
+	ev_dx = libinput_event_pointer_get_dx(ptrev);
+	ev_dy = libinput_event_pointer_get_dy(ptrev);
 	actual_length = sqrt(ev_dx*ev_dx + ev_dy*ev_dy);
 	actual_dir = atan2(ev_dx, ev_dy);
 
@@ -183,8 +183,7 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 			 which == REL_WHEEL ?
 				LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL :
 				LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL);
-	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev),
-			 li_fixed_from_int(expected));
+	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev), expected);
 	libinput_event_destroy(event);
 }
 

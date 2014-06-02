@@ -83,7 +83,7 @@ struct evdev_device {
 	struct mtdev *mtdev;
 
 	struct {
-		li_fixed_t dx, dy;
+		int dx, dy;
 	} rel;
 
 	enum evdev_event_type pending_event;
@@ -148,14 +148,14 @@ int
 evdev_device_has_capability(struct evdev_device *device,
 			    enum libinput_device_capability capability);
 
-li_fixed_t
+double
 evdev_device_transform_x(struct evdev_device *device,
-			 li_fixed_t x,
+			 double x,
 			 uint32_t width);
 
-li_fixed_t
+double
 evdev_device_transform_y(struct evdev_device *device,
-			 li_fixed_t y,
+			 double y,
 			 uint32_t height);
 
 void

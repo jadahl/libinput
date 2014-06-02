@@ -485,7 +485,7 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 		pointer_notify_axis(&tp->device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL,
-				    li_fixed_from_double(dy));
+				    dy);
 	}
 
 	if (dx != 0.0 &&
@@ -493,7 +493,7 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 		pointer_notify_axis(&tp->device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL,
-				    li_fixed_from_double(dx));
+				    dx);
 	}
 }
 
@@ -573,11 +573,8 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 		tp_get_delta(t, &dx, &dy);
 		tp_filter_motion(tp, &dx, &dy, time);
 
-		if (dx != 0 || dy != 0)
-			pointer_notify_motion(&tp->device->base,
-					      time,
-					      li_fixed_from_double(dx),
-					      li_fixed_from_double(dy));
+		if (dx != 0.0 || dy != 0.0)
+			pointer_notify_motion(&tp->device->base, time, dx, dy);
 	}
 }
 
