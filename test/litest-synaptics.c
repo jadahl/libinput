@@ -85,15 +85,15 @@ static int events[] = {
 };
 
 static struct input_absinfo absinfo[] = {
-	{ ABS_X, 1472, 5472, 75 },
-	{ ABS_Y, 1408, 4448, 129 },
-	{ ABS_PRESSURE, 0, 255, 0 },
-	{ ABS_TOOL_WIDTH, 0, 15, 0 },
-	{ ABS_MT_SLOT, 0, 1, 0 },
-	{ ABS_MT_POSITION_X, 1472, 5472, 75 },
-	{ ABS_MT_POSITION_Y, 1408, 4448, 129 },
-	{ ABS_MT_TRACKING_ID, 0, 65535, 0 },
-	{ ABS_MT_PRESSURE, 0, 255, 0 },
+	{ ABS_X, 1472, 5472, 0, 0, 75 },
+	{ ABS_Y, 1408, 4448, 0, 0, 129 },
+	{ ABS_PRESSURE, 0, 255, 0, 0, 0 },
+	{ ABS_TOOL_WIDTH, 0, 15, 0, 0, 0 },
+	{ ABS_MT_SLOT, 0, 1, 0, 0, 0 },
+	{ ABS_MT_POSITION_X, 1472, 5472, 0, 0, 75 },
+	{ ABS_MT_POSITION_Y, 1408, 4448, 0, 0, 129 },
+	{ ABS_MT_TRACKING_ID, 0, 65535, 0, 0, 0 },
+	{ ABS_MT_PRESSURE, 0, 255, 0, 0, 0 },
 	{ .value = -1 }
 };
 
