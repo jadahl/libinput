@@ -68,8 +68,8 @@ create_simple_test_device(const char *name, ...)
 
 	va_start(args, name);
 
-	while ((type = va_arg(args, unsigned int)) != -1 &&
-	       (code = va_arg(args, unsigned int)) != -1) {
+	while ((type = va_arg(args, unsigned int)) != (unsigned int)-1 &&
+	       (code = va_arg(args, unsigned int)) != (unsigned int)-1) {
 		const struct input_absinfo *a = NULL;
 		if (type == EV_ABS)
 			a = &abs;
