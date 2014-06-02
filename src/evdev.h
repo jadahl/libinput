@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#include <linux/input.h>
+#include "linux/input.h"
 #include <libevdev/libevdev.h>
 
 #include "libinput-private.h"

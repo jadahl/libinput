@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <linux/input.h>
+#include "linux/input.h"
 #include <sys/ptrace.h>
 #include <sys/timerfd.h>
 #include <sys/wait.h>

@@ -26,7 +26,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <linux/input.h>
+#include "linux/input.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <mtdev-plumbing.h>
@@ -40,14 +40,6 @@
 #include "libinput-private.h"
 
 #define DEFAULT_AXIS_STEP_DISTANCE li_fixed_from_int(10)
-
-#ifndef KEY_MICMUTE
-#define KEY_MICMUTE 0xf8
-#endif
-
-#ifndef KEY_LIGHTS_TOGGLE
-#define KEY_LIGHTS_TOGGLE 0x21e
-#endif
 
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds)

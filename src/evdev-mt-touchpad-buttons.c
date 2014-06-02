@@ -26,14 +26,10 @@
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
-#include <linux/input.h>
+#include "linux/input.h"
 #include <sys/timerfd.h>
 
 #include "evdev-mt-touchpad.h"
-
-#ifndef INPUT_PROP_TOPBUTTONPAD
-#define INPUT_PROP_TOPBUTTONPAD 0x04
-#endif
 
 #define DEFAULT_BUTTON_MOTION_THRESHOLD 0.02 /* 2% of size */
 #define DEFAULT_BUTTON_ENTER_TIMEOUT 100 /* ms */

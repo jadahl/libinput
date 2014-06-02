@@ -1,5 +1,8 @@
 if BUILD_TESTS
-AM_CPPFLAGS = -I$(top_srcdir)/src $(CHECK_CFLAGS) $(LIBEVDEV_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include \
+              -I$(top_srcdir)/src \
+              $(CHECK_CFLAGS) \
+              $(LIBEVDEV_CFLAGS)
 
 TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la -lm
 TEST_CFLAGS = $(GCC_CFLAGS) $(AM_CFLAGS)

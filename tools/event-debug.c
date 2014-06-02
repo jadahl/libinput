@@ -31,7 +31,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <libudev.h>
-#include <linux/input.h>
+#include "linux/input.h"
 #include <sys/ioctl.h>
 #include <sys/signalfd.h>
 

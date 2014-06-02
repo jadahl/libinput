@@ -23,7 +23,7 @@
 #ifndef LIBINPUT_PRIVATE_H
 #define LIBINPUT_PRIVATE_H
 
-#include <linux/input.h>
+#include "linux/input.h"
 
 #include "libinput.h"
 #include "libinput-util.h"
