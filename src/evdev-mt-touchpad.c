@@ -574,11 +574,10 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 		tp_filter_motion(tp, &dx, &dy, time);
 
 		if (dx != 0 || dy != 0)
-			pointer_notify_motion(
-				&tp->device->base,
-				time,
-				li_fixed_from_double(dx),
-				li_fixed_from_double(dy));
+			pointer_notify_motion(&tp->device->base,
+					      time,
+					      li_fixed_from_double(dx),
+					      li_fixed_from_double(dy));
 	}
 }
 
