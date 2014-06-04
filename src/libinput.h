@@ -128,9 +128,9 @@ enum libinput_led {
  * Logical state of a physical button. Note that the logical state may not
  * represent the physical state of the button.
  */
-enum libinput_pointer_button_state {
-	LIBINPUT_POINTER_BUTTON_STATE_RELEASED = 0,
-	LIBINPUT_POINTER_BUTTON_STATE_PRESSED = 1
+enum libinput_button_state {
+	LIBINPUT_BUTTON_STATE_RELEASED = 0,
+	LIBINPUT_BUTTON_STATE_PRESSED = 1
 };
 
 
@@ -536,7 +536,7 @@ libinput_event_pointer_get_button(struct libinput_event_pointer *event);
  *
  * @return the button state triggering this event
  */
-enum libinput_pointer_button_state
+enum libinput_button_state
 libinput_event_pointer_get_button_state(struct libinput_event_pointer *event);
 
 /**

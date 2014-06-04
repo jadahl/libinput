@@ -289,8 +289,8 @@ evdev_process_key(struct evdev_device *device, struct input_event *e, int time)
 			&device->base,
 			time,
 			e->code,
-			e->value ? LIBINPUT_POINTER_BUTTON_STATE_PRESSED :
-				   LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+			e->value ? LIBINPUT_BUTTON_STATE_PRESSED :
+				   LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 
 	default:

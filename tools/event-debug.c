@@ -279,14 +279,14 @@ static void
 print_button_event(struct libinput_event *ev)
 {
 	struct libinput_event_pointer *p = libinput_event_get_pointer_event(ev);
-	enum libinput_pointer_button_state state;
+	enum libinput_button_state state;
 
 	print_event_time(libinput_event_pointer_get_time(p));
 
 	state = libinput_event_pointer_get_button_state(p);
 	printf("%3d %s, seat count: %u\n",
 	       libinput_event_pointer_get_button(p),
-	       state == LIBINPUT_POINTER_BUTTON_STATE_PRESSED ? "pressed" : "released",
+	       state == LIBINPUT_BUTTON_STATE_PRESSED ? "pressed" : "released",
 	       libinput_event_pointer_get_seat_button_count(p));
 }
 

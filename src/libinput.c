@@ -65,7 +65,7 @@ struct libinput_event_pointer {
 	double y;
 	uint32_t button;
 	uint32_t seat_button_count;
-	enum libinput_pointer_button_state state;
+	enum libinput_button_state state;
 	enum libinput_pointer_axis axis;
 	double value;
 };
@@ -348,7 +348,7 @@ libinput_event_pointer_get_button(struct libinput_event_pointer *event)
 	return event->button;
 }
 
-LIBINPUT_EXPORT enum libinput_pointer_button_state
+LIBINPUT_EXPORT enum libinput_button_state
 libinput_event_pointer_get_button_state(struct libinput_event_pointer *event)
 {
 	return event->state;
@@ -712,14 +712,14 @@ update_seat_key_count(struct libinput_seat *seat,
 static uint32_t
 update_seat_button_count(struct libinput_seat *seat,
 			 int32_t button,
-			 enum libinput_pointer_button_state state)
+			 enum libinput_button_state state)
 {
 	assert(button >= 0 && button <= KEY_MAX);
 
 	switch (state) {
-	case LIBINPUT_POINTER_BUTTON_STATE_PRESSED:
+	case LIBINPUT_BUTTON_STATE_PRESSED:
 		return ++seat->button_count[button];
-	case LIBINPUT_POINTER_BUTTON_STATE_RELEASED:
+	case LIBINPUT_BUTTON_STATE_RELEASED:
 		/* We might not have received the first PRESSED event. */
 		if (seat->button_count[button] == 0)
 			return 0;
@@ -863,7 +863,7 @@ void
 pointer_notify_button(struct libinput_device *device,
 		      uint32_t time,
 		      int32_t button,
-		      enum libinput_pointer_button_state state)
+		      enum libinput_button_state state)
 {
 	struct libinput_event_pointer *button_event;
 	int32_t seat_button_count;

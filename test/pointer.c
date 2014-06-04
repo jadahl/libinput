@@ -122,8 +122,8 @@ test_button_event(struct litest_device *dev, int button, int state)
 	ck_assert_int_eq(libinput_event_pointer_get_button(ptrev), button);
 	ck_assert_int_eq(libinput_event_pointer_get_button_state(ptrev),
 			 state ?
-				LIBINPUT_POINTER_BUTTON_STATE_PRESSED :
-				LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+				LIBINPUT_BUTTON_STATE_PRESSED :
+				LIBINPUT_BUTTON_STATE_RELEASED);
 	libinput_event_destroy(event);
 }
 
@@ -247,7 +247,7 @@ START_TEST(pointer_seat_button_count)
 		ck_assert_int_eq(libinput_event_pointer_get_button(tev),
 				 BTN_LEFT);
 		ck_assert_int_eq(libinput_event_pointer_get_button_state(tev),
-				 LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
+				 LIBINPUT_BUTTON_STATE_PRESSED);
 
 		++expected_seat_button_count;
 		seat_button_count =
@@ -277,7 +277,7 @@ START_TEST(pointer_seat_button_count)
 		ck_assert_int_eq(libinput_event_pointer_get_button(tev),
 				 BTN_LEFT);
 		ck_assert_int_eq(libinput_event_pointer_get_button_state(tev),
-				 LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+				 LIBINPUT_BUTTON_STATE_RELEASED);
 
 		--expected_seat_button_count;
 		seat_button_count =

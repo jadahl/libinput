@@ -683,7 +683,7 @@ static int
 tp_post_clickfinger_buttons(struct tp_dispatch *tp, uint64_t time)
 {
 	uint32_t current, old, button;
-	enum libinput_pointer_button_state state;
+	enum libinput_button_state state;
 
 	current = tp->buttons.state;
 	old = tp->buttons.old_state;
@@ -700,11 +700,11 @@ tp_post_clickfinger_buttons(struct tp_dispatch *tp, uint64_t time)
 			return 0;
 		}
 		tp->buttons.active = button;
-		state = LIBINPUT_POINTER_BUTTON_STATE_PRESSED;
+		state = LIBINPUT_BUTTON_STATE_PRESSED;
 	} else {
 		button = tp->buttons.active;
 		tp->buttons.active = 0;
-		state = LIBINPUT_POINTER_BUTTON_STATE_RELEASED;
+		state = LIBINPUT_BUTTON_STATE_RELEASED;
 	}
 
 	if (button)
@@ -725,13 +725,13 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 	button = BTN_LEFT;
 
 	while (current || old) {
-		enum libinput_pointer_button_state state;
+		enum libinput_button_state state;
 
 		if ((current & 0x1) ^ (old & 0x1)) {
 			if (!!(current & 0x1))
-				state = LIBINPUT_POINTER_BUTTON_STATE_PRESSED;
+				state = LIBINPUT_BUTTON_STATE_PRESSED;
 			else
-				state = LIBINPUT_POINTER_BUTTON_STATE_RELEASED;
+				state = LIBINPUT_BUTTON_STATE_RELEASED;
 
 			pointer_notify_button(&tp->device->base,
 					      time,
@@ -751,7 +751,7 @@ static int
 tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 {
 	uint32_t current, old, button;
-	enum libinput_pointer_button_state state;
+	enum libinput_button_state state;
 	enum { AREA = 0x01, LEFT = 0x02, MIDDLE = 0x04, RIGHT = 0x08 };
 
 	current = tp->buttons.state;
@@ -799,11 +799,11 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 			button = BTN_LEFT;
 
 		tp->buttons.active = button;
-		state = LIBINPUT_POINTER_BUTTON_STATE_PRESSED;
+		state = LIBINPUT_BUTTON_STATE_PRESSED;
 	} else {
 		button = tp->buttons.active;
 		tp->buttons.active = 0;
-		state = LIBINPUT_POINTER_BUTTON_STATE_RELEASED;
+		state = LIBINPUT_BUTTON_STATE_RELEASED;
 	}
 
 	tp->buttons.click_pending = false;

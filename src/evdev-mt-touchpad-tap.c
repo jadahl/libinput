@@ -99,7 +99,7 @@ static void
 tp_tap_notify(struct tp_dispatch *tp,
 	      uint64_t time,
 	      int nfingers,
-	      enum libinput_pointer_button_state state)
+	      enum libinput_button_state state)
 {
 	int32_t button;
 
@@ -170,7 +170,7 @@ tp_tap_touch_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_TAPPED;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
 		tp_tap_set_timer(tp, time);
 		break;
 	case TAP_EVENT_TIMEOUT:
@@ -220,11 +220,11 @@ tp_tap_tapped_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
@@ -240,8 +240,8 @@ tp_tap_touch2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_HOLD;
-		tp_tap_notify(tp, time, 2, LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 2, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 2, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, time, 2, LIBINPUT_BUTTON_STATE_RELEASED);
 		tp_tap_clear_timer(tp);
 		break;
 	case TAP_EVENT_MOTION:
@@ -293,8 +293,8 @@ tp_tap_touch3_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_TOUCH_2_HOLD;
-		tp_tap_notify(tp, time, 3, LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 3, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 3, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, time, 3, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
@@ -332,9 +332,9 @@ tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp, enum tap_event
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		tp_tap_clear_timer(tp);
 		break;
 	case TAP_EVENT_MOTION:
@@ -343,7 +343,7 @@ tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp, enum tap_event
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
@@ -366,7 +366,7 @@ tp_tap_dragging_handle_event(struct tp_dispatch *tp, enum tap_event event, uint6
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
@@ -385,11 +385,11 @@ tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp, enum tap_event event, 
 		break;
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
@@ -404,7 +404,7 @@ tp_tap_dragging2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint
 		break;
 	case TAP_EVENT_TOUCH:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_TIMEOUT:
@@ -412,7 +412,7 @@ tp_tap_dragging2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_POINTER_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }

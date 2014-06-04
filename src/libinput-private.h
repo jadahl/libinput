@@ -153,7 +153,7 @@ void
 pointer_notify_button(struct libinput_device *device,
 		      uint32_t time,
 		      int32_t button,
-		      enum libinput_pointer_button_state state);
+		      enum libinput_button_state state);
 
 void
 pointer_notify_axis(struct libinput_device *device,
