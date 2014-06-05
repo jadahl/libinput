@@ -203,7 +203,8 @@ litest_add(const char *name,
 	litest_add_tcase(s, func, required, excluded);
 }
 
-int is_debugger_attached()
+static int
+is_debugger_attached(void)
 {
 	int status;
 	int rc;
