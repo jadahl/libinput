@@ -477,7 +477,10 @@ tp_tap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 	if (tp->tap.state == TAP_STATE_IDLE || tp->tap.state == TAP_STATE_DEAD)
 		tp_tap_clear_timer(tp);
 
-	log_debug("%s → %s → %s\n", tap_state_to_str(current), tap_event_to_str(event), tap_state_to_str(tp->tap.state));
+	log_debug("tap state: %s → %s → %s\n",
+		  tap_state_to_str(current),
+		  tap_event_to_str(event),
+		  tap_state_to_str(tp->tap.state));
 }
 
 static bool
