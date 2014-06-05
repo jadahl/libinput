@@ -59,9 +59,11 @@ PKG_CHECK_MODULES(LIBUDEV, [libudev])
 PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
 
 if test "x$GCC" = "xyes"; then
-	GCC_CFLAGS="-Wall -Wextra -Wno-unused-parameter -g -Wstrict-prototypes -Wmissing-prototypes -fvisibility=hidden"
+	GCC_CXXFLAGS="-Wall -Wextra -Wno-unused-parameter -g -fvisibility=hidden"
+	GCC_CFLAGS="$GCC_CXXFLAGS -Wmissing-prototypes -Wstrict-prototypes"
 fi
 AC_SUBST(GCC_CFLAGS)
+AC_SUBST(GCC_CXXFLAGS)
 
 AC_PATH_PROG(DOXYGEN, [doxygen])
 if test "x$DOXYGEN" = "x"; then
