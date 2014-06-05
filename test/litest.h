@@ -55,6 +55,7 @@ enum litest_device_feature {
 	LITEST_WHEEL = 1 << 5,
 	LITEST_TOUCH = 1 << 6,
 	LITEST_SINGLE_TOUCH = 1 << 7,
+	LITEST_APPLE_CLICKPAD = 1 << 8,
 };
 
 struct litest_device {
