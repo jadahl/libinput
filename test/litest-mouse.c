@@ -35,6 +35,7 @@ static void litest_mouse_setup(void)
 }
 
 static struct litest_device_interface interface = {
+	NULL
 };
 
 static struct input_id input_id = {
