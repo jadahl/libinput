@@ -28,7 +28,8 @@
 #include "litest-int.h"
 #include "libinput-util.h"
 
-void litest_wacom_touch_setup(void)
+static void
+litest_wacom_touch_setup(void)
 {
 	struct litest_device *d = litest_create_device(LITEST_WACOM_TOUCH);
 	litest_set_current_device(d);

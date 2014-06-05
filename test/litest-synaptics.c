@@ -28,7 +28,8 @@
 #include "litest-int.h"
 #include "libinput-util.h"
 
-void litest_synaptics_clickpad_setup(void)
+static void
+litest_synaptics_clickpad_setup(void)
 {
 	struct litest_device *d = litest_create_device(LITEST_SYNAPTICS_CLICKPAD);
 	litest_set_current_device(d);
