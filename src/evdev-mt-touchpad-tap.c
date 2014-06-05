@@ -138,7 +138,7 @@ tp_tap_idle_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 		break;
 	case TAP_EVENT_RELEASE:
 	case TAP_EVENT_MOTION:
-		log_info("invalid event, no fingers are down\n");
+		log_bug_libinput("invalid event, no fingers are down\n");
 		break;
 	case TAP_EVENT_TIMEOUT:
 		break;
@@ -201,7 +201,7 @@ tp_tap_tapped_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 	switch (event) {
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_RELEASE:
-		log_info("invalid event when fingers are up\n");
+		log_bug_libinput("invalid event when fingers are up\n");
 		break;
 	case TAP_EVENT_TOUCH:
 		tp->tap.state = TAP_STATE_DRAGGING_OR_DOUBLETAP;
