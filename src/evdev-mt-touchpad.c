@@ -545,13 +545,12 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 	double dx, dy;
+	int consumed = 0;
 
-	if (tp_post_button_events(tp, time) != 0) {
-		tp_stop_scroll_events(tp, time);
-		return;
-	}
+	consumed |= tp_tap_handle_state(tp, time);
+	consumed |= tp_post_button_events(tp, time);
 
-	if (tp_tap_handle_state(tp, time) != 0) {
+	if (consumed) {
 		tp_stop_scroll_events(tp, time);
 		return;
 	}
