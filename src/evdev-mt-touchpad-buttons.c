@@ -22,12 +22,10 @@
 
 #include <errno.h>
 #include <limits.h>
-#include <time.h>
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
 #include "linux/input.h"
-#include <sys/timerfd.h>
 
 #include "evdev-mt-touchpad.h"
 
@@ -130,34 +128,17 @@ is_inside_top_middle_area(struct tp_dispatch *tp, struct tp_touch *t)
 }
 
 static void
-tp_button_set_timer(struct tp_dispatch *tp, uint64_t timeout)
-{
-	struct itimerspec its;
-	its.it_interval.tv_sec = 0;
-	its.it_interval.tv_nsec = 0;
-	its.it_value.tv_sec = timeout / 1000;
-	its.it_value.tv_nsec = (timeout % 1000) * 1000 * 1000;
-	timerfd_settime(tp->buttons.timer_fd, TFD_TIMER_ABSTIME, &its, NULL);
-}
-
-static void
 tp_button_set_enter_timer(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	t->button.timeout = t->millis + DEFAULT_BUTTON_ENTER_TIMEOUT;
-	tp_button_set_timer(tp, t->button.timeout);
+	libinput_timer_set(&t->button.timer,
+			   t->millis + DEFAULT_BUTTON_ENTER_TIMEOUT);
 }
 
 static void
 tp_button_set_leave_timer(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	t->button.timeout = t->millis + DEFAULT_BUTTON_LEAVE_TIMEOUT;
-	tp_button_set_timer(tp, t->button.timeout);
-}
-
-static void
-tp_button_clear_timer(struct tp_dispatch *tp, struct tp_touch *t)
-{
-	t->button.timeout = 0;
+	libinput_timer_set(&t->button.timer,
+			   t->millis + DEFAULT_BUTTON_LEAVE_TIMEOUT);
 }
 
 /*
@@ -168,7 +149,7 @@ static void
 tp_button_set_state(struct tp_dispatch *tp, struct tp_touch *t,
 		    enum button_state new_state, enum button_event event)
 {
-	tp_button_clear_timer(tp, t);
+	libinput_timer_cancel(&t->button.timer);
 
 	t->button.state = new_state;
 	switch (t->button.state) {
@@ -545,16 +526,11 @@ tp_button_handle_state(struct tp_dispatch *tp, uint64_t time)
 }
 
 static void
-tp_button_handle_timeout(struct tp_dispatch *tp, uint64_t now)
+tp_button_handle_timeout(uint64_t now, void *data)
 {
-	struct tp_touch *t;
+	struct tp_touch *t = data;
 
-	tp_for_each_touch(tp, t) {
-		if (t->button.timeout != 0 && t->button.timeout <= now) {
-			tp_button_clear_timer(tp, t);
-			tp_button_handle_event(tp, t, BUTTON_EVENT_TIMEOUT, now);
-		}
-	}
+	tp_button_handle_event(t->tp, t, BUTTON_EVENT_TIMEOUT, now);
 }
 
 int
@@ -582,32 +558,11 @@ tp_process_button(struct tp_dispatch *tp,
 	return 0;
 }
 
-static void
-tp_button_timeout_handler(void *data)
-{
-	struct tp_dispatch *tp = data;
-	uint64_t expires;
-	int len;
-	struct timespec ts;
-	uint64_t now;
-
-	len = read(tp->buttons.timer_fd, &expires, sizeof expires);
-	if (len != sizeof expires)
-		/* This will only happen if the application made the fd
-		 * non-blocking, but this function should only be called
-		 * upon the timeout, so lets continue anyway. */
-		log_error("timerfd read error: %s\n", strerror(errno));
-
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	now = ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
-
-	tp_button_handle_timeout(tp, now);
-}
-
 int
 tp_init_buttons(struct tp_dispatch *tp,
 		struct evdev_device *device)
 {
+	struct tp_touch *t;
 	int width, height;
 	double diagonal;
 
@@ -645,21 +600,16 @@ tp_init_buttons(struct tp_dispatch *tp,
 		} else {
 			tp->buttons.top_area.bottom_edge = INT_MIN;
 		}
-
-		tp->buttons.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
-		if (tp->buttons.timer_fd == -1)
-			return -1;
-
-		tp->buttons.source =
-			libinput_add_fd(tp->device->base.seat->libinput,
-					tp->buttons.timer_fd,
-					tp_button_timeout_handler,
-					tp);
-		if (tp->buttons.source == NULL)
-			return -1;
 	} else {
 		tp->buttons.bottom_area.top_edge = INT_MAX;
 		tp->buttons.top_area.bottom_edge = INT_MIN;
+	}
+
+	tp_for_each_touch(tp, t) {
+		t->button.state = BUTTON_STATE_NONE;
+		libinput_timer_init(&t->button.timer,
+				    tp->device->base.seat->libinput,
+				    tp_button_handle_timeout, t);
 	}
 
 	return 0;
@@ -668,15 +618,10 @@ tp_init_buttons(struct tp_dispatch *tp,
 void
 tp_destroy_buttons(struct tp_dispatch *tp)
 {
-	if (tp->buttons.source) {
-		libinput_remove_source(tp->device->base.seat->libinput,
-				       tp->buttons.source);
-		tp->buttons.source = NULL;
-	}
-	if (tp->buttons.timer_fd > -1) {
-		close(tp->buttons.timer_fd);
-		tp->buttons.timer_fd = -1;
-	}
+	struct tp_touch *t;
+
+	tp_for_each_touch(tp, t)
+		libinput_timer_cancel(&t->button.timer);
 }
 
 static int

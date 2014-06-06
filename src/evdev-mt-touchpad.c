@@ -628,7 +628,7 @@ static void
 tp_init_touch(struct tp_dispatch *tp,
 	      struct tp_touch *t)
 {
-	t->button.state = BUTTON_STATE_NONE;
+	t->tp = tp;
 }
 
 static int
@@ -748,7 +748,6 @@ tp_init(struct tp_dispatch *tp,
 	tp->base.interface = &tp_interface;
 	tp->device = device;
 	tp->tap.timer_fd = -1;
-	tp->buttons.timer_fd = -1;
 
 	if (tp_init_slots(tp, device) != 0)
 		return -1;

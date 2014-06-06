@@ -28,6 +28,7 @@
 
 #include "evdev.h"
 #include "filter.h"
+#include "timer.h"
 
 #define TOUCHPAD_HISTORY_LENGTH 4
 #define TOUCHPAD_MIN_SAMPLES 4
@@ -98,6 +99,7 @@ struct tp_motion {
 };
 
 struct tp_touch {
+	struct tp_dispatch *tp;
 	enum touch_state state;
 	bool dirty;
 	bool fake;				/* a fake touch */
@@ -132,7 +134,7 @@ struct tp_touch {
 		enum button_state state;
 		/* We use button_event here so we can use == on events */
 		enum button_event curr;
-		uint64_t timeout;
+		struct libinput_timer timer;
 	} button;
 };
 
@@ -187,11 +189,6 @@ struct tp_dispatch {
 			int32_t rightbutton_left_edge;
 			int32_t leftbutton_right_edge;
 		} top_area;
-
-		unsigned int timeout;		/* current timeout in ms */
-
-		int timer_fd;
-		struct libinput_source *source;
 	} buttons;				/* physical buttons */
 
 	struct {
