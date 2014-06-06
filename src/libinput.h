@@ -31,6 +31,9 @@ extern "C" {
 #include <stdint.h>
 #include <libudev.h>
 
+#define LIBINPUT_ATTRIBUTE_PRINTF(_format, _args) \
+	__attribute__ ((format (printf, _format, _args)))
+
 /**
  * @mainpage
  * libinput is a generic input device handling library. It abstracts
@@ -999,7 +1002,8 @@ libinput_log_get_priority(void);
  */
 typedef void (*libinput_log_handler)(enum libinput_log_priority priority,
 				     void *user_data,
-				     const char *format, va_list args);
+				     const char *format, va_list args)
+	   LIBINPUT_ATTRIBUTE_PRINTF(3, 0);
 
 /**
  * @ingroup base
