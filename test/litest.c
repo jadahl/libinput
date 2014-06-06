@@ -247,8 +247,27 @@ litest_list_tests(struct list *tests)
 	}
 }
 
+static void
+litest_log_handler(enum libinput_log_priority pri,
+		   void *user_data,
+		   const char *format,
+		   va_list args)
+{
+	const char *priority = NULL;
+
+	switch(pri) {
+	case LIBINPUT_LOG_PRIORITY_INFO: priority = "info"; break;
+	case LIBINPUT_LOG_PRIORITY_ERROR: priority = "error"; break;
+	case LIBINPUT_LOG_PRIORITY_DEBUG: priority = "debug"; break;
+	}
+
+	fprintf(stderr, "litest %s: ", priority);
+	vfprintf(stderr, format, args);
+}
+
 static const struct option opts[] = {
 	{ "list", 0, 0, 'l' },
+	{ "verbose", 0, 0, 'v' },
 	{ 0, 0, 0, 0}
 };
 
@@ -282,6 +301,10 @@ litest_run(int argc, char **argv) {
 			case 'l':
 				litest_list_tests(&all_tests);
 				return 0;
+			case 'v':
+				libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
+				libinput_log_set_handler(litest_log_handler, NULL);
+				break;
 			default:
 				fprintf(stderr, "usage: %s [--list]\n", argv[0]);
 				return 1;
