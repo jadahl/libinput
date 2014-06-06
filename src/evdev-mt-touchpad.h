@@ -200,9 +200,7 @@ struct tp_dispatch {
 
 	struct {
 		bool enabled;
-		int timer_fd;
-		struct libinput_source *source;
-		unsigned int timeout;
+		struct libinput_timer timer;
 		enum tp_tap_state state;
 	} tap;
 };
@@ -218,9 +216,6 @@ tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
 
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time);
-
-unsigned int
-tp_tap_handle_timeout(struct tp_dispatch *tp, uint64_t time);
 
 int
 tp_init_tap(struct tp_dispatch *tp);

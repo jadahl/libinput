@@ -30,9 +30,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
-#include <sys/timerfd.h>
 
 #include "evdev-mt-touchpad.h"
 
@@ -120,22 +118,13 @@ tp_tap_notify(struct tp_dispatch *tp,
 static void
 tp_tap_set_timer(struct tp_dispatch *tp, uint64_t time)
 {
-	uint64_t timeout = time + DEFAULT_TAP_TIMEOUT_PERIOD;
-	struct itimerspec its;
-
-	its.it_interval.tv_sec = 0;
-	its.it_interval.tv_nsec = 0;
-	its.it_value.tv_sec = timeout / 1000;
-	its.it_value.tv_nsec = (timeout % 1000) * 1000 * 1000;
-	timerfd_settime(tp->tap.timer_fd, TFD_TIMER_ABSTIME, &its, NULL);
-
-	tp->tap.timeout = timeout;
+	libinput_timer_set(&tp->tap.timer, time + DEFAULT_TAP_TIMEOUT_PERIOD);
 }
 
 static void
 tp_tap_clear_timer(struct tp_dispatch *tp)
 {
-	tp->tap.timeout = 0;
+	libinput_timer_cancel(&tp->tap.timer);
 }
 
 static void
@@ -548,60 +537,21 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 }
 
 static void
-tp_tap_timeout_handler(void *data)
+tp_tap_handle_timeout(uint64_t time, void *data)
 {
-	struct tp_dispatch *touchpad = data;
-	uint64_t expires;
-	int len;
-	struct timespec ts;
-	uint64_t now;
+	struct tp_dispatch *tp = data;
 
-	len = read(touchpad->tap.timer_fd, &expires, sizeof expires);
-	if (len != sizeof expires)
-		/* This will only happen if the application made the fd
-		 * non-blocking, but this function should only be called
-		 * upon the timeout, so lets continue anyway. */
-		log_error("timerfd read error: %s\n", strerror(errno));
-
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-	now = ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
-
-	tp_tap_handle_timeout(touchpad, now);
-}
-
-unsigned int
-tp_tap_handle_timeout(struct tp_dispatch *tp, uint64_t time)
-{
-	if (!tp->tap.enabled)
-		return 0;
-
-	if (tp->tap.timeout && tp->tap.timeout <= time) {
-		tp_tap_clear_timer(tp);
-		tp_tap_handle_event(tp, TAP_EVENT_TIMEOUT, time);
-	}
-
-	return tp->tap.timeout;
+	tp_tap_handle_event(tp, TAP_EVENT_TIMEOUT, time);
 }
 
 int
 tp_init_tap(struct tp_dispatch *tp)
 {
 	tp->tap.state = TAP_STATE_IDLE;
-	tp->tap.timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 
-	if (tp->tap.timer_fd == -1)
-		return -1;
-
-	tp->tap.source =
-		libinput_add_fd(tp->device->base.seat->libinput,
-				tp->tap.timer_fd,
-				tp_tap_timeout_handler,
-				tp);
-
-	if (tp->tap.source == NULL) {
-		close(tp->tap.timer_fd);
-		return -1;
-	}
+	libinput_timer_init(&tp->tap.timer,
+			    tp->device->base.seat->libinput,
+			    tp_tap_handle_timeout, tp);
 
 	tp->tap.enabled = 1; /* FIXME */
 
@@ -611,13 +561,5 @@ tp_init_tap(struct tp_dispatch *tp)
 void
 tp_destroy_tap(struct tp_dispatch *tp)
 {
-	if (tp->tap.source) {
-		libinput_remove_source(tp->device->base.seat->libinput,
-				       tp->tap.source);
-		tp->tap.source = NULL;
-	}
-	if (tp->tap.timer_fd > -1) {
-		close(tp->tap.timer_fd);
-		tp->tap.timer_fd = -1;
-	}
+	libinput_timer_cancel(&tp->tap.timer);
 }

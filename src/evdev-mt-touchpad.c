@@ -747,7 +747,6 @@ tp_init(struct tp_dispatch *tp,
 
 	tp->base.interface = &tp_interface;
 	tp->device = device;
-	tp->tap.timer_fd = -1;
 
 	if (tp_init_slots(tp, device) != 0)
 		return -1;
