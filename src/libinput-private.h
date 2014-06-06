@@ -28,6 +28,8 @@
 #include "libinput.h"
 #include "libinput-util.h"
 
+struct libinput_source;
+
 struct libinput_interface_backend {
 	int (*resume)(struct libinput *libinput);
 	void (*suspend)(struct libinput *libinput);
@@ -39,6 +41,12 @@ struct libinput {
 	struct list source_destroy_list;
 
 	struct list seat_list;
+
+	struct {
+		struct list list;
+		struct libinput_source *source;
+		int fd;
+	} timer;
 
 	struct libinput_event **events;
 	size_t events_count;
@@ -79,7 +87,6 @@ struct libinput_device {
 
 typedef void (*libinput_source_dispatch_t)(void *data);
 
-struct libinput_source;
 
 #define log_debug(...) log_msg(LIBINPUT_LOG_PRIORITY_DEBUG, __VA_ARGS__)
 #define log_info(...) log_msg(LIBINPUT_LOG_PRIORITY_INFO, __VA_ARGS__)

@@ -21,6 +21,8 @@ libinput_la_SOURCES =			\
 	path.c				\
 	udev-seat.c			\
 	udev-seat.h			\
+	timer.c				\
+	timer.h				\
 	../include/linux/input.h
 
 libinput_la_LIBADD = $(MTDEV_LIBS) \

@@ -33,6 +33,7 @@
 #include "libinput.h"
 #include "libinput-private.h"
 #include "evdev.h"
+#include "timer.h"
 
 struct libinput_source {
 	libinput_source_dispatch_t dispatch;
@@ -485,6 +486,12 @@ libinput_init(struct libinput *libinput,
 	list_init(&libinput->source_destroy_list);
 	list_init(&libinput->seat_list);
 
+	if (libinput_timer_subsys_init(libinput) != 0) {
+		free(libinput->events);
+		close(libinput->epoll_fd);
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -521,8 +528,6 @@ libinput_destroy(struct libinput *libinput)
 	while ((event = libinput_get_event(libinput)))
 	       libinput_event_destroy(event);
 
-	libinput_drop_destroyed_sources(libinput);
-
 	free(libinput->events);
 
 	list_for_each_safe(seat, next_seat, &libinput->seat_list, link) {
@@ -534,6 +539,8 @@ libinput_destroy(struct libinput *libinput)
 		libinput_seat_destroy(seat);
 	}
 
+	libinput_timer_subsys_destroy(libinput);
+	libinput_drop_destroyed_sources(libinput);
 	close(libinput->epoll_fd);
 	free(libinput);
 }
