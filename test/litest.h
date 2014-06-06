@@ -123,6 +123,7 @@ void litest_keyboard_key(struct litest_device *d,
 			 unsigned int key,
 			 bool is_press);
 void litest_drain_events(struct libinput *li);
+void litest_assert_empty_queue(struct libinput *li);
 
 struct libevdev_uinput * litest_create_uinput_device(const char *name,
 						     struct input_id *id,

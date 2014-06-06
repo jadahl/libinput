@@ -737,6 +737,67 @@ litest_drain_events(struct libinput *li)
 	}
 }
 
+static void
+litest_print_event(struct libinput_event *event)
+{
+	struct libinput_event_pointer *p;
+	struct libinput_device *dev;
+	enum libinput_event_type type;
+	double x, y;
+
+	dev = libinput_event_get_device(event);
+	type = libinput_event_get_type(event);
+
+	fprintf(stderr,
+		"device %s type %d ",
+		libinput_device_get_sysname(dev),
+		type);
+	switch (type) {
+	case LIBINPUT_EVENT_POINTER_MOTION:
+		p = libinput_event_get_pointer_event(event);
+		x = libinput_event_pointer_get_dx(p);
+		y = libinput_event_pointer_get_dy(p);
+		fprintf(stderr, "motion: %.2f/%.2f", x, y);
+		break;
+	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
+		p = libinput_event_get_pointer_event(event);
+		x = libinput_event_pointer_get_absolute_x(p);
+		y = libinput_event_pointer_get_absolute_y(p);
+		fprintf(stderr, "motion: %.2f/%.2f", x, y);
+		break;
+	case LIBINPUT_EVENT_POINTER_BUTTON:
+		p = libinput_event_get_pointer_event(event);
+		fprintf(stderr,
+			"button: %d state %d",
+			libinput_event_pointer_get_button(p),
+			libinput_event_pointer_get_button_state(p));
+		break;
+	default:
+		break;
+	}
+
+	fprintf(stderr, "\n");
+}
+
+void
+litest_assert_empty_queue(struct libinput *li)
+{
+	bool empty_queue = true;
+	struct libinput_event *event;
+
+	libinput_dispatch(li);
+	while ((event = libinput_get_event(li))) {
+		empty_queue = false;
+		fprintf(stderr,
+			"Unexpected event: ");
+		litest_print_event(event);
+		libinput_event_destroy(event);
+		libinput_dispatch(li);
+	}
+
+	ck_assert(empty_queue);
+}
+
 struct libevdev_uinput *
 litest_create_uinput_device_from_description(const char *name,
 					     const struct input_id *id,

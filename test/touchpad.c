@@ -182,9 +182,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 	assert_button_event(li, BTN_LEFT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
 
-	libinput_dispatch(li);
-	event = libinput_get_event(li);
-	ck_assert(event == NULL);
+	litest_assert_empty_queue(li);
 }
 END_TEST
 
@@ -192,7 +190,6 @@ START_TEST(touchpad_2fg_tap)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	litest_drain_events(dev->libinput);
 
@@ -209,9 +206,7 @@ START_TEST(touchpad_2fg_tap)
 	assert_button_event(li, BTN_RIGHT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
 
-	libinput_dispatch(li);
-	event = libinput_get_event(li);
-	ck_assert(event == NULL);
+	litest_assert_empty_queue(li);
 }
 END_TEST
 
