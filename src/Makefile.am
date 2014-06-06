@@ -38,7 +38,6 @@ libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libinput.pc
 
-AM_CPPFLAGS = $(FFI_CFLAGS)
 AM_CFLAGS = $(GCC_CFLAGS)
 
 DISTCLEANFILES = libinput-version.h
