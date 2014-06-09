@@ -247,7 +247,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 }
 
 static void
-evdev_process_touch_button(struct evdev_device *device, int time, int value)
+evdev_process_touch_button(struct evdev_device *device,
+			   uint64_t time, int value)
 {
 	if (device->pending_event != EVDEV_NONE &&
 	    device->pending_event != EVDEV_ABSOLUTE_MOTION)
@@ -259,7 +260,8 @@ evdev_process_touch_button(struct evdev_device *device, int time, int value)
 }
 
 static inline void
-evdev_process_key(struct evdev_device *device, struct input_event *e, int time)
+evdev_process_key(struct evdev_device *device,
+		  struct input_event *e, uint64_t time)
 {
 	/* ignore kernel key repeat */
 	if (e->value == 2)
