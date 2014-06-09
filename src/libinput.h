@@ -213,7 +213,7 @@ struct libinput_event_pointer;
 struct libinput_event_touch;
 
 /**
- * @defgroup event Acessing and destruction of events
+ * @defgroup event Accessing and destruction of events
  */
 
 /**
