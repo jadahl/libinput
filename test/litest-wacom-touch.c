@@ -26,7 +26,6 @@
 
 #include "litest.h"
 #include "litest-int.h"
-#include "libinput-util.h"
 
 static void
 litest_wacom_touch_setup(void)

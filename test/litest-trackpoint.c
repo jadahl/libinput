@@ -26,7 +26,6 @@
 
 #include "litest.h"
 #include "litest-int.h"
-#include "libinput-util.h"
 
 static void litest_trackpoint_setup(void)
 {
