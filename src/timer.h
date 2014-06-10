@@ -25,6 +25,8 @@
 
 #include <stdint.h>
 
+#include "libinput-util.h"
+
 struct libinput;
 
 struct libinput_timer {
