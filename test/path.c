@@ -158,7 +158,7 @@ START_TEST(path_added_seat)
 	ck_assert(seat != NULL);
 
 	seat_name = libinput_seat_get_logical_name(seat);
-	ck_assert_int_eq(strcmp(seat_name, "default"), 0);
+	ck_assert_str_eq(seat_name, "default");
 
 	libinput_event_destroy(event);
 }
@@ -237,7 +237,7 @@ START_TEST(path_add_device)
 		libinput_event_destroy(event);
 	}
 
-	ck_assert_int_eq(strcmp(sysname1, sysname2), 0);
+	ck_assert_str_eq(sysname1, sysname2);
 
 	libinput_event_destroy(event);
 }
