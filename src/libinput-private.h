@@ -97,6 +97,10 @@ typedef void (*libinput_source_dispatch_t)(void *data);
 
 void
 log_msg(enum libinput_log_priority priority, const char *format, ...);
+void
+log_msg_va(enum libinput_log_priority priority,
+	   const char *format,
+	   va_list args);
 
 int
 libinput_init(struct libinput *libinput,

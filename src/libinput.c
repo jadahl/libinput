@@ -111,15 +111,22 @@ static struct log_data log_data = {
 };
 
 void
+log_msg_va(enum libinput_log_priority priority,
+	   const char *format,
+	   va_list args)
+{
+	if (log_data.handler && log_data.priority <= priority)
+		log_data.handler(priority, log_data.user_data, format, args);
+}
+
+void
 log_msg(enum libinput_log_priority priority, const char *format, ...)
 {
 	va_list args;
 
-	if (log_data.handler && log_data.priority <= priority) {
-		va_start(args, format);
-		log_data.handler(priority, log_data.user_data, format, args);
-		va_end(args);
-	}
+	va_start(args, format);
+	log_msg_va(priority, format, args);
+	va_end(args);
 }
 
 LIBINPUT_EXPORT void
