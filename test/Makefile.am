@@ -19,6 +19,7 @@ liblitest_la_SOURCES = \
 	litest-mouse.c \
 	litest-synaptics.c \
 	litest-synaptics-st.c \
+	litest-synaptics-t440.c \
 	litest-trackpoint.c \
 	litest-wacom-touch.c \
 	litest.c
