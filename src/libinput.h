@@ -74,6 +74,27 @@ extern "C" {
  * button area.
  * The exact behavior of the touchpad is implementation-dependent.
  *
+ * Top software button area
+ * ========================
+ * On selected touchpads, the top area of the touchpad is a separate set of
+ * software buttons split into a left, middle and right button area.
+ * Pressing the touchpad down with a finger in those areas will generate
+ * clicks as shown in the diagram below:
+ *
+ * @code
+    +------------------------+
+    |  LEFT | MIDDLE | RIGHT |
+    +------------------------+
+    |                        |
+    |          LEFT          |
+    |                        |
+    +------------------------+
+    |    LEFT    |   RIGHT   |
+    +------------------------+
+ * @endcode
+ * This behavior is enabled on the Lenovo *40 series (T440, T540, T240...)
+ * and the Lenovo Helix, Yoga S1 and Carbon X1 2nd.
+ *
  * Clickfinger
  * ===========
  * On Apple touchpads, no button areas are provided. Instead, use a
