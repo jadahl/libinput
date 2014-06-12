@@ -458,8 +458,8 @@ main(int argc, char *argv[])
 	if (!udev)
 		error("Failed to initialize udev\n");
 
-	li = libinput_udev_create_for_seat(&interface, &w, udev, "seat0");
-	if (!li)
+	li = libinput_udev_create_context(&interface, &w, udev);
+	if (!li || libinput_udev_assign_seat(li, "seat0") != 0)
 		error("Failed to initialize context from udev\n");
 
 	window_init(&w);

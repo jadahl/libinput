@@ -333,14 +333,13 @@ static const struct libinput_interface_backend interface_backend = {
 };
 
 LIBINPUT_EXPORT struct libinput *
-libinput_udev_create_for_seat(const struct libinput_interface *interface,
-			      void *user_data,
-			      struct udev *udev,
-			      const char *seat_id)
+libinput_udev_create_context(const struct libinput_interface *interface,
+			     void *user_data,
+			     struct udev *udev)
 {
 	struct udev_input *input;
 
-	if (!interface || !udev || !seat_id)
+	if (!interface || !udev)
 		return NULL;
 
 	input = zalloc(sizeof *input);
@@ -354,14 +353,53 @@ libinput_udev_create_for_seat(const struct libinput_interface *interface,
 	}
 
 	input->udev = udev_ref(udev);
-	input->seat_id = strdup(seat_id);
-
-	if (udev_input_enable(&input->base) < 0) {
-		udev_unref(udev);
-		libinput_destroy(&input->base);
-		free(input);
-		return NULL;
-	}
 
 	return &input->base;
+}
+
+LIBINPUT_EXPORT int
+libinput_udev_assign_seat(struct libinput *libinput,
+			  const char *seat_id)
+{
+	struct udev_input *input = (struct udev_input*)libinput;
+
+	if (!seat_id)
+		return -1;
+	if (input->seat_id != NULL)
+		return -1;
+
+	if (libinput->interface_backend != &interface_backend) {
+		log_bug_client("Mismatching backends.\n");
+		return -1;
+	}
+
+	input->seat_id = strdup(seat_id);
+
+	if (udev_input_enable(&input->base) < 0)
+		return -1;
+
+	return 0;
+}
+
+LIBINPUT_EXPORT struct libinput *
+libinput_udev_create_for_seat(const struct libinput_interface *interface,
+			      void *user_data,
+			      struct udev *udev,
+			      const char *seat_id)
+{
+	struct libinput *libinput;
+
+	if (!interface || !udev || !seat_id)
+		return NULL;
+
+	libinput = libinput_udev_create_context(interface, user_data, udev);
+	if (!libinput)
+		return NULL;
+
+	if (libinput_udev_assign_seat(libinput, seat_id) != 0) {
+		libinput_destroy(libinput);
+		libinput = NULL;
+	}
+
+	return libinput;
 }

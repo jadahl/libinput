@@ -33,6 +33,7 @@ extern "C" {
 
 #define LIBINPUT_ATTRIBUTE_PRINTF(_format, _args) \
 	__attribute__ ((format (printf, _format, _args)))
+#define LIBINPUT_ATTRIBUTE_DEPRECATED __attribute__ ((deprecated))
 
 /**
  * @mainpage
@@ -782,6 +783,49 @@ struct libinput_interface {
 /**
  * @ingroup base
  *
+ * Create a new libinput context from udev. This context is inactive until
+ * assigned a seat ID with libinput_udev_assign_seat().
+ *
+ * @param interface The callback interface
+ * @param user_data Caller-specific data passed to the various callback
+ * interfaces.
+ * @param udev An already initialized udev context
+ *
+ * @return An initialized, but inactive libinput context or NULL on error
+ */
+struct libinput *
+libinput_udev_create_context(const struct libinput_interface *interface,
+			     void *user_data,
+			     struct udev *udev);
+
+/**
+ * @ingroup base
+ *
+ * Assign a seat to this libinput context. New devices or the removal of
+ * existing devices will appear as events during libinput_dispatch().
+ *
+ * libinput_udev_assign_seat() succeeds even if no input devices are currently
+ * available on this seat, or if devices are available but fail to open in
+ * @ref libinput_interface::open_restricted. Devices that do not have the
+ * minimum capabilities to be recognized as pointer, keyboard or touch
+ * device are ignored. Such devices and those that failed to open
+ * ignored until the next call to libinput_resume().
+ *
+ * This function may only be called once per context.
+ *
+ * @param libinput A libinput context initialized with
+ * libinput_udev_create_context()
+ * @param seat_id A seat identifier. This string must not be NULL.
+ *
+ * @return 0 on success or -1 on failure.
+ */
+int
+libinput_udev_assign_seat(struct libinput *libinput,
+		       const char *seat_id);
+
+/**
+ * @ingroup base
+ *
  * Create a new libinput context from udev, for input devices matching
  * the given seat ID. New devices or devices removed will appear as events
  * during libinput_dispatch.
@@ -801,12 +845,17 @@ struct libinput_interface {
  *
  * @return An initialized libinput context, ready to handle events or NULL on
  * error.
+ *
+ * @deprecated This function was deprecated in 0.4.0 and will be removed
+ * soon. Use libinput_udev_create_context() and libinput_udev_assign_seat()
+ * instead.
  */
 struct libinput *
 libinput_udev_create_for_seat(const struct libinput_interface *interface,
 			      void *user_data,
 			      struct udev *udev,
-			      const char *seat_id);
+			      const char *seat_id)
+	LIBINPUT_ATTRIBUTE_DEPRECATED;
 
 /**
  * @ingroup base
