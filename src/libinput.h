@@ -967,6 +967,7 @@ libinput_destroy(struct libinput *libinput);
  * @param priority The minimum priority of log messages to print.
  *
  * @see libinput_log_set_handler
+ * @see libinput_log_get_priority
  */
 void
 libinput_log_set_priority(enum libinput_log_priority priority);
@@ -982,6 +983,7 @@ libinput_log_set_priority(enum libinput_log_priority priority);
  * @return The minimum priority of log messages to print.
  *
  * @see libinput_log_set_handler
+ * @see libinput_log_set_priority
  */
 enum libinput_log_priority
 libinput_log_get_priority(void);
