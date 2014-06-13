@@ -2,10 +2,10 @@
 
 set -e
 
-[ -e doc ] || echo "Run this from the project root"  && exit 1
+[ -e doc ] || (echo "Run this from the project root" && exit 1)
 
 make
 
-[ -e doc/html ] || echo "HTML documentation failed to build" && exit 1
+[ -e doc/html ] || (echo "HTML documentation failed to build" && exit 1)
 
 rsync --delete -avz doc/html/ freedesktop.org:/srv/wayland.freedesktop.org/www/libinput/doc/latest
