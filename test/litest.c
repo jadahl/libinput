@@ -267,6 +267,23 @@ litest_log_handler(enum libinput_log_priority pri,
 	vfprintf(stderr, format, args);
 }
 
+static int
+open_restricted(const char *path, int flags, void *userdata)
+{
+	return open(path, flags);
+}
+
+static void
+close_restricted(int fd, void *userdata)
+{
+	close(fd);
+}
+
+struct libinput_interface interface = {
+	.open_restricted = open_restricted,
+	.close_restricted = close_restricted,
+};
+
 static const struct option opts[] = {
 	{ "list", 0, 0, 'l' },
 	{ "verbose", 0, 0, 'v' },
@@ -334,24 +351,6 @@ litest_run(int argc, char **argv) {
 
 	return failed;
 }
-
-static int
-open_restricted(const char *path, int flags, void *userdata)
-{
-	return open(path, flags);
-}
-
-static void
-close_restricted(int fd, void *userdata)
-{
-	close(fd);
-}
-
-const struct libinput_interface interface = {
-	.open_restricted = open_restricted,
-	.close_restricted = close_restricted,
-};
-
 
 static struct input_absinfo *
 merge_absinfo(const struct input_absinfo *orig,
