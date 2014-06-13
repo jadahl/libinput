@@ -57,14 +57,13 @@ const struct libinput_interface simple_interface = {
 START_TEST(path_create_NULL)
 {
 	struct libinput *li;
-	const struct libinput_interface interface;
 
 	open_func_count = 0;
 	close_func_count = 0;
 
 	li = libinput_path_create_context(NULL, NULL);
 	ck_assert(li == NULL);
-	li = libinput_path_create_context(&interface, NULL);
+	li = libinput_path_create_context(&simple_interface, NULL);
 	ck_assert(li != NULL);
 	libinput_destroy(li);
 
