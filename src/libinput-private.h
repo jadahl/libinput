@@ -146,7 +146,7 @@ void
 keyboard_notify_key(struct libinput_device *device,
 		    uint32_t time,
 		    uint32_t key,
-		    enum libinput_keyboard_key_state state);
+		    enum libinput_key_state state);
 
 void
 pointer_notify_motion(struct libinput_device *device,

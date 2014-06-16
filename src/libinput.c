@@ -56,7 +56,7 @@ struct libinput_event_keyboard {
 	uint32_t time;
 	uint32_t key;
 	uint32_t seat_key_count;
-	enum libinput_keyboard_key_state state;
+	enum libinput_key_state state;
 };
 
 struct libinput_event_pointer {
@@ -285,7 +285,7 @@ libinput_event_keyboard_get_key(struct libinput_event_keyboard *event)
 	return event->key;
 }
 
-LIBINPUT_EXPORT enum libinput_keyboard_key_state
+LIBINPUT_EXPORT enum libinput_key_state
 libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event)
 {
 	return event->state;
@@ -717,14 +717,14 @@ libinput_dispatch(struct libinput *libinput)
 static uint32_t
 update_seat_key_count(struct libinput_seat *seat,
 		      int32_t key,
-		      enum libinput_keyboard_key_state state)
+		      enum libinput_key_state state)
 {
 	assert(key >= 0 && key <= KEY_MAX);
 
 	switch (state) {
-	case LIBINPUT_KEYBOARD_KEY_STATE_PRESSED:
+	case LIBINPUT_KEY_STATE_PRESSED:
 		return ++seat->button_count[key];
-	case LIBINPUT_KEYBOARD_KEY_STATE_RELEASED:
+	case LIBINPUT_KEY_STATE_RELEASED:
 		/* We might not have received the first PRESSED event. */
 		if (seat->button_count[key] == 0)
 			return 0;
@@ -816,7 +816,7 @@ void
 keyboard_notify_key(struct libinput_device *device,
 		    uint32_t time,
 		    uint32_t key,
-		    enum libinput_keyboard_key_state state)
+		    enum libinput_key_state state)
 {
 	struct libinput_event_keyboard *key_event;
 	uint32_t seat_key_count;

@@ -130,9 +130,9 @@ enum libinput_device_capability {
  * Logical state of a key. Note that the logical state may not represent
  * the physical state of the key.
  */
-enum libinput_keyboard_key_state {
-	LIBINPUT_KEYBOARD_KEY_STATE_RELEASED = 0,
-	LIBINPUT_KEYBOARD_KEY_STATE_PRESSED = 1
+enum libinput_key_state {
+	LIBINPUT_KEY_STATE_RELEASED = 0,
+	LIBINPUT_KEY_STATE_PRESSED = 1
 };
 
 /**
@@ -382,7 +382,7 @@ libinput_event_keyboard_get_key(struct libinput_event_keyboard *event);
  *
  * @return The state change of the key
  */
-enum libinput_keyboard_key_state
+enum libinput_key_state
 libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event);
 
 

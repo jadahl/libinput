@@ -310,8 +310,8 @@ evdev_process_key(struct evdev_device *device,
 			&device->base,
 			time,
 			e->code,
-			e->value ? LIBINPUT_KEYBOARD_KEY_STATE_PRESSED :
-				   LIBINPUT_KEYBOARD_KEY_STATE_RELEASED);
+			e->value ? LIBINPUT_KEY_STATE_PRESSED :
+				   LIBINPUT_KEY_STATE_RELEASED);
 		break;
 	}
 }

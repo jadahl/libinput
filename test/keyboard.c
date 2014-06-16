@@ -64,7 +64,7 @@ START_TEST(keyboard_seat_key_count)
 		ck_assert_notnull(kev);
 		ck_assert_int_eq(libinput_event_keyboard_get_key(kev), KEY_A);
 		ck_assert_int_eq(libinput_event_keyboard_get_key_state(kev),
-				 LIBINPUT_KEYBOARD_KEY_STATE_PRESSED);
+				 LIBINPUT_KEY_STATE_PRESSED);
 
 		++expected_key_button_count;
 		seat_key_count =
@@ -93,7 +93,7 @@ START_TEST(keyboard_seat_key_count)
 		ck_assert_notnull(kev);
 		ck_assert_int_eq(libinput_event_keyboard_get_key(kev), KEY_A);
 		ck_assert_int_eq(libinput_event_keyboard_get_key_state(kev),
-				 LIBINPUT_KEYBOARD_KEY_STATE_RELEASED);
+				 LIBINPUT_KEY_STATE_RELEASED);
 
 		--expected_key_button_count;
 		seat_key_count =

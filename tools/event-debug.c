@@ -247,13 +247,13 @@ static void
 print_key_event(struct libinput_event *ev)
 {
 	struct libinput_event_keyboard *k = libinput_event_get_keyboard_event(ev);
-	enum libinput_keyboard_key_state state;
+	enum libinput_key_state state;
 
 	print_event_time(libinput_event_keyboard_get_time(k));
 	state = libinput_event_keyboard_get_key_state(k);
 	printf("%d %s\n",
 	       libinput_event_keyboard_get_key(k),
-	       state == LIBINPUT_KEYBOARD_KEY_STATE_PRESSED ? "pressed" : "released");
+	       state == LIBINPUT_KEY_STATE_PRESSED ? "pressed" : "released");
 }
 
 static void
