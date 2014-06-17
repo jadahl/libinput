@@ -1185,6 +1185,16 @@ libinput_device_has_capability(struct libinput_device *device,
 					   capability);
 }
 
+LIBINPUT_EXPORT int
+libinput_device_get_size(struct libinput_device *device,
+			 double *width,
+			 double *height)
+{
+	return evdev_device_get_size((struct evdev_device *)device,
+				     width,
+				     height);
+}
+
 LIBINPUT_EXPORT struct libinput_event *
 libinput_event_device_notify_get_base_event(struct libinput_event_device_notify *event)
 {

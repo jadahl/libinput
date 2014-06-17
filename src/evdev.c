@@ -871,6 +871,25 @@ evdev_device_has_capability(struct evdev_device *device,
 	}
 }
 
+int
+evdev_device_get_size(struct evdev_device *device,
+		      double *width,
+		      double *height)
+{
+	const struct input_absinfo *x, *y;
+
+	x = libevdev_get_abs_info(device->evdev, ABS_X);
+	y = libevdev_get_abs_info(device->evdev, ABS_Y);
+
+	if (!x || !y || !x->resolution || !y->resolution)
+		return -1;
+
+	*width = evdev_convert_to_mm(x, x->maximum);
+	*height = evdev_convert_to_mm(y, y->maximum);
+
+	return 0;
+}
+
 void
 evdev_device_remove(struct evdev_device *device)
 {

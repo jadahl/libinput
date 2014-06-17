@@ -1303,6 +1303,25 @@ int
 libinput_device_has_capability(struct libinput_device *device,
 			       enum libinput_device_capability capability);
 
+/**
+ * @ingroup device
+ *
+ * Get the physical size of a device in mm, where meaningful. This function
+ * only succeeds on devices with the required data, i.e. tablets, touchpads
+ * and touchscreens.
+ *
+ * If this function returns nonzero, width and height are unmodified.
+ *
+ * @param device The device
+ * @param width Set to the width of the device
+ * @param height Set to the height of the device
+ * @return 0 on success, or nonzero otherwise
+ */
+int
+libinput_device_get_size(struct libinput_device *device,
+			 double *width,
+			 double *height);
+
 #ifdef __cplusplus
 }
 #endif

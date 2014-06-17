@@ -231,10 +231,16 @@ print_device_notify(struct libinput_event *ev)
 {
 	struct libinput_device *dev = libinput_event_get_device(ev);
 	struct libinput_seat *seat = libinput_device_get_seat(dev);
+	double w, h;
 
-	printf("%s	%s\n",
+	printf("%s	%s",
 	       libinput_seat_get_physical_name(seat),
 	       libinput_seat_get_logical_name(seat));
+
+	if (libinput_device_get_size(dev, &w, &h) == 0)
+		printf("\tsize %.2f/%.2fmm", w, h);
+
+	printf("\n");
 }
 
 static void
