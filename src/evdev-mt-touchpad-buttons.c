@@ -452,6 +452,7 @@ tp_button_handle_event(struct tp_dispatch *tp,
 		       enum button_event event,
 		       uint64_t time)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 	enum button_state current = t->button.state;
 
 	switch(t->button.state) {
@@ -485,7 +486,8 @@ tp_button_handle_event(struct tp_dispatch *tp,
 	}
 
 	if (current != t->button.state)
-		log_debug("button state: from %s, event %s to %s\n",
+		log_debug(libinput,
+			  "button state: from %s, event %s to %s\n",
 			  button_state_to_str(current),
 			  button_event_to_str(event),
 			  button_state_to_str(t->button.state));
@@ -538,11 +540,13 @@ tp_process_button(struct tp_dispatch *tp,
 		  const struct input_event *e,
 		  uint64_t time)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 	uint32_t mask = 1 << (e->code - BTN_LEFT);
 
 	/* Ignore other buttons on clickpads */
 	if (tp->buttons.is_clickpad && e->code != BTN_LEFT) {
-		log_bug_kernel("received %s button event on a clickpad\n",
+		log_bug_kernel(libinput,
+			       "received %s button event on a clickpad\n",
 			       libevdev_event_code_get_name(EV_KEY, e->code));
 		return 0;
 	}
@@ -562,6 +566,7 @@ int
 tp_init_buttons(struct tp_dispatch *tp,
 		struct evdev_device *device)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 	struct tp_touch *t;
 	int width, height;
 	double diagonal;
@@ -575,10 +580,12 @@ tp_init_buttons(struct tp_dispatch *tp,
 	if (libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE) ||
 	    libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT)) {
 		if (tp->buttons.is_clickpad)
-			log_bug_kernel("clickpad advertising right button\n");
+			log_bug_kernel(libinput,
+				       "clickpad advertising right button\n");
 	} else {
 		if (!tp->buttons.is_clickpad)
-			log_bug_kernel("non clickpad without right button?\n");
+			log_bug_kernel(libinput,
+				       "non clickpad without right button?\n");
 	}
 
 	absinfo_x = device->abs.absinfo_x;

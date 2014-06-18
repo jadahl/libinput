@@ -59,7 +59,7 @@ libinput_timer_arm_timer_fd(struct libinput *libinput)
 
 	r = timerfd_settime(libinput->timer.fd, TFD_TIMER_ABSTIME, &its, NULL);
 	if (r)
-		log_error("timerfd_settime error: %s\n", strerror(errno));
+		log_error(libinput, "timerfd_settime error: %s\n", strerror(errno));
 }
 
 void
@@ -96,7 +96,7 @@ libinput_timer_handler(void *data)
 
 	r = clock_gettime(CLOCK_MONOTONIC, &ts);
 	if (r) {
-		log_error("clock_gettime error: %s\n", strerror(errno));
+		log_error(libinput, "clock_gettime error: %s\n", strerror(errno));
 		return;
 	}
 

@@ -1032,13 +1032,15 @@ libinput_destroy(struct libinput *libinput);
  *
  * The default log priority is LIBINPUT_LOG_PRIORITY_ERROR.
  *
+ * @param libinput A previously initialized libinput context
  * @param priority The minimum priority of log messages to print.
  *
  * @see libinput_log_set_handler
  * @see libinput_log_get_priority
  */
 void
-libinput_log_set_priority(enum libinput_log_priority priority);
+libinput_log_set_priority(struct libinput *libinput,
+			  enum libinput_log_priority priority);
 
 /**
  * @ingroup base
@@ -1048,30 +1050,30 @@ libinput_log_set_priority(enum libinput_log_priority priority);
  *
  * The default log priority is LIBINPUT_LOG_PRIORITY_ERROR.
  *
+ * @param libinput A previously initialized libinput context
  * @return The minimum priority of log messages to print.
  *
  * @see libinput_log_set_handler
  * @see libinput_log_set_priority
  */
 enum libinput_log_priority
-libinput_log_get_priority(void);
+libinput_log_get_priority(const struct libinput *libinput);
 
 /**
  * @ingroup base
  *
  * Log handler type for custom logging.
  *
+ * @param libinput The libinput context
  * @param priority The priority of the current message
- * @param user_data Caller-specific data pointer as previously passed into
- * libinput_log_set_handler()
  * @param format Message format in printf-style
  * @param args Message arguments
  *
  * @see libinput_set_log_priority
  * @see libinput_log_set_handler
  */
-typedef void (*libinput_log_handler)(enum libinput_log_priority priority,
-				     void *user_data,
+typedef void (*libinput_log_handler)(struct libinput *libinput,
+				     enum libinput_log_priority priority,
 				     const char *format, va_list args)
 	   LIBINPUT_ATTRIBUTE_PRINTF(3, 0);
 
@@ -1084,6 +1086,7 @@ typedef void (*libinput_log_handler)(enum libinput_log_priority priority,
  *
  * The default log handler prints to stderr.
  *
+ * @param libinput A previously initialized libinput context
  * @param log_handler The log handler for library messages.
  * @param user_data Caller-specific data pointer, passed into the log
  * handler.
@@ -1091,8 +1094,8 @@ typedef void (*libinput_log_handler)(enum libinput_log_priority priority,
  * @see libinput_log_set_handler
  */
 void
-libinput_log_set_handler(libinput_log_handler log_handler,
-			 void *user_data);
+libinput_log_set_handler(struct libinput *libinput,
+			 libinput_log_handler log_handler);
 
 /**
  * @defgroup seat Initialization and manipulation of seats

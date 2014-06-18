@@ -160,7 +160,9 @@ path_device_enable(struct path_input *input, const char *devnode)
 
 	if (path_get_udev_properties(devnode, &sysname,
 				     &seat_name, &seat_logical_name) == -1) {
-		log_info("failed to obtain sysname for device '%s'.\n", devnode);
+		log_info(&input->base,
+			 "failed to obtain sysname for device '%s'.\n",
+			 devnode);
 		return NULL;
 	}
 
@@ -171,7 +173,9 @@ path_device_enable(struct path_input *input, const char *devnode)
 	} else {
 		seat = path_seat_create(input, seat_name, seat_logical_name);
 		if (!seat) {
-			log_info("failed to create seat for device '%s'.\n", devnode);
+			log_info(&input->base,
+				 "failed to create seat for device '%s'.\n",
+				 devnode);
 			goto out;
 		}
 	}
@@ -181,10 +185,14 @@ path_device_enable(struct path_input *input, const char *devnode)
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
 		device = NULL;
-		log_info("not using input device '%s'.\n", devnode);
+		log_info(&input->base,
+			 "not using input device '%s'.\n",
+			 devnode);
 		goto out;
 	} else if (device == NULL) {
-		log_info("failed to create input device '%s'.\n", devnode);
+		log_info(&input->base,
+			 "failed to create input device '%s'.\n",
+			 devnode);
 		goto out;
 	}
 
@@ -264,7 +272,7 @@ libinput_path_add_device(struct libinput *libinput,
 	struct libinput_device *device;
 
 	if (libinput->interface_backend != &interface_backend) {
-		log_bug_client("Mismatching backends.\n");
+		log_bug_client(libinput, "Mismatching backends.\n");
 		return NULL;
 	}
 
@@ -301,7 +309,7 @@ libinput_path_remove_device(struct libinput_device *device)
 	struct path_device *dev;
 
 	if (libinput->interface_backend != &interface_backend) {
-		log_bug_client("Mismatching backends.\n");
+		log_bug_client(libinput, "Mismatching backends.\n");
 		return;
 	}
 

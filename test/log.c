@@ -32,7 +32,7 @@
 #include "litest.h"
 
 static int log_handler_called;
-static void *log_handler_userdata;
+static struct libinput *log_handler_context;
 
 static int open_restricted(const char *path, int flags, void *data)
 {
@@ -51,56 +51,41 @@ const struct libinput_interface simple_interface = {
 };
 
 static void
-simple_log_handler(enum libinput_log_priority priority,
-		   void *userdata,
+simple_log_handler(struct libinput *libinput,
+		   enum libinput_log_priority priority,
 		   const char *format,
 		   va_list args)
 {
 	log_handler_called++;
-	ck_assert(userdata == log_handler_userdata);
+	if (log_handler_context)
+		ck_assert(libinput == log_handler_context);
 	ck_assert(format != NULL);
 }
 
 START_TEST(log_default_priority)
 {
 	enum libinput_log_priority pri;
+	struct libinput *li;
 
-	pri = libinput_log_get_priority();
+	li = libinput_path_create_context(&simple_interface, NULL);
+	pri = libinput_log_get_priority(li);
 
 	ck_assert_int_eq(pri, LIBINPUT_LOG_PRIORITY_ERROR);
+
+	libinput_destroy(li);
 }
 END_TEST
 
 START_TEST(log_handler_invoked)
 {
 	struct libinput *li;
-	enum libinput_log_priority pri = libinput_log_get_priority();
-
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-	libinput_log_set_handler(simple_log_handler, NULL);
-	log_handler_userdata = NULL;
 
 	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, "/tmp");
 
-	ck_assert_int_gt(log_handler_called, 0);
-	log_handler_called = 0;
+	libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_DEBUG);
+	libinput_log_set_handler(li, simple_log_handler);
+	log_handler_context = li;
 
-	libinput_destroy(li);
-	libinput_log_set_priority(pri);
-}
-END_TEST
-
-START_TEST(log_userdata_NULL)
-{
-	struct libinput *li;
-	enum libinput_log_priority pri = libinput_log_get_priority();
-
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-	libinput_log_set_handler(simple_log_handler, NULL);
-	log_handler_userdata = NULL;
-
-	li = libinput_path_create_context(&simple_interface, NULL);
 	libinput_path_add_device(li, "/tmp");
 
 	ck_assert_int_gt(log_handler_called, 0);
@@ -108,73 +93,48 @@ START_TEST(log_userdata_NULL)
 
 	libinput_destroy(li);
 
-	libinput_log_set_priority(pri);
-}
-END_TEST
-
-START_TEST(log_userdata)
-{
-	struct libinput *li;
-	enum libinput_log_priority pri = libinput_log_get_priority();
-
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-	libinput_log_set_handler(simple_log_handler, &li);
-	log_handler_userdata = &li;
-
-	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, "/tmp");
-
-	ck_assert_int_gt(log_handler_called, 0);
-	log_handler_called = 0;
-
-	libinput_destroy(li);
-	libinput_log_set_priority(pri);
+	log_handler_context = NULL;
 }
 END_TEST
 
 START_TEST(log_handler_NULL)
 {
 	struct libinput *li;
-	enum libinput_log_priority pri = libinput_log_get_priority();
-
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-	libinput_log_set_handler(NULL, NULL);
-	log_handler_userdata = NULL;
 
 	li = libinput_path_create_context(&simple_interface, NULL);
+	libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_DEBUG);
+	libinput_log_set_handler(li, NULL);
+
 	libinput_path_add_device(li, "/tmp");
 
 	ck_assert_int_eq(log_handler_called, 0);
 	log_handler_called = 0;
-	libinput_log_set_handler(simple_log_handler, NULL);
 
 	libinput_destroy(li);
-	libinput_log_set_priority(pri);
 }
 END_TEST
 
 START_TEST(log_priority)
 {
 	struct libinput *li;
-	enum libinput_log_priority pri = libinput_log_get_priority();
-
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_ERROR);
-	libinput_log_set_handler(simple_log_handler, NULL);
-	log_handler_userdata = NULL;
 
 	li = libinput_path_create_context(&simple_interface, NULL);
+	libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_ERROR);
+	libinput_log_set_handler(li, simple_log_handler);
+	log_handler_context = li;
+
 	libinput_path_add_device(li, "/tmp");
 
 	ck_assert_int_eq(log_handler_called, 0);
 
-	libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_INFO);
+	libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_INFO);
 	libinput_path_add_device(li, "/tmp");
 	ck_assert_int_gt(log_handler_called, 0);
 
 	log_handler_called = 0;
 
 	libinput_destroy(li);
-	libinput_log_set_priority(pri);
+	log_handler_context = NULL;
 }
 END_TEST
 
@@ -182,8 +142,6 @@ int main (int argc, char **argv) {
 	litest_add_no_device("log:defaults", log_default_priority);
 	litest_add_no_device("log:logging", log_handler_invoked);
 	litest_add_no_device("log:logging", log_handler_NULL);
-	litest_add_no_device("log:logging", log_userdata);
-	litest_add_no_device("log:logging", log_userdata_NULL);
 	litest_add_no_device("log:logging", log_priority);
 
 	return litest_run(argc, argv);

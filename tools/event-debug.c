@@ -131,6 +131,15 @@ static const struct libinput_interface interface = {
 	.close_restricted = close_restricted,
 };
 
+static void
+log_handler(struct libinput *li,
+	    enum libinput_log_priority priority,
+	    const char *format,
+	    va_list args)
+{
+	vprintf(format, args);
+}
+
 static int
 open_udev(struct libinput **li)
 {
@@ -144,6 +153,11 @@ open_udev(struct libinput **li)
 	if (!*li) {
 		fprintf(stderr, "Failed to initialize context from udev\n");
 		return 1;
+	}
+
+	if (verbose) {
+		libinput_log_set_handler(*li, log_handler);
+		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
 	}
 
 	if (libinput_udev_assign_seat(*li, seat)) {
@@ -164,6 +178,11 @@ open_device(struct libinput **li, const char *path)
 	if (!*li) {
 		fprintf(stderr, "Failed to initialize context from %s\n", path);
 		return 1;
+	}
+
+	if (verbose) {
+		libinput_log_set_handler(*li, log_handler);
+		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
 	}
 
 	device = libinput_path_add_device(*li, path);
@@ -447,15 +466,6 @@ mainloop(struct libinput *li)
 	close(fds[1].fd);
 }
 
-static void
-log_handler(enum libinput_log_priority priority,
-	    void *user_data,
-	    const char *format,
-	    va_list args)
-{
-	vprintf(format, args);
-}
-
 int
 main(int argc, char **argv)
 {
@@ -464,11 +474,6 @@ main(int argc, char **argv)
 
 	if (parse_args(argc, argv))
 		return 1;
-
-	if (verbose) {
-		libinput_log_set_handler(log_handler, NULL);
-		libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-	}
 
 	if (mode == MODE_UDEV) {
 		if (open_udev(&li))

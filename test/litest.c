@@ -44,6 +44,7 @@
 #include "libinput-util.h"
 
 static int in_debugger = -1;
+static int verbose = 0;
 
 struct test {
 	struct list node;
@@ -250,8 +251,8 @@ litest_list_tests(struct list *tests)
 }
 
 static void
-litest_log_handler(enum libinput_log_priority pri,
-		   void *user_data,
+litest_log_handler(struct libinput *libinput,
+		   enum libinput_log_priority pri,
 		   const char *format,
 		   va_list args)
 {
@@ -321,8 +322,7 @@ litest_run(int argc, char **argv) {
 				litest_list_tests(&all_tests);
 				return 0;
 			case 'v':
-				libinput_log_set_priority(LIBINPUT_LOG_PRIORITY_DEBUG);
-				libinput_log_set_handler(litest_log_handler, NULL);
+				verbose = 1;
 				break;
 			default:
 				fprintf(stderr, "usage: %s [--list]\n", argv[0]);
@@ -482,6 +482,11 @@ litest_create_context(void)
 	struct libinput *libinput =
 		libinput_path_create_context(&interface, NULL);
 	ck_assert_notnull(libinput);
+
+	libinput_log_set_handler(libinput, litest_log_handler);
+	if (verbose)
+		libinput_log_set_priority(libinput, LIBINPUT_LOG_PRIORITY_DEBUG);
+
 	return libinput;
 }
 

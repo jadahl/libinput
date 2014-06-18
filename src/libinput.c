@@ -81,8 +81,8 @@ struct libinput_event_touch {
 };
 
 static void
-libinput_default_log_func(enum libinput_log_priority priority,
-			  void *data,
+libinput_default_log_func(struct libinput *libinput,
+			  enum libinput_log_priority priority,
 			  const char *format, va_list args)
 {
 	const char *prefix;
@@ -98,55 +98,47 @@ libinput_default_log_func(enum libinput_log_priority priority,
 	vfprintf(stderr, format, args);
 }
 
-struct log_data {
-	enum libinput_log_priority priority;
-	libinput_log_handler handler;
-	void *user_data;
-};
-
-static struct log_data log_data = {
-	.priority = LIBINPUT_LOG_PRIORITY_ERROR,
-	.handler = libinput_default_log_func,
-	.user_data = NULL,
-};
-
 void
-log_msg_va(enum libinput_log_priority priority,
+log_msg_va(struct libinput *libinput,
+	   enum libinput_log_priority priority,
 	   const char *format,
 	   va_list args)
 {
-	if (log_data.handler && log_data.priority <= priority)
-		log_data.handler(priority, log_data.user_data, format, args);
+	if (libinput->log_handler &&
+	    libinput->log_priority <= priority)
+		libinput->log_handler(libinput, priority, format, args);
 }
 
 void
-log_msg(enum libinput_log_priority priority, const char *format, ...)
+log_msg(struct libinput *libinput,
+	enum libinput_log_priority priority,
+	const char *format, ...)
 {
 	va_list args;
 
 	va_start(args, format);
-	log_msg_va(priority, format, args);
+	log_msg_va(libinput, priority, format, args);
 	va_end(args);
 }
 
 LIBINPUT_EXPORT void
-libinput_log_set_priority(enum libinput_log_priority priority)
+libinput_log_set_priority(struct libinput *libinput,
+			  enum libinput_log_priority priority)
 {
-	log_data.priority = priority;
+	libinput->log_priority = priority;
 }
 
 LIBINPUT_EXPORT enum libinput_log_priority
-libinput_log_get_priority(void)
+libinput_log_get_priority(const struct libinput *libinput)
 {
-	return log_data.priority;
+	return libinput->log_priority;
 }
 
 LIBINPUT_EXPORT void
-libinput_log_set_handler(libinput_log_handler log_handler,
-			 void *user_data)
+libinput_log_set_handler(struct libinput *libinput,
+			 libinput_log_handler log_handler)
 {
-	log_data.handler = log_handler;
-	log_data.user_data = user_data;
+	libinput->log_handler = log_handler;
 }
 
 static void
@@ -499,6 +491,8 @@ libinput_init(struct libinput *libinput,
 		return -1;
 	}
 
+	libinput->log_handler = libinput_default_log_func;
+	libinput->log_priority = LIBINPUT_LOG_PRIORITY_ERROR;
 	libinput->interface = interface;
 	libinput->interface_backend = interface_backend;
 	libinput->user_data = user_data;

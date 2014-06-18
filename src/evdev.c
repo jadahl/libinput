@@ -115,6 +115,7 @@ evdev_device_transform_y(struct evdev_device *device,
 static void
 evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 {
+	struct libinput *libinput = device->base.seat->libinput;
 	struct motion_params motion;
 	int32_t cx, cy;
 	double x, y;
@@ -147,7 +148,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 			break;
 
 		if (device->mt.slots[slot].seat_slot != -1) {
-			log_bug_kernel("%s: Driver sent multiple touch down for the "
+			log_bug_kernel(libinput,
+				       "%s: Driver sent multiple touch down for the "
 				       "same slot", device->devnode);
 			break;
 		}
@@ -196,7 +198,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 			break;
 
 		if (device->abs.seat_slot != -1) {
-			log_bug_kernel("%s: Driver sent multiple touch down for the "
+			log_bug_kernel(libinput,
+				       "%s: Driver sent multiple touch down for the "
 				       "same slot", device->devnode);
 			break;
 		}
@@ -591,6 +594,7 @@ configure_pointer_acceleration(struct evdev_device *device)
 static int
 evdev_configure_device(struct evdev_device *device)
 {
+	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
 	const struct input_absinfo *absinfo;
 	struct input_absinfo fixed;
@@ -696,7 +700,8 @@ evdev_configure_device(struct evdev_device *device)
 		    !libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_PEN) &&
 		    (has_abs || has_mt)) {
 			device->dispatch = evdev_mt_touchpad_create(device);
-			log_info("input device '%s', %s is a touchpad\n",
+			log_info(libinput,
+				 "input device '%s', %s is a touchpad\n",
 				 device->devname, device->devnode);
 		}
 		for (i = KEY_ESC; i < KEY_MAX; i++) {
@@ -725,7 +730,8 @@ evdev_configure_device(struct evdev_device *device)
 
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
 
-		log_info("input device '%s', %s is a pointer caps =%s%s%s\n",
+		log_info(libinput,
+			 "input device '%s', %s is a pointer caps =%s%s%s\n",
 			 device->devname, device->devnode,
 			 has_abs ? " absolute-motion" : "",
 			 has_rel ? " relative-motion": "",
@@ -733,12 +739,14 @@ evdev_configure_device(struct evdev_device *device)
 	}
 	if (has_keyboard) {
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
-		log_info("input device '%s', %s is a keyboard\n",
+		log_info(libinput,
+			 "input device '%s', %s is a keyboard\n",
 			 device->devname, device->devnode);
 	}
 	if (has_touch && !has_button) {
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
-		log_info("input device '%s', %s is a touch device\n",
+		log_info(libinput,
+			 "input device '%s', %s is a touch device\n",
 			 device->devname, device->devnode);
 	}
 
@@ -761,7 +769,8 @@ evdev_device_create(struct libinput_seat *seat,
 	 * read.  mtdev_get() also expects this. */
 	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
 	if (fd < 0) {
-		log_info("opening input device '%s' failed (%s).\n",
+		log_info(libinput,
+			 "opening input device '%s' failed (%s).\n",
 			 devnode, strerror(-fd));
 		return NULL;
 	}

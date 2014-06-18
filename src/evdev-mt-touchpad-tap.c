@@ -130,6 +130,7 @@ tp_tap_clear_timer(struct tp_dispatch *tp)
 static void
 tp_tap_idle_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 
 	switch (event) {
 	case TAP_EVENT_TOUCH:
@@ -138,7 +139,8 @@ tp_tap_idle_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 		break;
 	case TAP_EVENT_RELEASE:
 	case TAP_EVENT_MOTION:
-		log_bug_libinput("invalid event, no fingers are down\n");
+		log_bug_libinput(libinput,
+				 "invalid event, no fingers are down\n");
 		break;
 	case TAP_EVENT_TIMEOUT:
 		break;
@@ -197,11 +199,13 @@ tp_tap_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 static void
 tp_tap_tapped_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 
 	switch (event) {
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_RELEASE:
-		log_bug_libinput("invalid event when fingers are up\n");
+		log_bug_libinput(libinput,
+				 "invalid event when fingers are up\n");
 		break;
 	case TAP_EVENT_TOUCH:
 		tp->tap.state = TAP_STATE_DRAGGING_OR_DOUBLETAP;
@@ -426,7 +430,9 @@ tp_tap_dead_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 static void
 tp_tap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 {
+	struct libinput *libinput = tp->device->base.seat->libinput;
 	enum tp_tap_state current;
+
 	if (!tp->tap.enabled)
 		return;
 
@@ -477,7 +483,8 @@ tp_tap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 	if (tp->tap.state == TAP_STATE_IDLE || tp->tap.state == TAP_STATE_DEAD)
 		tp_tap_clear_timer(tp);
 
-	log_debug("tap state: %s → %s → %s\n",
+	log_debug(libinput,
+		  "tap state: %s → %s → %s\n",
 		  tap_state_to_str(current),
 		  tap_event_to_str(event),
 		  tap_state_to_str(tp->tap.state));

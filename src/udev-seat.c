@@ -80,10 +80,10 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
-		log_info("not using input device '%s'.\n", devnode);
+		log_info(&input->base, "not using input device '%s'.\n", devnode);
 		return 0;
 	} else if (device == NULL) {
-		log_info("failed to create input device '%s'.\n", devnode);
+		log_info(&input->base, "failed to create input device '%s'.\n", devnode);
 		return 0;
 	}
 
@@ -100,7 +100,8 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 					 &device->abs.calibration[4],
 					 &device->abs.calibration[5]) == 6) {
 		device->abs.apply_calibration = 1;
-		log_info("Applying calibration: %f %f %f %f %f %f\n",
+		log_info(&input->base,
+			 "Applying calibration: %f %f %f %f %f %f\n",
 			 device->abs.calibration[0],
 			 device->abs.calibration[1],
 			 device->abs.calibration[2],
@@ -128,7 +129,8 @@ device_removed(struct udev_device *udev_device, struct udev_input *input)
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
 			if (!strcmp(device->devnode, devnode)) {
-				log_info("input device %s, %s removed\n",
+				log_info(&input->base,
+					 "input device %s, %s removed\n",
 					 device->devname, device->devnode);
 				evdev_device_remove(device);
 				break;
@@ -243,7 +245,8 @@ udev_input_enable(struct libinput *libinput)
 
 	input->udev_monitor = udev_monitor_new_from_netlink(udev, "udev");
 	if (!input->udev_monitor) {
-		log_info("udev: failed to create the udev monitor\n");
+		log_info(libinput,
+			 "udev: failed to create the udev monitor\n");
 		return -1;
 	}
 
@@ -251,7 +254,7 @@ udev_input_enable(struct libinput *libinput)
 			"input", NULL);
 
 	if (udev_monitor_enable_receiving(input->udev_monitor)) {
-		log_info("udev: failed to bind the udev monitor\n");
+		log_info(libinput, "udev: failed to bind the udev monitor\n");
 		udev_monitor_unref(input->udev_monitor);
 		input->udev_monitor = NULL;
 		return -1;
@@ -369,7 +372,7 @@ libinput_udev_assign_seat(struct libinput *libinput,
 		return -1;
 
 	if (libinput->interface_backend != &interface_backend) {
-		log_bug_client("Mismatching backends.\n");
+		log_bug_client(libinput, "Mismatching backends.\n");
 		return -1;
 	}
 
