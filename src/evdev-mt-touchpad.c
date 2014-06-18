@@ -139,7 +139,7 @@ tp_motion_history_reset(struct tp_touch *t)
 static inline struct tp_touch *
 tp_current_touch(struct tp_dispatch *tp)
 {
-	return &tp->touches[min(tp->slot, tp->ntouches)];
+	return &tp->touches[min(tp->slot, tp->ntouches - 1)];
 }
 
 static inline struct tp_touch *
