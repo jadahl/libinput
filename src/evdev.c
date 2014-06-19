@@ -593,6 +593,7 @@ evdev_configure_device(struct evdev_device *device)
 {
 	struct libevdev *evdev = device->evdev;
 	const struct input_absinfo *absinfo;
+	struct input_absinfo fixed;
 	int has_abs, has_rel, has_mt;
 	int has_button, has_keyboard, has_touch;
 	struct mt_slot *slots;
@@ -611,10 +612,20 @@ evdev_configure_device(struct evdev_device *device)
 	if (libevdev_has_event_type(evdev, EV_ABS)) {
 
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
+			if (absinfo->resolution == 0) {
+				fixed = *absinfo;
+				fixed.resolution = 1;
+				libevdev_set_abs_info(evdev, ABS_X, &fixed);
+			}
 			device->abs.absinfo_x = absinfo;
 			has_abs = 1;
 		}
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_Y))) {
+			if (absinfo->resolution == 0) {
+				fixed = *absinfo;
+				fixed.resolution = 1;
+				libevdev_set_abs_info(evdev, ABS_Y, &fixed);
+			}
 			device->abs.absinfo_y = absinfo;
 			has_abs = 1;
 		}
@@ -624,8 +635,22 @@ evdev_configure_device(struct evdev_device *device)
 		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
 		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
+			if (absinfo->resolution == 0) {
+				fixed = *absinfo;
+				fixed.resolution = 1;
+				libevdev_set_abs_info(evdev,
+						      ABS_MT_POSITION_X,
+						      &fixed);
+			}
 			device->abs.absinfo_x = absinfo;
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
+			if (absinfo->resolution == 0) {
+				fixed = *absinfo;
+				fixed.resolution = 1;
+				libevdev_set_abs_info(evdev,
+						      ABS_MT_POSITION_Y,
+						      &fixed);
+			}
 			device->abs.absinfo_y = absinfo;
 			device->is_mt = 1;
 			has_touch = 1;
