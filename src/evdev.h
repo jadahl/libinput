@@ -164,4 +164,11 @@ evdev_device_remove(struct evdev_device *device);
 void
 evdev_device_destroy(struct evdev_device *device);
 
+static inline double
+evdev_convert_to_mm(const struct input_absinfo *absinfo, double v)
+{
+	double value = v - absinfo->minimum;
+	return value/absinfo->resolution;
+}
+
 #endif /* EVDEV_H */

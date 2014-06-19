@@ -319,13 +319,19 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event)
 LIBINPUT_EXPORT double
 libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event)
 {
-	return event->x;
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_convert_to_mm(device->abs.absinfo_x, event->x);
 }
 
 LIBINPUT_EXPORT double
 libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event)
 {
-	return event->y;
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_convert_to_mm(device->abs.absinfo_y, event->y);
 }
 
 LIBINPUT_EXPORT double
@@ -402,7 +408,10 @@ libinput_event_touch_get_seat_slot(struct libinput_event_touch *event)
 LIBINPUT_EXPORT double
 libinput_event_touch_get_x(struct libinput_event_touch *event)
 {
-	return event->x;
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_convert_to_mm(device->abs.absinfo_x, event->x);
 }
 
 LIBINPUT_EXPORT double
@@ -428,7 +437,10 @@ libinput_event_touch_get_y_transformed(struct libinput_event_touch *event,
 LIBINPUT_EXPORT double
 libinput_event_touch_get_y(struct libinput_event_touch *event)
 {
-	return event->y;
+	struct evdev_device *device =
+		(struct evdev_device *) event->base.device;
+
+	return evdev_convert_to_mm(device->abs.absinfo_y, event->y);
 }
 
 struct libinput_source *
