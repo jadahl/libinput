@@ -750,8 +750,10 @@ tp_init(struct tp_dispatch *tp,
 	if (tp_init_slots(tp, device) != 0)
 		return -1;
 
-	width = abs(device->abs.max_x - device->abs.min_x);
-	height = abs(device->abs.max_y - device->abs.min_y);
+	width = abs(device->abs.absinfo_x->maximum -
+		    device->abs.absinfo_x->minimum);
+	height = abs(device->abs.absinfo_y->maximum -
+		     device->abs.absinfo_y->minimum);
 	diagonal = sqrt(width*width + height*height);
 
 	tp->hysteresis.margin_x =

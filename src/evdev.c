@@ -89,13 +89,19 @@ transform_absolute(struct evdev_device *device, int32_t *x, int32_t *y)
 	}
 }
 
+static inline double
+scale_axis(const struct input_absinfo *absinfo, double val, double to_range)
+{
+	return (val - absinfo->minimum) * to_range /
+		(absinfo->maximum - absinfo->minimum + 1);
+}
+
 double
 evdev_device_transform_x(struct evdev_device *device,
 			 double x,
 			 uint32_t width)
 {
-	return (x - device->abs.min_x) * width /
-		(device->abs.max_x - device->abs.min_x + 1);
+	return scale_axis(device->abs.absinfo_x, x, width);
 }
 
 double
@@ -103,8 +109,7 @@ evdev_device_transform_y(struct evdev_device *device,
 			 double y,
 			 uint32_t height)
 {
-	return (y - device->abs.min_y) * height /
-		(device->abs.max_y - device->abs.min_y + 1);
+	return scale_axis(device->abs.absinfo_y, y, height);
 }
 
 static void
@@ -606,13 +611,11 @@ evdev_configure_device(struct evdev_device *device)
 	if (libevdev_has_event_type(evdev, EV_ABS)) {
 
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
-			device->abs.min_x = absinfo->minimum;
-			device->abs.max_x = absinfo->maximum;
+			device->abs.absinfo_x = absinfo;
 			has_abs = 1;
 		}
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_Y))) {
-			device->abs.min_y = absinfo->minimum;
-			device->abs.max_y = absinfo->maximum;
+			device->abs.absinfo_y = absinfo;
 			has_abs = 1;
 		}
                 /* We only handle the slotted Protocol B in weston.
@@ -621,11 +624,9 @@ evdev_configure_device(struct evdev_device *device)
 		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
 		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
-			device->abs.min_x = absinfo->minimum;
-			device->abs.max_x = absinfo->maximum;
+			device->abs.absinfo_x = absinfo;
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
-			device->abs.min_y = absinfo->minimum;
-			device->abs.max_y = absinfo->maximum;
+			device->abs.absinfo_y = absinfo;
 			device->is_mt = 1;
 			has_touch = 1;
 			has_mt = 1;

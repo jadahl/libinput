@@ -66,7 +66,7 @@ struct evdev_device {
 	const char *devname;
 	int fd;
 	struct {
-		int min_x, max_x, min_y, max_y;
+		const struct input_absinfo *absinfo_x, *absinfo_y;
 		int32_t x, y;
 
 		int32_t seat_slot;

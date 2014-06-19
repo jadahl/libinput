@@ -565,6 +565,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 	struct tp_touch *t;
 	int width, height;
 	double diagonal;
+	const struct input_absinfo *absinfo_x, *absinfo_y;
 
 	tp->buttons.is_clickpad = libevdev_has_property(device->evdev,
 							INPUT_PROP_BUTTONPAD);
@@ -580,8 +581,11 @@ tp_init_buttons(struct tp_dispatch *tp,
 			log_bug_kernel("non clickpad without right button?\n");
 	}
 
-	width = abs(device->abs.max_x - device->abs.min_x);
-	height = abs(device->abs.max_y - device->abs.min_y);
+	absinfo_x = device->abs.absinfo_x;
+	absinfo_y = device->abs.absinfo_y;
+
+	width = abs(absinfo_x->maximum - absinfo_x->minimum);
+	height = abs(absinfo_y->maximum - absinfo_y->minimum);
 	diagonal = sqrt(width*width + height*height);
 
 	tp->buttons.motion_dist = diagonal * DEFAULT_BUTTON_MOTION_THRESHOLD;
@@ -590,13 +594,15 @@ tp_init_buttons(struct tp_dispatch *tp,
 		tp->buttons.use_clickfinger = true;
 
 	if (tp->buttons.is_clickpad && !tp->buttons.use_clickfinger) {
-		tp->buttons.bottom_area.top_edge = height * .8 + device->abs.min_y;
-		tp->buttons.bottom_area.rightbutton_left_edge = width/2 + device->abs.min_x;
+		int xoffset = absinfo_x->minimum,
+		    yoffset = absinfo_y->minimum;
+		tp->buttons.bottom_area.top_edge = height * .8 + yoffset;
+		tp->buttons.bottom_area.rightbutton_left_edge = width/2 + xoffset;
 
 		if (tp->buttons.has_topbuttons) {
-			tp->buttons.top_area.bottom_edge = height * .08 + device->abs.min_y;
-			tp->buttons.top_area.rightbutton_left_edge = width * .58 + device->abs.min_x;
-			tp->buttons.top_area.leftbutton_right_edge = width * .42 + device->abs.min_x;
+			tp->buttons.top_area.bottom_edge = height * .08 + yoffset;
+			tp->buttons.top_area.rightbutton_left_edge = width * .58 + xoffset;
+			tp->buttons.top_area.leftbutton_right_edge = width * .42 + xoffset;
 		} else {
 			tp->buttons.top_area.bottom_edge = INT_MIN;
 		}
