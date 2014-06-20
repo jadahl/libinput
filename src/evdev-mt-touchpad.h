@@ -88,6 +88,12 @@ enum tp_tap_state {
 	TAP_STATE_DEAD, /**< finger count exceeded */
 };
 
+enum tp_tap_touch_state {
+	TAP_TOUCH_STATE_IDLE = 16,	/**< not in touch */
+	TAP_TOUCH_STATE_TOUCH,		/**< touching, may tap */
+	TAP_TOUCH_STATE_DEAD,		/**< exceeded motion/timeout */
+};
+
 struct tp_motion {
 	int32_t x;
 	int32_t y;
@@ -131,6 +137,10 @@ struct tp_touch {
 		enum button_event curr;
 		struct libinput_timer timer;
 	} button;
+
+	struct {
+		enum tp_tap_touch_state state;
+	} tap;
 };
 
 struct tp_dispatch {

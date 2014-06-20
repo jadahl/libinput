@@ -95,11 +95,15 @@ tap_event_to_str(enum tap_event event) {
 
 static void
 tp_tap_notify(struct tp_dispatch *tp,
+	      struct tp_touch *t,
 	      uint64_t time,
 	      int nfingers,
 	      enum libinput_button_state state)
 {
 	int32_t button;
+
+	if (t && t->tap.state == TAP_TOUCH_STATE_DEAD)
+		return;
 
 	switch (nfingers) {
 	case 1: button = BTN_LEFT; break;
@@ -128,7 +132,9 @@ tp_tap_clear_timer(struct tp_dispatch *tp)
 }
 
 static void
-tp_tap_idle_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_idle_handle_event(struct tp_dispatch *tp,
+			 struct tp_touch *t,
+			 enum tap_event event, uint64_t time)
 {
 	struct libinput *libinput = tp->device->base.seat->libinput;
 
@@ -151,7 +157,9 @@ tp_tap_idle_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 }
 
 static void
-tp_tap_touch_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_touch_handle_event(struct tp_dispatch *tp,
+			  struct tp_touch *t,
+			  enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -161,7 +169,7 @@ tp_tap_touch_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_TAPPED;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
 		tp_tap_set_timer(tp, time);
 		break;
 	case TAP_EVENT_TIMEOUT:
@@ -176,7 +184,9 @@ tp_tap_touch_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t
 }
 
 static void
-tp_tap_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_hold_handle_event(struct tp_dispatch *tp,
+			 struct tp_touch *t,
+			 enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -197,7 +207,9 @@ tp_tap_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 }
 
 static void
-tp_tap_tapped_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_tapped_handle_event(struct tp_dispatch *tp,
+			   struct tp_touch *t,
+			   enum tap_event event, uint64_t time)
 {
 	struct libinput *libinput = tp->device->base.seat->libinput;
 
@@ -213,17 +225,19 @@ tp_tap_tapped_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
 
 static void
-tp_tap_touch2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_touch2_handle_event(struct tp_dispatch *tp,
+			   struct tp_touch *t,
+			   enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -233,8 +247,8 @@ tp_tap_touch2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_HOLD;
-		tp_tap_notify(tp, time, 2, LIBINPUT_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 2, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 2, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, t, time, 2, LIBINPUT_BUTTON_STATE_RELEASED);
 		tp_tap_clear_timer(tp);
 		break;
 	case TAP_EVENT_MOTION:
@@ -249,7 +263,9 @@ tp_tap_touch2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 }
 
 static void
-tp_tap_touch2_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_touch2_hold_handle_event(struct tp_dispatch *tp,
+				struct tp_touch *t,
+				enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -271,7 +287,9 @@ tp_tap_touch2_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, ui
 }
 
 static void
-tp_tap_touch3_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_touch3_handle_event(struct tp_dispatch *tp,
+			   struct tp_touch *t,
+			   enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -286,8 +304,8 @@ tp_tap_touch3_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_TOUCH_2_HOLD;
-		tp_tap_notify(tp, time, 3, LIBINPUT_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 3, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 3, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, t, time, 3, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
@@ -296,7 +314,9 @@ tp_tap_touch3_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_
 }
 
 static void
-tp_tap_touch3_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_touch3_hold_handle_event(struct tp_dispatch *tp,
+				struct tp_touch *t,
+				enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -317,7 +337,9 @@ tp_tap_touch3_hold_handle_event(struct tp_dispatch *tp, enum tap_event event, ui
 }
 
 static void
-tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp,
+					  struct tp_touch *t,
+					  enum tap_event event, uint64_t time)
 {
 	switch (event) {
 	case TAP_EVENT_TOUCH:
@@ -325,9 +347,9 @@ tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp, enum tap_event
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_PRESSED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		tp_tap_clear_timer(tp);
 		break;
 	case TAP_EVENT_MOTION:
@@ -336,13 +358,15 @@ tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp, enum tap_event
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
 
 static void
-tp_tap_dragging_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_dragging_handle_event(struct tp_dispatch *tp,
+			     struct tp_touch *t,
+			     enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -359,13 +383,15 @@ tp_tap_dragging_handle_event(struct tp_dispatch *tp, enum tap_event event, uint6
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
 
 static void
-tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp,
+				  struct tp_touch *t,
+				  enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -378,17 +404,19 @@ tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp, enum tap_event event, 
 		break;
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_IDLE;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
 
 static void
-tp_tap_dragging2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_dragging2_handle_event(struct tp_dispatch *tp,
+			      struct tp_touch *t,
+			      enum tap_event event, uint64_t time)
 {
 
 	switch (event) {
@@ -397,7 +425,7 @@ tp_tap_dragging2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint
 		break;
 	case TAP_EVENT_TOUCH:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_TIMEOUT:
@@ -405,13 +433,16 @@ tp_tap_dragging2_handle_event(struct tp_dispatch *tp, enum tap_event event, uint
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
-		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		tp_tap_notify(tp, t, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
 
 static void
-tp_tap_dead_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_dead_handle_event(struct tp_dispatch *tp,
+			 struct tp_touch *t,
+			 enum tap_event event,
+			 uint64_t time)
 {
 
 	switch (event) {
@@ -428,7 +459,10 @@ tp_tap_dead_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t 
 }
 
 static void
-tp_tap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
+tp_tap_handle_event(struct tp_dispatch *tp,
+		    struct tp_touch *t,
+		    enum tap_event event,
+		    uint64_t time)
 {
 	struct libinput *libinput = tp->device->base.seat->libinput;
 	enum tp_tap_state current;
@@ -440,43 +474,43 @@ tp_tap_handle_event(struct tp_dispatch *tp, enum tap_event event, uint64_t time)
 
 	switch(tp->tap.state) {
 	case TAP_STATE_IDLE:
-		tp_tap_idle_handle_event(tp, event, time);
+		tp_tap_idle_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH:
-		tp_tap_touch_handle_event(tp, event, time);
+		tp_tap_touch_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_HOLD:
-		tp_tap_hold_handle_event(tp, event, time);
+		tp_tap_hold_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TAPPED:
-		tp_tap_tapped_handle_event(tp, event, time);
+		tp_tap_tapped_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH_2:
-		tp_tap_touch2_handle_event(tp, event, time);
+		tp_tap_touch2_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH_2_HOLD:
-		tp_tap_touch2_hold_handle_event(tp, event, time);
+		tp_tap_touch2_hold_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH_3:
-		tp_tap_touch3_handle_event(tp, event, time);
+		tp_tap_touch3_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH_3_HOLD:
-		tp_tap_touch3_hold_handle_event(tp, event, time);
+		tp_tap_touch3_hold_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_DRAGGING_OR_DOUBLETAP:
-		tp_tap_dragging_or_doubletap_handle_event(tp, event, time);
+		tp_tap_dragging_or_doubletap_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_DRAGGING:
-		tp_tap_dragging_handle_event(tp, event, time);
+		tp_tap_dragging_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_DRAGGING_WAIT:
-		tp_tap_dragging_wait_handle_event(tp, event, time);
+		tp_tap_dragging_wait_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_DRAGGING_2:
-		tp_tap_dragging2_handle_event(tp, event, time);
+		tp_tap_dragging2_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_DEAD:
-		tp_tap_dead_handle_event(tp, event, time);
+		tp_tap_dead_handle_event(tp, t, event, time);
 		break;
 	}
 
@@ -508,19 +542,34 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 	int filter_motion = 0;
 
 	if (tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
-		tp_tap_handle_event(tp, TAP_EVENT_BUTTON, time);
+		tp_tap_handle_event(tp, NULL, TAP_EVENT_BUTTON, time);
 
 	tp_for_each_touch(tp, t) {
 		if (!t->dirty || t->state == TOUCH_NONE)
 			continue;
 
-		if (t->state == TOUCH_BEGIN)
-			tp_tap_handle_event(tp, TAP_EVENT_TOUCH, time);
-		else if (t->state == TOUCH_END)
-			tp_tap_handle_event(tp, TAP_EVENT_RELEASE, time);
-		else if (tp->tap.state != TAP_STATE_IDLE &&
-			 tp_tap_exceeds_motion_threshold(tp, t))
-			tp_tap_handle_event(tp, TAP_EVENT_MOTION, time);
+		if (tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
+			t->tap.state = TAP_TOUCH_STATE_DEAD;
+
+		if (t->state == TOUCH_BEGIN) {
+			t->tap.state = TAP_TOUCH_STATE_TOUCH;
+			tp_tap_handle_event(tp, t, TAP_EVENT_TOUCH, time);
+		} else if (t->state == TOUCH_END) {
+			tp_tap_handle_event(tp, t, TAP_EVENT_RELEASE, time);
+			t->tap.state = TAP_TOUCH_STATE_DEAD;
+		} else if (tp->tap.state != TAP_STATE_IDLE &&
+			 tp_tap_exceeds_motion_threshold(tp, t)) {
+			struct tp_touch *tmp;
+
+			/* Any touch exceeding the threshold turns all
+			 * touches into DEAD */
+			tp_for_each_touch(tp, tmp) {
+				if (tmp->tap.state == TAP_TOUCH_STATE_TOUCH)
+					tmp->tap.state = TAP_TOUCH_STATE_DEAD;
+			}
+
+			tp_tap_handle_event(tp, t, TAP_EVENT_MOTION, time);
+		}
 	}
 
 	/**
@@ -550,8 +599,17 @@ static void
 tp_tap_handle_timeout(uint64_t time, void *data)
 {
 	struct tp_dispatch *tp = data;
+	struct tp_touch *t;
 
-	tp_tap_handle_event(tp, TAP_EVENT_TIMEOUT, time);
+	tp_tap_handle_event(tp, NULL, TAP_EVENT_TIMEOUT, time);
+
+	tp_for_each_touch(tp, t) {
+		if (t->state == TOUCH_NONE ||
+		    t->tap.state == TAP_TOUCH_STATE_IDLE)
+			continue;
+
+		t->tap.state = TAP_TOUCH_STATE_DEAD;
+	}
 }
 
 int
