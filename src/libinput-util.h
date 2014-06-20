@@ -23,6 +23,8 @@
 #ifndef LIBINPUT_UTIL_H
 #define LIBINPUT_UTIL_H
 
+#include <unistd.h>
+
 #include "libinput.h"
 
 void
@@ -82,6 +84,12 @@ static inline void *
 zalloc(size_t size)
 {
 	return calloc(1, size);
+}
+
+static inline void
+msleep(unsigned int ms)
+{
+	usleep(ms * 1000);
 }
 
 #endif /* LIBINPUT_UTIL_H */

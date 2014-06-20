@@ -125,7 +125,7 @@ START_TEST(touchpad_1fg_tap)
 
 	assert_button_event(li, BTN_LEFT,
 			    LIBINPUT_BUTTON_STATE_PRESSED);
-	usleep(300000); /* tap-n-drag timeout */
+	msleep(300); /* tap-n-drag timeout */
 	assert_button_event(li, BTN_LEFT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
 
@@ -177,7 +177,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 
 	ck_assert_int_eq(libinput_next_event_type(li), LIBINPUT_EVENT_NONE);
 
-	usleep(300000); /* tap-n-drag timeout */
+	msleep(300); /* tap-n-drag timeout */
 
 	assert_button_event(li, BTN_LEFT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
@@ -202,7 +202,7 @@ START_TEST(touchpad_2fg_tap)
 
 	assert_button_event(li, BTN_RIGHT,
 			    LIBINPUT_BUTTON_STATE_PRESSED);
-	usleep(300000); /* tap-n-drag timeout */
+	msleep(300); /* tap-n-drag timeout */
 	assert_button_event(li, BTN_RIGHT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
 
@@ -681,7 +681,7 @@ START_TEST(clickpad_softbutton_left_1st_fg_move)
 	/* move out of the area, then wait for softbutton timer */
 	litest_touch_move_to(dev, 0, 20, 90, 90, 20, 10);
 	libinput_dispatch(li);
-	usleep(400000);
+	msleep(400);
 	libinput_dispatch(li);
 	litest_drain_events(li);
 
@@ -982,13 +982,13 @@ START_TEST(clickpad_topsoftbuttons_move_out_ignore)
 
 	litest_touch_down(dev, 0, 50, 5);
 	libinput_dispatch(li);
-	usleep(200000);
+	msleep(200);
 	libinput_dispatch(li);
 	litest_assert_empty_queue(li);
 
 	litest_touch_move_to(dev, 0, 50, 5, 80, 90, 20);
 	libinput_dispatch(li);
-	usleep(400000);
+	msleep(400);
 	libinput_dispatch(li);
 
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
