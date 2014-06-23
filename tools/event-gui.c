@@ -53,7 +53,7 @@ struct window {
 	int width, height; /* of window */
 
 	/* sprite position */
-	int x, y;
+	double x, y;
 
 	/* abs position */
 	int absx, absy;
@@ -233,10 +233,10 @@ handle_event_motion(struct libinput_event *ev, struct window *w)
 	double dx = libinput_event_pointer_get_dx(p),
 	       dy = libinput_event_pointer_get_dy(p);
 
-	w->x += (int)dx;
-	w->y += (int)dy;
-	w->x = clip(w->x, 0, w->width);
-	w->y = clip(w->y, 0, w->height);
+	w->x += dx;
+	w->y += dy;
+	w->x = clip(w->x, 0.0, w->width);
+	w->y = clip(w->y, 0.0, w->height);
 }
 
 static void
