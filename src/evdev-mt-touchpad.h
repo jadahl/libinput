@@ -72,11 +72,6 @@ enum button_state {
 	BUTTON_STATE_IGNORE,
 };
 
-enum scroll_state {
-	SCROLL_STATE_NONE,
-	SCROLL_STATE_SCROLLING
-};
-
 enum tp_tap_state {
 	TAP_STATE_IDLE = 4,
 	TAP_STATE_TOUCH,
@@ -192,7 +187,6 @@ struct tp_dispatch {
 	} buttons;				/* physical buttons */
 
 	struct {
-		enum scroll_state state;
 		enum libinput_pointer_axis direction;
 	} scroll;
 

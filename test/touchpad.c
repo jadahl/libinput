@@ -1027,16 +1027,27 @@ START_TEST(clickpad_topsoftbuttons_move_out_ignore)
 END_TEST
 
 static void
-test_2fg_scroll(struct litest_device *dev, int dx, int dy)
+test_2fg_scroll(struct litest_device *dev, int dx, int dy, int sleep)
 {
+	struct libinput *li = dev->libinput;
+
 	litest_touch_down(dev, 0, 47, 50);
 	litest_touch_down(dev, 1, 53, 50);
 
 	litest_touch_move_to(dev, 0, 47, 50, 47 + dx, 50 + dy, 5);
 	litest_touch_move_to(dev, 1, 53, 50, 53 + dx, 50 + dy, 5);
 
+	/* Avoid a small scroll being seen as a tap */
+	if (sleep) {
+		libinput_dispatch(li);
+		msleep(sleep);
+		libinput_dispatch(li);
+	}
+
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
+
+	libinput_dispatch(li);
 }
 
 static void
@@ -1045,8 +1056,6 @@ check_2fg_scroll(struct litest_device *dev, int axis, int dir)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event, *next_event;
 	struct libinput_event_pointer *ptrev;
-
-	libinput_dispatch(li);
 
 	event = libinput_get_event(li);
 	next_event = libinput_get_event(li);
@@ -1091,14 +1100,18 @@ START_TEST(touchpad_2fg_scroll)
 
 	/* Note this mixes in a tiny amount of movement in the wrong direction,
 	   which should be ignored */
-	test_2fg_scroll(dev, 1, 40);
+	test_2fg_scroll(dev, 1, 40, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
-	test_2fg_scroll(dev, 1, -40);
+	test_2fg_scroll(dev, 1, -40, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
-	test_2fg_scroll(dev, 40, 1);
+	test_2fg_scroll(dev, 40, 1, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
-	test_2fg_scroll(dev, -40, 1);
+	test_2fg_scroll(dev, -40, 1, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
+
+	/* 2fg scroll smaller than the threshold should not generate events */
+	test_2fg_scroll(dev, 1, 1, 200);
+	litest_assert_empty_queue(li);
 }
 END_TEST
 

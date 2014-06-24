@@ -464,17 +464,11 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	tp_filter_motion(tp, &dx, &dy, time);
 
 	/* Require at least three px scrolling to start */
-	if (dy <= -3.0 || dy >= 3.0) {
-		tp->scroll.state = SCROLL_STATE_SCROLLING;
+	if (dy <= -3.0 || dy >= 3.0)
 		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
-	}
-	if (dx <= -3.0 || dx >= 3.0) {
-		tp->scroll.state = SCROLL_STATE_SCROLLING;
-		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
-	}
 
-	if (tp->scroll.state == SCROLL_STATE_NONE)
-		return;
+	if (dx <= -3.0 || dx >= 3.0)
+		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 
 	/* Stop spurious MOTION events at the end of scrolling */
 	tp_for_each_touch(tp, t)
@@ -500,9 +494,6 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 static void
 tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
 {
-	if (tp->scroll.state == SCROLL_STATE_NONE)
-		return;
-
 	/* terminate scrolling with a zero scroll event */
 	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
 		pointer_notify_axis(&tp->device->base,
@@ -515,7 +506,6 @@ tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
 				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				    0);
 
-	tp->scroll.state = SCROLL_STATE_NONE;
 	tp->scroll.direction = 0;
 }
 
@@ -732,7 +722,6 @@ static int
 tp_init_scroll(struct tp_dispatch *tp)
 {
 	tp->scroll.direction = 0;
-	tp->scroll.state = SCROLL_STATE_NONE;
 
 	return 0;
 }
