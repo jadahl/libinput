@@ -50,7 +50,7 @@ extern "C" {
  *
  * Software button areas
  * =====================
- * On most touchpads, the bottom area of the touchpad is split into a a left
+ * On most touchpads, the bottom area of the touchpad is split into a left
  * and a right-button area. Pressing the touchpad down with a finger in
  * those areas will generate clicks as shown in the diagram below:
  *
