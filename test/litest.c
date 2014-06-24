@@ -822,11 +822,13 @@ litest_create_uinput_device_from_description(const char *name,
 		.flat = 0,
 		.resolution = 100
 	};
+	char buf[512];
 
 	dev = libevdev_new();
 	ck_assert(dev != NULL);
 
-	libevdev_set_name(dev, name);
+	snprintf(buf, sizeof(buf), "litest %s", name);
+	libevdev_set_name(dev, buf);
 	if (id) {
 		libevdev_set_id_bustype(dev, id->bustype);
 		libevdev_set_id_vendor(dev, id->vendor);
