@@ -22,6 +22,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <string.h>
 #include <sys/timerfd.h>
 #include <unistd.h>
@@ -65,6 +66,22 @@ libinput_timer_arm_timer_fd(struct libinput *libinput)
 void
 libinput_timer_set(struct libinput_timer *timer, uint64_t expire)
 {
+#ifndef NDEBUG
+	struct timespec ts;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) == 0) {
+		uint64_t now = ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
+		if (abs(expire - now) > 5000)
+			log_bug_libinput(timer->libinput,
+					 "timer offset more than 5s, now %"
+					 PRIu64 " expire %" PRIu64 "\n",
+					 now, expire);
+	} else {
+		log_error(timer->libinput,
+			  "clock_gettime error: %s\n", strerror(errno));
+	}
+#endif
+
 	assert(expire);
 
 	if (!timer->expire)
