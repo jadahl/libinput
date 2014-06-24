@@ -371,12 +371,32 @@ START_TEST(event_conversion_touch)
 }
 END_TEST
 
+START_TEST(context_ref_counting)
+{
+	struct libinput *li;
+
+	/* These tests rely on valgrind to detect memory leak and use after
+	 * free errors. */
+
+	li = libinput_path_create_context(&simple_interface, NULL);
+	ck_assert_notnull(li);
+	ck_assert_ptr_eq(libinput_unref(li), NULL);
+
+	li = libinput_path_create_context(&simple_interface, NULL);
+	ck_assert_notnull(li);
+	ck_assert_ptr_eq(libinput_ref(li), li);
+	ck_assert_ptr_eq(libinput_unref(li), li);
+	ck_assert_ptr_eq(libinput_unref(li), NULL);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_no_device("events:conversion", event_conversion_pointer);
 	litest_add_no_device("events:conversion", event_conversion_pointer_abs);
 	litest_add_no_device("events:conversion", event_conversion_key);
 	litest_add_no_device("events:conversion", event_conversion_touch);
+	litest_add_no_device("context:refcount", context_ref_counting);
 
 	return litest_run(argc, argv);
 }
