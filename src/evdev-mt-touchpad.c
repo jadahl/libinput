@@ -453,6 +453,8 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 			dx += tmpx;
 			dy += tmpy;
 		}
+		/* Stop spurious MOTION events at the end of scrolling */
+		t->is_pointer = false;
 	}
 
 	if (nchanged == 0)
@@ -469,10 +471,6 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 
 	if (dx <= -3.0 || dx >= 3.0)
 		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
-
-	/* Stop spurious MOTION events at the end of scrolling */
-	tp_for_each_touch(tp, t)
-		t->is_pointer = false;
 
 	if (dy != 0.0 &&
 	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))) {
