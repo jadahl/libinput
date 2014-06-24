@@ -607,10 +607,11 @@ libinput_seat_init(struct libinput_seat *seat,
 	list_insert(&libinput->seat_list, &seat->link);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_seat *
 libinput_seat_ref(struct libinput_seat *seat)
 {
 	seat->refcount++;
+	return seat;
 }
 
 static void
@@ -622,13 +623,17 @@ libinput_seat_destroy(struct libinput_seat *seat)
 	seat->destroy(seat);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_seat *
 libinput_seat_unref(struct libinput_seat *seat)
 {
 	assert(seat->refcount > 0);
 	seat->refcount--;
-	if (seat->refcount == 0)
+	if (seat->refcount == 0) {
 		libinput_seat_destroy(seat);
+		return NULL;
+	} else {
+		return seat;
+	}
 }
 
 LIBINPUT_EXPORT void
@@ -663,10 +668,11 @@ libinput_device_init(struct libinput_device *device,
 	device->refcount = 1;
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_ref(struct libinput_device *device)
 {
 	device->refcount++;
+	return device;
 }
 
 static void
@@ -675,13 +681,17 @@ libinput_device_destroy(struct libinput_device *device)
 	evdev_device_destroy((struct evdev_device *) device);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_unref(struct libinput_device *device)
 {
 	assert(device->refcount > 0);
 	device->refcount--;
-	if (device->refcount == 0)
+	if (device->refcount == 0) {
 		libinput_device_destroy(device);
+		return NULL;
+	} else {
+		return device;
+	}
 }
 
 LIBINPUT_EXPORT int

@@ -1080,8 +1080,9 @@ libinput_log_set_handler(libinput_log_handler log_handler,
  * the seat correctly to avoid dangling pointers.
  *
  * @param seat A previously obtained seat
+ * @return The passed seat
  */
-void
+struct libinput_seat *
 libinput_seat_ref(struct libinput_seat *seat);
 
 /**
@@ -1093,8 +1094,9 @@ libinput_seat_ref(struct libinput_seat *seat);
  * the seat correctly to avoid dangling pointers.
  *
  * @param seat A previously obtained seat
+ * @return NULL if seat was destroyed, otherwise the passed seat
  */
-void
+struct libinput_seat *
 libinput_seat_unref(struct libinput_seat *seat);
 
 /**
@@ -1167,8 +1169,9 @@ libinput_seat_get_logical_name(struct libinput_seat *seat);
  * the device correctly to avoid dangling pointers.
  *
  * @param device A previously obtained device
+ * @return The passed device
  */
-void
+struct libinput_device *
 libinput_device_ref(struct libinput_device *device);
 
 /**
@@ -1180,8 +1183,9 @@ libinput_device_ref(struct libinput_device *device);
  * the device correctly to avoid dangling pointers.
  *
  * @param device A previously obtained device
+ * @return NULL if device was destroyed, otherwise the passed device
  */
-void
+struct libinput_device *
 libinput_device_unref(struct libinput_device *device);
 
 /**
