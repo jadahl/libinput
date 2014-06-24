@@ -1026,6 +1026,82 @@ START_TEST(clickpad_topsoftbuttons_move_out_ignore)
 }
 END_TEST
 
+static void
+test_2fg_scroll(struct litest_device *dev, int dx, int dy)
+{
+	litest_touch_down(dev, 0, 47, 50);
+	litest_touch_down(dev, 1, 53, 50);
+
+	litest_touch_move_to(dev, 0, 47, 50, 47 + dx, 50 + dy, 5);
+	litest_touch_move_to(dev, 1, 53, 50, 53 + dx, 50 + dy, 5);
+
+	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
+}
+
+static void
+check_2fg_scroll(struct litest_device *dev, int axis, int dir)
+{
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event, *next_event;
+	struct libinput_event_pointer *ptrev;
+
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	next_event = libinput_get_event(li);
+	ck_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
+
+	while (event) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		ptrev = libinput_event_get_pointer_event(event);
+		ck_assert(ptrev != NULL);
+		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev), axis);
+
+		if (next_event) {
+			/* Normal scroll event, check dir */
+			if (dir > 0) {
+				ck_assert_int_ge(
+					libinput_event_pointer_get_axis_value(ptrev),
+					dir);
+			} else {
+				ck_assert_int_le(
+					libinput_event_pointer_get_axis_value(ptrev),
+					dir);
+			}
+		} else {
+			/* Last scroll event, must be 0 */
+			ck_assert_int_eq(
+				libinput_event_pointer_get_axis_value(ptrev),
+				0);
+		}
+		libinput_event_destroy(event);
+		event = next_event;
+		next_event = libinput_get_event(li);
+	}
+}
+
+START_TEST(touchpad_2fg_scroll)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	/* Note this mixes in a tiny amount of movement in the wrong direction,
+	   which should be ignored */
+	test_2fg_scroll(dev, 1, 40);
+	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
+	test_2fg_scroll(dev, 1, -40);
+	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
+	test_2fg_scroll(dev, 40, 1);
+	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
+	test_2fg_scroll(dev, -40, 1);
+	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
+}
+END_TEST
+
 int main(int argc, char **argv) {
 
 	litest_add("touchpad:motion", touchpad_1fg_motion, LITEST_TOUCHPAD, LITEST_ANY);
@@ -1063,6 +1139,8 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:topsoftbuttons", clickpad_topsoftbuttons_right, LITEST_TOPBUTTONPAD, LITEST_ANY);
 	litest_add("touchpad:topsoftbuttons", clickpad_topsoftbuttons_middle, LITEST_TOPBUTTONPAD, LITEST_ANY);
 	litest_add("touchpad:topsoftbuttons", clickpad_topsoftbuttons_move_out_ignore, LITEST_TOPBUTTONPAD, LITEST_ANY);
+
+	litest_add("touchpad:scroll", touchpad_2fg_scroll, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 
 	return litest_run(argc, argv);
 }
