@@ -108,7 +108,7 @@ START_TEST(keyboard_seat_key_count)
 
 	for (i = 0; i < num_devices; ++i)
 		litest_delete_device(devices[i]);
-	libinput_destroy(libinput);
+	libinput_unref(libinput);
 }
 END_TEST
 

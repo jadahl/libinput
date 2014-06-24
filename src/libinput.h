@@ -793,6 +793,9 @@ struct libinput_interface {
  * device are ignored. Such devices and those that failed to open
  * ignored until the next call to libinput_resume().
  *
+ * The reference count of the context is initialized to 1. See @ref
+ * libinput_unref.
+ *
  * @param interface The callback interface
  * @param user_data Caller-specific data passed to the various callback
  * interfaces.
@@ -817,6 +820,9 @@ libinput_udev_create_for_seat(const struct libinput_interface *interface,
  *
  * The context is fully initialized but will not generate events until at
  * least one device has been added.
+ *
+ * The reference count of the context is initialized to 1. See @ref
+ * libinput_unref.
  *
  * @param interface The callback interface
  * @param user_data Caller-specific data passed to the various callback
@@ -967,13 +973,27 @@ libinput_suspend(struct libinput *libinput);
 /**
  * @ingroup base
  *
- * Destroy the libinput context. After this, object references associated with
- * the destroyed context are invalid and may not be interacted with.
+ * Add a reference to the context. A context is destroyed whenever the
+ * reference count reaches 0. See @ref libinput_unref.
+ *
+ * @param libinput A previously initialized valid libinput context
+ * @return The passed libinput context
+ */
+struct libinput *
+libinput_ref(struct libinput *libinput);
+
+/**
+ * @ingroup base
+ *
+ * Dereference the libinput context. After this, the context may have been
+ * destroyed, if the last reference was dereferenced. If so, the context is
+ * invalid and may not be interacted with.
  *
  * @param libinput A previously initialized libinput context
+ * @return NULL if context was destroyed otherwise the passed context
  */
-void
-libinput_destroy(struct libinput *libinput);
+struct libinput *
+libinput_unref(struct libinput *libinput);
 
 /**
  * @ingroup base

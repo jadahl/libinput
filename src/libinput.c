@@ -502,6 +502,7 @@ libinput_init(struct libinput *libinput,
 	libinput->interface = interface;
 	libinput->interface_backend = interface_backend;
 	libinput->user_data = user_data;
+	libinput->refcount = 1;
 	list_init(&libinput->source_destroy_list);
 	list_init(&libinput->seat_list);
 
@@ -530,15 +531,27 @@ libinput_drop_destroyed_sources(struct libinput *libinput)
 	list_init(&libinput->source_destroy_list);
 }
 
-LIBINPUT_EXPORT void
-libinput_destroy(struct libinput *libinput)
+LIBINPUT_EXPORT struct libinput *
+libinput_ref(struct libinput *libinput)
+{
+	libinput->refcount++;
+	return libinput;
+}
+
+LIBINPUT_EXPORT struct libinput *
+libinput_unref(struct libinput *libinput)
 {
 	struct libinput_event *event;
 	struct libinput_device *device, *next_device;
 	struct libinput_seat *seat, *next_seat;
 
 	if (libinput == NULL)
-		return;
+		return NULL;
+
+	assert(libinput->refcount > 0);
+	libinput->refcount--;
+	if (libinput->refcount > 0)
+		return libinput;
 
 	libinput_suspend(libinput);
 
@@ -562,6 +575,8 @@ libinput_destroy(struct libinput *libinput)
 	libinput_drop_destroyed_sources(libinput);
 	close(libinput->epoll_fd);
 	free(libinput);
+
+	return NULL;
 }
 
 LIBINPUT_EXPORT void

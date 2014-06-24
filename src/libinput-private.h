@@ -57,6 +57,7 @@ struct libinput {
 	const struct libinput_interface *interface;
 	const struct libinput_interface_backend *interface_backend;
 	void *user_data;
+	int refcount;
 };
 
 typedef void (*libinput_seat_destroy_func) (struct libinput_seat *seat);

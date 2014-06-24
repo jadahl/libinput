@@ -163,7 +163,7 @@ open_device(struct libinput **li, const char *path)
 	device = libinput_path_add_device(*li, path);
 	if (!device) {
 		fprintf(stderr, "Failed to initialized device %s\n", path);
-		libinput_destroy(*li);
+		libinput_unref(*li);
 		return 1;
 	}
 
@@ -478,7 +478,7 @@ main(int argc, char **argv)
 
 	mainloop(li);
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	if (udev)
 		udev_unref(udev);
 

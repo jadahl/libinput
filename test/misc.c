@@ -133,7 +133,7 @@ START_TEST(event_conversion_device_notify)
 		libinput_event_destroy(event);
 	}
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(device_added, 0);
@@ -194,7 +194,7 @@ START_TEST(event_conversion_pointer)
 		libinput_event_destroy(event);
 	}
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(motion, 0);
@@ -254,7 +254,7 @@ START_TEST(event_conversion_pointer_abs)
 		libinput_event_destroy(event);
 	}
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(motion, 0);
@@ -304,7 +304,7 @@ START_TEST(event_conversion_key)
 		libinput_event_destroy(event);
 	}
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(key, 0);
@@ -364,7 +364,7 @@ START_TEST(event_conversion_touch)
 		libinput_event_destroy(event);
 	}
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(touch, 0);

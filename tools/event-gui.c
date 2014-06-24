@@ -467,7 +467,7 @@ main(int argc, char *argv[])
 
 	gtk_main();
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	udev_unref(udev);
 
 	return 0;
