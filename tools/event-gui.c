@@ -284,11 +284,11 @@ handle_event_axis(struct libinput_event *ev, struct window *w)
 	double v = libinput_event_pointer_get_axis_value(p);
 
 	switch (axis) {
-	case LIBINPUT_POINTER_AXIS_VERTICAL_SCROLL:
+	case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
 		w->vy += (int)v;
 		w->vy = clip(w->vy, 0, w->height);
 		break;
-	case LIBINPUT_POINTER_AXIS_HORIZONTAL_SCROLL:
+	case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
 		w->hx += (int)v;
 		w->hx = clip(w->hx, 0, w->width);
 		break;
