@@ -820,43 +820,6 @@ libinput_udev_assign_seat(struct libinput *libinput,
 /**
  * @ingroup base
  *
- * Create a new libinput context from udev, for input devices matching
- * the given seat ID. New devices or devices removed will appear as events
- * during libinput_dispatch.
- *
- * libinput_udev_create_for_seat() succeeds even if no input device is
- * available in this seat, or if devices are available but fail to open in
- * @ref libinput_interface::open_restricted. Devices that do not have the
- * minimum capabilities to be recognized as pointer, keyboard or touch
- * device are ignored. Such devices and those that failed to open
- * ignored until the next call to libinput_resume().
- *
- * The reference count of the context is initialized to 1. See @ref
- * libinput_unref.
- *
- * @param interface The callback interface
- * @param user_data Caller-specific data passed to the various callback
- * interfaces.
- * @param udev An already initialized udev context
- * @param seat_id A seat identifier. This string must not be NULL.
- *
- * @return An initialized libinput context, ready to handle events or NULL on
- * error.
- *
- * @deprecated This function was deprecated in 0.4.0 and will be removed
- * soon. Use libinput_udev_create_context() and libinput_udev_assign_seat()
- * instead.
- */
-struct libinput *
-libinput_udev_create_for_seat(const struct libinput_interface *interface,
-			      void *user_data,
-			      struct udev *udev,
-			      const char *seat_id)
-	LIBINPUT_ATTRIBUTE_DEPRECATED;
-
-/**
- * @ingroup base
- *
  * Create a new libinput context that requires the caller to manually add or
  * remove devices with libinput_path_add_device() and
  * libinput_path_remove_device().

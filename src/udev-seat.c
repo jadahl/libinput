@@ -384,26 +384,3 @@ libinput_udev_assign_seat(struct libinput *libinput,
 
 	return 0;
 }
-
-LIBINPUT_EXPORT struct libinput *
-libinput_udev_create_for_seat(const struct libinput_interface *interface,
-			      void *user_data,
-			      struct udev *udev,
-			      const char *seat_id)
-{
-	struct libinput *libinput;
-
-	if (!interface || !udev || !seat_id)
-		return NULL;
-
-	libinput = libinput_udev_create_context(interface, user_data, udev);
-	if (!libinput)
-		return NULL;
-
-	if (libinput_udev_assign_seat(libinput, seat_id) != 0) {
-		libinput_unref(libinput);
-		libinput = NULL;
-	}
-
-	return libinput;
-}
