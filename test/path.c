@@ -65,7 +65,7 @@ START_TEST(path_create_NULL)
 	ck_assert(li == NULL);
 	li = libinput_path_create_context(&simple_interface, NULL);
 	ck_assert(li != NULL);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	ck_assert_int_eq(open_func_count, 0);
 	ck_assert_int_eq(close_func_count, 0);
@@ -92,7 +92,7 @@ START_TEST(path_create_invalid)
 	ck_assert_int_eq(open_func_count, 0);
 	ck_assert_int_eq(close_func_count, 0);
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	ck_assert_int_eq(close_func_count, 0);
 
 	open_func_count = 0;
@@ -126,7 +126,7 @@ START_TEST(path_create_destroy)
 	ck_assert_int_eq(open_func_count, 1);
 
 	libevdev_uinput_destroy(uinput);
-	libinput_destroy(li);
+	libinput_unref(li);
 	ck_assert_int_eq(close_func_count, 1);
 
 	open_func_count = 0;
@@ -372,7 +372,7 @@ START_TEST(path_suspend)
 	libinput_resume(li);
 
 	libevdev_uinput_destroy(uinput);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -406,7 +406,7 @@ START_TEST(path_double_suspend)
 	libinput_resume(li);
 
 	libevdev_uinput_destroy(uinput);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -440,7 +440,7 @@ START_TEST(path_double_resume)
 	libinput_resume(li);
 
 	libevdev_uinput_destroy(uinput);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -523,7 +523,7 @@ START_TEST(path_add_device_suspend_resume)
 
 	libevdev_uinput_destroy(uinput1);
 	libevdev_uinput_destroy(uinput2);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -614,7 +614,7 @@ START_TEST(path_add_device_suspend_resume_fail)
 	ck_assert_int_eq(nevents, 2);
 
 	libevdev_uinput_destroy(uinput2);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -704,7 +704,7 @@ START_TEST(path_add_device_suspend_resume_remove_device)
 	ck_assert_int_eq(nevents, 1);
 
 	libevdev_uinput_destroy(uinput1);
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	open_func_count = 0;
 	close_func_count = 0;
@@ -790,7 +790,7 @@ START_TEST(path_seat_recycle)
 
 	ck_assert(found == 1);
 
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	libevdev_uinput_destroy(uinput);
 }

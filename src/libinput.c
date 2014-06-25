@@ -496,6 +496,7 @@ libinput_init(struct libinput *libinput,
 	libinput->interface = interface;
 	libinput->interface_backend = interface_backend;
 	libinput->user_data = user_data;
+	libinput->refcount = 1;
 	list_init(&libinput->source_destroy_list);
 	list_init(&libinput->seat_list);
 
@@ -524,15 +525,27 @@ libinput_drop_destroyed_sources(struct libinput *libinput)
 	list_init(&libinput->source_destroy_list);
 }
 
-LIBINPUT_EXPORT void
-libinput_destroy(struct libinput *libinput)
+LIBINPUT_EXPORT struct libinput *
+libinput_ref(struct libinput *libinput)
+{
+	libinput->refcount++;
+	return libinput;
+}
+
+LIBINPUT_EXPORT struct libinput *
+libinput_unref(struct libinput *libinput)
 {
 	struct libinput_event *event;
 	struct libinput_device *device, *next_device;
 	struct libinput_seat *seat, *next_seat;
 
 	if (libinput == NULL)
-		return;
+		return NULL;
+
+	assert(libinput->refcount > 0);
+	libinput->refcount--;
+	if (libinput->refcount > 0)
+		return libinput;
 
 	libinput_suspend(libinput);
 
@@ -556,6 +569,8 @@ libinput_destroy(struct libinput *libinput)
 	libinput_drop_destroyed_sources(libinput);
 	close(libinput->epoll_fd);
 	free(libinput);
+
+	return NULL;
 }
 
 LIBINPUT_EXPORT void
@@ -601,10 +616,11 @@ libinput_seat_init(struct libinput_seat *seat,
 	list_insert(&libinput->seat_list, &seat->link);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_seat *
 libinput_seat_ref(struct libinput_seat *seat)
 {
 	seat->refcount++;
+	return seat;
 }
 
 static void
@@ -616,13 +632,17 @@ libinput_seat_destroy(struct libinput_seat *seat)
 	seat->destroy(seat);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_seat *
 libinput_seat_unref(struct libinput_seat *seat)
 {
 	assert(seat->refcount > 0);
 	seat->refcount--;
-	if (seat->refcount == 0)
+	if (seat->refcount == 0) {
 		libinput_seat_destroy(seat);
+		return NULL;
+	} else {
+		return seat;
+	}
 }
 
 LIBINPUT_EXPORT void
@@ -657,10 +677,11 @@ libinput_device_init(struct libinput_device *device,
 	device->refcount = 1;
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_ref(struct libinput_device *device)
 {
 	device->refcount++;
+	return device;
 }
 
 static void
@@ -669,13 +690,17 @@ libinput_device_destroy(struct libinput_device *device)
 	evdev_device_destroy((struct evdev_device *) device);
 }
 
-LIBINPUT_EXPORT void
+LIBINPUT_EXPORT struct libinput_device *
 libinput_device_unref(struct libinput_device *device)
 {
 	assert(device->refcount > 0);
 	device->refcount--;
-	if (device->refcount == 0)
+	if (device->refcount == 0) {
 		libinput_device_destroy(device);
+		return NULL;
+	} else {
+		return device;
+	}
 }
 
 LIBINPUT_EXPORT int

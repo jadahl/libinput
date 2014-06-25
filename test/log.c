@@ -72,7 +72,7 @@ START_TEST(log_default_priority)
 
 	ck_assert_int_eq(pri, LIBINPUT_LOG_PRIORITY_ERROR);
 
-	libinput_destroy(li);
+	libinput_unref(li);
 }
 END_TEST
 
@@ -91,7 +91,7 @@ START_TEST(log_handler_invoked)
 	ck_assert_int_gt(log_handler_called, 0);
 	log_handler_called = 0;
 
-	libinput_destroy(li);
+	libinput_unref(li);
 
 	log_handler_context = NULL;
 }
@@ -110,7 +110,7 @@ START_TEST(log_handler_NULL)
 	ck_assert_int_eq(log_handler_called, 0);
 	log_handler_called = 0;
 
-	libinput_destroy(li);
+	libinput_unref(li);
 }
 END_TEST
 
@@ -133,7 +133,7 @@ START_TEST(log_priority)
 
 	log_handler_called = 0;
 
-	libinput_destroy(li);
+	libinput_unref(li);
 	log_handler_context = NULL;
 }
 END_TEST

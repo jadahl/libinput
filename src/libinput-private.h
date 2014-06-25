@@ -60,6 +60,7 @@ struct libinput {
 	libinput_log_handler log_handler;
 	enum libinput_log_priority log_priority;
 	void *user_data;
+	int refcount;
 };
 
 typedef void (*libinput_seat_destroy_func) (struct libinput_seat *seat);

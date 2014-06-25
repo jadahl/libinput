@@ -351,6 +351,7 @@ libinput_udev_create_context(const struct libinput_interface *interface,
 
 	if (libinput_init(&input->base, interface,
 			  &interface_backend, user_data) != 0) {
+		libinput_unref(&input->base);
 		free(input);
 		return NULL;
 	}
@@ -400,7 +401,7 @@ libinput_udev_create_for_seat(const struct libinput_interface *interface,
 		return NULL;
 
 	if (libinput_udev_assign_seat(libinput, seat_id) != 0) {
-		libinput_destroy(libinput);
+		libinput_unref(libinput);
 		libinput = NULL;
 	}
 

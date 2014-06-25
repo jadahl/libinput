@@ -577,7 +577,7 @@ litest_delete_device(struct litest_device *d)
 
 	libinput_device_unref(d->libinput_device);
 	if (d->owns_context)
-		libinput_destroy(d->libinput);
+		libinput_unref(d->libinput);
 	libevdev_free(d->evdev);
 	libevdev_uinput_destroy(d->uinput);
 	memset(d,0, sizeof(*d));
