@@ -857,6 +857,24 @@ evdev_device_get_sysname(struct evdev_device *device)
 	return device->sysname;
 }
 
+const char *
+evdev_device_get_name(struct evdev_device *device)
+{
+	return device->devname;
+}
+
+unsigned int
+evdev_device_get_id_product(struct evdev_device *device)
+{
+	return libevdev_get_id_product(device->evdev);
+}
+
+unsigned int
+evdev_device_get_id_vendor(struct evdev_device *device)
+{
+	return libevdev_get_id_vendor(device->evdev);
+}
+
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6])
 {

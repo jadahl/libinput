@@ -1248,11 +1248,52 @@ libinput_device_get_user_data(struct libinput_device *device);
  *
  * Get the system name of the device.
  *
+ * To get the descriptive device name, use libinput_device_get_name().
+ *
  * @param device A previously obtained device
  * @return System name of the device
+ *
  */
 const char *
 libinput_device_get_sysname(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
+ * The descriptive device name as advertised by the kernel and/or the
+ * hardware itself. To get the sysname for this device, use
+ * libinput_device_get_sysname().
+ *
+ * The lifetime of the returned string is tied to the struct
+ * libinput_device. The string may be the empty string but is never NULL.
+ *
+ * @param device A previously obtained device
+ * @return The device name
+ */
+const char *
+libinput_device_get_name(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
+ * Get the product ID for this device.
+ *
+ * @param device A previously obtained device
+ * @return The product ID of this device
+ */
+unsigned int
+libinput_device_get_id_product(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
+ * Get the vendor ID for this device.
+ *
+ * @param device A previously obtained device
+ * @return The vendor ID of this device
+ */
+unsigned int
+libinput_device_get_id_vendor(struct libinput_device *device);
 
 /**
  * @ingroup device

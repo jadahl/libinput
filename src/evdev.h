@@ -141,6 +141,15 @@ evdev_device_get_output(struct evdev_device *device);
 const char *
 evdev_device_get_sysname(struct evdev_device *device);
 
+const char *
+evdev_device_get_name(struct evdev_device *device);
+
+unsigned int
+evdev_device_get_id_product(struct evdev_device *device);
+
+unsigned int
+evdev_device_get_id_vendor(struct evdev_device *device);
+
 void
 evdev_device_calibrate(struct evdev_device *device, float calibration[6]);
 

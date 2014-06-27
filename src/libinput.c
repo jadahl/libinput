@@ -1162,6 +1162,24 @@ libinput_device_get_sysname(struct libinput_device *device)
 }
 
 LIBINPUT_EXPORT const char *
+libinput_device_get_name(struct libinput_device *device)
+{
+	return evdev_device_get_name((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT unsigned int
+libinput_device_get_id_product(struct libinput_device *device)
+{
+	return evdev_device_get_id_product((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT unsigned int
+libinput_device_get_id_vendor(struct libinput_device *device)
+{
+	return evdev_device_get_id_vendor((struct evdev_device *) device);
+}
+
+LIBINPUT_EXPORT const char *
 libinput_device_get_output_name(struct libinput_device *device)
 {
 	return evdev_device_get_output((struct evdev_device *) device);
