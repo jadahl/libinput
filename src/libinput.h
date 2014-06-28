@@ -815,7 +815,7 @@ libinput_udev_create_context(const struct libinput_interface *interface,
  */
 int
 libinput_udev_assign_seat(struct libinput *libinput,
-		       const char *seat_id);
+			  const char *seat_id);
 
 /**
  * @ingroup base
