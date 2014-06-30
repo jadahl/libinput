@@ -42,9 +42,8 @@ tp_hysteresis(int in, int center, int margin)
 
 	if (diff > margin)
 		return center + diff - margin;
-	else if (diff < -margin)
+	else
 		return center + diff + margin;
-	return center + diff;
 }
 
 static double
