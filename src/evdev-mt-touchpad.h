@@ -162,10 +162,6 @@ struct tp_dispatch {
 	struct motion_filter *filter;
 
 	struct {
-		double constant_factor;
-		double min_factor;
-		double max_factor;
-
 		double x_scale_coeff;
 		double y_scale_coeff;
 	} accel;
