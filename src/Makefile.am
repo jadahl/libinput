@@ -27,8 +27,7 @@ libinput_la_SOURCES =			\
 
 libinput_la_LIBADD = $(MTDEV_LIBS) \
 		     $(LIBUDEV_LIBS) \
-		     $(LIBEVDEV_LIBS) \
-		     -lm
+		     $(LIBEVDEV_LIBS)
 libinput_la_CFLAGS = -I$(top_srcdir)/include \
 		     $(MTDEV_CFLAGS)	\
 		     $(LIBUDEV_CFLAGS)	\

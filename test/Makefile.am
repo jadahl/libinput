@@ -8,7 +8,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 AM_CFLAGS = $(GCC_CFLAGS)
 AM_CXXFLAGS = $(GCC_CXXFLAGS)
 
-TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la -lm
+TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la
 noinst_LTLIBRARIES = liblitest.la
 liblitest_la_SOURCES = \
 	$(top_srcdir)/src/libinput-util.h \
