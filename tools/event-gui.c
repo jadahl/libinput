@@ -242,11 +242,11 @@ static void
 handle_event_absmotion(struct libinput_event *ev, struct window *w)
 {
 	struct libinput_event_pointer *p = libinput_event_get_pointer_event(ev);
-	double x = libinput_event_pointer_get_absolute_x(p),
-	       y = libinput_event_pointer_get_absolute_y(p);
+	double x = libinput_event_pointer_get_absolute_x_transformed(p, w->width),
+	       y = libinput_event_pointer_get_absolute_y_transformed(p, w->height);
 
-	w->absx = clip((int)x, 0, w->width);
-	w->absy = clip((int)y, 0, w->height);
+	w->absx = x;
+	w->absy = y;
 }
 
 static void
@@ -267,8 +267,8 @@ handle_event_touch(struct libinput_event *ev, struct window *w)
 		return;
 	}
 
-	x = libinput_event_touch_get_x(t),
-	y = libinput_event_touch_get_y(t);
+	x = libinput_event_touch_get_x_transformed(t, w->width),
+	y = libinput_event_touch_get_y_transformed(t, w->height);
 
 	touch->active = 1;
 	touch->x = (int)x;
