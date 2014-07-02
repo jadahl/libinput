@@ -581,11 +581,13 @@ tp_init_buttons(struct tp_dispatch *tp,
 	    libevdev_has_event_code(device->evdev, EV_KEY, BTN_RIGHT)) {
 		if (tp->buttons.is_clickpad)
 			log_bug_kernel(libinput,
-				       "clickpad advertising right button\n");
+				       "%s: clickpad advertising right button\n",
+				       device->sysname);
 	} else {
 		if (!tp->buttons.is_clickpad)
 			log_bug_kernel(libinput,
-				       "non clickpad without right button?\n");
+				       "%s: non clickpad without right button?\n",
+				       device->sysname);
 	}
 
 	absinfo_x = device->abs.absinfo_x;
