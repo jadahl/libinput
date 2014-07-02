@@ -45,7 +45,7 @@ libinput_timer_arm_timer_fd(struct libinput *libinput)
 {
 	int r;
 	struct libinput_timer *timer;
-	struct itimerspec its = { { 0 }, { 0 } };
+	struct itimerspec its = { { 0, 0 }, { 0, 0 } };
 	uint64_t earliest_expire = UINT64_MAX;
 
 	list_for_each(timer, &libinput->timer.list, link) {
