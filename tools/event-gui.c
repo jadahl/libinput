@@ -142,8 +142,7 @@ draw(GtkWidget *widget, cairo_t *cr, gpointer data)
 	cairo_set_source_rgb(cr, .2, .4, .8);
 
 	cairo_save(cr);
-	cairo_move_to(cr, w->absx, w->absy);
-	cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
+	cairo_arc(cr, w->absx, w->absy, 10, 0, 2 * M_PI);
 	cairo_fill(cr);
 	cairo_restore(cr);
 
