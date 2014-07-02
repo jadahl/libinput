@@ -52,8 +52,6 @@ button_state_to_str(enum button_state state) {
 	CASE_RETURN_STRING(BUTTON_STATE_NONE);
 	CASE_RETURN_STRING(BUTTON_STATE_AREA);
 	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM);
-	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM_NEW);
-	CASE_RETURN_STRING(BUTTON_STATE_BOTTOM_TO_AREA);
 	CASE_RETURN_STRING(BUTTON_STATE_TOP);
 	CASE_RETURN_STRING(BUTTON_STATE_TOP_NEW);
 	CASE_RETURN_STRING(BUTTON_STATE_TOP_TO_IGNORE);
@@ -161,13 +159,7 @@ tp_button_set_state(struct tp_dispatch *tp, struct tp_touch *t,
 		tp_set_pointer(tp, t);
 		break;
 	case BUTTON_STATE_BOTTOM:
-		break;
-	case BUTTON_STATE_BOTTOM_NEW:
 		t->button.curr = event;
-		tp_button_set_enter_timer(tp, t);
-		break;
-	case BUTTON_STATE_BOTTOM_TO_AREA:
-		tp_button_set_leave_timer(tp, t);
 		break;
 	case BUTTON_STATE_TOP:
 		break;
@@ -192,7 +184,7 @@ tp_button_none_handle_event(struct tp_dispatch *tp,
 	switch (event) {
 	case BUTTON_EVENT_IN_BOTTOM_R:
 	case BUTTON_EVENT_IN_BOTTOM_L:
-		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW, event);
+		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM, event);
 		break;
 	case BUTTON_EVENT_IN_TOP_R:
 	case BUTTON_EVENT_IN_TOP_M:
@@ -237,92 +229,28 @@ tp_button_area_handle_event(struct tp_dispatch *tp,
 
 static void
 tp_button_bottom_handle_event(struct tp_dispatch *tp,
-			    struct tp_touch *t,
-			    enum button_event event)
+			      struct tp_touch *t,
+			      enum button_event event)
 {
 	switch (event) {
 	case BUTTON_EVENT_IN_BOTTOM_R:
 	case BUTTON_EVENT_IN_BOTTOM_L:
 		if (event != t->button.curr)
-			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
-					    event);
-		break;
-	case BUTTON_EVENT_IN_TOP_R:
-	case BUTTON_EVENT_IN_TOP_M:
-	case BUTTON_EVENT_IN_TOP_L:
-	case BUTTON_EVENT_IN_AREA:
-		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_TO_AREA, event);
-		break;
-	case BUTTON_EVENT_UP:
-		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
-		break;
-	case BUTTON_EVENT_PRESS:
-	case BUTTON_EVENT_RELEASE:
-	case BUTTON_EVENT_TIMEOUT:
-		break;
-	}
-}
-
-static void
-tp_button_bottom_new_handle_event(struct tp_dispatch *tp,
-				struct tp_touch *t,
-				enum button_event event)
-{
-	switch(event) {
-	case BUTTON_EVENT_IN_BOTTOM_R:
-	case BUTTON_EVENT_IN_BOTTOM_L:
-		if (event != t->button.curr)
-			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
-					    event);
-		break;
-	case BUTTON_EVENT_IN_TOP_R:
-	case BUTTON_EVENT_IN_TOP_M:
-	case BUTTON_EVENT_IN_TOP_L:
-	case BUTTON_EVENT_IN_AREA:
-		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
-		break;
-	case BUTTON_EVENT_UP:
-		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
-		break;
-	case BUTTON_EVENT_PRESS:
-		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM, event);
-		break;
-	case BUTTON_EVENT_RELEASE:
-		break;
-	case BUTTON_EVENT_TIMEOUT:
-		tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM, event);
-		break;
-	}
-}
-
-static void
-tp_button_bottom_to_area_handle_event(struct tp_dispatch *tp,
-				      struct tp_touch *t,
-				      enum button_event event)
-{
-	switch(event) {
-	case BUTTON_EVENT_IN_BOTTOM_R:
-	case BUTTON_EVENT_IN_BOTTOM_L:
-		if (event == t->button.curr)
 			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM,
 					    event);
-		else
-			tp_button_set_state(tp, t, BUTTON_STATE_BOTTOM_NEW,
-					    event);
 		break;
 	case BUTTON_EVENT_IN_TOP_R:
 	case BUTTON_EVENT_IN_TOP_M:
 	case BUTTON_EVENT_IN_TOP_L:
 	case BUTTON_EVENT_IN_AREA:
+		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
 		break;
 	case BUTTON_EVENT_UP:
 		tp_button_set_state(tp, t, BUTTON_STATE_NONE, event);
 		break;
 	case BUTTON_EVENT_PRESS:
 	case BUTTON_EVENT_RELEASE:
-		break;
 	case BUTTON_EVENT_TIMEOUT:
-		tp_button_set_state(tp, t, BUTTON_STATE_AREA, event);
 		break;
 	}
 }
@@ -464,12 +392,6 @@ tp_button_handle_event(struct tp_dispatch *tp,
 		break;
 	case BUTTON_STATE_BOTTOM:
 		tp_button_bottom_handle_event(tp, t, event);
-		break;
-	case BUTTON_STATE_BOTTOM_NEW:
-		tp_button_bottom_new_handle_event(tp, t, event);
-		break;
-	case BUTTON_STATE_BOTTOM_TO_AREA:
-		tp_button_bottom_to_area_handle_event(tp, t, event);
 		break;
 	case BUTTON_STATE_TOP:
 		tp_button_top_handle_event(tp, t, event);
