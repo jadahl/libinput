@@ -455,7 +455,7 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
  *
  * Return the current absolute x coordinate of the pointer event, in mm from
  * the top left corner of the device. To get the corresponding output screen
- * coordinate, use libinput_event_pointer_get_x_transformed().
+ * coordinate, use libinput_event_pointer_get_absolute_x_transformed().
  *
  * For pointer events that are not of type
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
@@ -473,7 +473,7 @@ libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event);
  *
  * Return the current absolute y coordinate of the pointer event, in mm from
  * the top left corner of the device. To get the corresponding output screen
- * coordinate, use libinput_event_pointer_get_x_transformed().
+ * coordinate, use libinput_event_pointer_get_absolute_y_transformed().
  *
  * For pointer events that are not of type
  * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
