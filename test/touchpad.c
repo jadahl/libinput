@@ -90,7 +90,7 @@ START_TEST(touchpad_2fg_no_motion)
 END_TEST
 
 static void
-assert_button_event(struct libinput *li, int button,
+assert_button_event(struct libinput *li, unsigned int button,
 		    enum libinput_button_state state)
 {
 	struct libinput_event *event;
@@ -1127,7 +1127,7 @@ test_2fg_scroll(struct litest_device *dev, int dx, int dy, int sleep)
 }
 
 static void
-check_2fg_scroll(struct litest_device *dev, int axis, int dir)
+check_2fg_scroll(struct litest_device *dev, unsigned int axis, int dir)
 {
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event, *next_event;

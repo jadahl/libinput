@@ -102,7 +102,7 @@ START_TEST(pointer_motion_relative)
 END_TEST
 
 static void
-test_button_event(struct litest_device *dev, int button, int state)
+test_button_event(struct litest_device *dev, unsigned int button, int state)
 {
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;

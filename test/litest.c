@@ -357,7 +357,7 @@ merge_absinfo(const struct input_absinfo *orig,
 	      const struct input_absinfo *override)
 {
 	struct input_absinfo *abs;
-	int nelem, i;
+	unsigned int nelem, i;
 	size_t sz = ABS_MAX + 1;
 
 	if (!orig)
@@ -391,7 +391,7 @@ static int*
 merge_events(const int *orig, const int *override)
 {
 	int *events;
-	int nelem, i;
+	unsigned int nelem, i;
 	size_t sz = KEY_MAX * 3;
 
 	if (!orig)

@@ -394,7 +394,7 @@ START_TEST(device_ids)
 {
 	struct litest_device *dev = litest_current_device();
 	const char *name;
-	int pid, vid;
+	unsigned int pid, vid;
 
 	name = libevdev_get_name(dev->evdev);
 	pid = libevdev_get_id_product(dev->evdev);
