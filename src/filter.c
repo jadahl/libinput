@@ -30,6 +30,7 @@
 
 #include "filter.h"
 #include "libinput-util.h"
+#include "filter-private.h"
 
 void
 filter_dispatch(struct motion_filter *filter,
