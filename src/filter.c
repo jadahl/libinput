@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -47,6 +48,19 @@ filter_destroy(struct motion_filter *filter)
 		return;
 
 	filter->interface->destroy(filter);
+}
+
+bool
+filter_set_speed(struct motion_filter *filter,
+		 double speed)
+{
+	return filter->interface->set_speed(filter, speed);
+}
+
+double
+filter_get_speed(struct motion_filter *filter)
+{
+	return filter->speed;
 }
 
 /*
@@ -237,9 +251,21 @@ accelerator_destroy(struct motion_filter *filter)
 	free(accel);
 }
 
+static bool
+accelerator_set_speed(struct motion_filter *filter,
+		      double speed)
+{
+	assert(speed >= -1.0 && speed <= 1.0);
+
+	filter->speed = speed;
+
+	return true;
+}
+
 struct motion_filter_interface accelerator_interface = {
 	accelerator_filter,
-	accelerator_destroy
+	accelerator_destroy,
+	accelerator_set_speed,
 };
 
 struct motion_filter *
