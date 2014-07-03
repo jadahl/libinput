@@ -121,3 +121,12 @@ AC_CONFIG_FILES([Makefile
 		 test/Makefile
 		 tools/Makefile])
 AC_OUTPUT
+
+AC_MSG_RESULT([
+	Prefix			${prefix}
+
+	Build documentation	${have_doxygen}
+	Build tests		${build_tests}
+	Tests use valgrind	${VALGRIND}
+	Build GUI event tool	${build_eventgui}
+	])
