@@ -95,7 +95,7 @@ START_TEST(event_conversion_device_notify)
 	struct libinput_event *event;
 	int device_added = 0, device_removed = 0;
 
-	uinput = create_simple_test_device("test device",
+	uinput = create_simple_test_device("litest test device",
 					   EV_REL, REL_X,
 					   EV_REL, REL_Y,
 					   EV_KEY, BTN_LEFT,
@@ -149,7 +149,7 @@ START_TEST(event_conversion_pointer)
 	struct libinput_event *event;
 	int motion = 0, button = 0;
 
-	uinput = create_simple_test_device("test device",
+	uinput = create_simple_test_device("litest test device",
 					   EV_REL, REL_X,
 					   EV_REL, REL_Y,
 					   EV_KEY, BTN_LEFT,
@@ -210,7 +210,7 @@ START_TEST(event_conversion_pointer_abs)
 	struct libinput_event *event;
 	int motion = 0, button = 0;
 
-	uinput = create_simple_test_device("test device",
+	uinput = create_simple_test_device("litest test device",
 					   EV_ABS, ABS_X,
 					   EV_ABS, ABS_Y,
 					   EV_KEY, BTN_LEFT,
@@ -270,7 +270,7 @@ START_TEST(event_conversion_key)
 	struct libinput_event *event;
 	int key = 0;
 
-	uinput = create_simple_test_device("test device",
+	uinput = create_simple_test_device("litest test device",
 					   EV_KEY, KEY_A,
 					   EV_KEY, KEY_B,
 					   -1, -1);
@@ -319,7 +319,7 @@ START_TEST(event_conversion_touch)
 	struct libinput_event *event;
 	int touch = 0;
 
-	uinput = create_simple_test_device("test device",
+	uinput = create_simple_test_device("litest test device",
 					   EV_KEY, BTN_TOUCH,
 					   EV_ABS, ABS_X,
 					   EV_ABS, ABS_Y,

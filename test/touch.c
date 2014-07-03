@@ -80,7 +80,7 @@ START_TEST(touch_abs_transform)
 	};
 
 	dev = litest_create_device_with_overrides(LITEST_WACOM_TOUCH,
-						  "Highres touch device",
+						  "litest Highres touch device",
 						  NULL, abs, NULL);
 
 	libinput = dev->libinput;
@@ -129,7 +129,7 @@ START_TEST(touch_many_slots)
 	};
 
 	dev = litest_create_device_with_overrides(LITEST_WACOM_TOUCH,
-						  "Multi-touch device",
+						  "litest Multi-touch device",
 						  NULL, abs, NULL);
 	libinput = dev->libinput;
 

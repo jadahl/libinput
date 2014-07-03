@@ -223,7 +223,7 @@ START_TEST(pointer_seat_button_count)
 
 	libinput = litest_create_context();
 	for (i = 0; i < num_devices; ++i) {
-		sprintf(device_name, "Generic mouse (%d)", i);
+		sprintf(device_name, "litest Generic mouse (%d)", i);
 		devices[i] = litest_add_device_with_overrides(libinput,
 							      LITEST_MOUSE,
 							      device_name,

@@ -41,7 +41,7 @@ START_TEST(keyboard_seat_key_count)
 
 	libinput = litest_create_context();
 	for (i = 0; i < num_devices; ++i) {
-		sprintf(device_name, "Generic keyboard (%d)", i);
+		sprintf(device_name, "litest Generic keyboard (%d)", i);
 		devices[i] = litest_add_device_with_overrides(libinput,
 							      LITEST_KEYBOARD,
 							      device_name,
