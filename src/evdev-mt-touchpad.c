@@ -806,7 +806,6 @@ tp_init_slots(struct tp_dispatch *tp,
 static int
 tp_init_accel(struct tp_dispatch *tp, double diagonal)
 {
-	struct motion_filter *accel;
 	int res_x, res_y;
 
 	if (tp->has_mt) {
@@ -843,12 +842,8 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 		tp->accel.y_scale_coeff = DEFAULT_ACCEL_NUMERATOR / diagonal;
 	}
 
-	accel = create_pointer_accelator_filter(
-			pointer_accel_profile_linear);
-	if (accel == NULL)
+	if (evdev_device_init_pointer_acceleration(tp->device) == -1)
 		return -1;
-
-	tp->device->pointer.filter = accel;
 
 	return 0;
 }

@@ -177,6 +177,9 @@ evdev_device_create(struct libinput_seat *seat,
 		    const char *sysname,
 		    const char *syspath);
 
+int
+evdev_device_init_pointer_acceleration(struct evdev_device *device);
+
 struct evdev_dispatch *
 evdev_touchpad_create(struct evdev_device *device);
 
