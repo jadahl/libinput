@@ -224,6 +224,41 @@ window_cleanup(struct window *w)
 }
 
 static void
+change_ptraccel(struct window *w, double amount)
+{
+	struct libinput_device **dev;
+
+	ARRAY_FOR_EACH(w->devices, dev) {
+		double speed;
+		enum libinput_config_status status;
+
+		if (*dev == NULL)
+			continue;
+
+		if (!libinput_device_config_accel_is_available(*dev))
+			continue;
+
+		speed = libinput_device_config_accel_get_speed(*dev);
+		speed = clip(speed + amount, -1, 1);
+
+		status = libinput_device_config_accel_set_speed(*dev, speed);
+
+		if (status != LIBINPUT_CONFIG_STATUS_SUCCESS) {
+			msg("%s: failed to change accel to %.2f (%s)\n",
+			    libinput_device_get_name(*dev),
+			    speed,
+			    libinput_config_status_to_str(status));
+		} else {
+			printf("%s: speed is %.2f\n",
+			       libinput_device_get_name(*dev),
+			       speed);
+		}
+
+	}
+}
+
+
+static void
 handle_event_device_notify(struct libinput_event *ev)
 {
 	struct libinput_device *dev = libinput_event_get_device(ev);
@@ -344,9 +379,24 @@ static int
 handle_event_keyboard(struct libinput_event *ev, struct window *w)
 {
 	struct libinput_event_keyboard *k = libinput_event_get_keyboard_event(ev);
+	unsigned int key = libinput_event_keyboard_get_key(k);
 
-	if (libinput_event_keyboard_get_key(k) == KEY_ESC)
+	if (libinput_event_keyboard_get_key_state(k) ==
+	    LIBINPUT_KEY_STATE_RELEASED)
+		return 0;
+
+	switch(key) {
+	case KEY_ESC:
 		return 1;
+	case KEY_UP:
+		change_ptraccel(w, 0.1);
+		break;
+	case KEY_DOWN:
+		change_ptraccel(w, -0.1);
+		break;
+	default:
+		break;
+	}
 
 	return 0;
 }
