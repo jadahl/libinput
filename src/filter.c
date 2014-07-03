@@ -84,6 +84,9 @@ struct pointer_accelerator {
 
 	struct pointer_tracker *trackers;
 	int cur_tracker;
+
+	double threshold;	/* units/ms */
+	double accel;		/* unitless factor */
 };
 
 static void
@@ -259,6 +262,9 @@ create_pointer_accelator_filter(accel_profile_func_t profile)
 		calloc(NUM_POINTER_TRACKERS, sizeof *filter->trackers);
 	filter->cur_tracker = 0;
 
+	filter->threshold = DEFAULT_THRESHOLD;
+	filter->accel = DEFAULT_ACCELERATION;
+
 	return &filter->base;
 }
 
@@ -276,11 +282,15 @@ pointer_accel_profile_linear(struct motion_filter *filter,
 			     double speed_in,
 			     uint64_t time)
 {
+	struct pointer_accelerator *accel_filter =
+		(struct pointer_accelerator *)filter;
+
 	double s1, s2;
-	const int max_accel = DEFAULT_ACCELERATION;
+	const double max_accel = accel_filter->accel; /* unitless factor */
+	const double threshold = accel_filter->threshold; /* units/ms */
 
 	s1 = min(1, speed_in * 5);
-	s2 = 1 + (speed_in - DEFAULT_THRESHOLD) * 1.1;
+	s2 = 1 + (speed_in - threshold) * 1.1;
 
 	return min(max_accel, s2 > 1 ? s2 : s1);
 }
