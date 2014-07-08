@@ -341,7 +341,14 @@ pointer_accel_profile_smooth_simple(struct motion_filter *filter,
 	if (accel < 1.0)
 		accel = 1.0;
 
-
+	/* We use units/ms as velocity but it has no real meaning unless all
+	   devices have the same resolution. For touchpads, we normalize to
+	   400dpi (15.75 units/mm), but the resolution on USB mice is all
+	   over the place. Though most mice these days have either 400
+	   dpi (15.75 units/mm), 800 dpi or 1000dpi, excluding gaming mice
+	   that can usually adjust it on the fly anyway and currently go up
+	   to 8200dpi.
+	  */
 	if (velocity < (threshold / 2.0))
 		return calc_penumbral_gradient(0.5 + velocity / threshold) * 2.0 - 1.0;
 

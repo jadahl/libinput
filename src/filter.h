@@ -26,7 +26,7 @@
 #include "config.h"
 
 struct motion_params {
-	double dx, dy;
+	double dx, dy; /* in units/ms @ 400dpi */
 };
 
 struct motion_filter;
