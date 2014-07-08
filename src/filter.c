@@ -51,22 +51,22 @@ filter_destroy(struct motion_filter *filter)
  * Default parameters for pointer acceleration profiles.
  */
 
-#define DEFAULT_CONSTANT_ACCELERATION 10.0
-#define DEFAULT_THRESHOLD 4.0
-#define DEFAULT_ACCELERATION 2.0
+#define DEFAULT_CONSTANT_ACCELERATION 10.0	/* unitless factor */
+#define DEFAULT_THRESHOLD 4.0			/* in units/ms */
+#define DEFAULT_ACCELERATION 2.0		/* unitless factor */
 
 /*
  * Pointer acceleration filter constants
  */
 
-#define MAX_VELOCITY_DIFF	1.0
+#define MAX_VELOCITY_DIFF	1.0 /* units/ms */
 #define MOTION_TIMEOUT		300 /* (ms) */
 #define NUM_POINTER_TRACKERS	16
 
 struct pointer_tracker {
-	double dx;
-	double dy;
-	uint64_t time;
+	double dx;	/* delta to most recent event, in device units */
+	double dy;	/* delta to most recent event, in device units */
+	uint64_t time;  /* ms */
 	int dir;
 };
 
@@ -76,10 +76,10 @@ struct pointer_accelerator {
 
 	accel_profile_func_t profile;
 
-	double velocity;
-	double last_velocity;
-	int last_dx;
-	int last_dy;
+	double velocity;	/* units/ms */
+	double last_velocity;	/* units/ms */
+	int last_dx;		/* device units */
+	int last_dy;		/* device units */
 
 	struct pointer_tracker *trackers;
 	int cur_tracker;
@@ -183,7 +183,7 @@ calculate_tracker_velocity(struct pointer_tracker *tracker, uint64_t time)
 	dx = tracker->dx;
 	dy = tracker->dy;
 	distance = sqrt(dx*dx + dy*dy);
-	return distance / (double)(time - tracker->time);
+	return distance / (double)(time - tracker->time); /* units/ms */
 }
 
 static double
@@ -227,7 +227,7 @@ calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 		}
 	}
 
-	return result;
+	return result; /* units/ms */
 }
 
 static double
@@ -254,7 +254,7 @@ calculate_acceleration(struct pointer_accelerator *accel,
 
 	factor = factor / 6.0;
 
-	return factor;
+	return factor; /* unitless factor */
 }
 
 static void
@@ -264,8 +264,8 @@ accelerator_filter(struct motion_filter *filter,
 {
 	struct pointer_accelerator *accel =
 		(struct pointer_accelerator *) filter;
-	double velocity;
-	double accel_value;
+	double velocity; /* units/ms */
+	double accel_value; /* unitless factor */
 
 	feed_trackers(accel, motion->dx, motion->dy, time);
 	velocity = calculate_velocity(accel, time);
@@ -329,12 +329,12 @@ calc_penumbral_gradient(double x)
 double
 pointer_accel_profile_smooth_simple(struct motion_filter *filter,
 				    void *data,
-				    double velocity,
+				    double velocity, /* units/ms */
 				    uint64_t time)
 {
-	double threshold = DEFAULT_THRESHOLD;
-	double accel = DEFAULT_ACCELERATION;
-	double smooth_accel_coefficient;
+	double threshold = DEFAULT_THRESHOLD; /* units/ms */
+	double accel = DEFAULT_ACCELERATION; /* unitless factor */
+	double smooth_accel_coefficient; /* unitless factor */
 
 	if (threshold < 1.0)
 		threshold = 1.0;
