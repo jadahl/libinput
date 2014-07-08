@@ -51,8 +51,7 @@ filter_destroy(struct motion_filter *filter)
  * Default parameters for pointer acceleration profiles.
  */
 
-#define DEFAULT_CONSTANT_ACCELERATION 10.0	/* unitless factor */
-#define DEFAULT_THRESHOLD 4.0			/* in units/ms */
+#define DEFAULT_THRESHOLD 0.4			/* in units/ms */
 #define DEFAULT_ACCELERATION 2.0		/* unitless factor */
 
 /*
@@ -337,12 +336,11 @@ pointer_accel_profile_smooth_simple(struct motion_filter *filter,
 	double smooth_accel_coefficient; /* unitless factor */
 	double factor; /* unitless factor */
 
-	if (threshold < 1.0)
-		threshold = 1.0;
+	if (threshold < 0.1)
+		threshold = 0.1;
 	if (accel < 1.0)
 		accel = 1.0;
 
-	velocity *= DEFAULT_CONSTANT_ACCELERATION;
 
 	if (velocity < (threshold / 2.0))
 		return calc_penumbral_gradient(0.5 + velocity / threshold) * 2.0 - 1.0;
