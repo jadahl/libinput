@@ -63,7 +63,8 @@ tp_filter_motion(struct tp_dispatch *tp,
 	motion.dx = *dx * tp->accel.x_scale_coeff;
 	motion.dy = *dy * tp->accel.y_scale_coeff;
 
-	filter_dispatch(tp->filter, &motion, tp, time);
+	if (motion.dx != 0.0 || motion.dy != 0.0)
+		filter_dispatch(tp->filter, &motion, tp, time);
 
 	*dx = motion.dx;
 	*dy = motion.dy;
