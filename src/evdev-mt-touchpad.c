@@ -369,8 +369,9 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 			t->y = first->y;
 			if (!t->dirty)
 				t->dirty = first->dirty;
-		} else if (!t->dirty)
+		} else if (!t->dirty) {
 			continue;
+		}
 
 		tp_motion_hysteresis(tp, t);
 		tp_motion_history_push(t);
