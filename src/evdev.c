@@ -41,6 +41,12 @@
 
 #define DEFAULT_AXIS_STEP_DISTANCE 10
 
+enum evdev_key_type {
+	EVDEV_KEY_TYPE_NONE,
+	EVDEV_KEY_TYPE_KEY,
+	EVDEV_KEY_TYPE_BUTTON,
+};
+
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds)
 {
@@ -254,6 +260,23 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 	device->pending_event = EVDEV_NONE;
 }
 
+static enum evdev_key_type
+get_key_type(uint16_t code)
+{
+	if (code == BTN_TOUCH)
+		return EVDEV_KEY_TYPE_NONE;
+
+	if (code >= KEY_ESC && code <= KEY_MICMUTE)
+		return EVDEV_KEY_TYPE_KEY;
+	if (code >= BTN_MISC && code <= BTN_GEAR_UP)
+		return EVDEV_KEY_TYPE_BUTTON;
+	if (code >= KEY_OK && code <= KEY_LIGHTS_TOGGLE)
+		return EVDEV_KEY_TYPE_KEY;
+	if (code >= BTN_DPAD_UP && code <= BTN_TRIGGER_HAPPY40)
+		return EVDEV_KEY_TYPE_BUTTON;
+	return EVDEV_KEY_TYPE_NONE;
+}
+
 static void
 evdev_process_touch_button(struct evdev_device *device,
 			   uint64_t time, int value)
@@ -275,9 +298,6 @@ evdev_process_key(struct evdev_device *device,
 	if (e->value == 2)
 		return;
 
-	if (e->code > KEY_MAX)
-		return;
-
 	if (e->code == BTN_TOUCH) {
 		if (!device->is_mt)
 			evdev_process_touch_button(device, time, e->value);
@@ -286,35 +306,24 @@ evdev_process_key(struct evdev_device *device,
 
 	evdev_flush_pending_event(device, time);
 
-	switch (e->code) {
-	case BTN_LEFT:
-	case BTN_RIGHT:
-	case BTN_MIDDLE:
-	case BTN_SIDE:
-	case BTN_EXTRA:
-	case BTN_FORWARD:
-	case BTN_BACK:
-	case BTN_TASK:
-		pointer_notify_button(
-			&device->base,
-			time,
-			e->code,
-			e->value ? LIBINPUT_BUTTON_STATE_PRESSED :
-				   LIBINPUT_BUTTON_STATE_RELEASED);
+	switch (get_key_type(e->code)) {
+	case EVDEV_KEY_TYPE_NONE:
 		break;
-
-	default:
-		/* Only let KEY_* codes pass through. */
-		if (!(e->code <= KEY_MICMUTE ||
-		      (e->code >= KEY_OK && e->code <= KEY_LIGHTS_TOGGLE)))
-			break;
-
+	case EVDEV_KEY_TYPE_KEY:
 		keyboard_notify_key(
 			&device->base,
 			time,
 			e->code,
 			e->value ? LIBINPUT_KEY_STATE_PRESSED :
 				   LIBINPUT_KEY_STATE_RELEASED);
+		break;
+	case EVDEV_KEY_TYPE_BUTTON:
+		pointer_notify_button(
+			&device->base,
+			time,
+			e->code,
+			e->value ? LIBINPUT_BUTTON_STATE_PRESSED :
+				   LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
 	}
 }
@@ -709,22 +718,24 @@ evdev_configure_device(struct evdev_device *device)
 				 device->devname, device->devnode);
 			return device->dispatch == NULL ? -1 : 0;
 		}
-		for (i = KEY_ESC; i < KEY_MAX; i++) {
-			if (i >= BTN_MISC && i < KEY_OK)
-				continue;
+
+		for (i = 0; i < KEY_MAX; i++) {
 			if (libevdev_has_event_code(evdev, EV_KEY, i)) {
-				has_keyboard = 1;
-				break;
+				switch (get_key_type(i)) {
+				case EVDEV_KEY_TYPE_NONE:
+					break;
+				case EVDEV_KEY_TYPE_KEY:
+					has_keyboard = 1;
+					break;
+				case EVDEV_KEY_TYPE_BUTTON:
+					has_button = 1;
+					break;
+				}
 			}
 		}
+
 		if (libevdev_has_event_code(evdev, EV_KEY, BTN_TOUCH))
 			has_touch = 1;
-		for (i = BTN_MISC; i < BTN_JOYSTICK; i++) {
-			if (libevdev_has_event_code(evdev, EV_KEY, i)) {
-				has_button = 1;
-				break;
-			}
-		}
 	}
 	if (libevdev_has_event_type(evdev, EV_LED))
 		has_keyboard = 1;
