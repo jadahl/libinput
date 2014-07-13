@@ -257,7 +257,7 @@ handle_event_touch(struct libinput_event *ev, struct window *w)
 	struct touch *touch;
 	double x, y;
 
-	if (slot == -1 || slot >= ARRAY_LENGTH(w->touches))
+	if (slot == -1 || slot >= (int) ARRAY_LENGTH(w->touches))
 		return;
 
 	touch = &w->touches[slot];
@@ -436,7 +436,7 @@ close_restricted(int fd, void *user_data)
 	close(fd);
 }
 
-const static struct libinput_interface interface = {
+static const struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
 };
