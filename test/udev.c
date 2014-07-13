@@ -407,19 +407,20 @@ START_TEST(udev_seat_recycle)
 }
 END_TEST
 
-int main (int argc, char **argv) {
-
+int
+main(int argc, char **argv)
+{
 	litest_add_no_device("udev:create", udev_create_NULL);
 	litest_add_no_device("udev:create", udev_create_seat0);
 	litest_add_no_device("udev:create", udev_create_empty_seat);
 
 	litest_add_no_device("udev:seat events", udev_added_seat_default);
 
-	litest_add("udev:suspend", udev_double_suspend, LITEST_ANY, LITEST_ANY);
-	litest_add("udev:suspend", udev_double_resume, LITEST_ANY, LITEST_ANY);
-	litest_add("udev:suspend", udev_suspend_resume, LITEST_ANY, LITEST_ANY);
-	litest_add("udev:device events", udev_device_sysname, LITEST_ANY, LITEST_ANY);
-	litest_add("udev:seat", udev_seat_recycle, LITEST_ANY, LITEST_ANY);
+	litest_add_for_device("udev:suspend", udev_double_suspend, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("udev:suspend", udev_double_resume, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("udev:suspend", udev_suspend_resume, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("udev:device events", udev_device_sysname, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("udev:seat", udev_seat_recycle, LITEST_SYNAPTICS_CLICKPAD);
 
 	return litest_run(argc, argv);
 }

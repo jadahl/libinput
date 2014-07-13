@@ -181,11 +181,8 @@ litest_add_no_device(const char *name, void *func)
 	litest_add(name, func, LITEST_DISABLE_DEVICE, LITEST_DISABLE_DEVICE);
 }
 
-void
-litest_add(const char *name,
-	   void *func,
-	   enum litest_device_feature required,
-	   enum litest_device_feature excluded)
+static struct suite *
+get_suite(const char *name)
 {
 	struct suite *s;
 
@@ -193,10 +190,8 @@ litest_add(const char *name,
 		list_init(&all_tests);
 
 	list_for_each(s, &all_tests, node) {
-		if (strcmp(s->name, name) == 0) {
-			litest_add_tcase(s, func, required, excluded);
-			return;
-		}
+		if (strcmp(s->name, name) == 0)
+			return s;
 	}
 
 	s = zalloc(sizeof(*s));
@@ -205,7 +200,37 @@ litest_add(const char *name,
 
 	list_init(&s->tests);
 	list_insert(&all_tests, &s->node);
-	litest_add_tcase(s, func, required, excluded);
+
+	return s;
+}
+
+void
+litest_add(const char *name,
+	   void *func,
+	   enum litest_device_feature required,
+	   enum litest_device_feature excluded)
+{
+	litest_add_tcase(get_suite(name), func, required, excluded);
+}
+
+void
+litest_add_for_device(const char *name,
+		      void *func,
+		      enum litest_device_type type)
+{
+	struct suite *s;
+	struct litest_test_device **dev = devices;
+
+	s = get_suite(name);
+	while (*dev) {
+		if ((*dev)->type == type) {
+			litest_add_tcase_for_device(s, func, *dev);
+			return;
+		}
+		dev++;
+	}
+
+	ck_abort_msg("Invalid test device type");
 }
 
 static int

@@ -79,6 +79,10 @@ struct libinput *litest_create_context(void);
 void litest_add(const char *name, void *func,
 		enum litest_device_feature required_feature,
 		enum litest_device_feature excluded_feature);
+void
+litest_add_for_device(const char *name,
+		      void *func,
+		      enum litest_device_type type);
 void litest_add_no_device(const char *name, void *func);
 
 int litest_run(int argc, char **argv);
