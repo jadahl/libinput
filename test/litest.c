@@ -588,7 +588,8 @@ void
 litest_event(struct litest_device *d, unsigned int type,
 	     unsigned int code, int value)
 {
-	libevdev_uinput_write_event(d->uinput, type, code, value);
+	int ret = libevdev_uinput_write_event(d->uinput, type, code, value);
+	ck_assert_int_eq(ret, 0);
 }
 
 static int
