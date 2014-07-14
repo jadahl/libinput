@@ -900,8 +900,6 @@ litest_create_uinput_device_from_description(const char *name,
 		if (type == INPUT_PROP_MAX) {
 			rc = libevdev_enable_property(dev, code);
 		} else {
-			if (type != EV_SYN)
-				ck_assert(!libevdev_has_event_code(dev, type, code));
 			rc = libevdev_enable_event_code(dev, type, code,
 							type == EV_ABS ? &default_abs : NULL);
 		}
