@@ -91,8 +91,8 @@ static struct input_absinfo absinfo[] = {
 	{ ABS_PRESSURE, 0, 255, 0, 0, 0 },
 	{ ABS_TOOL_WIDTH, 0, 15, 0, 0, 0 },
 	{ ABS_MT_SLOT, 0, 1, 0, 0, 0 },
-	{ ABS_MT_POSITION_X, 1024, 5112, 0, 0, 75 },
-	{ ABS_MT_POSITION_Y, 2024, 4832, 0, 0, 129 },
+	{ ABS_MT_POSITION_X, 1024, 5112, 0, 0, 42 },
+	{ ABS_MT_POSITION_Y, 2024, 4832, 0, 0, 42 },
 	{ ABS_MT_TRACKING_ID, 0, 65535, 0, 0, 0 },
 	{ ABS_MT_PRESSURE, 0, 255, 0, 0, 0 },
 	{ .value = -1 }
