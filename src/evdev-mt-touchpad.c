@@ -25,6 +25,7 @@
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #include "evdev-mt-touchpad.h"
 
@@ -753,8 +754,20 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 {
 	int width;
 
+	/* We don't know how big the touchpad is */
+	if (device->abs.absinfo_x->resolution == 1)
+		return 0;
+
 	width = abs(device->abs.absinfo_x->maximum -
 		    device->abs.absinfo_x->minimum);
+
+	/* Enable palm detection on touchpads >= 80 mm. Anything smaller
+	   probably won't need it, until we find out it does */
+	if (width/device->abs.absinfo_x->resolution < 80) {
+		tp->palm.right_edge = INT_MAX;
+		tp->palm.left_edge = INT_MIN;
+		return 0;
+	}
 
 	/* palm edges are 5% of the width on each side */
 	tp->palm.right_edge = device->abs.absinfo_x->maximum - width * 0.05;

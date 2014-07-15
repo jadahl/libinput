@@ -1241,10 +1241,23 @@ START_TEST(touchpad_tap_default)
 }
 END_TEST
 
+static int
+touchpad_has_palm_detect_size(struct litest_device *dev)
+{
+	double width, height;
+
+	libinput_device_get_size(dev->libinput_device, &width, &height);
+
+	return width >= 80;
+}
+
 START_TEST(touchpad_palm_detect_at_edge)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
+
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
 
 	litest_drain_events(li);
 
@@ -1264,6 +1277,9 @@ START_TEST(touchpad_palm_detect_at_bottom_corners)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
+
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
 
 	/* Run for non-clickpads only: make sure the bottom corners trigger
 	   palm detection too */
@@ -1286,6 +1302,9 @@ START_TEST(touchpad_palm_detect_at_top_corners)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
+
 	/* Run for non-clickpads only: make sure the bottom corners trigger
 	   palm detection too */
 	litest_drain_events(li);
@@ -1307,6 +1326,9 @@ START_TEST(touchpad_palm_detect_palm_stays_palm)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
+
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 20);
@@ -1322,6 +1344,9 @@ START_TEST(touchpad_palm_detect_palm_becomes_pointer)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *ev;
 	enum libinput_event_type type;
+
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
 
 	litest_drain_events(li);
 
@@ -1351,6 +1376,9 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *ev;
 	enum libinput_event_type type;
+
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
 
 	/* moving non-palm into the edge does not label it as palm */
 	litest_drain_events(li);
