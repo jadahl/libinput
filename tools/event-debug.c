@@ -199,7 +199,7 @@ static void
 print_event_header(struct libinput_event *ev)
 {
 	struct libinput_device *dev = libinput_event_get_device(ev);
-	const char *type;
+	const char *type = NULL;
 
 	switch(libinput_event_get_type(ev)) {
 	case LIBINPUT_EVENT_NONE:
@@ -428,7 +428,7 @@ handle_and_print_events(struct libinput *li)
 	return rc;
 }
 
-void
+static void
 mainloop(struct libinput *li)
 {
 	struct pollfd fds[2];
