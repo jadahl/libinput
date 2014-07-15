@@ -925,6 +925,8 @@ START_TEST(clickpad_softbutton_left_2nd_fg_move)
 		event = libinput_get_event(li);
 	}
 
+	litest_touch_up(dev, 1);
+
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_touch_up(dev, 0);
