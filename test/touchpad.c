@@ -1198,15 +1198,13 @@ START_TEST(touchpad_2fg_scroll)
 
 	litest_drain_events(li);
 
-	/* Note this mixes in a tiny amount of movement in the wrong direction,
-	   which should be ignored */
-	test_2fg_scroll(dev, 1, 40, 0);
+	test_2fg_scroll(dev, 0.1, 40, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
-	test_2fg_scroll(dev, 1, -40, 0);
+	test_2fg_scroll(dev, 0.1, -40, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
-	test_2fg_scroll(dev, 40, 1, 0);
+	test_2fg_scroll(dev, 40, 0.1, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
-	test_2fg_scroll(dev, -40, 1, 0);
+	test_2fg_scroll(dev, -40, 0.1, 0);
 	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
 
 	/* 2fg scroll smaller than the threshold should not generate events */
