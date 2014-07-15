@@ -811,13 +811,14 @@ litest_assert_empty_queue(struct libinput *li)
 struct libevdev_uinput *
 litest_create_uinput_device_from_description(const char *name,
 					     const struct input_id *id,
-					     const struct input_absinfo *abs,
+					     const struct input_absinfo *abs_info,
 					     const int *events)
 {
 	struct libevdev_uinput *uinput;
 	struct libevdev *dev;
 	int type, code;
-	int rc;
+	int rc, fd;
+	const struct input_absinfo *abs;
 	const struct input_absinfo default_abs = {
 		.value = 0,
 		.minimum = 0,
@@ -827,6 +828,7 @@ litest_create_uinput_device_from_description(const char *name,
 		.resolution = 100
 	};
 	char buf[512];
+	const char *devnode;
 
 	dev = libevdev_new();
 	ck_assert(dev != NULL);
@@ -839,6 +841,7 @@ litest_create_uinput_device_from_description(const char *name,
 		libevdev_set_id_product(dev, id->product);
 	}
 
+	abs = abs_info;
 	while (abs && abs->value != -1) {
 		rc = libevdev_enable_event_code(dev, EV_ABS,
 						abs->value, abs);
@@ -865,6 +868,31 @@ litest_create_uinput_device_from_description(const char *name,
 						&uinput);
 	ck_assert_int_eq(rc, 0);
 
+	libevdev_free(dev);
+
+	/* uinput does not yet support setting the resolution, so we set it
+	 * afterwards. This is of course racy as hell but the way we
+	 * _generally_ use this function by the time libinput uses the
+	 * device, we're finished here */
+
+	devnode = libevdev_uinput_get_devnode(uinput);
+	ck_assert_notnull(devnode);
+	fd = open(devnode, O_RDONLY);
+	ck_assert_int_gt(fd, -1);
+	rc = libevdev_new_from_fd(fd, &dev);
+	ck_assert_int_eq(rc, 0);
+
+	abs = abs_info;
+	while (abs && abs->value != -1) {
+		if (abs->resolution != 0) {
+			rc = libevdev_kernel_set_abs_info(dev,
+							  abs->value,
+							  abs);
+			ck_assert_int_eq(rc, 0);
+		}
+		abs++;
+	}
+	close(fd);
 	libevdev_free(dev);
 
 	return uinput;
