@@ -524,23 +524,23 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	if (tp_post_scroll_events(tp, time) != 0)
 		return;
 
-	if (t->history.count >= TOUCHPAD_MIN_SAMPLES) {
-		if (!t->is_pointer) {
-			tp_for_each_touch(tp, t) {
-				if (t->is_pointer)
-					break;
-			}
+	if (!t->is_pointer) {
+		tp_for_each_touch(tp, t) {
+			if (t->is_pointer)
+				break;
 		}
-
-		if (!t->is_pointer)
-			return;
-
-		tp_get_delta(t, &dx, &dy);
-		tp_filter_motion(tp, &dx, &dy, time);
-
-		if (dx != 0.0 || dy != 0.0)
-			pointer_notify_motion(&tp->device->base, time, dx, dy);
 	}
+
+	if (!t->is_pointer ||
+	    !t->dirty ||
+	    t->history.count < TOUCHPAD_MIN_SAMPLES)
+		return;
+
+	tp_get_delta(t, &dx, &dy);
+	tp_filter_motion(tp, &dx, &dy, time);
+
+	if (dx != 0.0 || dy != 0.0)
+		pointer_notify_motion(&tp->device->base, time, dx, dy);
 }
 
 static void
