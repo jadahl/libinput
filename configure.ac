@@ -20,7 +20,7 @@ AC_SUBST([LIBINPUT_VERSION], [libinput_version])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz subdir-objects])
 
 # Before making a release, the LIBINPUT_LT_VERSION string should be
 # modified.

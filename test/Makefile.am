@@ -11,8 +11,8 @@ AM_CXXFLAGS = $(GCC_CXXFLAGS)
 TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la
 noinst_LTLIBRARIES = liblitest.la
 liblitest_la_SOURCES = \
-	$(top_srcdir)/src/libinput-util.h \
-	$(top_srcdir)/src/libinput-util.c \
+	../src/libinput-util.h \
+	../src/libinput-util.c \
 	litest.h \
 	litest-int.h \
 	litest-bcm5974.c \
