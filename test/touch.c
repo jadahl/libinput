@@ -72,8 +72,8 @@ START_TEST(touch_abs_transform)
 	bool tested = false;
 
 	struct input_absinfo abs[] = {
-		{ ABS_X, 0, 32767, 75, 0, 0 },
-		{ ABS_Y, 0, 32767, 129, 0, 0 },
+		{ ABS_X, 0, 32767, 75, 0, 10 },
+		{ ABS_Y, 0, 32767, 129, 0, 9 },
 		{ ABS_MT_POSITION_X, 0, 32767, 0, 0, 10 },
 		{ ABS_MT_POSITION_Y, 0, 32767, 0, 0, 9 },
 		{ .value = -1 },
