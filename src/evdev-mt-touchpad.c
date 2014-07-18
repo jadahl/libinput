@@ -128,23 +128,25 @@ tp_get_touch(struct tp_dispatch *tp, unsigned int slot)
 }
 
 static inline void
-tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t)
+tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	if (t->state != TOUCH_UPDATE) {
-		tp_motion_history_reset(t);
-		t->dirty = true;
-		t->state = TOUCH_BEGIN;
-		t->pinned.is_pinned = false;
-		tp->nfingers_down++;
-		assert(tp->nfingers_down >= 1);
-		tp->queued |= TOUCHPAD_EVENT_MOTION;
-	}
+	if (t->state == TOUCH_BEGIN || t->state == TOUCH_UPDATE)
+		return;
+
+	tp_motion_history_reset(t);
+	t->dirty = true;
+	t->state = TOUCH_BEGIN;
+	t->pinned.is_pinned = false;
+	t->millis = time;
+	tp->nfingers_down++;
+	assert(tp->nfingers_down >= 1);
+	tp->queued |= TOUCHPAD_EVENT_MOTION;
 }
 
 static inline void
-tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t)
+tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	if (t->state == TOUCH_NONE)
+	if (t->state == TOUCH_END || t->state == TOUCH_NONE)
 		return;
 
 	t->dirty = true;
@@ -152,6 +154,7 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t)
 	t->palm.is_palm = false;
 	t->state = TOUCH_END;
 	t->pinned.is_pinned = false;
+	t->millis = time;
 	assert(tp->nfingers_down >= 1);
 	tp->nfingers_down--;
 	tp->queued |= TOUCHPAD_EVENT_MOTION;
@@ -206,11 +209,10 @@ tp_process_absolute(struct tp_dispatch *tp,
 		tp->slot = e->value;
 		break;
 	case ABS_MT_TRACKING_ID:
-		t->millis = time;
 		if (e->value != -1)
-			tp_begin_touch(tp, t);
+			tp_begin_touch(tp, t, time);
 		else
-			tp_end_touch(tp, t);
+			tp_end_touch(tp, t, time);
 	}
 }
 
@@ -268,18 +270,11 @@ tp_process_fake_touch(struct tp_dispatch *tp,
 
 	for (i = 0; i < tp->ntouches; i++) {
 		t = tp_get_touch(tp, i);
-		if (i >= nfake_touches) {
-			if (t->state != TOUCH_NONE) {
-				tp_end_touch(tp, t);
-				t->millis = time;
-			}
-		} else if (t->state != TOUCH_UPDATE &&
-			   t->state != TOUCH_BEGIN) {
-			t->state = TOUCH_NONE;
-			tp_begin_touch(tp, t);
-			t->millis = time;
+		if (i < nfake_touches) {
+			tp_begin_touch(tp, t, time);
 			t->fake =true;
-		}
+		} else
+			tp_end_touch(tp, t, time);
 	}
 
 	assert(tp->nfingers_down == nfake_touches);
