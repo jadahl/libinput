@@ -108,16 +108,16 @@ void litest_event(struct litest_device *t,
 void litest_touch_up(struct litest_device *d, unsigned int slot);
 void litest_touch_move(struct litest_device *d,
 		       unsigned int slot,
-		       int x,
-		       int y);
+		       double x,
+		       double y);
 void litest_touch_down(struct litest_device *d,
 		       unsigned int slot,
-		       int x,
-		       int y);
+		       double x,
+		       double y);
 void litest_touch_move_to(struct litest_device *d,
 			  unsigned int slot,
-			  int x_from, int y_from,
-			  int x_to, int y_to,
+			  double x_from, double y_from,
+			  double x_to, double y_to,
 			  int steps);
 void litest_button_click(struct litest_device *d,
 			 unsigned int button,

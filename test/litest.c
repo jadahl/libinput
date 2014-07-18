@@ -595,7 +595,7 @@ litest_event(struct litest_device *d, unsigned int type,
 static int
 auto_assign_value(struct litest_device *d,
 		  const struct input_event *ev,
-		  int slot, int x, int y)
+		  int slot, double x, double y)
 {
 	static int tracking_id;
 	int value = ev->value;
@@ -625,7 +625,8 @@ auto_assign_value(struct litest_device *d,
 
 
 void
-litest_touch_down(struct litest_device *d, unsigned int slot, int x, int y)
+litest_touch_down(struct litest_device *d, unsigned int slot,
+		  double x, double y)
 {
 	struct input_event *ev;
 
@@ -669,7 +670,8 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 }
 
 void
-litest_touch_move(struct litest_device *d, unsigned int slot, int x, int y)
+litest_touch_move(struct litest_device *d, unsigned int slot,
+		  double x, double y)
 {
 	struct input_event *ev;
 
@@ -689,8 +691,8 @@ litest_touch_move(struct litest_device *d, unsigned int slot, int x, int y)
 void
 litest_touch_move_to(struct litest_device *d,
 		     unsigned int slot,
-		     int x_from, int y_from,
-		     int x_to, int y_to,
+		     double x_from, double y_from,
+		     double x_to, double y_to,
 		     int steps)
 {
 	for (int i = 0; i < steps - 1; i++)
@@ -720,7 +722,8 @@ litest_keyboard_key(struct litest_device *d, unsigned int key, bool is_press)
 	litest_button_click(d, key, is_press);
 }
 
-int litest_scale(const struct litest_device *d, unsigned int axis, int val)
+int
+litest_scale(const struct litest_device *d, unsigned int axis, double val)
 {
 	int min, max;
 	ck_assert_int_ge(val, 0);

@@ -93,7 +93,7 @@ struct litest_device_interface {
 };
 
 void litest_set_current_device(struct litest_device *device);
-int litest_scale(const struct litest_device *d, unsigned int axis, int val);
+int litest_scale(const struct litest_device *d, unsigned int axis, double val);
 void litest_generic_device_teardown(void);
 
 #endif
