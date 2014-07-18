@@ -408,9 +408,10 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 			t->y = first->y;
 			if (!t->dirty)
 				t->dirty = first->dirty;
-		} else if (!t->dirty) {
-			continue;
 		}
+
+		if (!t->dirty)
+			continue;
 
 		tp_palm_detect(tp, t, time);
 
