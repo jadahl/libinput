@@ -163,7 +163,7 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 static double
 tp_estimate_delta(int x0, int x1, int x2, int x3)
 {
-	return (x0 + x1 - x2 - x3) / 4;
+	return (x0 + x1 - x2 - x3) / 4.0;
 }
 
 void
