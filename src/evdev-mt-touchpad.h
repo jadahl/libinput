@@ -103,7 +103,6 @@ struct tp_touch {
 	struct tp_dispatch *tp;
 	enum touch_state state;
 	bool dirty;
-	bool fake;				/* a fake touch */
 	bool is_pointer;			/* the pointer-controlling touch */
 	int32_t x;
 	int32_t y;
@@ -156,7 +155,8 @@ struct tp_dispatch {
 	unsigned int slot;			/* current slot */
 	bool has_mt;
 
-	unsigned int ntouches;			/* number of slots */
+	unsigned int real_touches;		/* number of slots */
+	unsigned int ntouches;			/* no slots inc. fakes */
 	struct tp_touch *touches;		/* len == ntouches */
 	unsigned int fake_touches;		/* fake touch mask */
 
