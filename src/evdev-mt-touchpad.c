@@ -406,6 +406,11 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 
 	for (i = 0; i < tp->ntouches; i++) {
 		t = tp_get_touch(tp, i);
+
+		/* semi-mt finger postions may "jump" when nfingers changes */
+		if (tp->semi_mt && tp->nfingers_down != tp->old_nfingers_down)
+			tp_motion_history_reset(t);
+
 		if (i >= tp->real_touches && t->state != TOUCH_NONE) {
 			t->x = first->x;
 			t->y = first->y;
@@ -454,6 +459,7 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 		t->dirty = false;
 	}
 
+	tp->old_nfingers_down = tp->nfingers_down;
 	tp->buttons.old_state = tp->buttons.state;
 
 	tp->queued = TOUCHPAD_EVENT_NONE;
@@ -667,6 +673,8 @@ tp_init_slots(struct tp_dispatch *tp,
 		tp->slot = 0;
 		tp->has_mt = false;
 	}
+
+	tp->semi_mt = libevdev_has_property(device->evdev, INPUT_PROP_SEMI_MT);
 
 	ARRAY_FOR_EACH(max_touches, m) {
 		if (libevdev_has_event_code(device->evdev,

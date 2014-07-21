@@ -152,8 +152,10 @@ struct tp_dispatch {
 	struct evdev_dispatch base;
 	struct evdev_device *device;
 	unsigned int nfingers_down;		/* number of fingers down */
+	unsigned int old_nfingers_down;		/* previous no fingers down */
 	unsigned int slot;			/* current slot */
 	bool has_mt;
+	bool semi_mt;
 
 	unsigned int real_touches;		/* number of slots */
 	unsigned int ntouches;			/* no slots inc. fakes */
