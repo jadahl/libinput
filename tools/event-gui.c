@@ -223,6 +223,15 @@ handle_event_device_notify(struct libinput_event *ev)
 		type = "removed";
 
 	msg("%s %s\n", libinput_device_get_sysname(dev), type);
+
+	if (libinput_device_config_tap_get_finger_count(dev) > 0) {
+		enum libinput_config_status status;
+		status = libinput_device_config_tap_set_enabled(dev,
+								LIBINPUT_CONFIG_TAP_ENABLED);
+		if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
+			error("%s: Failed to enable tapping\n",
+			      libinput_device_get_sysname(dev));
+	}
 }
 
 static void
