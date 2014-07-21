@@ -1417,6 +1417,11 @@ libinput_device_get_size(struct libinput_device *device,
  * in the right order.
  */
 
+/**
+ * @ingroup config
+ *
+ * Status codes returned when applying configuration settings.
+ */
 enum libinput_config_status {
 	LIBINPUT_CONFIG_STATUS_SUCCESS = 0,	/**< Config applied successfully */
 	LIBINPUT_CONFIG_STATUS_UNSUPPORTED,	/**< Configuration not available on
@@ -1425,7 +1430,7 @@ enum libinput_config_status {
 };
 
 /**
- * @ingroup config Device configuration
+ * @ingroup config
  *
  * Return a string describing the error.
  *
