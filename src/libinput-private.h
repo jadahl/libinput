@@ -84,9 +84,9 @@ struct libinput_seat {
 struct libinput_device_config_tap {
 	int (*count)(struct libinput_device *device);
 	enum libinput_config_status (*set_enabled)(struct libinput_device *device,
-						   int enable);
-	int (*get_enabled)(struct libinput_device *device);
-	int (*get_default)(struct libinput_device *device);
+						   enum libinput_config_tap_state enable);
+	enum libinput_config_tap_state (*get_enabled)(struct libinput_device *device);
+	enum libinput_config_tap_state (*get_default)(struct libinput_device *device);
 };
 
 struct libinput_device_config {

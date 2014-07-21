@@ -1443,6 +1443,16 @@ libinput_config_status_to_str(enum libinput_config_status status);
 
 /**
  * @ingroup config
+ */
+enum libinput_config_tap_state {
+	LIBINPUT_CONFIG_TAP_DISABLED, /**< Tapping is to be disabled, or is
+					currently disabled */
+	LIBINPUT_CONFIG_TAP_ENABLED, /**< Tapping is to be enabled, or is
+				       currently enabled */
+};
+
+/**
+ * @ingroup config
  *
  * Check if the device supports tap-to-click. See
  * libinput_device_config_tap_set_enabled() for more information.
@@ -1468,7 +1478,8 @@ libinput_device_config_tap_get_finger_count(struct libinput_device *device);
  * libinput_device_config_tap_get_finger_count().
  *
  * @param device The device to configure
- * @param enable Non-zero to enable, zero to disable
+ * @param enable @ref LIBINPUT_CONFIG_TAP_ENABLED to enable tapping or @ref
+ * LIBINPUT_CONFIG_TAP_DISABLED to disable tapping
  *
  * @return A config status code. Disabling tapping on a device that does not
  * support tapping always succeeds.
@@ -1479,7 +1490,7 @@ libinput_device_config_tap_get_finger_count(struct libinput_device *device);
  */
 enum libinput_config_status
 libinput_device_config_tap_set_enabled(struct libinput_device *device,
-				       int enable);
+				       enum libinput_config_tap_state enable);
 
 /**
  * @ingroup config
@@ -1489,13 +1500,14 @@ libinput_device_config_tap_set_enabled(struct libinput_device *device,
  *
  * @param device The device to configure
  *
- * @return 1 if enabled, 0 otherwise.
+ * @return @ref LIBINPUT_CONFIG_TAP_ENABLED if tapping is currently enabled,
+ * or @ref LIBINPUT_CONFIG_TAP_DISABLED is currently disabled
  *
  * @see libinput_device_config_tap_get_finger_count
  * @see libinput_device_config_tap_set_enabled
  * @see libinput_device_config_tap_get_default_enabled
  */
-int
+enum libinput_config_tap_state
 libinput_device_config_tap_get_enabled(struct libinput_device *device);
 
 /**
@@ -1504,13 +1516,14 @@ libinput_device_config_tap_get_enabled(struct libinput_device *device);
  * Return the default setting for whether tapping is enabled on this device.
  *
  * @param device The device to configure
- * @return 1 if tapping is enabled by default, or 0 otherwise
+ * @return @ref LIBINPUT_CONFIG_TAP_ENABLED if tapping is enabled by default,
+ * or @ref LIBINPUT_CONFIG_TAP_DISABLED is disabled by default
  *
  * @see libinput_device_config_tap_get_finger_count
  * @see libinput_device_config_tap_set_enabled
  * @see libinput_device_config_tap_get_enabled
  */
-int
+enum libinput_config_tap_state
 libinput_device_config_tap_get_default_enabled(struct libinput_device *device);
 
 #ifdef __cplusplus

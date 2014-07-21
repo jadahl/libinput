@@ -625,7 +625,8 @@ tp_tap_config_count(struct libinput_device *device)
 }
 
 static enum libinput_config_status
-tp_tap_config_set_enabled(struct libinput_device *device, int enabled)
+tp_tap_config_set_enabled(struct libinput_device *device,
+			  enum libinput_config_tap_state enabled)
 {
 	struct evdev_dispatch *dispatch;
 	struct tp_dispatch *tp;
@@ -633,12 +634,12 @@ tp_tap_config_set_enabled(struct libinput_device *device, int enabled)
 	dispatch = ((struct evdev_device *) device)->dispatch;
 	tp = container_of(dispatch, tp, base);
 
-	tp->tap.enabled = enabled;
+	tp->tap.enabled = (enabled == LIBINPUT_CONFIG_TAP_ENABLED);
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
-static int
+static enum libinput_config_tap_state
 tp_tap_config_is_enabled(struct libinput_device *device)
 {
 	struct evdev_dispatch *dispatch;
@@ -647,10 +648,11 @@ tp_tap_config_is_enabled(struct libinput_device *device)
 	dispatch = ((struct evdev_device *) device)->dispatch;
 	tp = container_of(dispatch, tp, base);
 
-	return tp->tap.enabled;
+	return tp->tap.enabled ? LIBINPUT_CONFIG_TAP_ENABLED :
+				 LIBINPUT_CONFIG_TAP_DISABLED;
 }
 
-static int
+static enum libinput_config_tap_state
 tp_tap_config_get_default(struct libinput_device *device)
 {
 	/**
@@ -662,7 +664,7 @@ tp_tap_config_get_default(struct libinput_device *device)
 	 *   usually know where to enable it, or at least you can search for
 	 *   it.
 	 */
-	return false;
+	return LIBINPUT_CONFIG_TAP_DISABLED;
 }
 
 int
