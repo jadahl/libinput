@@ -1245,10 +1245,11 @@ static int
 touchpad_has_palm_detect_size(struct litest_device *dev)
 {
 	double width, height;
+	int rc;
 
-	libinput_device_get_size(dev->libinput_device, &width, &height);
+	rc = libinput_device_get_size(dev->libinput_device, &width, &height);
 
-	return width >= 80;
+	return rc == 0 && width >= 80;
 }
 
 START_TEST(touchpad_palm_detect_at_edge)
