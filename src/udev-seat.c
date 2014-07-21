@@ -216,7 +216,6 @@ udev_input_remove_devices(struct udev_input *input)
 	}
 }
 
-
 static void
 udev_input_disable(struct libinput *libinput)
 {

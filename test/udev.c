@@ -47,7 +47,6 @@ const struct libinput_interface simple_interface = {
 	.close_restricted = close_restricted,
 };
 
-
 START_TEST(udev_create_NULL)
 {
 	struct libinput *li;

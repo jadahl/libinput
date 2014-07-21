@@ -53,7 +53,6 @@ const struct libinput_interface simple_interface = {
 	.close_restricted = close_restricted,
 };
 
-
 START_TEST(path_create_NULL)
 {
 	struct libinput *li;
@@ -492,7 +491,6 @@ START_TEST(path_add_device_suspend_resume)
 
 	ck_assert_int_eq(nevents, 2);
 
-
 	libinput_suspend(li);
 	libinput_dispatch(li);
 
@@ -575,7 +573,6 @@ START_TEST(path_add_device_suspend_resume_fail)
 	}
 
 	ck_assert_int_eq(nevents, 2);
-
 
 	libinput_suspend(li);
 	libinput_dispatch(li);
@@ -666,7 +663,6 @@ START_TEST(path_add_device_suspend_resume_remove_device)
 	}
 
 	ck_assert_int_eq(nevents, 2);
-
 
 	libinput_suspend(li);
 	libinput_dispatch(li);

@@ -195,7 +195,6 @@ static int events[] = {
 	-1, -1,
 };
 
-
 struct litest_test_device litest_keyboard_device = {
 	.type = LITEST_KEYBOARD,
 	.features = LITEST_KEYS,

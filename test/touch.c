@@ -112,7 +112,6 @@ START_TEST(touch_abs_transform)
 }
 END_TEST
 
-
 START_TEST(touch_many_slots)
 {
 	struct libinput *libinput;

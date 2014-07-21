@@ -431,7 +431,6 @@ parse_opts(int argc, char *argv[])
 	return 0;
 }
 
-
 static int
 open_restricted(const char *path, int flags, void *user_data)
 {

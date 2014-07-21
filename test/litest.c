@@ -97,7 +97,6 @@ struct litest_test_device* devices[] = {
 	NULL,
 };
 
-
 static struct list all_tests;
 
 static void
@@ -234,7 +233,6 @@ is_debugger_attached(void)
 
 	return rc;
 }
-
 
 static void
 litest_list_tests(struct list *tests)
@@ -420,7 +418,6 @@ merge_events(const int *orig, const int *override)
 
 	return events;
 }
-
 
 static struct litest_device *
 litest_create(enum litest_device_type which,

@@ -777,7 +777,6 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 	return 0;
 }
 
-
 static int
 tp_init(struct tp_dispatch *tp,
 	struct evdev_device *device)

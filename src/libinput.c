@@ -1052,7 +1052,6 @@ touch_notify_frame(struct libinput_device *device,
 			  &touch_event->base);
 }
 
-
 static void
 libinput_post_event(struct libinput *libinput,
 		    struct libinput_event *event)
