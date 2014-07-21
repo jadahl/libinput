@@ -24,6 +24,7 @@
 #include "config.h"
 #endif
 
+#include <assert.h>
 #include <check.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -620,12 +621,26 @@ auto_assign_value(struct litest_device *d,
 	return value;
 }
 
+static void
+send_btntool(struct litest_device *d)
+{
+	litest_event(d, EV_KEY, BTN_TOUCH, d->ntouches_down != 0);
+	litest_event(d, EV_KEY, BTN_TOOL_FINGER, d->ntouches_down == 1);
+	litest_event(d, EV_KEY, BTN_TOOL_DOUBLETAP, d->ntouches_down == 2);
+	litest_event(d, EV_KEY, BTN_TOOL_TRIPLETAP, d->ntouches_down == 3);
+	litest_event(d, EV_KEY, BTN_TOOL_QUADTAP, d->ntouches_down == 4);
+	litest_event(d, EV_KEY, BTN_TOOL_QUINTTAP, d->ntouches_down == 5);
+}
 
 void
 litest_touch_down(struct litest_device *d, unsigned int slot,
 		  double x, double y)
 {
 	struct input_event *ev;
+
+	assert(++d->ntouches_down > 0);
+
+	send_btntool(d);
 
 	if (d->interface->touch_down) {
 		d->interface->touch_down(d, slot, x, y);
@@ -650,6 +665,10 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		{ .type = EV_SYN, .code = SYN_REPORT, .value = 0 },
 		{ .type = -1, .code = -1 }
 	};
+
+	assert(--d->ntouches_down >= 0);
+
+	send_btntool(d);
 
 	if (d->interface->touch_up) {
 		d->interface->touch_up(d, slot);

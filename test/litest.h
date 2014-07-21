@@ -67,6 +67,8 @@ struct litest_device {
 	bool owns_context;
 	struct libinput_device *libinput_device;
 	struct litest_device_interface *interface;
+
+	int ntouches_down;
 };
 
 struct libinput *litest_create_context(void);

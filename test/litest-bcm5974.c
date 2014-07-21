@@ -34,8 +34,6 @@ static void litest_bcm5974_setup(void)
 }
 
 struct input_event down[] = {
-	{ .type = EV_KEY, .code = BTN_TOOL_FINGER, .value = 1 },
-	{ .type = EV_KEY, .code = BTN_TOUCH, .value = 1 },
 	{ .type = EV_ABS, .code = ABS_X, .value = LITEST_AUTO_ASSIGN  },
 	{ .type = EV_ABS, .code = ABS_Y, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_PRESSURE, .value = 30  },
@@ -53,8 +51,6 @@ static struct input_event move[] = {
 	{ .type = EV_ABS, .code = ABS_Y, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_MT_POSITION_X, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_MT_POSITION_Y, .value = LITEST_AUTO_ASSIGN },
-	{ .type = EV_KEY, .code = BTN_TOOL_FINGER, .value = 1 },
-	{ .type = EV_KEY, .code = BTN_TOUCH, .value = 1 },
 	{ .type = EV_SYN, .code = SYN_REPORT, .value = 0 },
 	{ .type = -1, .code = -1 },
 };
