@@ -521,7 +521,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 
 	tp->buttons.motion_dist = diagonal * DEFAULT_BUTTON_MOTION_THRESHOLD;
 
-	if (libevdev_get_id_vendor(device->evdev) == 0x5ac) /* Apple */
+	if (libevdev_get_id_vendor(device->evdev) == VENDOR_ID_APPLE)
 		tp->buttons.use_clickfinger = true;
 
 	if (tp->buttons.is_clickpad && !tp->buttons.use_clickfinger) {

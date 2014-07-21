@@ -33,6 +33,8 @@
 #define TOUCHPAD_HISTORY_LENGTH 4
 #define TOUCHPAD_MIN_SAMPLES 4
 
+#define VENDOR_ID_APPLE 0x5ac
+
 enum touchpad_event {
 	TOUCHPAD_EVENT_NONE		= 0,
 	TOUCHPAD_EVENT_MOTION		= (1 << 0),

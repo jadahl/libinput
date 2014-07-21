@@ -1247,6 +1247,9 @@ touchpad_has_palm_detect_size(struct litest_device *dev)
 	double width, height;
 	int rc;
 
+	if (libinput_device_get_id_vendor(dev->libinput_device) == 0x5ac) /* Apple */
+		return 1;
+
 	rc = libinput_device_get_size(dev->libinput_device, &width, &height);
 
 	return rc == 0 && width >= 80;
