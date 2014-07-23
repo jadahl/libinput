@@ -427,6 +427,9 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event);
  * events that are not of type LIBINPUT_EVENT_POINTER_MOTION, this function
  * returns 0.
  *
+ * If a device employs pointer acceleration, the delta returned by this
+ * function is the accelerated delta.
+ *
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION.
  *
@@ -441,6 +444,9 @@ libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
  * Return the delta between the last event and the current event. For pointer
  * events that are not of type LIBINPUT_EVENT_POINTER_MOTION, this function
  * returns 0.
+ *
+ * If a device employs pointer acceleration, the delta returned by this
+ * function is the accelerated delta.
  *
  * @note It is an application bug to call this function for events other than
  * LIBINPUT_EVENT_POINTER_MOTION.
