@@ -43,6 +43,7 @@ enum litest_device_type {
 	LITEST_TRACKPOINT,
 	LITEST_MOUSE,
 	LITEST_WACOM_TOUCH,
+	LITEST_ALPS_SEMI_MT,
 };
 
 enum litest_device_feature {
@@ -58,6 +59,7 @@ enum litest_device_feature {
 	LITEST_SINGLE_TOUCH = 1 << 7,
 	LITEST_APPLE_CLICKPAD = 1 << 8,
 	LITEST_TOPBUTTONPAD = 1 << 9,
+	LITEST_SEMI_MT = 1 << 10,
 };
 
 struct litest_device {
@@ -69,6 +71,7 @@ struct litest_device {
 	struct litest_device_interface *interface;
 
 	int ntouches_down;
+	void *private; /* device-specific data */
 };
 
 struct libinput *litest_create_context(void);
@@ -107,6 +110,9 @@ void litest_event(struct litest_device *t,
 		  unsigned int type,
 		  unsigned int code,
 		  int value);
+int litest_auto_assign_value(struct litest_device *d,
+			     const struct input_event *ev,
+			     int slot, double x, double y);
 void litest_touch_up(struct litest_device *d, unsigned int slot);
 void litest_touch_move(struct litest_device *d,
 		       unsigned int slot,

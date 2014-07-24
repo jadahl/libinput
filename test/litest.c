@@ -85,6 +85,7 @@ extern struct litest_test_device litest_trackpoint_device;
 extern struct litest_test_device litest_bcm5974_device;
 extern struct litest_test_device litest_mouse_device;
 extern struct litest_test_device litest_wacom_touch_device;
+extern struct litest_test_device litest_alps_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -95,6 +96,7 @@ struct litest_test_device* devices[] = {
 	&litest_bcm5974_device,
 	&litest_mouse_device,
 	&litest_wacom_touch_device,
+	&litest_alps_device,
 	NULL,
 };
 
@@ -578,6 +580,7 @@ litest_delete_device(struct litest_device *d)
 		libinput_unref(d->libinput);
 	libevdev_free(d->evdev);
 	libevdev_uinput_destroy(d->uinput);
+	free(d->private);
 	memset(d,0, sizeof(*d));
 	free(d);
 }
@@ -590,10 +593,10 @@ litest_event(struct litest_device *d, unsigned int type,
 	ck_assert_int_eq(ret, 0);
 }
 
-static int
-auto_assign_value(struct litest_device *d,
-		  const struct input_event *ev,
-		  int slot, double x, double y)
+int
+litest_auto_assign_value(struct litest_device *d,
+			 const struct input_event *ev,
+			 int slot, double x, double y)
 {
 	static int tracking_id;
 	int value = ev->value;
@@ -649,7 +652,7 @@ litest_touch_down(struct litest_device *d, unsigned int slot,
 
 	ev = d->interface->touch_down_events;
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = auto_assign_value(d, ev, slot, x, y);
+		int value = litest_auto_assign_value(d, ev, slot, x, y);
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}
@@ -679,7 +682,7 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		ev = up;
 
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = auto_assign_value(d, ev, slot, 0, 0);
+		int value = litest_auto_assign_value(d, ev, slot, 0, 0);
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}
@@ -698,7 +701,7 @@ litest_touch_move(struct litest_device *d, unsigned int slot,
 
 	ev = d->interface->touch_move_events;
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = auto_assign_value(d, ev, slot, x, y);
+		int value = litest_auto_assign_value(d, ev, slot, x, y);
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}

@@ -72,8 +72,8 @@ struct litest_test_device {
 };
 
 struct litest_device_interface {
-	void (*touch_down)(struct litest_device *d, unsigned int slot, int x, int y);
-	void (*touch_move)(struct litest_device *d, unsigned int slot, int x, int y);
+	void (*touch_down)(struct litest_device *d, unsigned int slot, double x, double y);
+	void (*touch_move)(struct litest_device *d, unsigned int slot, double x, double y);
 	void (*touch_up)(struct litest_device *d, unsigned int slot);
 
 	/**

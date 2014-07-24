@@ -15,6 +15,7 @@ liblitest_la_SOURCES = \
 	../src/libinput-util.c \
 	litest.h \
 	litest-int.h \
+	litest-alps-semi-mt.c \
 	litest-bcm5974.c \
 	litest-keyboard.c \
 	litest-mouse.c \
