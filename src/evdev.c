@@ -620,6 +620,7 @@ evdev_configure_device(struct evdev_device *device)
 				fixed = *absinfo;
 				fixed.resolution = 1;
 				libevdev_set_abs_info(evdev, ABS_X, &fixed);
+				device->abs.fake_resolution = 1;
 			}
 			device->abs.absinfo_x = absinfo;
 			has_abs = 1;
@@ -629,6 +630,7 @@ evdev_configure_device(struct evdev_device *device)
 				fixed = *absinfo;
 				fixed.resolution = 1;
 				libevdev_set_abs_info(evdev, ABS_Y, &fixed);
+				device->abs.fake_resolution = 1;
 			}
 			device->abs.absinfo_y = absinfo;
 			has_abs = 1;
@@ -645,6 +647,7 @@ evdev_configure_device(struct evdev_device *device)
 				libevdev_set_abs_info(evdev,
 						      ABS_MT_POSITION_X,
 						      &fixed);
+				device->abs.fake_resolution = 1;
 			}
 			device->abs.absinfo_x = absinfo;
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
@@ -654,6 +657,7 @@ evdev_configure_device(struct evdev_device *device)
 				libevdev_set_abs_info(evdev,
 						      ABS_MT_POSITION_Y,
 						      &fixed);
+				device->abs.fake_resolution = 1;
 			}
 			device->abs.absinfo_y = absinfo;
 			device->is_mt = 1;
@@ -908,7 +912,8 @@ evdev_device_get_size(struct evdev_device *device,
 	x = libevdev_get_abs_info(device->evdev, ABS_X);
 	y = libevdev_get_abs_info(device->evdev, ABS_Y);
 
-	if (!x || !y || !x->resolution || !y->resolution)
+	if (!x || !y || device->abs.fake_resolution ||
+	    !x->resolution || !y->resolution)
 		return -1;
 
 	*width = evdev_convert_to_mm(x, x->maximum);

@@ -67,8 +67,9 @@ struct evdev_device {
 	int fd;
 	struct {
 		const struct input_absinfo *absinfo_x, *absinfo_y;
-		int32_t x, y;
+		int fake_resolution;
 
+		int32_t x, y;
 		int32_t seat_slot;
 
 		int apply_calibration;
