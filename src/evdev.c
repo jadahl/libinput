@@ -707,6 +707,7 @@ evdev_configure_device(struct evdev_device *device)
 			log_info(libinput,
 				 "input device '%s', %s is a touchpad\n",
 				 device->devname, device->devnode);
+			return device->dispatch == NULL ? -1 : 0;
 		}
 		for (i = KEY_ESC; i < KEY_MAX; i++) {
 			if (i >= BTN_MISC && i < KEY_OK)

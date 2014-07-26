@@ -824,6 +824,8 @@ tp_init(struct tp_dispatch *tp,
 	if (tp_init_palmdetect(tp, device) != 0)
 		return -1;
 
+	device->seat_caps |= EVDEV_DEVICE_POINTER;
+
 	return 0;
 }
 
