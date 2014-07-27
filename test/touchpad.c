@@ -256,14 +256,17 @@ START_TEST(touchpad_1fg_tap_click)
 
 	litest_drain_events(dev->libinput);
 
-	/* finger down, button click, finger up
-	   -> only one button left event pair */
+	/* Finger down, finger up -> tap button press
+	 * Physical button click -> no button press/release
+	 * Tap timeout -> tap button release */
 	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
-	litest_touch_up(dev, 0);
+	libinput_dispatch(li);
+	msleep(200);
 
 	libinput_dispatch(li);
 
@@ -277,6 +280,42 @@ START_TEST(touchpad_1fg_tap_click)
 END_TEST
 
 START_TEST(touchpad_2fg_tap_click)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
+
+	litest_drain_events(dev->libinput);
+
+	/* two fingers down, left button click, fingers up
+	   -> one left button, one right button event pair */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_down(dev, 1, 70, 50);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_LEFT, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
+
+	libinput_dispatch(li);
+
+	assert_button_event(li, BTN_LEFT,
+			    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_button_event(li, BTN_LEFT,
+			    LIBINPUT_BUTTON_STATE_RELEASED);
+	assert_button_event(li, BTN_RIGHT,
+			    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_button_event(li, BTN_RIGHT,
+			    LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(clickpad_2fg_tap_click)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -681,6 +720,38 @@ START_TEST(touchpad_btn_left)
 			    LIBINPUT_BUTTON_STATE_PRESSED);
 	assert_button_event(li, BTN_LEFT,
 			    LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(clickpad_1fg_tap_click)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
+
+	litest_drain_events(dev->libinput);
+
+	/* finger down, button click, finger up
+	   -> only one button left event pair */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_LEFT, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 0);
+	libinput_dispatch(li);
+	msleep(200);
+
+	libinput_dispatch(li);
+
+	assert_button_event(li, BTN_LEFT,
+			    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_button_event(li, BTN_LEFT,
+			    LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_assert_empty_queue(li);
 }
 END_TEST
 
@@ -1553,8 +1624,9 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_2fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD, LITEST_ANY);
-	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
+	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
+
 	litest_add("touchpad:tap", touchpad_2fg_tap_click_apple, LITEST_APPLE_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_timeout, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
@@ -1574,6 +1646,9 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_tap_invalid, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_tap_is_available, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_tap_is_not_available, LITEST_ANY, LITEST_TOUCHPAD);
+
+	litest_add("touchpad:tap", clickpad_1fg_tap_click, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:tap", clickpad_2fg_tap_click, LITEST_CLICKPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
 
 	litest_add_no_device("touchpad:clickfinger", touchpad_1fg_clickfinger);
 	litest_add_no_device("touchpad:clickfinger", touchpad_2fg_clickfinger);

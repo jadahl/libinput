@@ -542,7 +542,10 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	int filter_motion = 0;
 
-	if (tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
+	/* Handle queued button pressed events from clickpads. For touchpads
+	 * with separate physical buttons, ignore button pressed events so they
+	 * don't interfere with tapping. */
+	if (tp->buttons.is_clickpad && tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
 		tp_tap_handle_event(tp, NULL, TAP_EVENT_BUTTON, time);
 
 	tp_for_each_touch(tp, t) {
