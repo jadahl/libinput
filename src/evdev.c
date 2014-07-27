@@ -60,6 +60,12 @@ is_key_down(struct evdev_device *device, int code)
 }
 
 static int
+get_key_down_count(struct evdev_device *device, int code)
+{
+	return device->key_count[code];
+}
+
+static int
 update_key_down_count(struct evdev_device *device, int code, int pressed)
 {
 	int key_count;
@@ -1013,12 +1019,53 @@ evdev_device_get_size(struct evdev_device *device,
 	return 0;
 }
 
+static void
+release_pressed_keys(struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	struct timespec ts;
+	uint64_t time;
+	int code;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+		log_bug_libinput(libinput, "clock_gettime: %s\n", strerror(errno));
+		return;
+	}
+
+	time = ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
+
+	for (code = 0; code < KEY_CNT; code++) {
+		if (get_key_down_count(device, code) > 0) {
+			switch (get_key_type(code)) {
+			case EVDEV_KEY_TYPE_NONE:
+				break;
+			case EVDEV_KEY_TYPE_KEY:
+				keyboard_notify_key(
+					&device->base,
+					time,
+					code,
+					LIBINPUT_KEY_STATE_RELEASED);
+				break;
+			case EVDEV_KEY_TYPE_BUTTON:
+				pointer_notify_button(
+					&device->base,
+					time,
+					code,
+					LIBINPUT_BUTTON_STATE_RELEASED);
+				break;
+			}
+		}
+	}
+}
+
 void
 evdev_device_remove(struct evdev_device *device)
 {
 	if (device->source)
 		libinput_remove_source(device->base.seat->libinput,
 				       device->source);
+
+	release_pressed_keys(device);
 
 	if (device->mtdev)
 		mtdev_close_delete(device->mtdev);
