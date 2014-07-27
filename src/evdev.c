@@ -47,6 +47,18 @@ enum evdev_key_type {
 	EVDEV_KEY_TYPE_BUTTON,
 };
 
+static void
+set_key_down(struct evdev_device *device, int code, int pressed)
+{
+	long_set_bit_state(device->key_mask, code, pressed);
+}
+
+static int
+is_key_down(struct evdev_device *device, int code)
+{
+	return long_bit_is_set(device->key_mask, code);
+}
+
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds)
 {
@@ -294,6 +306,8 @@ static inline void
 evdev_process_key(struct evdev_device *device,
 		  struct input_event *e, uint64_t time)
 {
+	enum evdev_key_type type;
+
 	/* ignore kernel key repeat */
 	if (e->value == 2)
 		return;
@@ -306,7 +320,24 @@ evdev_process_key(struct evdev_device *device,
 
 	evdev_flush_pending_event(device, time);
 
-	switch (get_key_type(e->code)) {
+	type = get_key_type(e->code);
+
+	/* Ignore key release events from the kernel for keys that libinput
+	 * never got a pressed event for. */
+	if (e->value == 0) {
+		switch (type) {
+		case EVDEV_KEY_TYPE_NONE:
+			break;
+		case EVDEV_KEY_TYPE_KEY:
+		case EVDEV_KEY_TYPE_BUTTON:
+			if (!is_key_down(device, e->code))
+				return;
+		}
+	}
+
+	set_key_down(device, e->code, e->value);
+
+	switch (type) {
 	case EVDEV_KEY_TYPE_NONE:
 		break;
 	case EVDEV_KEY_TYPE_KEY:
@@ -853,12 +884,8 @@ err:
 int
 evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size)
 {
-	int len;
-
 	memset(keys, 0, size);
-	len = ioctl(device->fd, EVIOCGKEY(size), keys);
-
-	return (len == -1) ? -errno : len;
+	return 0;
 }
 
 const char *

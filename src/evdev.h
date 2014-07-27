@@ -95,6 +95,10 @@ struct evdev_device {
 	struct {
 		struct motion_filter *filter;
 	} pointer;
+
+	/* Bitmask of pressed keys used to ignore initial release events from
+	 * the kernel. */
+	unsigned long key_mask[NLONGS(KEY_CNT)];
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)

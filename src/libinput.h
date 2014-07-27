@@ -1359,7 +1359,8 @@ libinput_device_led_update(struct libinput_device *device,
  */
 int
 libinput_device_get_keys(struct libinput_device *device,
-			 char *keys, size_t size);
+			 char *keys, size_t size)
+	LIBINPUT_ATTRIBUTE_DEPRECATED;
 
 /**
  * @ingroup device

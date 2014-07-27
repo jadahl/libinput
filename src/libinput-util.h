@@ -72,6 +72,8 @@ int list_empty(const struct list *list);
 	     pos = tmp,							\
 	     tmp = container_of(pos->member.next, tmp, member))
 
+#define LONG_BITS (sizeof(long) * 8)
+#define NLONGS(x) (((x) + LONG_BITS - 1) / LONG_BITS)
 #define ARRAY_LENGTH(a) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_FOR_EACH(_arr, _elem) \
 	for (size_t _i = 0; (_elem = &_arr[_i]) && _i < ARRAY_LENGTH(_arr); _i++)
@@ -148,6 +150,33 @@ vector_get_direction(int dx, int dy)
 	}
 
 	return dir;
+}
+
+static inline int
+long_bit_is_set(const unsigned long *array, int bit)
+{
+    return !!(array[bit / LONG_BITS] & (1LL << (bit % LONG_BITS)));
+}
+
+static inline void
+long_set_bit(unsigned long *array, int bit)
+{
+    array[bit / LONG_BITS] |= (1LL << (bit % LONG_BITS));
+}
+
+static inline void
+long_clear_bit(unsigned long *array, int bit)
+{
+    array[bit / LONG_BITS] &= ~(1LL << (bit % LONG_BITS));
+}
+
+static inline void
+long_set_bit_state(unsigned long *array, int bit, int state)
+{
+	if (state)
+		long_set_bit(array, bit);
+	else
+		long_clear_bit(array, bit);
 }
 
 #endif /* LIBINPUT_UTIL_H */

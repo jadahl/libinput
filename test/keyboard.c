@@ -112,10 +112,73 @@ START_TEST(keyboard_seat_key_count)
 }
 END_TEST
 
+START_TEST(keyboard_ignore_no_pressed_release)
+{
+	struct litest_device *dev;
+	struct libinput *unused_libinput;
+	struct libinput *libinput;
+	struct libinput_event *event;
+	struct libinput_event_keyboard *kevent;
+	int events[] = {
+		EV_KEY, KEY_A,
+		-1, -1,
+	};
+	enum libinput_key_state *state;
+	enum libinput_key_state expected_states[] = {
+		LIBINPUT_KEY_STATE_PRESSED,
+		LIBINPUT_KEY_STATE_RELEASED,
+	};
+
+	/* We can't send pressed -> released -> pressed events using uinput
+	 * as such non-symmetric events are dropped. Work-around this by first
+	 * adding the test device to the tested context after having sent an
+	 * initial pressed event. */
+	unused_libinput = litest_create_context();
+	dev = litest_add_device_with_overrides(unused_libinput,
+					       LITEST_KEYBOARD,
+					       "Generic keyboard",
+					       NULL, NULL, events);
+
+	litest_keyboard_key(dev, KEY_A, true);
+	litest_drain_events(unused_libinput);
+
+	libinput = litest_create_context();
+	libinput_path_add_device(libinput,
+				 libevdev_uinput_get_devnode(dev->uinput));
+	litest_drain_events(libinput);
+
+	litest_keyboard_key(dev, KEY_A, false);
+	litest_keyboard_key(dev, KEY_A, true);
+	litest_keyboard_key(dev, KEY_A, false);
+
+	libinput_dispatch(libinput);
+
+	ARRAY_FOR_EACH(expected_states, state) {
+		event = libinput_get_event(libinput);
+		ck_assert_notnull(event);
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_KEYBOARD_KEY);
+		kevent = libinput_event_get_keyboard_event(event);
+		ck_assert_int_eq(libinput_event_keyboard_get_key(kevent),
+				 KEY_A);
+		ck_assert_int_eq(libinput_event_keyboard_get_key_state(kevent),
+				 *state);
+		libinput_event_destroy(event);
+		libinput_dispatch(libinput);
+	}
+
+	litest_assert_empty_queue(libinput);
+	litest_delete_device(dev);
+	libinput_unref(libinput);
+	libinput_unref(unused_libinput);
+}
+END_TEST
+
 int
 main(int argc, char **argv)
 {
 	litest_add_no_device("keyboard:seat key count", keyboard_seat_key_count);
+	litest_add_no_device("keyboard:key counting", keyboard_ignore_no_pressed_release);
 
 	return litest_run(argc, argv);
 }
