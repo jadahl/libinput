@@ -607,11 +607,12 @@ tp_post_clickfinger_buttons(struct tp_dispatch *tp, uint64_t time)
 		state = LIBINPUT_BUTTON_STATE_RELEASED;
 	}
 
-	if (button)
-		pointer_notify_button(&tp->device->base,
-				      time,
-				      button,
-				      state);
+	if (button) {
+		evdev_pointer_notify_button(tp->device,
+					    time,
+					    button,
+					    state);
+	}
 	return 1;
 }
 
@@ -633,10 +634,10 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 			else
 				state = LIBINPUT_BUTTON_STATE_RELEASED;
 
-			pointer_notify_button(&tp->device->base,
-					      time,
-					      button,
-					      state);
+			evdev_pointer_notify_button(tp->device,
+						    time,
+						    button,
+						    state);
 		}
 
 		button++;
@@ -708,11 +709,12 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 
 	tp->buttons.click_pending = false;
 
-	if (button)
-		pointer_notify_button(&tp->device->base,
-				      time,
-				      button,
-				      state);
+	if (button) {
+		evdev_pointer_notify_button(tp->device,
+					    time,
+					    button,
+					    state);
+	}
 	return 1;
 }
 

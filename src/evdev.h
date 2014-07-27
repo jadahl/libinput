@@ -99,6 +99,9 @@ struct evdev_device {
 	/* Bitmask of pressed keys used to ignore initial release events from
 	 * the kernel. */
 	unsigned long key_mask[NLONGS(KEY_CNT)];
+	/* Key counter used for multiplexing button events internally in
+	 * libinput. */
+	uint8_t key_count[KEY_CNT];
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)
@@ -176,6 +179,18 @@ double
 evdev_device_transform_y(struct evdev_device *device,
 			 double y,
 			 uint32_t height);
+
+void
+evdev_keyboard_notify_key(struct evdev_device *device,
+			  uint32_t time,
+			  int key,
+			  enum libinput_key_state state);
+
+void
+evdev_pointer_notify_button(struct evdev_device *device,
+			    uint32_t time,
+			    int button,
+			    enum libinput_button_state state);
 
 void
 evdev_device_remove(struct evdev_device *device);

@@ -59,6 +59,58 @@ is_key_down(struct evdev_device *device, int code)
 	return long_bit_is_set(device->key_mask, code);
 }
 
+static int
+update_key_down_count(struct evdev_device *device, int code, int pressed)
+{
+	int key_count;
+	assert(code >= 0 && code < KEY_CNT);
+
+	if (pressed) {
+		key_count = ++device->key_count[code];
+	} else {
+		assert(device->key_count[code] > 0);
+		key_count = --device->key_count[code];
+	}
+
+	if (key_count > 32) {
+		log_bug_libinput(device->base.seat->libinput,
+				 "Key count for %s reached abnormal values\n",
+				 libevdev_event_code_get_name(EV_KEY, code));
+	}
+
+	return key_count;
+}
+
+void
+evdev_keyboard_notify_key(struct evdev_device *device,
+			  uint32_t time,
+			  int key,
+			  enum libinput_key_state state)
+{
+	int down_count;
+
+	down_count = update_key_down_count(device, key, state);
+
+	if ((state == LIBINPUT_KEY_STATE_PRESSED && down_count == 1) ||
+	    (state == LIBINPUT_KEY_STATE_RELEASED && down_count == 0))
+		keyboard_notify_key(&device->base, time, key, state);
+}
+
+void
+evdev_pointer_notify_button(struct evdev_device *device,
+			    uint32_t time,
+			    int button,
+			    enum libinput_button_state state)
+{
+	int down_count;
+
+	down_count = update_key_down_count(device, button, state);
+
+	if ((state == LIBINPUT_BUTTON_STATE_PRESSED && down_count == 1) ||
+	    (state == LIBINPUT_BUTTON_STATE_RELEASED && down_count == 0))
+		pointer_notify_button(&device->base, time, button, state);
+}
+
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds)
 {
@@ -341,16 +393,16 @@ evdev_process_key(struct evdev_device *device,
 	case EVDEV_KEY_TYPE_NONE:
 		break;
 	case EVDEV_KEY_TYPE_KEY:
-		keyboard_notify_key(
-			&device->base,
+		evdev_keyboard_notify_key(
+			device,
 			time,
 			e->code,
 			e->value ? LIBINPUT_KEY_STATE_PRESSED :
 				   LIBINPUT_KEY_STATE_RELEASED);
 		break;
 	case EVDEV_KEY_TYPE_BUTTON:
-		pointer_notify_button(
-			&device->base,
+		evdev_pointer_notify_button(
+			device,
 			time,
 			e->code,
 			e->value ? LIBINPUT_BUTTON_STATE_PRESSED :

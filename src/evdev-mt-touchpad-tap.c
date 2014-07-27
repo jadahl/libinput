@@ -113,10 +113,10 @@ tp_tap_notify(struct tp_dispatch *tp,
 		return;
 	}
 
-	pointer_notify_button(&tp->device->base,
-			      time,
-			      button,
-			      state);
+	evdev_pointer_notify_button(tp->device,
+				    time,
+				    button,
+				    state);
 }
 
 static void
