@@ -542,12 +542,13 @@ tp_init_buttons(struct tp_dispatch *tp,
 
 		if (tp->buttons.has_topbuttons) {
 			/* T440s has the top button line 5mm from the top,
-			   make the buttons 6mm high */
+			   event analysis has shown events to start down to ~10mm
+			   from the top - which maps to 15% */
 			if (yres > 1) {
 				tp->buttons.top_area.bottom_edge =
-					yoffset + 6 * yres;
+					yoffset + 10 * yres;
 			} else {
-				tp->buttons.top_area.bottom_edge = height * .08 + yoffset;
+				tp->buttons.top_area.bottom_edge = height * .15 + yoffset;
 			}
 			tp->buttons.top_area.rightbutton_left_edge = width * .58 + xoffset;
 			tp->buttons.top_area.leftbutton_right_edge = width * .42 + xoffset;
