@@ -34,7 +34,7 @@ libinput_la_CFLAGS = -I$(top_srcdir)/include \
 		     $(LIBEVDEV_CFLAGS)	\
 		     $(GCC_CFLAGS)
 
-libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION)
+libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION) -shared
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libinput.pc
