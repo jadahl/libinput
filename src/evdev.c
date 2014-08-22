@@ -885,10 +885,11 @@ evdev_device_create(struct libinput_seat *seat,
 		return NULL;
 
 	libinput_device_init(&device->base, seat);
+	libinput_seat_ref(seat);
 
 	rc = libevdev_new_from_fd(fd, &device->evdev);
 	if (rc != 0)
-		return NULL;
+		goto err;
 
 	libevdev_set_clock_id(device->evdev, CLOCK_MONOTONIC);
 
@@ -904,8 +905,6 @@ evdev_device_create(struct libinput_seat *seat,
 	device->fd = fd;
 	device->pending_event = EVDEV_NONE;
 	device->devname = libevdev_get_name(device->evdev);
-
-	libinput_seat_ref(seat);
 
 	if (evdev_configure_device(device) == -1)
 		goto err;
