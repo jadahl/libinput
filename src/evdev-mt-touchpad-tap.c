@@ -253,6 +253,7 @@ tp_tap_touch2_handle_event(struct tp_dispatch *tp,
 		break;
 	case TAP_EVENT_MOTION:
 		tp_tap_clear_timer(tp);
+		/* fallthrough */
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_TOUCH_2_HOLD;
 		break;
