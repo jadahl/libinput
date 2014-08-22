@@ -617,7 +617,7 @@ static int
 tp_tap_config_count(struct libinput_device *device)
 {
 	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp;
+	struct tp_dispatch *tp = NULL;
 
 	dispatch = ((struct evdev_device *) device)->dispatch;
 	tp = container_of(dispatch, tp, base);
@@ -630,7 +630,7 @@ tp_tap_config_set_enabled(struct libinput_device *device,
 			  enum libinput_config_tap_state enabled)
 {
 	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp;
+	struct tp_dispatch *tp = NULL;
 
 	dispatch = ((struct evdev_device *) device)->dispatch;
 	tp = container_of(dispatch, tp, base);
@@ -644,7 +644,7 @@ static enum libinput_config_tap_state
 tp_tap_config_is_enabled(struct libinput_device *device)
 {
 	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp;
+	struct tp_dispatch *tp = NULL;
 
 	dispatch = ((struct evdev_device *) device)->dispatch;
 	tp = container_of(dispatch, tp, base);
