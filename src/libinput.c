@@ -457,7 +457,6 @@ libinput_add_fd(struct libinput *libinput,
 	ep.data.ptr = source;
 
 	if (epoll_ctl(libinput->epoll_fd, EPOLL_CTL_ADD, fd, &ep) < 0) {
-		close(source->fd);
 		free(source);
 		return NULL;
 	}
