@@ -1470,7 +1470,7 @@ enum libinput_config_tap_state {
  *
  * @see libinput_device_config_tap_set_enabled
  * @see libinput_device_config_tap_get_enabled
- * @see libinput_device_config_tap_set_enabled_get_default
+ * @see libinput_device_config_tap_get_default_enabled
  */
 int
 libinput_device_config_tap_get_finger_count(struct libinput_device *device);
