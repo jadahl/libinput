@@ -359,7 +359,7 @@ litest_run(int argc, char **argv) {
 		}
 	}
 
-	srunner_run_all(sr, CK_NORMAL);
+	srunner_run_all(sr, CK_ENV);
 	failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
 
