@@ -802,6 +802,7 @@ litest_wait_for_event_of_type(struct libinput *li, ...)
 		assert(type > 0);
 		assert(ntypes < ARRAY_LENGTH(types));
 		types[ntypes++] = type;
+		type = va_arg(args, int);
 	}
 	va_end(args);
 
