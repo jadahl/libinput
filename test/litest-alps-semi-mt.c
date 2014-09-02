@@ -95,7 +95,7 @@ static void
 alps_touch_down(struct litest_device *d, unsigned int slot, double x, double y)
 {
 	struct alps *alps = d->private;
-	double t, l, r, b; /* top, left, right, bottom */
+	double t, l, r = 0, b = 0; /* top, left, right, bottom */
 
 	if (d->ntouches_down > 2 || slot > 1)
 		return;
@@ -137,7 +137,7 @@ static void
 alps_touch_move(struct litest_device *d, unsigned int slot, double x, double y)
 {
 	struct alps *alps = d->private;
-	double t, l, r, b; /* top, left, right, bottom */
+	double t, l, r = 0, b = 0; /* top, left, right, bottom */
 
 	if (d->ntouches_down > 2 || slot > 1)
 		return;
