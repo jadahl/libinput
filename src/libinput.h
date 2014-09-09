@@ -1617,7 +1617,24 @@ libinput_device_config_calibration_get_matrix(struct libinput_device *device,
 /**
  * @ingroup config
  *
- * Return the default calibration matrix for this device.
+ * Return the default calibration matrix for this device. On most devices,
+ * this is the identity matrix. If the udev property
+ * <b>LIBINPUT_CALIBRATION_MATRIX</b> is set on the respective udev device,
+ * that property's value becomes the default matrix.
+ *
+ * The udev property is parsed as 6 floating point numbers separated by a
+ * single space each (scanf(3) format "%f %f %f %f %f %f").
+ * The 6 values represent the first two rows of the calibration matrix as
+ * described in libinput_device_config_calibration_set_matrix().
+ *
+ * Example values are:
+ * @code
+ * ENV{LIBINPUT_CALIBRATION_MATRIX}="1 0 0 0 1 0" # default
+ * ENV{LIBINPUT_CALIBRATION_MATRIX}="0 -1 1 1 0 0" # 90 degree clockwise
+ * ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 0 -1 1" # 180 degree clockwise
+ * ENV{LIBINPUT_CALIBRATION_MATRIX}="0 1 0 -1 0 1" # 270 degree clockwise
+ * ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 1 0 0" # reflect along y axis
+ * @endcode
  *
  * @param device The device to configure
  * @param matrix Set to the array representing the first two rows of a 3x3 matrix as
