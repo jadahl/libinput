@@ -642,6 +642,10 @@ tp_device_added(struct evdev_device *device,
 {
 	struct tp_dispatch *tp = (struct tp_dispatch*)device->dispatch;
 
+	if (tp->buttons.trackpoint == NULL &&
+	    (added_device->tags & EVDEV_TAG_TRACKPOINT))
+		tp->buttons.trackpoint = added_device;
+
 	if (tp->sendevents.current_mode !=
 	    LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE)
 		return;
@@ -656,6 +660,9 @@ tp_device_removed(struct evdev_device *device,
 {
 	struct tp_dispatch *tp = (struct tp_dispatch*)device->dispatch;
 	struct libinput_device *dev;
+
+	if (removed_device == tp->buttons.trackpoint)
+		tp->buttons.trackpoint = NULL;
 
 	if (tp->sendevents.current_mode !=
 	    LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE)

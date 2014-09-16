@@ -198,6 +198,8 @@ struct tp_dispatch {
 			int32_t rightbutton_left_edge;
 			int32_t leftbutton_right_edge;
 		} top_area;
+
+		struct evdev_device *trackpoint;
 	} buttons;				/* physical buttons */
 
 	enum touchpad_event queued;
