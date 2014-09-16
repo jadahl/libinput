@@ -110,6 +110,7 @@ struct evdev_device {
 	enum evdev_device_tags tags;
 
 	int is_mt;
+	int suspended;
 
 	struct {
 		struct motion_filter *filter;
@@ -144,6 +145,14 @@ struct evdev_dispatch_interface {
 	/* A device was removed */
 	void (*device_removed)(struct evdev_device *device,
 			       struct evdev_device *removed_device);
+
+	/* A device was suspended */
+	void (*device_suspended)(struct evdev_device *device,
+				 struct evdev_device *suspended_device);
+
+	/* A device was resumed */
+	void (*device_resumed)(struct evdev_device *device,
+			       struct evdev_device *resumed_device);
 
 	/* Tag device with one of EVDEV_TAG */
 	void (*tag_device)(struct evdev_device *device,
@@ -226,6 +235,12 @@ evdev_device_suspend(struct evdev_device *device);
 
 int
 evdev_device_resume(struct evdev_device *device);
+
+void
+evdev_notify_suspended_device(struct evdev_device *device);
+
+void
+evdev_notify_resumed_device(struct evdev_device *device);
 
 void
 evdev_keyboard_notify_key(struct evdev_device *device,

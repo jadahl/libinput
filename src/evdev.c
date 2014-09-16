@@ -692,6 +692,8 @@ struct evdev_dispatch_interface fallback_interface = {
 	fallback_destroy,
 	NULL, /* device_added */
 	NULL, /* device_removed */
+	NULL, /* device_suspended */
+	NULL, /* device_resumed */
 	fallback_tag_device,
 };
 
@@ -1078,11 +1080,17 @@ evdev_notify_added_device(struct evdev_device *device)
 		if (dev == &device->base)
 			continue;
 
+		/* Notify existing device d about addition of device device */
 		if (d->dispatch->interface->device_added)
 			d->dispatch->interface->device_added(d, device);
 
+		/* Notify new device device about existing device d */
 		if (device->dispatch->interface->device_added)
 			device->dispatch->interface->device_added(device, d);
+
+		/* Notify new device device if existing device d is suspended */
+		if (d->suspended && device->dispatch->interface->device_suspended)
+			device->dispatch->interface->device_suspended(device, d);
 	}
 
 	notify_added_device(&device->base);
@@ -1413,9 +1421,51 @@ release_pressed_keys(struct evdev_device *device)
 	}
 }
 
+void
+evdev_notify_suspended_device(struct evdev_device *device)
+{
+	struct libinput_device *it;
+
+	if (device->suspended)
+		return;
+
+	list_for_each(it, &device->base.seat->devices_list, link) {
+		struct evdev_device *d = (struct evdev_device*)it;
+		if (it == &device->base)
+			continue;
+
+		if (d->dispatch->interface->device_suspended)
+			d->dispatch->interface->device_suspended(d, device);
+	}
+
+	device->suspended = 1;
+}
+
+void
+evdev_notify_resumed_device(struct evdev_device *device)
+{
+	struct libinput_device *it;
+
+	if (!device->suspended)
+		return;
+
+	list_for_each(it, &device->base.seat->devices_list, link) {
+		struct evdev_device *d = (struct evdev_device*)it;
+		if (it == &device->base)
+			continue;
+
+		if (d->dispatch->interface->device_resumed)
+			d->dispatch->interface->device_resumed(d, device);
+	}
+
+	device->suspended = 0;
+}
+
 int
 evdev_device_suspend(struct evdev_device *device)
 {
+	evdev_notify_suspended_device(device);
+
 	if (device->source) {
 		libinput_remove_source(device->base.seat->libinput,
 				       device->source);
@@ -1505,6 +1555,8 @@ evdev_device_resume(struct evdev_device *device)
 	}
 
 	memset(device->hw_key_mask, 0, sizeof(device->hw_key_mask));
+
+	evdev_notify_resumed_device(device);
 
 	return 0;
 }
