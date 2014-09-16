@@ -404,7 +404,7 @@ START_TEST(device_disable_release_tap)
 	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
 	/* tap happened before suspending, so we still expect the event */
 
-	msleep(300); /* tap-n-drag timeout */
+	litest_timeout_tap();
 
 	litest_assert_button_event(li,
 				   BTN_LEFT,
@@ -443,7 +443,7 @@ START_TEST(device_disable_release_tap_n_drag)
 	litest_touch_up(dev, 0);
 	litest_touch_down(dev, 0, 50, 50);
 	libinput_dispatch(li);
-	msleep(400); /* tap-n-drag timeout */
+	litest_timeout_tap();
 	libinput_dispatch(li);
 
 	status = libinput_device_config_send_events_set_mode(device,

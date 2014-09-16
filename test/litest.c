@@ -1123,3 +1123,15 @@ void litest_assert_scroll(struct libinput *li, unsigned int axis, int dir)
 		next_event = libinput_get_event(li);
 	}
 }
+
+void
+litest_timeout_tap(void)
+{
+	msleep(200);
+}
+
+void
+litest_timeout_softbuttons(void)
+{
+	msleep(300);
+}
