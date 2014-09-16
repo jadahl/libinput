@@ -26,10 +26,12 @@
 
 #include "config.h"
 
+#include <stdbool.h>
 #include "linux/input.h"
 #include <libevdev/libevdev.h>
 
 #include "libinput-private.h"
+#include "timer.h"
 
 enum evdev_event_type {
 	EVDEV_NONE,
@@ -96,6 +98,9 @@ struct evdev_device {
 	} rel;
 
 	struct {
+		struct libinput_timer timer;
+		bool has_middle_button_scroll;
+		bool middle_button_scroll_active;
 		double threshold;
 		uint32_t direction;
 	} scroll;

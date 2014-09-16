@@ -41,6 +41,7 @@
 #include "libinput-private.h"
 
 #define DEFAULT_AXIS_STEP_DISTANCE 10
+#define DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT 200
 
 enum evdev_key_type {
 	EVDEV_KEY_TYPE_NONE,
@@ -203,6 +204,15 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		device->rel.dx = 0;
 		device->rel.dy = 0;
 
+		/* Use unaccelerated deltas for pointing stick scroll */
+		if (device->scroll.has_middle_button_scroll &&
+		    hw_is_key_down(device, BTN_MIDDLE)) {
+			if (device->scroll.middle_button_scroll_active)
+				evdev_post_scroll(device, time,
+						  motion.dx, motion.dy);
+			break;
+		}
+
 		/* Apply pointer acceleration. */
 		filter_dispatch(device->pointer.filter, &motion, device, time);
 
@@ -346,6 +356,37 @@ get_key_type(uint16_t code)
 }
 
 static void
+evdev_middle_button_scroll_timeout(uint64_t time, void *data)
+{
+	struct evdev_device *device = data;
+
+	device->scroll.middle_button_scroll_active = true;
+}
+
+static void
+evdev_middle_button_scroll_button(struct evdev_device *device,
+				 uint64_t time, int is_press)
+{
+	if (is_press) {
+		libinput_timer_set(&device->scroll.timer,
+				time + DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT);
+	} else {
+		libinput_timer_cancel(&device->scroll.timer);
+		if (device->scroll.middle_button_scroll_active) {
+			evdev_stop_scroll(device, time);
+			device->scroll.middle_button_scroll_active = false;
+		} else {
+			/* If the button is released quickly enough emit the
+			 * button press/release events. */
+			evdev_pointer_notify_button(device, time, BTN_MIDDLE,
+					LIBINPUT_BUTTON_STATE_PRESSED);
+			evdev_pointer_notify_button(device, time, BTN_MIDDLE,
+					LIBINPUT_BUTTON_STATE_RELEASED);
+		}
+	}
+}
+
+static void
 evdev_process_touch_button(struct evdev_device *device,
 			   uint64_t time, int value)
 {
@@ -405,6 +446,12 @@ evdev_process_key(struct evdev_device *device,
 				   LIBINPUT_KEY_STATE_RELEASED);
 		break;
 	case EVDEV_KEY_TYPE_BUTTON:
+		if (device->scroll.has_middle_button_scroll &&
+		    e->code == BTN_MIDDLE) {
+			evdev_middle_button_scroll_button(device, time,
+							  e->value);
+			break;
+		}
 		evdev_pointer_notify_button(
 			device,
 			time,
@@ -946,6 +993,15 @@ evdev_configure_device(struct evdev_device *device)
 			device->mt.slot = active_slot;
 		}
 	}
+
+	if (libevdev_has_property(evdev, INPUT_PROP_POINTING_STICK)) {
+		libinput_timer_init(&device->scroll.timer,
+				    device->base.seat->libinput,
+				    evdev_middle_button_scroll_timeout,
+				    device);
+		device->scroll.has_middle_button_scroll = true;
+	}
+
 	if (libevdev_has_event_code(evdev, EV_REL, REL_X) ||
 	    libevdev_has_event_code(evdev, EV_REL, REL_Y))
 		has_rel = 1;

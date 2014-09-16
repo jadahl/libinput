@@ -132,7 +132,9 @@ START_TEST(pointer_button)
 		test_button_event(dev, BTN_RIGHT, 0);
 	}
 
-	if (libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE)) {
+	/* Skip middle button test on trackpoints (used for scrolling) */
+	if (!libevdev_has_property(dev->evdev, INPUT_PROP_POINTING_STICK) &&
+	    libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE)) {
 		test_button_event(dev, BTN_MIDDLE, 1);
 		test_button_event(dev, BTN_MIDDLE, 0);
 	}
