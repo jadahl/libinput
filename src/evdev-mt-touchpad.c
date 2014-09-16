@@ -492,47 +492,7 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	dy /= nchanged;
 
 	tp_filter_motion(tp, &dx, &dy, time);
-
-	/* Require at least five px scrolling to start */
-	if (dy <= -5.0 || dy >= 5.0)
-		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
-
-	if (dx <= -5.0 || dx >= 5.0)
-		tp->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
-
-	if (dy != 0.0 &&
-	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))) {
-		pointer_notify_axis(&tp->device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
-				    dy);
-	}
-
-	if (dx != 0.0 &&
-	    (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))) {
-		pointer_notify_axis(&tp->device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
-				    dx);
-	}
-}
-
-static void
-tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
-{
-	/* terminate scrolling with a zero scroll event */
-	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
-		pointer_notify_axis(&tp->device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
-				    0);
-	if (tp->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
-		pointer_notify_axis(&tp->device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
-				    0);
-
-	tp->scroll.direction = 0;
+	evdev_post_scroll(tp->device, time, dx, dy);
 }
 
 static int
@@ -548,7 +508,7 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 	}
 
 	if (nfingers_down != 2) {
-		tp_stop_scroll_events(tp, time);
+		evdev_stop_scroll(tp->device, time);
 		return 0;
 	}
 
@@ -567,7 +527,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	consumed |= tp_post_button_events(tp, time);
 
 	if (consumed) {
-		tp_stop_scroll_events(tp, time);
+		evdev_stop_scroll(tp->device, time);
 		return;
 	}
 
@@ -847,14 +807,6 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 }
 
 static int
-tp_init_scroll(struct tp_dispatch *tp)
-{
-	tp->scroll.direction = 0;
-
-	return 0;
-}
-
-static int
 tp_init_palmdetect(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
@@ -908,9 +860,6 @@ tp_init(struct tp_dispatch *tp,
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
 	tp->hysteresis.margin_y =
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
-
-	if (tp_init_scroll(tp) != 0)
-		return -1;
 
 	if (tp_init_accel(tp, diagonal) != 0)
 		return -1;

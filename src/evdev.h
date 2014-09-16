@@ -95,6 +95,11 @@ struct evdev_device {
 		int dx, dy;
 	} rel;
 
+	struct {
+		double threshold;
+		uint32_t direction;
+	} scroll;
+
 	enum evdev_event_type pending_event;
 	enum evdev_device_seat_capability seat_caps;
 	enum evdev_device_tags tags;
@@ -228,6 +233,16 @@ evdev_pointer_notify_button(struct evdev_device *device,
 			    uint32_t time,
 			    int button,
 			    enum libinput_button_state state);
+
+void
+evdev_post_scroll(struct evdev_device *device,
+		  uint64_t time,
+		  double dx,
+		  double dy);
+
+
+void
+evdev_stop_scroll(struct evdev_device *device, uint64_t time);
 
 void
 evdev_device_remove(struct evdev_device *device);

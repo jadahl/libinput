@@ -200,10 +200,6 @@ struct tp_dispatch {
 		} top_area;
 	} buttons;				/* physical buttons */
 
-	struct {
-		enum libinput_pointer_axis direction;
-	} scroll;
-
 	enum touchpad_event queued;
 
 	struct {
