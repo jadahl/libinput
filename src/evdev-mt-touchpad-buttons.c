@@ -496,7 +496,8 @@ tp_release_all_buttons(struct tp_dispatch *tp,
 
 void
 tp_init_softbuttons(struct tp_dispatch *tp,
-		    struct evdev_device *device)
+		    struct evdev_device *device,
+		    double topbutton_size_mult)
 {
 	int width, height;
 	const struct input_absinfo *absinfo_x, *absinfo_y;
@@ -524,14 +525,18 @@ tp_init_softbuttons(struct tp_dispatch *tp,
 	tp->buttons.bottom_area.rightbutton_left_edge = width/2 + xoffset;
 
 	if (tp->buttons.has_topbuttons) {
-		/* T440s has the top button line 5mm from the top,
-		   event analysis has shown events to start down to ~10mm
-		   from the top - which maps to 15% */
+		/* T440s has the top button line 5mm from the top, event
+		   analysis has shown events to start down to ~10mm from the
+		   top - which maps to 15%.  We allow the caller to enlarge the
+		   area using a multiplier for the touchpad disabled case. */
+		double topsize_mm = 10 * topbutton_size_mult;
+		double topsize_pct = .15 * topbutton_size_mult;
+
 		if (yres > 1) {
 			tp->buttons.top_area.bottom_edge =
-			yoffset + 10 * yres;
+			yoffset + topsize_mm * yres;
 		} else {
-			tp->buttons.top_area.bottom_edge = height * .15 + yoffset;
+			tp->buttons.top_area.bottom_edge = height * topsize_pct + yoffset;
 		}
 		tp->buttons.top_area.rightbutton_left_edge = width * .58 + xoffset;
 		tp->buttons.top_area.leftbutton_right_edge = width * .42 + xoffset;
@@ -581,7 +586,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 		tp->buttons.use_clickfinger = true;
 
 	if (tp->buttons.is_clickpad && !tp->buttons.use_clickfinger) {
-		tp_init_softbuttons(tp, device);
+		tp_init_softbuttons(tp, device, 1.0);
 	} else {
 		tp->buttons.bottom_area.top_edge = INT_MAX;
 		tp->buttons.top_area.bottom_edge = INT_MIN;

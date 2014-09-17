@@ -645,6 +645,8 @@ tp_suspend(struct tp_dispatch *tp, struct evdev_device *device)
 	 */
 	if (tp->buttons.has_topbuttons) {
 		evdev_notify_suspended_device(device);
+		/* Enlarge topbutton area while suspended */
+		tp_init_softbuttons(tp, device, 1.5);
 	} else {
 		evdev_device_suspend(device);
 	}
@@ -656,6 +658,8 @@ tp_resume(struct tp_dispatch *tp, struct evdev_device *device)
 	if (tp->buttons.has_topbuttons) {
 		/* tap state-machine is offline while suspended, reset state */
 		tp_clear_state(tp, device);
+		/* restore original topbutton area size */
+		tp_init_softbuttons(tp, device, 1.0);
 		evdev_notify_resumed_device(device);
 	} else {
 		evdev_device_resume(device);

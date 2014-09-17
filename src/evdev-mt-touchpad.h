@@ -245,7 +245,9 @@ int
 tp_init_buttons(struct tp_dispatch *tp, struct evdev_device *device);
 
 void
-tp_init_softbuttons(struct tp_dispatch *tp, struct evdev_device *device);
+tp_init_softbuttons(struct tp_dispatch *tp,
+		    struct evdev_device *device,
+		    double topbutton_size_mult);
 
 void
 tp_destroy_buttons(struct tp_dispatch *tp);
