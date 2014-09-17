@@ -1084,3 +1084,42 @@ litest_assert_button_event(struct libinput *li, unsigned int button,
 			 state);
 	libinput_event_destroy(event);
 }
+
+void litest_assert_scroll(struct libinput *li, unsigned int axis, int dir)
+{
+	struct libinput_event *event, *next_event;
+	struct libinput_event_pointer *ptrev;
+
+	event = libinput_get_event(li);
+	next_event = libinput_get_event(li);
+	ck_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
+
+	while (event) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		ptrev = libinput_event_get_pointer_event(event);
+		ck_assert(ptrev != NULL);
+		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev), axis);
+
+		if (next_event) {
+			/* Normal scroll event, check dir */
+			if (dir > 0) {
+				ck_assert_int_ge(
+					libinput_event_pointer_get_axis_value(ptrev),
+					dir);
+			} else {
+				ck_assert_int_le(
+					libinput_event_pointer_get_axis_value(ptrev),
+					dir);
+			}
+		} else {
+			/* Last scroll event, must be 0 */
+			ck_assert_int_eq(
+				libinput_event_pointer_get_axis_value(ptrev),
+				0);
+		}
+		libinput_event_destroy(event);
+		event = next_event;
+		next_event = libinput_get_event(li);
+	}
+}

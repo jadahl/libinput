@@ -147,6 +147,7 @@ void litest_assert_empty_queue(struct libinput *li);
 void litest_assert_button_event(struct libinput *li,
 				unsigned int button,
 				enum libinput_button_state state);
+void litest_assert_scroll(struct libinput *li, unsigned int axis, int dir);
 
 struct libevdev_uinput * litest_create_uinput_device(const char *name,
 						     struct input_id *id,

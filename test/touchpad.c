@@ -1346,47 +1346,6 @@ test_2fg_scroll(struct litest_device *dev, double dx, double dy, int sleep)
 	libinput_dispatch(li);
 }
 
-static void
-check_2fg_scroll(struct litest_device *dev, unsigned int axis, int dir)
-{
-	struct libinput *li = dev->libinput;
-	struct libinput_event *event, *next_event;
-	struct libinput_event_pointer *ptrev;
-
-	event = libinput_get_event(li);
-	next_event = libinput_get_event(li);
-	ck_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
-
-	while (event) {
-		ck_assert_int_eq(libinput_event_get_type(event),
-				 LIBINPUT_EVENT_POINTER_AXIS);
-		ptrev = libinput_event_get_pointer_event(event);
-		ck_assert(ptrev != NULL);
-		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev), axis);
-
-		if (next_event) {
-			/* Normal scroll event, check dir */
-			if (dir > 0) {
-				ck_assert_int_ge(
-					libinput_event_pointer_get_axis_value(ptrev),
-					dir);
-			} else {
-				ck_assert_int_le(
-					libinput_event_pointer_get_axis_value(ptrev),
-					dir);
-			}
-		} else {
-			/* Last scroll event, must be 0 */
-			ck_assert_int_eq(
-				libinput_event_pointer_get_axis_value(ptrev),
-				0);
-		}
-		libinput_event_destroy(event);
-		event = next_event;
-		next_event = libinput_get_event(li);
-	}
-}
-
 START_TEST(touchpad_2fg_scroll)
 {
 	struct litest_device *dev = litest_current_device();
@@ -1395,13 +1354,13 @@ START_TEST(touchpad_2fg_scroll)
 	litest_drain_events(li);
 
 	test_2fg_scroll(dev, 0.1, 40, 0);
-	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
 	test_2fg_scroll(dev, 0.1, -40, 0);
-	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
 	test_2fg_scroll(dev, 40, 0.1, 0);
-	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
 	test_2fg_scroll(dev, -40, 0.1, 0);
-	check_2fg_scroll(dev, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
 
 	/* 2fg scroll smaller than the threshold should not generate events */
 	test_2fg_scroll(dev, 0.1, 0.1, 200);
