@@ -1428,3 +1428,39 @@ libinput_device_config_accel_get_default_speed(struct libinput_device *device)
 	return device->config.accel->get_default_speed(device);
 }
 
+LIBINPUT_EXPORT int
+libinput_device_config_scroll_has_natural_scroll(struct libinput_device *device)
+{
+	if (!device->config.natural_scroll)
+		return 0;
+
+	return device->config.natural_scroll->has(device);
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_scroll_set_natural_scroll_enabled(struct libinput_device *device,
+							 int enabled)
+{
+	if (!libinput_device_config_scroll_has_natural_scroll(device))
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+
+	return device->config.natural_scroll->set_enabled(device, enabled);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_scroll_get_natural_scroll_enabled(struct libinput_device *device)
+{
+	if (!device->config.natural_scroll)
+		return 0;
+
+	return device->config.natural_scroll->get_enabled(device);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_scroll_get_default_natural_scroll_enabled(struct libinput_device *device)
+{
+	if (!device->config.natural_scroll)
+		return 0;
+
+	return device->config.natural_scroll->get_default_enabled(device);
+}

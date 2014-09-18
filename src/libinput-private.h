@@ -117,11 +117,20 @@ struct libinput_device_config_accel {
 	double (*get_default_speed)(struct libinput_device *device);
 };
 
+struct libinput_device_config_natural_scroll {
+	int (*has)(struct libinput_device *device);
+	enum libinput_config_status (*set_enabled)(struct libinput_device *device,
+						   int enabled);
+	int (*get_enabled)(struct libinput_device *device);
+	int (*get_default_enabled)(struct libinput_device *device);
+};
+
 struct libinput_device_config {
 	struct libinput_device_config_tap *tap;
 	struct libinput_device_config_calibration *calibration;
 	struct libinput_device_config_send_events *sendevents;
 	struct libinput_device_config_accel *accel;
+	struct libinput_device_config_natural_scroll *natural_scroll;
 };
 
 struct libinput_device {

@@ -1842,6 +1842,87 @@ libinput_device_config_accel_get_speed(struct libinput_device *device);
 double
 libinput_device_config_accel_get_default_speed(struct libinput_device *device);
 
+/**
+ * @ingroup config
+ *
+ * Return non-zero if the device supports "natural scrolling".
+ *
+ * In traditional scroll mode, the movement of fingers on a touchpad when
+ * scrolling matches the movement of the scroll bars. When the fingers move
+ * down, the scroll bar moves down, a line of text on the screen moves
+ * towards the upper end of the screen. This also matches scroll wheels on
+ * mice (wheel down, content moves up).
+ *
+ * Natural scrolling is the term coined by Apple for inverted scrolling.
+ * In this mode, the effect of scrolling movement of fingers on a touchpad
+ * resemble physical manipulation of paper. When the fingers move down, a
+ * line of text on the screen moves down (scrollbars move up). This is the
+ * opposite of scroll wheels on mice.
+ *
+ * A device supporting natural scrolling can be switched between traditional
+ * scroll mode and natural scroll mode.
+ *
+ * @param device The device to configure
+ *
+ * @return 0 if natural scrolling is not supported, non-zero if natural
+ * scrolling is supported by this device
+ *
+ * @see libinput_device_config_set_natural_scroll_enabled
+ * @see libinput_device_config_get_natural_scroll_enabled
+ * @see libinput_device_config_get_default_natural_scroll_enabled
+ */
+int
+libinput_device_config_scroll_has_natural_scroll(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Enable or disable natural scrolling on the device.
+ *
+ * @param device The device to configure
+ * @param enable non-zero to enable, zero to disable natural scrolling
+ *
+ * @return a config status code
+ *
+ * @see libinput_device_config_has_natural_scroll
+ * @see libinput_device_config_get_natural_scroll_enabled
+ * @see libinput_device_config_get_default_natural_scroll_enabled
+ */
+enum libinput_config_status
+libinput_device_config_scroll_set_natural_scroll_enabled(struct libinput_device *device,
+							 int enable);
+/**
+ * @ingroup config
+ *
+ * Get the current mode for scrolling on this device
+ *
+ * @param device The device to configure
+ *
+ * @return zero if natural scrolling is disabled, non-zero if enabled
+ *
+ * @see libinput_device_config_has_natural_scroll
+ * @see libinput_device_config_set_natural_scroll_enabled
+ * @see libinput_device_config_get_default_natural_scroll_enabled
+ */
+int
+libinput_device_config_scroll_get_natural_scroll_enabled(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Get the default mode for scrolling on this device
+ *
+ * @param device The device to configure
+ *
+ * @return zero if natural scrolling is disabled by default, non-zero if enabled
+ *
+ * @see libinput_device_config_has_natural_scroll
+ * @see libinput_device_config_set_natural_scroll_enabled
+ * @see libinput_device_config_get_natural_scroll_enabled
+ */
+int
+libinput_device_config_scroll_get_default_natural_scroll_enabled(struct libinput_device *device);
+
 #ifdef __cplusplus
 }
 #endif
