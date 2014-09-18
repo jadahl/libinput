@@ -52,9 +52,6 @@ struct motion_filter {
 	struct motion_filter_interface *interface;
 };
 
-struct motion_filter *
-create_linear_acceleration_filter(double speed);
-
 typedef double (*accel_profile_func_t)(struct motion_filter *filter,
 				       void *data,
 				       double velocity,
