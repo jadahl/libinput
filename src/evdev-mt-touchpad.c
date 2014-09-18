@@ -492,6 +492,12 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	dy /= nchanged;
 
 	tp_filter_motion(tp, &dx, &dy, time);
+
+	if (tp->scroll.natural_scrolling_enabled) {
+		dx = -dx;
+		dy = -dy;
+	}
+
 	evdev_post_scroll(tp->device, time, dx, dy);
 }
 
@@ -849,6 +855,61 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 }
 
 static int
+tp_scroll_config_natural_has(struct libinput_device *device)
+{
+	return 1;
+}
+
+static enum libinput_config_status
+tp_scroll_config_natural_set(struct libinput_device *device,
+			     int enabled)
+{
+	struct evdev_dispatch *dispatch;
+	struct tp_dispatch *tp = NULL;
+
+	dispatch = ((struct evdev_device *) device)->dispatch;
+	tp = container_of(dispatch, tp, base);
+
+	tp->scroll.natural_scrolling_enabled = enabled ? true : false;
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static int
+tp_scroll_config_natural_get(struct libinput_device *device)
+{
+	struct evdev_dispatch *dispatch;
+	struct tp_dispatch *tp = NULL;
+
+	dispatch = ((struct evdev_device *) device)->dispatch;
+	tp = container_of(dispatch, tp, base);
+
+	return tp->scroll.natural_scrolling_enabled ? 1 : 0;
+}
+
+static int
+tp_scroll_config_natural_get_default(struct libinput_device *device)
+{
+	/* could enable this on Apple touchpads. could do that, could
+	 * very well do that... */
+	return 0;
+}
+
+static int
+tp_init_scroll(struct tp_dispatch *tp)
+{
+
+	tp->scroll.config.has = tp_scroll_config_natural_has;
+	tp->scroll.config.set_enabled = tp_scroll_config_natural_set;
+	tp->scroll.config.get_enabled = tp_scroll_config_natural_get;
+	tp->scroll.config.get_default_enabled = tp_scroll_config_natural_get_default;
+	tp->scroll.natural_scrolling_enabled = false;
+	tp->device->base.config.natural_scroll = &tp->scroll.config;
+
+	return 0;
+}
+
+static int
 tp_init_palmdetect(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
@@ -902,6 +963,9 @@ tp_init(struct tp_dispatch *tp,
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
 	tp->hysteresis.margin_y =
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
+
+	if (tp_init_scroll(tp) != 0)
+		return -1;
 
 	if (tp_init_accel(tp, diagonal) != 0)
 		return -1;

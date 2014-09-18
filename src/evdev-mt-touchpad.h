@@ -201,6 +201,11 @@ struct tp_dispatch {
 		struct evdev_device *trackpoint;
 	} buttons;				/* physical buttons */
 
+	struct {
+		struct libinput_device_config_natural_scroll config;
+		bool natural_scrolling_enabled;
+	} scroll;
+
 	enum touchpad_event queued;
 
 	struct {
