@@ -56,7 +56,7 @@ static int events[] = {
 
 struct litest_test_device litest_trackpoint_device = {
 	.type = LITEST_TRACKPOINT,
-	.features = LITEST_POINTER | LITEST_BUTTON,
+	.features = LITEST_POINTER | LITEST_BUTTON | LITEST_POINTINGSTICK,
 	.shortname = "trackpoint",
 	.setup = litest_trackpoint_setup,
 	.interface = &interface,

@@ -34,6 +34,7 @@ run_tests = \
 	test-touch \
 	test-log \
 	test-touchpad \
+	test-trackpoint \
 	test-misc \
 	test-keyboard \
 	test-device
@@ -71,6 +72,10 @@ test_log_LDFLAGS = -no-install
 test_touchpad_SOURCES = touchpad.c
 test_touchpad_LDADD = $(TEST_LIBS)
 test_touchpad_LDFLAGS = -no-install
+
+test_trackpoint_SOURCES = trackpoint.c
+test_trackpoint_LDADD = $(TEST_LIBS)
+test_trackpoint_LDFLAGS = -no-install
 
 test_misc_SOURCES = misc.c
 test_misc_LDADD = $(TEST_LIBS)

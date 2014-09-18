@@ -61,6 +61,7 @@ enum litest_device_feature {
 	LITEST_APPLE_CLICKPAD = 1 << 8,
 	LITEST_TOPBUTTONPAD = 1 << 9,
 	LITEST_SEMI_MT = 1 << 10,
+	LITEST_POINTINGSTICK = 1 << 11,
 };
 
 struct litest_device {
