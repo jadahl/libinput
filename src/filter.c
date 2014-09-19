@@ -69,6 +69,7 @@ filter_get_speed(struct motion_filter *filter)
 
 #define DEFAULT_THRESHOLD 0.4			/* in units/ms */
 #define DEFAULT_ACCELERATION 2.0		/* unitless factor */
+#define DEFAULT_INCLINE 1.1			/* unitless factor */
 
 /*
  * Pointer acceleration filter constants
@@ -101,6 +102,7 @@ struct pointer_accelerator {
 
 	double threshold;	/* units/ms */
 	double accel;		/* unitless factor */
+	double incline;		/* incline of the function */
 };
 
 static void
@@ -255,10 +257,21 @@ static bool
 accelerator_set_speed(struct motion_filter *filter,
 		      double speed)
 {
+	struct pointer_accelerator *accel_filter =
+		(struct pointer_accelerator *)filter;
+
 	assert(speed >= -1.0 && speed <= 1.0);
 
-	filter->speed = speed;
+	/* delay when accel kicks in */
+	accel_filter->threshold = DEFAULT_THRESHOLD - speed/6.0;
 
+	/* adjust max accel factor */
+	accel_filter->accel = DEFAULT_ACCELERATION + speed;
+
+	/* higher speed -> faster to reach max */
+	accel_filter->incline = DEFAULT_INCLINE + speed/2.0;
+
+	filter->speed = speed;
 	return true;
 }
 
@@ -290,6 +303,7 @@ create_pointer_accelator_filter(accel_profile_func_t profile)
 
 	filter->threshold = DEFAULT_THRESHOLD;
 	filter->accel = DEFAULT_ACCELERATION;
+	filter->incline = DEFAULT_INCLINE;
 
 	return &filter->base;
 }
@@ -314,9 +328,10 @@ pointer_accel_profile_linear(struct motion_filter *filter,
 	double s1, s2;
 	const double max_accel = accel_filter->accel; /* unitless factor */
 	const double threshold = accel_filter->threshold; /* units/ms */
+	const double incline = accel_filter->incline;
 
 	s1 = min(1, speed_in * 5);
-	s2 = 1 + (speed_in - threshold) * 1.1;
+	s2 = 1 + (speed_in - threshold) * incline;
 
 	return min(max_accel, s2 > 1 ? s2 : s1);
 }
