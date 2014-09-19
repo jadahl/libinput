@@ -114,6 +114,7 @@ struct evdev_device {
 	int suspended;
 
 	struct {
+		struct libinput_device_config_accel config;
 		struct motion_filter *filter;
 	} pointer;
 

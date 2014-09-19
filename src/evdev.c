@@ -861,6 +861,39 @@ evdev_device_dispatch(void *data)
 }
 
 static int
+evdev_accel_config_available(struct libinput_device *device)
+{
+	/* this function is only called if we set up ptraccel, so we can
+	   reply with a resounding "Yes" */
+	return 1;
+}
+
+static enum libinput_config_status
+evdev_accel_config_set_speed(struct libinput_device *device, double speed)
+{
+	struct evdev_device *dev = (struct evdev_device *)device;
+
+	if (!filter_set_speed(dev->pointer.filter, speed))
+		return LIBINPUT_CONFIG_STATUS_INVALID;
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static double
+evdev_accel_config_get_speed(struct libinput_device *device)
+{
+	struct evdev_device *dev = (struct evdev_device *)device;
+
+	return filter_get_speed(dev->pointer.filter);
+}
+
+static double
+evdev_accel_config_get_default_speed(struct libinput_device *device)
+{
+	return 0.0;
+}
+
+static int
 configure_pointer_acceleration(struct evdev_device *device)
 {
 	device->pointer.filter =
@@ -868,6 +901,12 @@ configure_pointer_acceleration(struct evdev_device *device)
 			pointer_accel_profile_linear);
 	if (!device->pointer.filter)
 		return -1;
+
+	device->pointer.config.available = evdev_accel_config_available;
+	device->pointer.config.set_speed = evdev_accel_config_set_speed;
+	device->pointer.config.get_speed = evdev_accel_config_get_speed;
+	device->pointer.config.get_default_speed = evdev_accel_config_get_default_speed;
+	device->base.config.accel = &device->pointer.config;
 
 	return 0;
 }
