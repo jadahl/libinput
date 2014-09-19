@@ -845,7 +845,7 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	}
 
 	accel = create_pointer_accelator_filter(
-			pointer_accel_profile_smooth_simple);
+			pointer_accel_profile_linear);
 	if (accel == NULL)
 		return -1;
 

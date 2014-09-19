@@ -865,7 +865,7 @@ configure_pointer_acceleration(struct evdev_device *device)
 {
 	device->pointer.filter =
 		create_pointer_accelator_filter(
-			pointer_accel_profile_smooth_simple);
+			pointer_accel_profile_linear);
 	if (!device->pointer.filter)
 		return -1;
 
