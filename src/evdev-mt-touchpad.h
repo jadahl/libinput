@@ -167,8 +167,6 @@ struct tp_dispatch {
 		int32_t margin_y;
 	} hysteresis;
 
-	struct motion_filter *filter;
-
 	struct {
 		double x_scale_coeff;
 		double y_scale_coeff;

@@ -65,7 +65,7 @@ tp_filter_motion(struct tp_dispatch *tp,
 	motion.dy = *dy * tp->accel.y_scale_coeff;
 
 	if (motion.dx != 0.0 || motion.dy != 0.0)
-		filter_dispatch(tp->filter, &motion, tp, time);
+		filter_dispatch(tp->device->pointer.filter, &motion, tp, time);
 
 	*dx = motion.dx;
 	*dy = motion.dy;
@@ -602,7 +602,6 @@ tp_destroy(struct evdev_dispatch *dispatch)
 	tp_destroy_tap(tp);
 	tp_destroy_buttons(tp);
 
-	filter_destroy(tp->filter);
 	free(tp->touches);
 	free(tp);
 }
@@ -849,7 +848,7 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	if (accel == NULL)
 		return -1;
 
-	tp->filter = accel;
+	tp->device->pointer.filter = accel;
 
 	return 0;
 }
