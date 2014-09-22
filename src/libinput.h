@@ -1725,6 +1725,8 @@ uint32_t
 libinput_device_config_send_events_get_modes(struct libinput_device *device);
 
 /**
+ * @ingroup config
+ *
  * Set the send-event mode for this device. The mode defines when the device
  * processes and sends events to the caller.
  *
@@ -1756,6 +1758,8 @@ libinput_device_config_send_events_set_mode(struct libinput_device *device,
 					    enum libinput_config_send_events_mode mode);
 
 /**
+ * @ingroup config
+ *
  * Get the send-event mode for this device. The mode defines when the device
  * processes and sends events to the caller.
  *
@@ -1770,6 +1774,8 @@ enum libinput_config_send_events_mode
 libinput_device_config_send_events_get_mode(struct libinput_device *device);
 
 /**
+ * @ingroup config
+ *
  * Get the default send-event mode for this device. The mode defines when
  * the device processes and sends events to the caller.
  *
