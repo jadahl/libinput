@@ -1464,3 +1464,40 @@ libinput_device_config_scroll_get_default_natural_scroll_enabled(struct libinput
 
 	return device->config.natural_scroll->get_default_enabled(device);
 }
+
+LIBINPUT_EXPORT int
+libinput_device_config_buttons_has_left_handed(struct libinput_device *device)
+{
+	if (!device->config.left_handed)
+		return 0;
+
+	return device->config.left_handed->has(device);
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_buttons_set_left_handed(struct libinput_device *device,
+					       int left_handed)
+{
+	if (!libinput_device_config_buttons_has_left_handed(device))
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+
+	return device->config.left_handed->set(device, left_handed);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_buttons_get_left_handed(struct libinput_device *device)
+{
+	if (!libinput_device_config_buttons_has_left_handed(device))
+		return 0;
+
+	return device->config.left_handed->get(device);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_config_buttons_get_default_left_handed(struct libinput_device *device)
+{
+	if (!libinput_device_config_buttons_has_left_handed(device))
+		return 0;
+
+	return device->config.left_handed->get_default(device);
+}

@@ -1929,6 +1929,84 @@ libinput_device_config_scroll_get_natural_scroll_enabled(struct libinput_device 
 int
 libinput_device_config_scroll_get_default_natural_scroll_enabled(struct libinput_device *device);
 
+/**
+ * @ingroup config
+ *
+ * Check if a device has a button configuration that supports left-handed
+ * usage.
+ *
+ * @param device The device to configure
+ * @return Non-zero if the device can be set to left-handed, or zero
+ * otherwise
+ *
+ * @see libinput_device_config_buttons_set_left_handed
+ * @see libinput_device_config_buttons_get_left_handed
+ * @see libinput_device_config_buttons_get_default_left_handed
+ */
+int
+libinput_device_config_buttons_has_left_handed(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Set the left-handed configuration of the device. A device in left-handed
+ * mode sends a left button event instead of the right button and vice
+ * versa.
+ *
+ * The exact button behavior is device-dependent. On a mouse and most
+ * pointing devices, left and right buttons are swapped but the middle
+ * button is unmodified. On a touchpad, physical buttons (if present) are
+ * swapped. On a clickpad, the top and bottom software-emulated buttons are
+ * swapped where present, the main area of the touchpad remains a left
+ * button. Tapping and clickfinger behavior is not affected by this setting.
+ *
+ * Changing the left-handed configuration of a device may not take effect
+ * until all buttons have been logically released.
+ *
+ * @param device The device to configure
+ * @param left_handed Zero to disable, non-zero to enable left-handed mode
+ * @return A configuration status code
+ *
+ * @see libinput_device_config_buttons_has_left_handed
+ * @see libinput_device_config_buttons_get_left_handed
+ * @see libinput_device_config_buttons_get_default_left_handed
+ */
+enum libinput_config_status
+libinput_device_config_buttons_set_left_handed(struct libinput_device *device,
+					       int left_handed);
+
+/**
+ * @ingroup config
+ *
+ * Get the current left-handed configuration of the device.
+ *
+ * @param device The device to configure
+ * @return Zero if the device is in right-handed mode, non-zero if the
+ * device is in left-handed mode
+ *
+ * @see libinput_device_config_buttons_has_left_handed
+ * @see libinput_device_config_buttons_set_left_handed
+ * @see libinput_device_config_buttons_get_default_left_handed
+ */
+int
+libinput_device_config_buttons_get_left_handed(struct libinput_device *device);
+
+/**
+ * @ingroup config
+ *
+ * Get the default left-handed configuration of the device.
+ *
+ * @param device The device to configure
+ * @return Zero if the device is in right-handed mode by default, or non-zero if the
+ * device is in left-handed mode by default
+ *
+ * @see libinput_device_config_buttons_has_left_handed
+ * @see libinput_device_config_buttons_set_left_handed
+ * @see libinput_device_config_buttons_get_left_handed
+ */
+int
+libinput_device_config_buttons_get_default_left_handed(struct libinput_device *device);
+
 #ifdef __cplusplus
 }
 #endif

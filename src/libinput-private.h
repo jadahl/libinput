@@ -125,12 +125,20 @@ struct libinput_device_config_natural_scroll {
 	int (*get_default_enabled)(struct libinput_device *device);
 };
 
+struct libinput_device_config_left_handed {
+	int (*has)(struct libinput_device *device);
+	enum libinput_config_status (*set)(struct libinput_device *device, int left_handed);
+	int (*get)(struct libinput_device *device);
+	int (*get_default)(struct libinput_device *device);
+};
+
 struct libinput_device_config {
 	struct libinput_device_config_tap *tap;
 	struct libinput_device_config_calibration *calibration;
 	struct libinput_device_config_send_events *sendevents;
 	struct libinput_device_config_accel *accel;
 	struct libinput_device_config_natural_scroll *natural_scroll;
+	struct libinput_device_config_left_handed *left_handed;
 };
 
 struct libinput_device {
