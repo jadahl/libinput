@@ -1628,7 +1628,305 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 }
 END_TEST
 
+START_TEST(touchpad_left_handed)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_button_click(dev, BTN_RIGHT, 1);
+	litest_button_click(dev, BTN_RIGHT, 0);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	if (libevdev_has_event_code(dev->evdev,
+				    EV_KEY,
+				    BTN_MIDDLE)) {
+		litest_button_click(dev, BTN_MIDDLE, 1);
+		litest_button_click(dev, BTN_MIDDLE, 0);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+	}
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_clickpad)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 10, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 90, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 50, 50);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_clickfinger)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 10, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	/* Clickfinger is unaffected by left-handed setting */
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 10, 90);
+	litest_touch_down(dev, 1, 30, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_tapping)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+
+	libinput_dispatch(li);
+	litest_timeout_tap();
+	libinput_dispatch(li);
+
+	/* Tapping is unaffected by left-handed setting */
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_tapping_2fg)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_down(dev, 1, 70, 50);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
+	libinput_dispatch(li);
+	litest_timeout_tap();
+	libinput_dispatch(li);
+
+	/* Tapping is unaffected by left-handed setting */
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_delayed)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+
+	litest_drain_events(li);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	/* left-handed takes effect now */
+	litest_button_click(dev, BTN_RIGHT, 1);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 0);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_button_click(dev, BTN_RIGHT, 0);
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_left_handed_clickpad_delayed)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 10, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	/* left-handed takes effect now */
+	litest_drain_events(li);
+	litest_touch_down(dev, 0, 90, 90);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 0);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_button_click(dev, BTN_LEFT, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
 int main(int argc, char **argv) {
+
 
 	litest_add("touchpad:motion", touchpad_1fg_motion, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:motion", touchpad_2fg_no_motion, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
@@ -1696,6 +1994,14 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:palm", touchpad_palm_detect_palm_becomes_pointer, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_palm_stays_palm, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_no_palm_moving_into_edges, LITEST_TOUCHPAD, LITEST_ANY);
+
+	litest_add("touchpad:left-handed", touchpad_left_handed, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
+	litest_add("touchpad:left-handed", touchpad_left_handed_clickfinger, LITEST_APPLE_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:left-handed", touchpad_left_handed_tapping, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:left-handed", touchpad_left_handed_tapping_2fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:left-handed", touchpad_left_handed_delayed, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad_delayed, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 
 	return litest_run(argc, argv);
 }

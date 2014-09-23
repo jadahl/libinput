@@ -401,6 +401,27 @@ START_TEST(touch_calibration_translation)
 }
 END_TEST
 
+START_TEST(touch_no_left_handed)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	enum libinput_config_status status;
+	int rc;
+
+	rc = libinput_device_config_buttons_has_left_handed(d);
+	ck_assert_int_eq(rc, 0);
+
+	rc = libinput_device_config_buttons_get_left_handed(d);
+	ck_assert_int_eq(rc, 0);
+
+	rc = libinput_device_config_buttons_get_default_left_handed(d);
+	ck_assert_int_eq(rc, 0);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 0);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+}
+END_TEST
+
 int
 main(int argc, char **argv)
 {
@@ -414,6 +435,8 @@ main(int argc, char **argv)
 	litest_add("touch:calibration", touch_calibration_rotation, LITEST_SINGLE_TOUCH, LITEST_TOUCHPAD);
 	litest_add("touch:calibration", touch_calibration_translation, LITEST_TOUCH, LITEST_TOUCHPAD);
 	litest_add("touch:calibration", touch_calibration_translation, LITEST_SINGLE_TOUCH, LITEST_TOUCHPAD);
+
+	litest_add("touch:left-handed", touch_no_left_handed, LITEST_TOUCH, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

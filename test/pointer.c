@@ -396,6 +396,128 @@ START_TEST(pointer_no_calibration)
 }
 END_TEST
 
+START_TEST(pointer_left_handed_defaults)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	int rc;
+
+	rc = libinput_device_config_buttons_has_left_handed(d);
+	ck_assert_int_ne(rc, 0);
+
+	rc = libinput_device_config_buttons_get_left_handed(d);
+	ck_assert_int_eq(rc, 0);
+
+	rc = libinput_device_config_buttons_get_default_left_handed(d);
+	ck_assert_int_eq(rc, 0);
+}
+END_TEST
+
+START_TEST(pointer_left_handed)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+	litest_button_click(dev, BTN_LEFT, 1);
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_button_click(dev, BTN_RIGHT, 1);
+	litest_button_click(dev, BTN_RIGHT, 0);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	if (libevdev_has_event_code(dev->evdev,
+				    EV_KEY,
+				    BTN_MIDDLE)) {
+		litest_button_click(dev, BTN_MIDDLE, 1);
+		litest_button_click(dev, BTN_MIDDLE, 0);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+	}
+}
+END_TEST
+
+START_TEST(pointer_left_handed_during_click)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	litest_drain_events(li);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	/* Change while button is down, expect correct release event */
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(pointer_left_handed_during_click_multiple_buttons)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *d = dev->libinput_device;
+	struct libinput *li = dev->libinput;
+	enum libinput_config_status status;
+
+	litest_drain_events(li);
+	litest_button_click(dev, BTN_LEFT, 1);
+	libinput_dispatch(li);
+
+	status = libinput_device_config_buttons_set_left_handed(d, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	/* No left-handed until all buttons were down */
+	litest_button_click(dev, BTN_RIGHT, 1);
+	litest_button_click(dev, BTN_RIGHT, 0);
+	litest_button_click(dev, BTN_LEFT, 0);
+
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+	litest_assert_button_event(li,
+				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_POINTER, LITEST_ANY);
@@ -405,6 +527,12 @@ int main (int argc, char **argv) {
 	litest_add_no_device("pointer:seat button count", pointer_seat_button_count);
 
 	litest_add("pointer:calibration", pointer_no_calibration, LITEST_ANY, LITEST_TOUCH|LITEST_SINGLE_TOUCH);
+
+									/* tests touchpads too */
+	litest_add("pointer:left-handed", pointer_left_handed_defaults, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed_during_click, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed_during_click_multiple_buttons, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
