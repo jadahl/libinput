@@ -124,6 +124,17 @@ struct evdev_device {
 	/* Key counter used for multiplexing button events internally in
 	 * libinput. */
 	uint8_t key_count[KEY_CNT];
+
+	struct {
+		struct libinput_device_config_left_handed config_left_handed;
+		/* left-handed currently enabled */
+		bool left_handed;
+		/* set during device init if we want left_handed config,
+		 * used at runtime to delay the effect until buttons are up */
+		bool want_left_handed;
+		/* Checks if buttons are down and commits the setting */
+		void (*change_to_left_handed)(struct evdev_device *device);
+	} buttons;
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)
@@ -277,6 +288,23 @@ evdev_convert_to_mm(const struct input_absinfo *absinfo, double v)
 {
 	double value = v - absinfo->minimum;
 	return value/absinfo->resolution;
+}
+
+int
+evdev_init_left_handed(struct evdev_device *device,
+		       void (*change_to_left_handed)(struct evdev_device *));
+
+static inline uint32_t
+evdev_to_left_handed(struct evdev_device *device,
+		     uint32_t button)
+{
+	if (device->buttons.left_handed) {
+		if (button == BTN_LEFT)
+			return BTN_RIGHT;
+		else if (button == BTN_RIGHT)
+			return BTN_LEFT;
+	}
+	return button;
 }
 
 #endif /* EVDEV_H */

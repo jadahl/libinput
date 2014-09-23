@@ -115,8 +115,14 @@ evdev_pointer_notify_button(struct evdev_device *device,
 	down_count = update_key_down_count(device, button, state);
 
 	if ((state == LIBINPUT_BUTTON_STATE_PRESSED && down_count == 1) ||
-	    (state == LIBINPUT_BUTTON_STATE_RELEASED && down_count == 0))
+	    (state == LIBINPUT_BUTTON_STATE_RELEASED && down_count == 0)) {
 		pointer_notify_button(&device->base, time, button, state);
+
+		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
+		    device->buttons.change_to_left_handed)
+			device->buttons.change_to_left_handed(device);
+	}
+
 }
 
 void
@@ -455,7 +461,7 @@ evdev_process_key(struct evdev_device *device,
 		evdev_pointer_notify_button(
 			device,
 			time,
-			e->code,
+			evdev_to_left_handed(device, e->code),
 			e->value ? LIBINPUT_BUTTON_STATE_PRESSED :
 				   LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
@@ -754,14 +760,92 @@ evdev_sendevents_get_default_mode(struct libinput_device *device)
 	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 }
 
+static int
+evdev_left_handed_has(struct libinput_device *device)
+{
+	/* This is only hooked up when we have left-handed configuration, so we
+	 * can hardcode 1 here */
+	return 1;
+}
+
+static void
+evdev_change_to_left_handed(struct evdev_device *device)
+{
+	unsigned int button;
+
+	if (device->buttons.want_left_handed == device->buttons.left_handed)
+		return;
+
+	for (button = BTN_LEFT; button < BTN_JOYSTICK; button++) {
+		if (libevdev_has_event_code(device->evdev, EV_KEY, button) &&
+		    hw_is_key_down(device, button))
+			return;
+	}
+
+	device->buttons.left_handed = device->buttons.want_left_handed;
+}
+
+static enum libinput_config_status
+evdev_left_handed_set(struct libinput_device *device, int left_handed)
+{
+	struct evdev_device *evdev_device = (struct evdev_device *)device;
+
+	evdev_device->buttons.want_left_handed = left_handed ? true : false;
+
+	evdev_device->buttons.change_to_left_handed(evdev_device);
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static int
+evdev_left_handed_get(struct libinput_device *device)
+{
+	struct evdev_device *evdev_device = (struct evdev_device *)device;
+
+	/* return the wanted configuration, even if it hasn't taken
+	 * effect yet! */
+	return evdev_device->buttons.want_left_handed;
+}
+
+static int
+evdev_left_handed_get_default(struct libinput_device *device)
+{
+	return 0;
+}
+
+int
+evdev_init_left_handed(struct evdev_device *device,
+		       void (*change_to_left_handed)(struct evdev_device *))
+{
+	device->buttons.config_left_handed.has = evdev_left_handed_has;
+	device->buttons.config_left_handed.set = evdev_left_handed_set;
+	device->buttons.config_left_handed.get = evdev_left_handed_get;
+	device->buttons.config_left_handed.get_default = evdev_left_handed_get_default;
+	device->base.config.left_handed = &device->buttons.config_left_handed;
+	device->buttons.left_handed = false;
+	device->buttons.want_left_handed = false;
+	device->buttons.change_to_left_handed = change_to_left_handed;
+
+	return 0;
+}
+
 static struct evdev_dispatch *
 fallback_dispatch_create(struct libinput_device *device)
 {
 	struct evdev_dispatch *dispatch = zalloc(sizeof *dispatch);
+	struct evdev_device *evdev_device = (struct evdev_device *)device;
+
 	if (dispatch == NULL)
 		return NULL;
 
 	dispatch->interface = &fallback_interface;
+
+	if (evdev_device->buttons.want_left_handed &&
+	    evdev_init_left_handed(evdev_device,
+				   evdev_change_to_left_handed) == -1) {
+		free(dispatch);
+		return NULL;
+	}
 
 	device->config.calibration = &dispatch->calibration;
 
@@ -1101,6 +1185,9 @@ evdev_configure_device(struct evdev_device *device)
 			 has_abs ? " absolute-motion" : "",
 			 has_rel ? " relative-motion": "",
 			 has_button ? " button" : "");
+
+		/* want left-handed config option */
+		device->buttons.want_left_handed = true;
 	}
 	if (has_keyboard) {
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
@@ -1461,7 +1548,7 @@ release_pressed_keys(struct evdev_device *device)
 				evdev_pointer_notify_button(
 					device,
 					time,
-					code,
+					evdev_to_left_handed(device, code),
 					LIBINPUT_BUTTON_STATE_RELEASED);
 				break;
 			}
