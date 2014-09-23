@@ -661,14 +661,17 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 		enum libinput_button_state state;
 
 		if ((current & 0x1) ^ (old & 0x1)) {
+			uint32_t b;
+
 			if (!!(current & 0x1))
 				state = LIBINPUT_BUTTON_STATE_PRESSED;
 			else
 				state = LIBINPUT_BUTTON_STATE_RELEASED;
 
+			b = evdev_to_left_handed(tp->device, button);
 			evdev_pointer_notify_button(tp->device,
 						    time,
-						    button,
+						    b,
 						    state);
 		}
 
@@ -758,10 +761,12 @@ tp_post_softbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 		}
 
 		if ((button & MIDDLE) || ((button & LEFT) && (button & RIGHT)))
-			button = BTN_MIDDLE;
+			button = evdev_to_left_handed(tp->device, BTN_MIDDLE);
 		else if (button & RIGHT)
-			button = BTN_RIGHT;
-		else
+			button = evdev_to_left_handed(tp->device, BTN_RIGHT);
+		else if (button & LEFT)
+			button = evdev_to_left_handed(tp->device, BTN_LEFT);
+		else /* main area is always BTN_LEFT */
 			button = BTN_LEFT;
 
 		tp->buttons.active = button;

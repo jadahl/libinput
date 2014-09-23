@@ -1056,6 +1056,23 @@ tp_sendevents_get_default_mode(struct libinput_device *device)
 	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 }
 
+static void
+tp_change_to_left_handed(struct evdev_device *device)
+{
+	struct tp_dispatch *tp = (struct tp_dispatch *)device->dispatch;
+
+	if (device->buttons.want_left_handed == device->buttons.left_handed)
+		return;
+
+	if (tp->buttons.state & 0x3) /* BTN_LEFT|BTN_RIGHT */
+		return;
+
+	/* tapping and clickfinger aren't affected by left-handed config,
+	 * so checking physical buttons is enough */
+
+	device->buttons.left_handed = device->buttons.want_left_handed;
+}
+
 struct evdev_dispatch *
 evdev_mt_touchpad_create(struct evdev_device *device)
 {
@@ -1077,6 +1094,8 @@ evdev_mt_touchpad_create(struct evdev_device *device)
 	tp->sendevents.config.set_mode = tp_sendevents_set_mode;
 	tp->sendevents.config.get_mode = tp_sendevents_get_mode;
 	tp->sendevents.config.get_default_mode = tp_sendevents_get_default_mode;
+
+	evdev_init_left_handed(device, tp_change_to_left_handed);
 
 	return  &tp->base;
 }
