@@ -131,7 +131,7 @@ START_TEST(device_disable_touchpad)
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 90, 90, 10);
+	litest_touch_move_to(dev, 0, 50, 50, 90, 90, 10, 0);
 	litest_touch_up(dev, 0);
 
 

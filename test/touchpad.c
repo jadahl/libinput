@@ -41,7 +41,7 @@ START_TEST(touchpad_1fg_motion)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 50, 5);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 50, 5, 0);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
@@ -72,8 +72,8 @@ START_TEST(touchpad_2fg_no_motion)
 
 	litest_touch_down(dev, 0, 20, 20);
 	litest_touch_down(dev, 1, 70, 20);
-	litest_touch_move_to(dev, 0, 20, 20, 80, 80, 5);
-	litest_touch_move_to(dev, 1, 70, 20, 80, 50, 5);
+	litest_touch_move_to(dev, 0, 20, 20, 80, 80, 5, 0);
+	litest_touch_move_to(dev, 1, 70, 20, 80, 50, 5, 0);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 
@@ -131,7 +131,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_up(dev, 0);
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 0);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
@@ -150,7 +150,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 
 	/* lift finger, set down again, should continue dragging */
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 0);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
@@ -400,7 +400,7 @@ START_TEST(touchpad_no_2fg_tap_after_move)
 	   -> no event
 	 */
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 90, 90, 10);
+	litest_touch_move_to(dev, 0, 50, 50, 90, 90, 10, 0);
 	litest_drain_events(dev->libinput);
 
 	litest_touch_down(dev, 1, 70, 50);
@@ -450,7 +450,7 @@ START_TEST(touchpad_no_first_fg_tap_after_move)
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_down(dev, 1, 70, 50);
 	libinput_dispatch(dev->libinput);
-	litest_touch_move_to(dev, 1, 70, 50, 90, 90, 10);
+	litest_touch_move_to(dev, 1, 70, 50, 90, 90, 10, 0);
 	libinput_dispatch(dev->libinput);
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
@@ -516,7 +516,7 @@ START_TEST(touchpad_1fg_tap_n_drag_click)
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_up(dev, 0);
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 50, 10);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 50, 10, 0);
 
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
@@ -803,7 +803,7 @@ START_TEST(clickpad_click_n_drag)
 
 	/* now put a second finger down */
 	litest_touch_down(dev, 1, 70, 70);
-	litest_touch_move_to(dev, 1, 70, 70, 80, 50, 5);
+	litest_touch_move_to(dev, 1, 70, 70, 80, 50, 5, 0);
 	litest_touch_up(dev, 1);
 
 	libinput_dispatch(li);
@@ -997,14 +997,14 @@ START_TEST(clickpad_softbutton_left_1st_fg_move)
 	litest_assert_empty_queue(li);
 
 	/* move out of the area, then wait for softbutton timer */
-	litest_touch_move_to(dev, 0, 20, 90, 90, 20, 10);
+	litest_touch_move_to(dev, 0, 20, 90, 90, 20, 10, 0);
 	libinput_dispatch(li);
 	litest_timeout_softbuttons();
 	libinput_dispatch(li);
 	litest_drain_events(li);
 
 	/* move down left, expect motion */
-	litest_touch_move_to(dev, 0, 90, 20, 20, 90, 10);
+	litest_touch_move_to(dev, 0, 90, 20, 20, 90, 10, 0);
 
 	libinput_dispatch(li);
 	event = libinput_get_event(li);
@@ -1070,7 +1070,7 @@ START_TEST(clickpad_softbutton_left_2nd_fg_move)
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 1, 20, 20);
-	litest_touch_move_to(dev, 1, 20, 20, 80, 20, 10);
+	litest_touch_move_to(dev, 1, 20, 20, 80, 20, 10, 0);
 
 	libinput_dispatch(li);
 	event = libinput_get_event(li);
@@ -1097,7 +1097,7 @@ START_TEST(clickpad_softbutton_left_2nd_fg_move)
 
 	/* second finger down */
 	litest_touch_down(dev, 1, 20, 20);
-	litest_touch_move_to(dev, 1, 20, 20, 20, 80, 10);
+	litest_touch_move_to(dev, 1, 20, 20, 20, 80, 10, 0);
 
 	libinput_dispatch(li);
 	event = libinput_get_event(li);
@@ -1148,7 +1148,7 @@ START_TEST(clickpad_softbutton_left_to_right)
 	*/
 
 	litest_touch_down(dev, 0, 20, 90);
-	litest_touch_move_to(dev, 0, 20, 90, 90, 90, 10);
+	litest_touch_move_to(dev, 0, 20, 90, 90, 90, 10, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
@@ -1182,7 +1182,7 @@ START_TEST(clickpad_softbutton_right_to_left)
 	*/
 
 	litest_touch_down(dev, 0, 90, 90);
-	litest_touch_move_to(dev, 0, 90, 90, 20, 90, 10);
+	litest_touch_move_to(dev, 0, 90, 90, 20, 90, 10, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
@@ -1306,7 +1306,7 @@ START_TEST(clickpad_topsoftbuttons_move_out_ignore)
 	libinput_dispatch(li);
 	litest_assert_empty_queue(li);
 
-	litest_touch_move_to(dev, 0, 50, 5, 80, 90, 20);
+	litest_touch_move_to(dev, 0, 50, 5, 80, 90, 20, 0);
 	libinput_dispatch(li);
 	litest_timeout_softbuttons();
 	libinput_dispatch(li);
@@ -1330,8 +1330,8 @@ test_2fg_scroll(struct litest_device *dev, double dx, double dy, int want_sleep)
 	litest_touch_down(dev, 0, 47, 50);
 	litest_touch_down(dev, 1, 53, 50);
 
-	litest_touch_move_to(dev, 0, 47, 50, 47 + dx, 50 + dy, 5);
-	litest_touch_move_to(dev, 1, 53, 50, 53 + dx, 50 + dy, 5);
+	litest_touch_move_to(dev, 0, 47, 50, 47 + dx, 50 + dy, 5, 0);
+	litest_touch_move_to(dev, 1, 53, 50, 53 + dx, 50 + dy, 5, 0);
 
 	/* Avoid a small scroll being seen as a tap */
 	if (want_sleep) {
@@ -1482,13 +1482,13 @@ START_TEST(touchpad_palm_detect_at_edge)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 50);
-	litest_touch_move_to(dev, 0, 99, 50, 99, 70, 5);
+	litest_touch_move_to(dev, 0, 99, 50, 99, 70, 5, 0);
 	litest_touch_up(dev, 0);
 
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 5, 50);
-	litest_touch_move_to(dev, 0, 5, 50, 5, 70, 5);
+	litest_touch_move_to(dev, 0, 5, 50, 5, 70, 5, 0);
 	litest_touch_up(dev, 0);
 }
 END_TEST
@@ -1506,13 +1506,13 @@ START_TEST(touchpad_palm_detect_at_bottom_corners)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 95);
-	litest_touch_move_to(dev, 0, 99, 95, 99, 99, 10);
+	litest_touch_move_to(dev, 0, 99, 95, 99, 99, 10, 0);
 	litest_touch_up(dev, 0);
 
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 5, 95);
-	litest_touch_move_to(dev, 0, 5, 95, 5, 99, 5);
+	litest_touch_move_to(dev, 0, 5, 95, 5, 99, 5, 0);
 	litest_touch_up(dev, 0);
 }
 END_TEST
@@ -1530,13 +1530,13 @@ START_TEST(touchpad_palm_detect_at_top_corners)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 5);
-	litest_touch_move_to(dev, 0, 99, 5, 99, 9, 10);
+	litest_touch_move_to(dev, 0, 99, 5, 99, 9, 10, 0);
 	litest_touch_up(dev, 0);
 
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 5, 5);
-	litest_touch_move_to(dev, 0, 5, 5, 5, 9, 5);
+	litest_touch_move_to(dev, 0, 5, 5, 5, 9, 5, 0);
 	litest_touch_up(dev, 0);
 }
 END_TEST
@@ -1552,7 +1552,7 @@ START_TEST(touchpad_palm_detect_palm_stays_palm)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 20);
-	litest_touch_move_to(dev, 0, 99, 20, 75, 99, 5);
+	litest_touch_move_to(dev, 0, 99, 20, 75, 99, 5, 0);
 	litest_touch_up(dev, 0);
 	litest_assert_empty_queue(li);
 }
@@ -1571,7 +1571,7 @@ START_TEST(touchpad_palm_detect_palm_becomes_pointer)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 50);
-	litest_touch_move_to(dev, 0, 99, 50, 0, 70, 5);
+	litest_touch_move_to(dev, 0, 99, 50, 0, 70, 5, 0);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
@@ -1604,11 +1604,11 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 99, 50, 5);
+	litest_touch_move_to(dev, 0, 50, 50, 99, 50, 5, 0);
 
 	litest_drain_events(li);
 
-	litest_touch_move_to(dev, 0, 99, 50, 99, 90, 5);
+	litest_touch_move_to(dev, 0, 99, 50, 99, 90, 5, 0);
 	libinput_dispatch(li);
 
 	type = libinput_next_event_type(li);
