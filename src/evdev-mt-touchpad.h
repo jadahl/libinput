@@ -291,4 +291,7 @@ tp_tap_suspend(struct tp_dispatch *tp, uint64_t time);
 void
 tp_tap_resume(struct tp_dispatch *tp, uint64_t time);
 
+bool
+tp_tap_dragging(struct tp_dispatch *tp);
+
 #endif

@@ -749,3 +749,16 @@ tp_tap_resume(struct tp_dispatch *tp, uint64_t time)
 {
 	tp_tap_enabled_update(tp, false, tp->tap.enabled, time);
 }
+
+bool
+tp_tap_dragging(struct tp_dispatch *tp)
+{
+	switch (tp->tap.state) {
+	case TAP_STATE_DRAGGING:
+	case TAP_STATE_DRAGGING_2:
+	case TAP_STATE_DRAGGING_WAIT:
+		return true;
+	default:
+		return false;
+	}
+}
