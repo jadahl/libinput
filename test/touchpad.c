@@ -131,7 +131,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_up(dev, 0);
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 0);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
@@ -150,7 +150,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 
 	/* lift finger, set down again, should continue dragging */
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 0);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
