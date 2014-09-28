@@ -570,7 +570,7 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 			tp_tap_handle_event(tp, t, TAP_EVENT_TOUCH, time);
 		} else if (t->state == TOUCH_END) {
 			tp_tap_handle_event(tp, t, TAP_EVENT_RELEASE, time);
-			t->tap.state = TAP_TOUCH_STATE_DEAD;
+			t->tap.state = TAP_TOUCH_STATE_IDLE;
 		} else if (tp->tap.state != TAP_STATE_IDLE &&
 			 tp_tap_exceeds_motion_threshold(tp, t)) {
 			struct tp_touch *tmp;
