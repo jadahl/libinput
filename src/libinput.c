@@ -674,6 +674,7 @@ libinput_device_init(struct libinput_device *device,
 {
 	device->seat = seat;
 	device->refcount = 1;
+	list_init(&device->event_listeners);
 }
 
 LIBINPUT_EXPORT struct libinput_device *
@@ -686,6 +687,7 @@ libinput_device_ref(struct libinput_device *device)
 static void
 libinput_device_destroy(struct libinput_device *device)
 {
+	assert(list_empty(&device->event_listeners));
 	evdev_device_destroy((struct evdev_device *) device);
 }
 
@@ -730,6 +732,26 @@ libinput_dispatch(struct libinput *libinput)
 	libinput_drop_destroyed_sources(libinput);
 
 	return 0;
+}
+
+void
+libinput_device_add_event_listener(struct libinput_device *device,
+				   struct libinput_event_listener *listener,
+				   void (*notify_func)(
+						uint64_t time,
+						struct libinput_event *event,
+						void *notify_func_data),
+				   void *notify_func_data)
+{
+	listener->notify_func = notify_func;
+	listener->notify_func_data = notify_func_data;
+	list_insert(&device->event_listeners, &listener->link);
+}
+
+void
+libinput_device_remove_event_listener(struct libinput_event_listener *listener)
+{
+	list_remove(&listener->link);
 }
 
 static uint32_t
@@ -799,7 +821,13 @@ post_device_event(struct libinput_device *device,
 		  enum libinput_event_type type,
 		  struct libinput_event *event)
 {
+	struct libinput_event_listener *listener, *tmp;
+
 	init_event_base(event, device, type);
+
+	list_for_each_safe(listener, tmp, &device->event_listeners, link)
+		listener->notify_func(time, event, listener->notify_func_data);
+
 	libinput_post_event(device->seat->libinput, event);
 }
 

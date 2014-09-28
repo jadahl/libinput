@@ -144,10 +144,17 @@ struct libinput_device_config {
 struct libinput_device {
 	struct libinput_seat *seat;
 	struct list link;
+	struct list event_listeners;
 	void *user_data;
 	int terminated;
 	int refcount;
 	struct libinput_device_config config;
+};
+
+struct libinput_event_listener {
+	struct list link;
+	void (*notify_func)(uint64_t time, struct libinput_event *ev, void *notify_func_data);
+	void *notify_func_data;
 };
 
 typedef void (*libinput_source_dispatch_t)(void *data);
@@ -204,6 +211,18 @@ libinput_seat_init(struct libinput_seat *seat,
 void
 libinput_device_init(struct libinput_device *device,
 		     struct libinput_seat *seat);
+
+void
+libinput_device_add_event_listener(struct libinput_device *device,
+				   struct libinput_event_listener *listener,
+				   void (*notify_func)(
+						uint64_t time,
+						struct libinput_event *event,
+						void *notify_func_data),
+				   void *notify_func_data);
+
+void
+libinput_device_remove_event_listener(struct libinput_event_listener *listener);
 
 void
 notify_added_device(struct libinput_device *device);
