@@ -113,6 +113,11 @@ tp_tap_notify(struct tp_dispatch *tp,
 		return;
 	}
 
+	if (state == LIBINPUT_BUTTON_STATE_PRESSED)
+		tp->tap.buttons_pressed |= (1 << nfingers);
+	else
+		tp->tap.buttons_pressed &= ~(1 << nfingers);
+
 	evdev_pointer_notify_button(tp->device,
 				    time,
 				    button,
@@ -697,5 +702,13 @@ tp_destroy_tap(struct tp_dispatch *tp)
 void
 tp_release_all_taps(struct tp_dispatch *tp, uint64_t now)
 {
-	tp_tap_handle_timeout(now, tp);
+	int i;
+
+	for (i = 1; i <= 3; i++) {
+		if (tp->tap.buttons_pressed & (1 << i))
+			tp_tap_notify(tp, NULL, now, i,
+				      LIBINPUT_BUTTON_STATE_RELEASED);
+	}
+
+	tp->tap.state = tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
 }
