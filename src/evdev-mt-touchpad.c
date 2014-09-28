@@ -527,7 +527,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 	double dx, dy;
-	int consumed = 0;
+	int filter_motion = 0;
 
 	/* Only post (top) button events while suspended */
 	if (tp->device->suspended) {
@@ -535,10 +535,10 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 		return;
 	}
 
-	consumed |= tp_tap_handle_state(tp, time);
-	consumed |= tp_post_button_events(tp, time);
+	filter_motion |= tp_tap_handle_state(tp, time);
+	filter_motion |= tp_post_button_events(tp, time);
 
-	if (consumed) {
+	if (filter_motion) {
 		evdev_stop_scroll(tp->device, time);
 		return;
 	}
