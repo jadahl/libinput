@@ -832,7 +832,7 @@ notify_removed_device(struct libinput_device *device)
 
 void
 keyboard_notify_key(struct libinput_device *device,
-		    uint32_t time,
+		    uint64_t time,
 		    uint32_t key,
 		    enum libinput_key_state state)
 {
@@ -859,7 +859,7 @@ keyboard_notify_key(struct libinput_device *device,
 
 void
 pointer_notify_motion(struct libinput_device *device,
-		      uint32_t time,
+		      uint64_t time,
 		      double dx,
 		      double dy)
 {
@@ -882,7 +882,7 @@ pointer_notify_motion(struct libinput_device *device,
 
 void
 pointer_notify_motion_absolute(struct libinput_device *device,
-			       uint32_t time,
+			       uint64_t time,
 			       double x,
 			       double y)
 {
@@ -905,7 +905,7 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 
 void
 pointer_notify_button(struct libinput_device *device,
-		      uint32_t time,
+		      uint64_t time,
 		      int32_t button,
 		      enum libinput_button_state state)
 {
@@ -934,7 +934,7 @@ pointer_notify_button(struct libinput_device *device,
 
 void
 pointer_notify_axis(struct libinput_device *device,
-		    uint32_t time,
+		    uint64_t time,
 		    enum libinput_pointer_axis axis,
 		    double value)
 {
@@ -957,7 +957,7 @@ pointer_notify_axis(struct libinput_device *device,
 
 void
 touch_notify_touch_down(struct libinput_device *device,
-			uint32_t time,
+			uint64_t time,
 			int32_t slot,
 			int32_t seat_slot,
 			double x,
@@ -984,7 +984,7 @@ touch_notify_touch_down(struct libinput_device *device,
 
 void
 touch_notify_touch_motion(struct libinput_device *device,
-			  uint32_t time,
+			  uint64_t time,
 			  int32_t slot,
 			  int32_t seat_slot,
 			  double x,
@@ -1011,7 +1011,7 @@ touch_notify_touch_motion(struct libinput_device *device,
 
 void
 touch_notify_touch_up(struct libinput_device *device,
-		      uint32_t time,
+		      uint64_t time,
 		      int32_t slot,
 		      int32_t seat_slot)
 {
@@ -1034,7 +1034,7 @@ touch_notify_touch_up(struct libinput_device *device,
 
 void
 touch_notify_frame(struct libinput_device *device,
-		   uint32_t time)
+		   uint64_t time)
 {
 	struct libinput_event_touch *touch_event;
 
