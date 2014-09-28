@@ -211,6 +211,7 @@ struct tp_dispatch {
 	struct {
 		struct libinput_device_config_tap config;
 		bool enabled;
+		bool suspended;
 		struct libinput_timer timer;
 		enum tp_tap_state state;
 		uint32_t buttons_pressed;
@@ -280,5 +281,11 @@ tp_button_is_inside_softbutton_area(struct tp_dispatch *tp, struct tp_touch *t);
 void
 tp_release_all_taps(struct tp_dispatch *tp,
 		    uint64_t time);
+
+void
+tp_tap_suspend(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_tap_resume(struct tp_dispatch *tp, uint64_t time);
 
 #endif

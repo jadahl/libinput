@@ -546,6 +546,9 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	int filter_motion = 0;
 
+	if (tp->tap.suspended)
+		return 0;
+
 	/* Handle queued button pressed events from clickpads. For touchpads
 	 * with separate physical buttons, ignore button pressed events so they
 	 * don't interfere with tapping. */
@@ -710,5 +713,20 @@ tp_release_all_taps(struct tp_dispatch *tp, uint64_t now)
 				      LIBINPUT_BUTTON_STATE_RELEASED);
 	}
 
+	tp->tap.state = tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
+}
+
+void
+tp_tap_suspend(struct tp_dispatch *tp, uint64_t time)
+{
+	tp->tap.suspended = true;
+	tp_release_all_taps(tp, time);
+}
+
+void
+tp_tap_resume(struct tp_dispatch *tp, uint64_t time)
+{
+	tp->tap.suspended = false;
+	/* Must restart in DEAD if fingers are down atm */
 	tp->tap.state = tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
 }
