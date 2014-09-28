@@ -151,6 +151,11 @@ struct libinput_device {
 	struct libinput_device_config config;
 };
 
+struct libinput_event {
+	enum libinput_event_type type;
+	struct libinput_device *device;
+};
+
 struct libinput_event_listener {
 	struct list link;
 	void (*notify_func)(uint64_t time, struct libinput_event *ev, void *notify_func_data);

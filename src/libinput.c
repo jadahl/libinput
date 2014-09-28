@@ -42,11 +42,6 @@ struct libinput_source {
 	struct list link;
 };
 
-struct libinput_event {
-	enum libinput_event_type type;
-	struct libinput_device *device;
-};
-
 struct libinput_event_device_notify {
 	struct libinput_event base;
 };
