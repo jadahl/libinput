@@ -795,6 +795,7 @@ post_base_event(struct libinput_device *device,
 
 static void
 post_device_event(struct libinput_device *device,
+		  uint64_t time,
 		  enum libinput_event_type type,
 		  struct libinput_event *event)
 {
@@ -852,7 +853,7 @@ keyboard_notify_key(struct libinput_device *device,
 		.seat_key_count = seat_key_count,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_KEYBOARD_KEY,
 			  &key_event->base);
 }
@@ -875,7 +876,7 @@ pointer_notify_motion(struct libinput_device *device,
 		.y = dy,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_POINTER_MOTION,
 			  &motion_event->base);
 }
@@ -898,7 +899,7 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 		.y = y,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE,
 			  &motion_absolute_event->base);
 }
@@ -927,7 +928,7 @@ pointer_notify_button(struct libinput_device *device,
 		.seat_button_count = seat_button_count,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_POINTER_BUTTON,
 			  &button_event->base);
 }
@@ -950,7 +951,7 @@ pointer_notify_axis(struct libinput_device *device,
 		.value = value,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_POINTER_AXIS,
 			  &axis_event->base);
 }
@@ -977,7 +978,7 @@ touch_notify_touch_down(struct libinput_device *device,
 		.y = y,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_TOUCH_DOWN,
 			  &touch_event->base);
 }
@@ -1004,7 +1005,7 @@ touch_notify_touch_motion(struct libinput_device *device,
 		.y = y,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_TOUCH_MOTION,
 			  &touch_event->base);
 }
@@ -1027,7 +1028,7 @@ touch_notify_touch_up(struct libinput_device *device,
 		.seat_slot = seat_slot,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_TOUCH_UP,
 			  &touch_event->base);
 }
@@ -1046,7 +1047,7 @@ touch_notify_frame(struct libinput_device *device,
 		.time = time,
 	};
 
-	post_device_event(device,
+	post_device_event(device, time,
 			  LIBINPUT_EVENT_TOUCH_FRAME,
 			  &touch_event->base);
 }
