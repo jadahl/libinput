@@ -225,6 +225,9 @@ struct tp_dispatch {
 	struct {
 		struct libinput_device_config_send_events config;
 		enum libinput_config_send_events_mode current_mode;
+		bool trackpoint_active;
+		struct libinput_event_listener trackpoint_listener;
+		struct libinput_timer trackpoint_timer;
 	} sendevents;
 };
 

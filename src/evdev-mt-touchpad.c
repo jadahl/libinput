@@ -31,6 +31,7 @@
 
 #define DEFAULT_ACCEL_NUMERATOR 1200.0
 #define DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR 700.0
+#define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 500 /* ms */
 
 static inline int
 tp_hysteresis(int in, int center, int margin)
@@ -538,7 +539,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	filter_motion |= tp_tap_handle_state(tp, time);
 	filter_motion |= tp_post_button_events(tp, time);
 
-	if (filter_motion) {
+	if (filter_motion || tp->sendevents.trackpoint_active) {
 		evdev_stop_scroll(tp->device, time);
 		return;
 	}
@@ -600,6 +601,16 @@ tp_process(struct evdev_dispatch *dispatch,
 }
 
 static void
+tp_destroy_sendevents(struct tp_dispatch *tp)
+{
+	libinput_timer_cancel(&tp->sendevents.trackpoint_timer);
+
+	if (tp->buttons.trackpoint)
+		libinput_device_remove_event_listener(
+					&tp->sendevents.trackpoint_listener);
+}
+
+static void
 tp_destroy(struct evdev_dispatch *dispatch)
 {
 	struct tp_dispatch *tp =
@@ -607,6 +618,7 @@ tp_destroy(struct evdev_dispatch *dispatch)
 
 	tp_destroy_tap(tp);
 	tp_destroy_buttons(tp);
+	tp_destroy_sendevents(tp);
 
 	free(tp->touches);
 	free(tp);
@@ -672,6 +684,35 @@ tp_resume(struct tp_dispatch *tp, struct evdev_device *device)
 }
 
 static void
+tp_trackpoint_timeout(uint64_t now, void *data)
+{
+	struct tp_dispatch *tp = data;
+
+	tp_tap_resume(tp, now);
+	tp->sendevents.trackpoint_active = false;
+}
+
+static void
+tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
+{
+	struct tp_dispatch *tp = data;
+
+	/* Buttons do not count as trackpad activity, as people may use
+	   the trackpoint buttons in combination with the touchpad. */
+	if (event->type == LIBINPUT_EVENT_POINTER_BUTTON)
+		return;
+
+	if (!tp->sendevents.trackpoint_active) {
+		evdev_stop_scroll(tp->device, time);
+		tp_tap_suspend(tp, time);
+		tp->sendevents.trackpoint_active = true;
+	}
+
+	libinput_timer_set(&tp->sendevents.trackpoint_timer,
+			   time + DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT);
+}
+
+static void
 tp_device_added(struct evdev_device *device,
 		struct evdev_device *added_device)
 {
@@ -682,6 +723,9 @@ tp_device_added(struct evdev_device *device,
 		/* Don't send any pending releases to the new trackpoint */
 		tp->buttons.active_is_topbutton = false;
 		tp->buttons.trackpoint = added_device;
+		libinput_device_add_event_listener(&added_device->base,
+					&tp->sendevents.trackpoint_listener,
+					tp_trackpoint_event, tp);
 	}
 
 	if (tp->sendevents.current_mode !=
@@ -705,6 +749,8 @@ tp_device_removed(struct evdev_device *device,
 			tp->buttons.active = 0;
 			tp->buttons.active_is_topbutton = false;
 		}
+		libinput_device_remove_event_listener(
+					&tp->sendevents.trackpoint_listener);
 		tp->buttons.trackpoint = NULL;
 	}
 
@@ -941,6 +987,16 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 }
 
 static int
+tp_init_sendevents(struct tp_dispatch *tp,
+		   struct evdev_device *device)
+{
+	libinput_timer_init(&tp->sendevents.trackpoint_timer,
+			    tp->device->base.seat->libinput,
+			    tp_trackpoint_timeout, tp);
+	return 0;
+}
+
+static int
 tp_init(struct tp_dispatch *tp,
 	struct evdev_device *device)
 {
@@ -977,6 +1033,9 @@ tp_init(struct tp_dispatch *tp,
 		return -1;
 
 	if (tp_init_palmdetect(tp, device) != 0)
+		return -1;
+
+	if (tp_init_sendevents(tp, device) != 0)
 		return -1;
 
 	device->seat_caps |= EVDEV_DEVICE_POINTER;
