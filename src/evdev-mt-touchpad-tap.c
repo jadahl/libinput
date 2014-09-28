@@ -562,7 +562,8 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 		if (!t->dirty || t->state == TOUCH_NONE)
 			continue;
 
-		if (tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
+		if (tp->buttons.is_clickpad &&
+		    tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS)
 			t->tap.state = TAP_TOUCH_STATE_DEAD;
 
 		if (t->state == TOUCH_BEGIN) {
