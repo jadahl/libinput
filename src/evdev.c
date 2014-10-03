@@ -577,11 +577,11 @@ evdev_process_absolute(struct evdev_device *device,
 	}
 }
 
-static inline int
+static inline bool
 evdev_need_touch_frame(struct evdev_device *device)
 {
 	if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
-		return 0;
+		return false;
 
 	switch (device->pending_event) {
 	case EVDEV_NONE:
@@ -593,10 +593,10 @@ evdev_need_touch_frame(struct evdev_device *device)
 	case EVDEV_ABSOLUTE_TOUCH_DOWN:
 	case EVDEV_ABSOLUTE_TOUCH_UP:
 	case EVDEV_ABSOLUTE_MOTION:
-		return 1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 static void
@@ -626,7 +626,7 @@ fallback_process(struct evdev_dispatch *dispatch,
 		 struct input_event *event,
 		 uint64_t time)
 {
-	int need_frame = 0;
+	bool need_frame = false;
 
 	switch (event->type) {
 	case EV_REL:
