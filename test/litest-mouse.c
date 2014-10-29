@@ -55,7 +55,7 @@ static int events[] = {
 
 struct litest_test_device litest_mouse_device = {
 	.type = LITEST_MOUSE,
-	.features = LITEST_POINTER | LITEST_BUTTON | LITEST_WHEEL,
+	.features = LITEST_RELATIVE | LITEST_BUTTON | LITEST_WHEEL,
 	.shortname = "mouse",
 	.setup = litest_mouse_setup,
 	.interface = &interface,

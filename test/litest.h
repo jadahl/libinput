@@ -55,7 +55,7 @@ enum litest_device_feature {
 	LITEST_CLICKPAD = 1 << 1,
 	LITEST_BUTTON = 1 << 2,
 	LITEST_KEYS = 1 << 3,
-	LITEST_POINTER = 1 << 4,
+	LITEST_RELATIVE = 1 << 4,
 	LITEST_WHEEL = 1 << 5,
 	LITEST_TOUCH = 1 << 6,
 	LITEST_SINGLE_TOUCH = 1 << 7,

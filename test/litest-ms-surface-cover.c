@@ -374,7 +374,7 @@ static int events[] = {
 
 struct litest_test_device litest_ms_surface_cover_device = {
 	.type = LITEST_MS_SURFACE_COVER,
-	.features = LITEST_KEYBOARD | LITEST_POINTER | LITEST_FAKE_MT,
+	.features = LITEST_KEYBOARD | LITEST_RELATIVE | LITEST_FAKE_MT,
 	.shortname = "MS surface cover",
 	.setup = litest_ms_surface_cover_setup,
 	.interface = &interface,

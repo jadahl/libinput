@@ -520,7 +520,7 @@ END_TEST
 
 int main (int argc, char **argv) {
 
-	litest_add("pointer:motion", pointer_motion_relative, LITEST_POINTER, LITEST_ANY);
+	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
@@ -530,9 +530,9 @@ int main (int argc, char **argv) {
 
 									/* tests touchpads too */
 	litest_add("pointer:left-handed", pointer_left_handed_defaults, LITEST_BUTTON, LITEST_ANY);
-	litest_add("pointer:left-handed", pointer_left_handed, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
-	litest_add("pointer:left-handed", pointer_left_handed_during_click, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
-	litest_add("pointer:left-handed", pointer_left_handed_during_click_multiple_buttons, LITEST_POINTER|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed_during_click, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:left-handed", pointer_left_handed_during_click_multiple_buttons, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
