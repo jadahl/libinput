@@ -102,6 +102,44 @@ START_TEST(pointer_motion_relative)
 END_TEST
 
 static void
+test_absolute_event(struct litest_device *dev, double x, double y)
+{
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+	double ex, ey;
+
+	litest_touch_down(dev, 0, x, y);
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
+
+	ptrev = libinput_event_get_pointer_event(event);
+	ck_assert(ptrev != NULL);
+
+	ex = libinput_event_pointer_get_absolute_x_transformed(ptrev, 100);
+	ey = libinput_event_pointer_get_absolute_y_transformed(ptrev, 100);
+	ck_assert_int_eq(ex + 0.5, x);
+	ck_assert_int_eq(ey + 0.5, y);
+
+	libinput_event_destroy(event);
+}
+
+START_TEST(pointer_motion_absolute)
+{
+	struct litest_device *dev = litest_current_device();
+
+	litest_drain_events(dev->libinput);
+
+	test_absolute_event(dev, 0, 100);
+	test_absolute_event(dev, 100, 0);
+	test_absolute_event(dev, 50, 50);
+}
+END_TEST
+
+static void
 test_button_event(struct litest_device *dev, unsigned int button, int state)
 {
 	struct libinput *li = dev->libinput;
@@ -521,6 +559,7 @@ END_TEST
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
+	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
