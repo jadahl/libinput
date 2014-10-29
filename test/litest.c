@@ -88,6 +88,7 @@ extern struct litest_test_device litest_wacom_touch_device;
 extern struct litest_test_device litest_alps_device;
 extern struct litest_test_device litest_generic_singletouch_device;
 extern struct litest_test_device litest_qemu_tablet_device;
+extern struct litest_test_device litest_xen_virtual_pointer_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -101,6 +102,7 @@ struct litest_test_device* devices[] = {
 	&litest_alps_device,
 	&litest_generic_singletouch_device,
 	&litest_qemu_tablet_device,
+	&litest_xen_virtual_pointer_device,
 	NULL,
 };
 

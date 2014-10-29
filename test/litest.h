@@ -47,6 +47,7 @@ enum litest_device_type {
 	LITEST_GENERIC_SINGLETOUCH = -11,
 	LITEST_MS_SURFACE_COVER = -12,
 	LITEST_QEMU_TABLET = -13,
+	LITEST_XEN_VIRTUAL_POINTER = -14,
 };
 
 enum litest_device_feature {
