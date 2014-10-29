@@ -46,6 +46,7 @@ enum litest_device_type {
 	LITEST_ALPS_SEMI_MT = -10,
 	LITEST_GENERIC_SINGLETOUCH = -11,
 	LITEST_MS_SURFACE_COVER = -12,
+	LITEST_QEMU_TABLET = -13,
 };
 
 enum litest_device_feature {
@@ -64,6 +65,7 @@ enum litest_device_feature {
 	LITEST_SEMI_MT = 1 << 10,
 	LITEST_POINTINGSTICK = 1 << 11,
 	LITEST_FAKE_MT = 1 << 12,
+	LITEST_ABSOLUTE = 1 << 13,
 };
 
 struct litest_device {

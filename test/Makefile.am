@@ -21,6 +21,7 @@ liblitest_la_SOURCES = \
 	litest-keyboard.c \
 	litest-mouse.c \
 	litest-ms-surface-cover.c \
+	litest-qemu-usb-tablet.c \
 	litest-synaptics.c \
 	litest-synaptics-st.c \
 	litest-synaptics-t440.c \
