@@ -135,6 +135,10 @@ struct evdev_device {
 		/* Checks if buttons are down and commits the setting */
 		void (*change_to_left_handed)(struct evdev_device *device);
 	} buttons;
+
+	/* The number of times libevdev processes a SYN_DROPPED, so we can
+	 * stop logging them to avoid flooding the logs. */
+	int syn_drops_received;
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)

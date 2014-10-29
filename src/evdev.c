@@ -924,6 +924,17 @@ evdev_device_dispatch(void *data)
 		rc = libevdev_next_event(device->evdev,
 					 LIBEVDEV_READ_FLAG_NORMAL, &ev);
 		if (rc == LIBEVDEV_READ_STATUS_SYNC) {
+			if (device->syn_drops_received < 10) {
+				device->syn_drops_received++;
+				log_info(libinput, "SYN_DROPPED event from "
+					 "\"%s\" - some input events have "
+					 "been lost.\n", device->devname);
+				if (device->syn_drops_received == 10)
+					log_info(libinput, "No longer logging "
+						 "SYN_DROPPED events for "
+						 "\"%s\"\n", device->devname);
+			}
+
 			/* send one more sync event so we handle all
 			   currently pending events before we sync up
 			   to the current state */
