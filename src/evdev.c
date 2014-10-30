@@ -42,6 +42,8 @@
 
 #define DEFAULT_AXIS_STEP_DISTANCE 10
 #define DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT 200
+/* The HW DPI rate we normalize to before calculating pointer acceleration */
+#define DEFAULT_MOUSE_DPI 400
 
 enum evdev_key_type {
 	EVDEV_KEY_TYPE_NONE,
@@ -205,8 +207,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 	case EVDEV_NONE:
 		return;
 	case EVDEV_RELATIVE_MOTION:
-		motion.dx = device->rel.dx;
-		motion.dy = device->rel.dy;
+		motion.dx = device->rel.dx / ((double)device->dpi / DEFAULT_MOUSE_DPI);
+		motion.dy = device->rel.dy / ((double)device->dpi / DEFAULT_MOUSE_DPI);
 		device->rel.dx = 0;
 		device->rel.dy = 0;
 
@@ -1293,6 +1295,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->devname = libevdev_get_name(device->evdev);
 	device->scroll.threshold = 5.0; /* Default may be overridden */
 	device->scroll.direction = 0;
+	device->dpi = DEFAULT_MOUSE_DPI;
 
 	matrix_init_identity(&device->abs.calibration);
 	matrix_init_identity(&device->abs.usermatrix);

@@ -136,6 +136,7 @@ struct evdev_device {
 		void (*change_to_left_handed)(struct evdev_device *device);
 	} buttons;
 
+	int dpi; /* HW resolution */
 	/* The number of times libevdev processes a SYN_DROPPED, so we can
 	 * stop logging them to avoid flooding the logs. */
 	int syn_drops_received;
