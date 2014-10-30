@@ -1387,9 +1387,9 @@ libinput_device_config_send_events_get_modes(struct libinput_device *device)
 
 LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_send_events_set_mode(struct libinput_device *device,
-					    enum libinput_config_send_events_mode mode)
+					    uint32_t mode)
 {
-	if ((libinput_device_config_send_events_get_modes(device) & mode) == 0)
+	if ((libinput_device_config_send_events_get_modes(device) & mode) != mode)
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	if (device->config.sendevents)
@@ -1398,7 +1398,7 @@ libinput_device_config_send_events_set_mode(struct libinput_device *device,
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
-LIBINPUT_EXPORT enum libinput_config_send_events_mode
+LIBINPUT_EXPORT uint32_t
 libinput_device_config_send_events_get_mode(struct libinput_device *device)
 {
 	if (device->config.sendevents)
@@ -1407,7 +1407,7 @@ libinput_device_config_send_events_get_mode(struct libinput_device *device)
 		return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 }
 
-LIBINPUT_EXPORT enum libinput_config_send_events_mode
+LIBINPUT_EXPORT uint32_t
 libinput_device_config_send_events_get_default_mode(struct libinput_device *device)
 {
 	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;

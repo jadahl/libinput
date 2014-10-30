@@ -1047,8 +1047,7 @@ static uint32_t
 tp_sendevents_get_modes(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
-	uint32_t modes = LIBINPUT_CONFIG_SEND_EVENTS_ENABLED |
-			 LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
+	uint32_t modes = LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
 
 	if (evdev->tags & EVDEV_TAG_INTERNAL_TOUCHPAD)
 		modes |= LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE;
@@ -1077,6 +1076,11 @@ tp_sendevents_set_mode(struct libinput_device *device,
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
+
+	/* DISABLED overrides any DISABLED_ON_ */
+	if ((mode & LIBINPUT_CONFIG_SEND_EVENTS_DISABLED) &&
+	    (mode & LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE))
+	    mode &= ~LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE;
 
 	if (mode == tp->sendevents.current_mode)
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;

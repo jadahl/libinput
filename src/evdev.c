@@ -717,8 +717,7 @@ struct evdev_dispatch_interface fallback_interface = {
 static uint32_t
 evdev_sendevents_get_modes(struct libinput_device *device)
 {
-	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED |
-	       LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
+	return LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
 }
 
 static enum libinput_config_status
@@ -738,7 +737,7 @@ evdev_sendevents_set_mode(struct libinput_device *device,
 	case LIBINPUT_CONFIG_SEND_EVENTS_DISABLED:
 		evdev_device_suspend(evdev);
 		break;
-	default:
+	default: /* no support for combined modes yet */
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 	}
 
