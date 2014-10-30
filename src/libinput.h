@@ -1780,7 +1780,7 @@ libinput_device_config_send_events_get_mode(struct libinput_device *device);
  * the device processes and sends events to the caller.
  *
  * @param device The device to configure
- * @return The current send-event mode for this device.
+ * @return The default send-event mode for this device.
  *
  * @see libinput_device_config_send_events_get_modes
  * @see libinput_device_config_send_events_set_mode
