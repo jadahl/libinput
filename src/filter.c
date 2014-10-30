@@ -282,7 +282,7 @@ struct motion_filter_interface accelerator_interface = {
 };
 
 struct motion_filter *
-create_pointer_accelator_filter(accel_profile_func_t profile)
+create_pointer_accelerator_filter(accel_profile_func_t profile)
 {
 	struct pointer_accelerator *filter;
 

@@ -53,7 +53,7 @@ typedef double (*accel_profile_func_t)(struct motion_filter *filter,
 				       uint64_t time);
 
 struct motion_filter *
-create_pointer_accelator_filter(accel_profile_func_t filter);
+create_pointer_accelerator_filter(accel_profile_func_t filter);
 
 
 /*

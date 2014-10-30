@@ -992,7 +992,7 @@ int
 evdev_device_init_pointer_acceleration(struct evdev_device *device)
 {
 	device->pointer.filter =
-		create_pointer_accelator_filter(
+		create_pointer_accelerator_filter(
 			pointer_accel_profile_linear);
 	if (!device->pointer.filter)
 		return -1;
