@@ -1226,6 +1226,12 @@ libinput_device_set_seat_logical_name(struct libinput_device *device,
 							       name);
 }
 
+LIBINPUT_EXPORT struct udev_device *
+libinput_device_get_udev_device(struct libinput_device *device)
+{
+	return evdev_device_get_udev_device((struct evdev_device *)device);
+}
+
 LIBINPUT_EXPORT void
 libinput_device_led_update(struct libinput_device *device,
 			   enum libinput_led leds)

@@ -234,6 +234,9 @@ evdev_device_get_id_product(struct evdev_device *device);
 unsigned int
 evdev_device_get_id_vendor(struct evdev_device *device);
 
+struct udev_device *
+evdev_device_get_udev_device(struct evdev_device *device);
+
 void
 evdev_device_set_default_calibration(struct evdev_device *device,
 				     const float calibration[6]);

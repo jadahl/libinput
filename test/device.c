@@ -618,6 +618,17 @@ START_TEST(device_ids)
 }
 END_TEST
 
+START_TEST(device_get_udev_handle)
+{
+	struct litest_device *dev = litest_current_device();
+	struct udev_device *udev_device;
+
+	udev_device = libinput_device_get_udev_device(dev->libinput_device);
+	ck_assert_notnull(udev_device);
+	udev_device_unref(udev_device);
+}
+END_TEST
+
 int main (int argc, char **argv)
 {
 	litest_add("device:sendevents", device_sendevents_config, LITEST_ANY, LITEST_TOUCHPAD);
@@ -639,6 +650,8 @@ int main (int argc, char **argv)
 	litest_add("device:sendevents", device_disable_release_softbutton, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 	litest_add("device:sendevents", device_disable_topsoftbutton, LITEST_TOPBUTTONPAD, LITEST_ANY);
 	litest_add("device:id", device_ids, LITEST_ANY, LITEST_ANY);
+
+	litest_add("device:udev", device_get_udev_handle, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

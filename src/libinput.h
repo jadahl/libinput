@@ -1397,6 +1397,24 @@ libinput_device_set_seat_logical_name(struct libinput_device *device,
 				      const char *name);
 
 /**
+ * Return a udev handle to the device that is this libinput device, if any.
+ * The returned handle has a refcount of at least 1, the caller must call
+ * udev_device_unref() once to release the associated resources.
+ *
+ * Some devices may not have a udev device, or the udev device may be
+ * unobtainable. This function returns NULL if no udev device was available.
+ *
+ * Calling this function multiple times for the same device may not
+ * return the same udev handle each time.
+ *
+ * @param device A previously obtained device
+ * @return A udev handle to the device with a refcount of >= 1 or NULL.
+ * @retval NULL This device is not represented by a udev device
+ */
+struct udev_device *
+libinput_device_get_udev_device(struct libinput_device *device);
+
+/**
  * @ingroup device
  *
  * Update the LEDs on the device, if any. If the device does not have
