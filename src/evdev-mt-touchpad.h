@@ -203,7 +203,9 @@ struct tp_dispatch {
 
 	struct {
 		struct libinput_device_config_natural_scroll config_natural;
+		struct libinput_device_config_scroll_mode config_mode;
 		bool natural_scrolling_enabled;
+		enum libinput_config_scroll_mode mode;
 	} scroll;
 
 	enum touchpad_event queued;
