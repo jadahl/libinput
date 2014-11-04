@@ -1084,7 +1084,8 @@ libinput_log_get_priority(const struct libinput *libinput);
  * @param format Message format in printf-style
  * @param args Message arguments
  *
- * @see libinput_set_log_priority
+ * @see libinput_log_set_priority
+ * @see libinput_log_get_priority
  * @see libinput_log_set_handler
  */
 typedef void (*libinput_log_handler)(struct libinput *libinput,
@@ -1103,10 +1104,9 @@ typedef void (*libinput_log_handler)(struct libinput *libinput,
  *
  * @param libinput A previously initialized libinput context
  * @param log_handler The log handler for library messages.
- * @param user_data Caller-specific data pointer, passed into the log
- * handler.
  *
- * @see libinput_log_set_handler
+ * @see libinput_log_set_priority
+ * @see libinput_log_get_priority
  */
 void
 libinput_log_set_handler(struct libinput *libinput,
