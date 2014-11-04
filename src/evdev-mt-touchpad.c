@@ -949,12 +949,12 @@ static int
 tp_init_scroll(struct tp_dispatch *tp)
 {
 
-	tp->scroll.config.has = tp_scroll_config_natural_has;
-	tp->scroll.config.set_enabled = tp_scroll_config_natural_set;
-	tp->scroll.config.get_enabled = tp_scroll_config_natural_get;
-	tp->scroll.config.get_default_enabled = tp_scroll_config_natural_get_default;
+	tp->scroll.config_natural.has = tp_scroll_config_natural_has;
+	tp->scroll.config_natural.set_enabled = tp_scroll_config_natural_set;
+	tp->scroll.config_natural.get_enabled = tp_scroll_config_natural_get;
+	tp->scroll.config_natural.get_default_enabled = tp_scroll_config_natural_get_default;
 	tp->scroll.natural_scrolling_enabled = false;
-	tp->device->base.config.natural_scroll = &tp->scroll.config;
+	tp->device->base.config.natural_scroll = &tp->scroll.config_natural;
 
 	/* In mm for touchpads with valid resolution, see tp_init_accel() */
 	tp->device->scroll.threshold = 5.0;

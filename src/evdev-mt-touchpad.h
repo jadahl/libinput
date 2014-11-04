@@ -202,7 +202,7 @@ struct tp_dispatch {
 	} buttons;				/* physical buttons */
 
 	struct {
-		struct libinput_device_config_natural_scroll config;
+		struct libinput_device_config_natural_scroll config_natural;
 		bool natural_scrolling_enabled;
 	} scroll;
 
