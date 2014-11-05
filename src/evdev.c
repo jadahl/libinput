@@ -1095,7 +1095,15 @@ evdev_configure_device(struct evdev_device *device)
 			device->abs.absinfo_y = absinfo;
 			has_abs = 1;
 		}
-		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
+
+		/* Fake MT devices have the ABS_MT_SLOT bit set because of
+		   the limited ABS_* range - they aren't MT devices, they
+		   just have too many ABS_ axes */
+		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT) &&
+		    libevdev_get_num_slots(evdev) == -1) {
+			has_mt = 0;
+			has_touch = 0;
+		} else if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
 		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
 			if (evdev_fix_abs_resolution(evdev,
