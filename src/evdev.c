@@ -925,15 +925,19 @@ evdev_device_dispatch(void *data)
 		rc = libevdev_next_event(device->evdev,
 					 LIBEVDEV_READ_FLAG_NORMAL, &ev);
 		if (rc == LIBEVDEV_READ_STATUS_SYNC) {
-			if (device->syn_drops_received < 10) {
-				device->syn_drops_received++;
+			switch (ratelimit_test(&device->syn_drop_limit)) {
+			case RATELIMIT_PASS:
 				log_info(libinput, "SYN_DROPPED event from "
 					 "\"%s\" - some input events have "
 					 "been lost.\n", device->devname);
-				if (device->syn_drops_received == 10)
-					log_info(libinput, "No longer logging "
-						 "SYN_DROPPED events for "
-						 "\"%s\"\n", device->devname);
+				break;
+			case RATELIMIT_THRESHOLD:
+				log_info(libinput, "SYN_DROPPED flood "
+					 "from \"%s\"\n",
+					 device->devname);
+				break;
+			case RATELIMIT_EXCEEDED:
+				break;
 			}
 
 			/* send one more sync event so we handle all
@@ -1310,6 +1314,8 @@ evdev_device_create(struct libinput_seat *seat,
 	device->scroll.threshold = 5.0; /* Default may be overridden */
 	device->scroll.direction = 0;
 	device->dpi = DEFAULT_MOUSE_DPI;
+	/* at most 5 SYN_DROPPED log-messages per 30s */
+	ratelimit_init(&device->syn_drop_limit, 30ULL * 1000, 5);
 
 	matrix_init_identity(&device->abs.calibration);
 	matrix_init_identity(&device->abs.usermatrix);

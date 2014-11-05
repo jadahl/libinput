@@ -137,9 +137,7 @@ struct evdev_device {
 	} buttons;
 
 	int dpi; /* HW resolution */
-	/* The number of times libevdev processes a SYN_DROPPED, so we can
-	 * stop logging them to avoid flooding the logs. */
-	int syn_drops_received;
+	struct ratelimit syn_drop_limit; /* ratelimit for SYN_DROPPED logging */
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)
