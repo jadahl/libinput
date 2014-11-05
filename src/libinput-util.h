@@ -280,4 +280,20 @@ matrix_to_farray6(const struct matrix *m, float out[6])
 	out[5] = m->val[1][2];
 }
 
+enum ratelimit_state {
+	RATELIMIT_EXCEEDED,
+	RATELIMIT_THRESHOLD,
+	RATELIMIT_PASS,
+};
+
+struct ratelimit {
+	uint64_t interval;
+	uint64_t begin;
+	unsigned int burst;
+	unsigned int num;
+};
+
+void ratelimit_init(struct ratelimit *r, uint64_t ival_ms, unsigned int burst);
+enum ratelimit_state ratelimit_test(struct ratelimit *r);
+
 #endif /* LIBINPUT_UTIL_H */

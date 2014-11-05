@@ -65,3 +65,51 @@ list_empty(const struct list *list)
 {
 	return list->next == list;
 }
+
+void
+ratelimit_init(struct ratelimit *r, uint64_t ival_ms, unsigned int burst)
+{
+	r->interval = ival_ms;
+	r->begin = 0;
+	r->burst = burst;
+	r->num = 0;
+}
+
+/*
+ * Perform rate-limit test. Returns RATELIMIT_PASS if the rate-limited action
+ * is still allowed, RATELIMIT_THRESHOLD if the limit has been reached with
+ * this call, and RATELIMIT_EXCEEDED if you're beyond the threshold.
+ * It's safe to treat the return-value as boolean, if you're not interested in
+ * the exact state. It evaluates to "true" if the threshold hasn't been
+ * exceeded, yet.
+ *
+ * The ratelimit object must be initialized via ratelimit_init().
+ *
+ * Modelled after Linux' lib/ratelimit.c by Dave Young
+ * <hidave.darkstar@gmail.com>, which is licensed GPLv2.
+ */
+enum ratelimit_state
+ratelimit_test(struct ratelimit *r)
+{
+	struct timespec ts;
+	uint64_t mtime;
+
+	if (r->interval <= 0 || r->burst <= 0)
+		return RATELIMIT_PASS;
+
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	mtime = ts.tv_sec * 1000 + ts.tv_nsec / 1000 / 1000;
+
+	if (r->begin <= 0 || r->begin + r->interval < mtime) {
+		/* reset counter */
+		r->begin = mtime;
+		r->num = 1;
+		return RATELIMIT_PASS;
+	} else if (r->num < r->burst) {
+		/* continue burst */
+		return (++r->num == r->burst) ? RATELIMIT_THRESHOLD
+					      : RATELIMIT_PASS;
+	}
+
+	return RATELIMIT_EXCEEDED;
+}

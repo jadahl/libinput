@@ -508,6 +508,46 @@ START_TEST(matrix_helpers)
 }
 END_TEST
 
+START_TEST(ratelimit_helpers)
+{
+	struct ratelimit rl;
+	unsigned int i, j;
+
+	/* 10 attempts every 100ms */
+	ratelimit_init(&rl, 100, 10);
+
+	for (j = 0; j < 3; ++j) {
+		/* a burst of 9 attempts must succeed */
+		for (i = 0; i < 9; ++i) {
+			ck_assert_int_eq(ratelimit_test(&rl),
+					 RATELIMIT_PASS);
+		}
+
+		/* the 10th attempt reaches the threshold */
+		ck_assert_int_eq(ratelimit_test(&rl), RATELIMIT_THRESHOLD);
+
+		/* ..then further attempts must fail.. */
+		ck_assert_int_eq(ratelimit_test(&rl), RATELIMIT_EXCEEDED);
+
+		/* ..regardless of how often we try. */
+		for (i = 0; i < 100; ++i) {
+			ck_assert_int_eq(ratelimit_test(&rl),
+					 RATELIMIT_EXCEEDED);
+		}
+
+		/* ..even after waiting 20ms */
+		msleep(20);
+		for (i = 0; i < 100; ++i) {
+			ck_assert_int_eq(ratelimit_test(&rl),
+					 RATELIMIT_EXCEEDED);
+		}
+
+		/* but after 100ms the counter is reset */
+		msleep(90); /* +10ms to account for time drifts */
+	}
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_no_device("events:conversion", event_conversion_pointer);
@@ -519,5 +559,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("config:status string", config_status_string);
 
 	litest_add_no_device("misc:matrix", matrix_helpers);
+	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
+
 	return litest_run(argc, argv);
 }
