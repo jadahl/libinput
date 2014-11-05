@@ -107,11 +107,35 @@ START_TEST(trackpoint_middlebutton_noscroll)
 }
 END_TEST
 
+START_TEST(trackpoint_scroll_source)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+
+	litest_drain_events(li);
+
+	litest_button_scroll(dev, BTN_MIDDLE, 0, 6);
+	litest_wait_for_event_of_type(li, LIBINPUT_EVENT_POINTER_AXIS, -1);
+
+	while ((event = libinput_get_event(li))) {
+		ptrev = libinput_event_get_pointer_event(event);
+
+		ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+				 LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS);
+
+		libinput_event_destroy(event);
+	}
+}
+END_TEST
+
 int main(int argc, char **argv) {
 
 	litest_add("trackpoint:middlebutton", trackpoint_middlebutton, LITEST_POINTINGSTICK, LITEST_ANY);
 	litest_add("trackpoint:middlebutton", trackpoint_middlebutton_noscroll, LITEST_POINTINGSTICK, LITEST_ANY);
 	litest_add("trackpoint:scroll", trackpoint_scroll, LITEST_POINTINGSTICK, LITEST_ANY);
+	litest_add("trackpoint:scroll", trackpoint_scroll_source, LITEST_POINTINGSTICK, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

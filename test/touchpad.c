@@ -1461,6 +1461,29 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 }
 END_TEST
 
+START_TEST(touchpad_2fg_scroll_source)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+
+	litest_drain_events(li);
+
+	test_2fg_scroll(dev, 0, 20, 0);
+	litest_wait_for_event_of_type(li, LIBINPUT_EVENT_POINTER_AXIS, -1);
+
+	while ((event = libinput_get_event(li))) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		ptrev = libinput_event_get_pointer_event(event);
+		ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+				 LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
+		libinput_event_destroy(event);
+	}
+}
+END_TEST
+
 START_TEST(touchpad_2fg_scroll_return_to_motion)
 {
 	struct litest_device *dev = litest_current_device();
@@ -1663,6 +1686,32 @@ START_TEST(touchpad_edge_scroll_no_edge_after_motion)
 
 	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_edge_scroll_source)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 99, 20);
+	litest_touch_move_to(dev, 0, 99, 20, 99, 80, 10, 0);
+	litest_touch_up(dev, 0);
+
+	litest_wait_for_event_of_type(li, LIBINPUT_EVENT_POINTER_AXIS, -1);
+
+	while ((event = libinput_get_event(li))) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		ptrev = libinput_event_get_pointer_event(event);
+		ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+				 LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
+		libinput_event_destroy(event);
+	}
 }
 END_TEST
 
@@ -2219,6 +2268,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:scroll", touchpad_2fg_scroll, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_2fg_scroll_slow_distance, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_2fg_scroll_return_to_motion, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:scroll", touchpad_2fg_scroll_source, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_defaults, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_enable_config, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
@@ -2226,6 +2276,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:scroll", touchpad_edge_scroll_no_motion, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_no_edge_after_motion, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_slow_distance, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
+	litest_add("touchpad:scroll", touchpad_edge_scroll_source, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 
 	litest_add("touchpad:palm", touchpad_palm_detect_at_edge, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_at_bottom_corners, LITEST_TOUCHPAD, LITEST_CLICKPAD);

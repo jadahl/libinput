@@ -435,7 +435,10 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 
 	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
-	evdev_post_scroll(tp->device, time, dx, dy);
+	evdev_post_scroll(tp->device,
+			  time,
+			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
+			  dx, dy);
 	tp->scroll.twofinger_state = TWOFINGER_SCROLL_STATE_ACTIVE;
 }
 
@@ -445,7 +448,9 @@ tp_twofinger_stop_scroll(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t, *ptr = NULL;
 	int nfingers_down = 0;
 
-	evdev_stop_scroll(tp->device, time);
+	evdev_stop_scroll(tp->device,
+			  time,
+			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
 
 	/* If we were scrolling and now there's exactly 1 active finger,
 	   switch back to pointer movement */
@@ -846,7 +851,9 @@ tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
 		return;
 
 	if (!tp->sendevents.trackpoint_active) {
-		evdev_stop_scroll(tp->device, time);
+		evdev_stop_scroll(tp->device,
+				  time,
+				  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
 		tp_tap_suspend(tp, time);
 		tp->sendevents.trackpoint_active = true;
 	}

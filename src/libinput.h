@@ -108,6 +108,28 @@ enum libinput_pointer_axis {
 };
 
 /**
+ * @ingroup device
+ *
+ * The source for a libinput_pointer_axis event. See
+ * libinput_event_pointer_get_axis_source() for details.
+ */
+enum libinput_pointer_axis_source {
+	/**
+	 * The event is caused by the rotation of a wheel.
+	 */
+	LIBINPUT_POINTER_AXIS_SOURCE_WHEEL = 1,
+	/**
+	 * The event is caused by the movement of one or more fingers on a
+	 * device.
+	 */
+	LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
+	/**
+	 * The event is caused by the motion of some device.
+	 */
+	LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS,
+};
+
+/**
  * @ingroup base
  *
  * Event type for events returned by libinput_get_event().
@@ -651,9 +673,8 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  * @ref LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
  * @ref LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, the value of the event is in
  * relative scroll units, with the positive direction being down or right,
- * respectively. The dimension of a scroll unit is equal to one unit of
- * motion in the respective axis, where applicable (e.g. touchpad two-finger
- * scrolling).
+ * respectively. For the interpretation of the value, see
+ * libinput_event_pointer_get_axis_source().
  *
  * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
  * this function returns 0.
@@ -665,6 +686,44 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  */
 double
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
+ * Return the source for a given axis event. Axis events (scroll events) can
+ * be caused by a hardware item such as a scroll wheel or emulated from
+ * other input sources, such as two-finger or edge scrolling on a
+ * touchpad.
+ *
+ * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_FINGER, libinput
+ * guarantees that a scroll sequence is terminated with a scroll value of 0.
+ * A caller may use this information to decide on whether kinetic scrolling
+ * should be triggered on this scroll sequence.
+ * The coordinate system is identical to the cursor movement, i.e. a
+ * scroll value of 1 represents the equivalent relative motion of 1.
+ *
+ * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_WHEEL, no terminating
+ * event is guaranteed (though it may happen).
+ * Scrolling is in discreet steps, a value of 10 representing one click
+ * of a typical mouse wheel. Some mice may have differently grained wheels,
+ * libinput will adjust the value accordingly. It is up to the caller how to
+ * interpret such different step sizes.
+ *
+ * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS, no
+ * terminating event is guaranteed (though it may happen).
+ * The coordinate system is identical to the cursor movement, i.e. a
+ * scroll value of 1 represents the equivalent relative motion of 1.
+ *
+ * For pointer events that are not of type LIBINPUT_EVENT_POINTER_AXIS,
+ * this function returns 0.
+ *
+ * @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_AXIS.
+ *
+ * @return the source for this axis event
+ */
+enum libinput_pointer_axis_source
+libinput_event_pointer_get_axis_source(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer

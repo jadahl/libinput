@@ -65,6 +65,7 @@ struct libinput_event_pointer {
 	uint32_t seat_button_count;
 	enum libinput_button_state state;
 	enum libinput_pointer_axis axis;
+	enum libinput_pointer_axis_source source;
 	double value;
 };
 
@@ -388,6 +389,12 @@ LIBINPUT_EXPORT double
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event)
 {
 	return event->value;
+}
+
+LIBINPUT_EXPORT enum libinput_pointer_axis_source
+libinput_event_pointer_get_axis_source(struct libinput_event_pointer *event)
+{
+	return event->source;
 }
 
 LIBINPUT_EXPORT uint32_t
@@ -986,6 +993,7 @@ void
 pointer_notify_axis(struct libinput_device *device,
 		    uint64_t time,
 		    enum libinput_pointer_axis axis,
+		    enum libinput_pointer_axis_source source,
 		    double value)
 {
 	struct libinput_event_pointer *axis_event;
@@ -998,6 +1006,7 @@ pointer_notify_axis(struct libinput_device *device,
 		.time = time,
 		.axis = axis,
 		.value = value,
+		.source = source,
 	};
 
 	post_device_event(device, time,

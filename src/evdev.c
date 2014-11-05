@@ -222,6 +222,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		    hw_is_key_down(device, device->scroll.button)) {
 			if (device->scroll.button_scroll_active)
 				evdev_post_scroll(device, time,
+						  LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS,
 						  dx_unaccel, dy_unaccel);
 			break;
 		}
@@ -394,7 +395,8 @@ evdev_button_scroll_button(struct evdev_device *device,
 	} else {
 		libinput_timer_cancel(&device->scroll.timer);
 		if (device->scroll.button_scroll_active) {
-			evdev_stop_scroll(device, time);
+			evdev_stop_scroll(device, time,
+					  LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS);
 			device->scroll.button_scroll_active = false;
 		} else {
 			/* If the button is released quickly enough emit the
@@ -538,6 +540,7 @@ static void
 evdev_notify_axis(struct evdev_device *device,
 		  uint64_t time,
 		  enum libinput_pointer_axis axis,
+		  enum libinput_pointer_axis_source source,
 		  double value)
 {
 	if (device->scroll.natural_scrolling_enabled)
@@ -546,6 +549,7 @@ evdev_notify_axis(struct evdev_device *device,
 	pointer_notify_axis(&device->base,
 			    time,
 			    axis,
+			    source,
 			    value);
 }
 
@@ -572,6 +576,7 @@ evdev_process_relative(struct evdev_device *device,
 			device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
 			-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
 		break;
 	case REL_HWHEEL:
@@ -580,6 +585,7 @@ evdev_process_relative(struct evdev_device *device,
 			device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
 			e->value * DEFAULT_AXIS_STEP_DISTANCE);
 		break;
 	}
@@ -1781,6 +1787,7 @@ evdev_start_scrolling(struct evdev_device *device,
 void
 evdev_post_scroll(struct evdev_device *device,
 		  uint64_t time,
+		  enum libinput_pointer_axis_source source,
 		  double dx,
 		  double dy)
 {
@@ -1831,6 +1838,7 @@ evdev_post_scroll(struct evdev_device *device,
 		evdev_notify_axis(device,
 				  time,
 				  LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+				  source,
 				  dy);
 	}
 
@@ -1840,23 +1848,28 @@ evdev_post_scroll(struct evdev_device *device,
 		evdev_notify_axis(device,
 				  time,
 				  LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+				  source,
 				  dx);
 	}
 }
 
 void
-evdev_stop_scroll(struct evdev_device *device, uint64_t time)
+evdev_stop_scroll(struct evdev_device *device,
+		  uint64_t time,
+		  enum libinput_pointer_axis_source source)
 {
 	/* terminate scrolling with a zero scroll event */
 	if (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
 		pointer_notify_axis(&device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+				    source,
 				    0);
 	if (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
 		pointer_notify_axis(&device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+				    source,
 				    0);
 
 	device->scroll.buildup_horizontal = 0;

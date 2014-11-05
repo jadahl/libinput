@@ -377,6 +377,8 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL :
 				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev), expected);
+	ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+			 LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
 	libinput_event_destroy(event);
 }
 

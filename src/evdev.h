@@ -298,12 +298,15 @@ evdev_init_natural_scroll(struct evdev_device *device);
 void
 evdev_post_scroll(struct evdev_device *device,
 		  uint64_t time,
+		  enum libinput_pointer_axis_source source,
 		  double dx,
 		  double dy);
 
 
 void
-evdev_stop_scroll(struct evdev_device *device, uint64_t time);
+evdev_stop_scroll(struct evdev_device *device,
+		  uint64_t time,
+		  enum libinput_pointer_axis_source source);
 
 void
 evdev_device_remove(struct evdev_device *device);
