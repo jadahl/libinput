@@ -20,6 +20,7 @@ liblitest_la_SOURCES = \
 	litest-generic-singletouch.c \
 	litest-keyboard.c \
 	litest-mouse.c \
+	litest-ms-surface-cover.c \
 	litest-synaptics.c \
 	litest-synaptics-st.c \
 	litest-synaptics-t440.c \

@@ -45,6 +45,7 @@ enum litest_device_type {
 	LITEST_WACOM_TOUCH = -9,
 	LITEST_ALPS_SEMI_MT = -10,
 	LITEST_GENERIC_SINGLETOUCH = -11,
+	LITEST_MS_SURFACE_COVER = -12,
 };
 
 enum litest_device_feature {
@@ -62,6 +63,7 @@ enum litest_device_feature {
 	LITEST_TOPBUTTONPAD = 1 << 9,
 	LITEST_SEMI_MT = 1 << 10,
 	LITEST_POINTINGSTICK = 1 << 11,
+	LITEST_FAKE_MT = 1 << 12,
 };
 
 struct litest_device {
