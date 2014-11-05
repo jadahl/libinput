@@ -476,9 +476,6 @@ tp_tap_handle_event(struct tp_dispatch *tp,
 
 	switch(tp->tap.state) {
 	case TAP_STATE_IDLE:
-		if (!tp->tap.enabled)
-			break;
-
 		tp_tap_idle_handle_event(tp, t, event, time);
 		break;
 	case TAP_STATE_TOUCH:
@@ -540,13 +537,19 @@ tp_tap_exceeds_motion_threshold(struct tp_dispatch *tp, struct tp_touch *t)
 	return dx * dx + dy * dy > threshold * threshold;
 }
 
+static bool
+tp_tap_enabled(struct tp_dispatch *tp)
+{
+	return tp->tap.enabled && !tp->tap.suspended;
+}
+
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	int filter_motion = 0;
 
-	if (tp->tap.suspended)
+	if (!tp_tap_enabled(tp))
 		return 0;
 
 	/* Handle queued button pressed events from clickpads. For touchpads
@@ -623,6 +626,26 @@ tp_tap_handle_timeout(uint64_t time, void *data)
 	}
 }
 
+static void
+tp_tap_enabled_update(struct tp_dispatch *tp, bool suspended, bool enabled, uint64_t time)
+{
+	bool was_enabled = tp_tap_enabled(tp);
+
+	tp->tap.suspended = suspended;
+	tp->tap.enabled = enabled;
+
+	if (tp_tap_enabled(tp) == was_enabled)
+		return;
+
+	if (tp_tap_enabled(tp)) {
+		/* Must restart in DEAD if fingers are down atm */
+		tp->tap.state =
+			tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
+	} else {
+		tp_release_all_taps(tp, time);
+	}
+}
+
 static int
 tp_tap_config_count(struct libinput_device *device)
 {
@@ -639,13 +662,12 @@ static enum libinput_config_status
 tp_tap_config_set_enabled(struct libinput_device *device,
 			  enum libinput_config_tap_state enabled)
 {
-	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp = NULL;
+	struct evdev_dispatch *dispatch = ((struct evdev_device *) device)->dispatch;
+	struct tp_dispatch *tp = container_of(dispatch, tp, base);
 
-	dispatch = ((struct evdev_device *) device)->dispatch;
-	tp = container_of(dispatch, tp, base);
-
-	tp->tap.enabled = (enabled == LIBINPUT_CONFIG_TAP_ENABLED);
+	tp_tap_enabled_update(tp, tp->tap.suspended,
+			      (enabled == LIBINPUT_CONFIG_TAP_ENABLED),
+			      libinput_now(device->seat->libinput));
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
@@ -719,14 +741,11 @@ tp_release_all_taps(struct tp_dispatch *tp, uint64_t now)
 void
 tp_tap_suspend(struct tp_dispatch *tp, uint64_t time)
 {
-	tp->tap.suspended = true;
-	tp_release_all_taps(tp, time);
+	tp_tap_enabled_update(tp, true, tp->tap.enabled, time);
 }
 
 void
 tp_tap_resume(struct tp_dispatch *tp, uint64_t time)
 {
-	tp->tap.suspended = false;
-	/* Must restart in DEAD if fingers are down atm */
-	tp->tap.state = tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
+	tp_tap_enabled_update(tp, false, tp->tap.enabled, time);
 }
