@@ -1095,9 +1095,6 @@ evdev_configure_device(struct evdev_device *device)
 			device->abs.absinfo_y = absinfo;
 			has_abs = 1;
 		}
-                /* We only handle the slotted Protocol B in weston.
-                   Devices with ABS_MT_POSITION_* but not ABS_MT_SLOT
-                   require mtdev for conversion. */
 		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
 		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
@@ -1117,6 +1114,9 @@ evdev_configure_device(struct evdev_device *device)
 			has_touch = 1;
 			has_mt = 1;
 
+			/* We only handle the slotted Protocol B in libinput.
+			   Devices with ABS_MT_POSITION_* but not ABS_MT_SLOT
+			   require mtdev for conversion. */
 			if (evdev_need_mtdev(device)) {
 				device->mtdev = mtdev_new_open(device->fd);
 				if (!device->mtdev)
