@@ -582,7 +582,6 @@ int main (int argc, char **argv)
 	litest_add("device:sendevents", device_disable_release_tap, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("device:sendevents", device_disable_release_tap_n_drag, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("device:sendevents", device_disable_release_softbutton, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
-
 	litest_add("device:sendevents", device_disable_topsoftbutton, LITEST_TOPBUTTONPAD, LITEST_ANY);
 
 	return litest_run(argc, argv);
