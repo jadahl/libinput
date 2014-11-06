@@ -123,6 +123,10 @@ evdev_pointer_notify_button(struct evdev_device *device,
 		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
 		    device->buttons.change_to_left_handed)
 			device->buttons.change_to_left_handed(device);
+
+		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
+		    device->scroll.change_scroll_mode)
+			device->scroll.change_scroll_mode(device);
 	}
 
 }
@@ -213,9 +217,9 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		device->rel.dy = 0;
 
 		/* Use unaccelerated deltas for pointing stick scroll */
-		if (device->scroll.has_middle_button_scroll &&
-		    hw_is_key_down(device, BTN_MIDDLE)) {
-			if (device->scroll.middle_button_scroll_active)
+		if (device->scroll.mode == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
+		    hw_is_key_down(device, device->scroll.button)) {
+			if (device->scroll.button_scroll_active)
 				evdev_post_scroll(device, time,
 						  motion.dx, motion.dy);
 			break;
@@ -364,31 +368,33 @@ get_key_type(uint16_t code)
 }
 
 static void
-evdev_middle_button_scroll_timeout(uint64_t time, void *data)
+evdev_button_scroll_timeout(uint64_t time, void *data)
 {
 	struct evdev_device *device = data;
 
-	device->scroll.middle_button_scroll_active = true;
+	device->scroll.button_scroll_active = true;
 }
 
 static void
-evdev_middle_button_scroll_button(struct evdev_device *device,
-				 uint64_t time, int is_press)
+evdev_button_scroll_button(struct evdev_device *device,
+			   uint64_t time, int is_press)
 {
 	if (is_press) {
 		libinput_timer_set(&device->scroll.timer,
 				time + DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT);
 	} else {
 		libinput_timer_cancel(&device->scroll.timer);
-		if (device->scroll.middle_button_scroll_active) {
+		if (device->scroll.button_scroll_active) {
 			evdev_stop_scroll(device, time);
-			device->scroll.middle_button_scroll_active = false;
+			device->scroll.button_scroll_active = false;
 		} else {
 			/* If the button is released quickly enough emit the
 			 * button press/release events. */
-			evdev_pointer_notify_button(device, time, BTN_MIDDLE,
+			evdev_pointer_notify_button(device, time,
+					device->scroll.button,
 					LIBINPUT_BUTTON_STATE_PRESSED);
-			evdev_pointer_notify_button(device, time, BTN_MIDDLE,
+			evdev_pointer_notify_button(device, time,
+					device->scroll.button,
 					LIBINPUT_BUTTON_STATE_RELEASED);
 		}
 	}
@@ -454,10 +460,9 @@ evdev_process_key(struct evdev_device *device,
 				   LIBINPUT_KEY_STATE_RELEASED);
 		break;
 	case EVDEV_KEY_TYPE_BUTTON:
-		if (device->scroll.has_middle_button_scroll &&
-		    e->code == BTN_MIDDLE) {
-			evdev_middle_button_scroll_button(device, time,
-							  e->value);
+		if (device->scroll.mode == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
+		    e->code == device->scroll.button) {
+			evdev_button_scroll_button(device, time, e->value);
 			break;
 		}
 		evdev_pointer_notify_button(
@@ -829,6 +834,115 @@ evdev_init_left_handed(struct evdev_device *device,
 	return 0;
 }
 
+static uint32_t
+evdev_scroll_get_modes(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
+}
+
+static void
+evdev_change_scroll_mode(struct evdev_device *device)
+{
+	if (device->scroll.want_mode == device->scroll.mode &&
+	    device->scroll.want_button == device->scroll.button)
+		return;
+
+	if (evdev_any_button_down(device))
+		return;
+
+	device->scroll.mode = device->scroll.want_mode;
+	device->scroll.button = device->scroll.want_button;
+}
+
+static enum libinput_config_status
+evdev_scroll_set_mode(struct libinput_device *device,
+		      enum libinput_config_scroll_mode mode)
+{
+	struct evdev_device *evdev = (struct evdev_device*)device;
+
+	evdev->scroll.want_mode = mode;
+	evdev->scroll.change_scroll_mode(evdev);
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static enum libinput_config_scroll_mode
+evdev_scroll_get_mode(struct libinput_device *device)
+{
+	struct evdev_device *evdev = (struct evdev_device *)device;
+
+	/* return the wanted configuration, even if it hasn't taken
+	 * effect yet! */
+	return evdev->scroll.want_mode;
+}
+
+static enum libinput_config_scroll_mode
+evdev_scroll_get_default_mode(struct libinput_device *device)
+{
+	struct evdev_device *evdev = (struct evdev_device *)device;
+
+	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
+		return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
+	else
+		return LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
+}
+
+static enum libinput_config_status
+evdev_scroll_set_button(struct libinput_device *device,
+			uint32_t button)
+{
+	struct evdev_device *evdev = (struct evdev_device*)device;
+
+	evdev->scroll.want_button = button;
+	evdev->scroll.change_scroll_mode(evdev);
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static uint32_t
+evdev_scroll_get_button(struct libinput_device *device)
+{
+	struct evdev_device *evdev = (struct evdev_device *)device;
+
+	/* return the wanted configuration, even if it hasn't taken
+	 * effect yet! */
+	return evdev->scroll.want_button;
+}
+
+static uint32_t
+evdev_scroll_get_default_button(struct libinput_device *device)
+{
+	struct evdev_device *evdev = (struct evdev_device *)device;
+
+	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
+		return BTN_MIDDLE;
+	else
+		return 0;
+}
+
+static int
+evdev_init_button_scroll(struct evdev_device *device,
+			 void (*change_scroll_mode)(struct evdev_device *))
+{
+	libinput_timer_init(&device->scroll.timer, device->base.seat->libinput,
+			    evdev_button_scroll_timeout, device);
+	device->scroll.config.get_modes = evdev_scroll_get_modes;
+	device->scroll.config.set_mode = evdev_scroll_set_mode;
+	device->scroll.config.get_mode = evdev_scroll_get_mode;
+	device->scroll.config.get_default_mode = evdev_scroll_get_default_mode;
+	device->scroll.config.set_button = evdev_scroll_set_button;
+	device->scroll.config.get_button = evdev_scroll_get_button;
+	device->scroll.config.get_default_button = evdev_scroll_get_default_button;
+	device->base.config.scroll_mode = &device->scroll.config;
+	device->scroll.mode = evdev_scroll_get_default_mode((struct libinput_device *)device);
+	device->scroll.want_mode = device->scroll.mode;
+	device->scroll.button = evdev_scroll_get_default_button((struct libinput_device *)device);
+	device->scroll.want_button = device->scroll.button;
+	device->scroll.change_scroll_mode = change_scroll_mode;
+
+	return 0;
+}
+
 static struct evdev_dispatch *
 fallback_dispatch_create(struct libinput_device *device)
 {
@@ -843,6 +957,13 @@ fallback_dispatch_create(struct libinput_device *device)
 	if (evdev_device->buttons.want_left_handed &&
 	    evdev_init_left_handed(evdev_device,
 				   evdev_change_to_left_handed) == -1) {
+		free(dispatch);
+		return NULL;
+	}
+
+	if (evdev_device->scroll.want_button &&
+	    evdev_init_button_scroll(evdev_device,
+				     evdev_change_scroll_mode) == -1) {
 		free(dispatch);
 		return NULL;
 	}
@@ -1158,14 +1279,6 @@ evdev_configure_device(struct evdev_device *device)
 		}
 	}
 
-	if (libevdev_has_property(evdev, INPUT_PROP_POINTING_STICK)) {
-		libinput_timer_init(&device->scroll.timer,
-				    device->base.seat->libinput,
-				    evdev_middle_button_scroll_timeout,
-				    device);
-		device->scroll.has_middle_button_scroll = true;
-	}
-
 	if (libevdev_has_event_code(evdev, EV_REL, REL_X) ||
 	    libevdev_has_event_code(evdev, EV_REL, REL_Y))
 		has_rel = 1;
@@ -1219,6 +1332,12 @@ evdev_configure_device(struct evdev_device *device)
 		/* want left-handed config option */
 		device->buttons.want_left_handed = true;
 	}
+
+	if (has_rel && has_button) {
+		/* want button scrolling config option */
+		device->scroll.want_button = 1;
+	}
+
 	if (has_keyboard) {
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
 		log_info(libinput,
