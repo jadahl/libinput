@@ -50,7 +50,7 @@ START_TEST(trackpoint_middlebutton)
 END_TEST
 
 static void
-test_2fg_scroll(struct litest_device *dev, double dx, double dy)
+test_trackpoint_scroll(struct litest_device *dev, double dx, double dy)
 {
 	struct libinput *li = dev->libinput;
 
@@ -76,19 +76,19 @@ START_TEST(trackpoint_scroll)
 
 	litest_drain_events(li);
 
-	test_2fg_scroll(dev, 1, 6);
+	test_trackpoint_scroll(dev, 1, 6);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 6);
-	test_2fg_scroll(dev, 1, -7);
+	test_trackpoint_scroll(dev, 1, -7);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -7);
-	test_2fg_scroll(dev, 8, 1);
+	test_trackpoint_scroll(dev, 8, 1);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 8);
-	test_2fg_scroll(dev, -9, 1);
+	test_trackpoint_scroll(dev, -9, 1);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -9);
 
 	/* scroll smaller than the threshold should not generate events */
-	test_2fg_scroll(dev, 1, 1);
+	test_trackpoint_scroll(dev, 1, 1);
 	/* long middle press without movement should not generate events */
-	test_2fg_scroll(dev, 0, 0);
+	test_trackpoint_scroll(dev, 0, 0);
 
 	litest_assert_empty_queue(li);
 }
