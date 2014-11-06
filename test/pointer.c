@@ -556,6 +556,45 @@ START_TEST(pointer_left_handed_during_click_multiple_buttons)
 }
 END_TEST
 
+START_TEST(pointer_scroll_button)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	/* Make left button switch to scrolling mode */
+	libinput_device_config_scroll_set_mode(dev->libinput_device,
+					LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN);
+	libinput_device_config_scroll_set_button(dev->libinput_device,
+					BTN_LEFT);
+
+	litest_drain_events(li);
+
+	litest_button_scroll(dev, BTN_LEFT, 1, 6);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 6);
+	litest_button_scroll(dev, BTN_LEFT, 1, -7);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -7);
+	litest_button_scroll(dev, BTN_LEFT, 8, 1);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 8);
+	litest_button_scroll(dev, BTN_LEFT, -9, 1);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -9);
+
+	/* scroll smaller than the threshold should not generate events */
+	litest_button_scroll(dev, BTN_LEFT, 1, 1);
+	/* left press without movement should not generate events */
+	litest_button_scroll(dev, BTN_LEFT, 0, 0);
+
+	litest_assert_empty_queue(li);
+
+	/* Restore default scroll behavior */
+	libinput_device_config_scroll_set_mode(dev->libinput_device,
+		libinput_device_config_scroll_get_default_mode(
+			dev->libinput_device));
+	libinput_device_config_scroll_set_button(dev->libinput_device,
+		libinput_device_config_scroll_get_default_button(
+			dev->libinput_device));
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
@@ -563,6 +602,7 @@ int main (int argc, char **argv) {
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
+	litest_add("pointer:scroll", pointer_scroll_button, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
 	litest_add_no_device("pointer:seat button count", pointer_seat_button_count);
 
 	litest_add("pointer:calibration", pointer_no_calibration, LITEST_ANY, LITEST_TOUCH|LITEST_SINGLE_TOUCH|LITEST_ABSOLUTE);
