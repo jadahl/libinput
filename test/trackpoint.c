@@ -49,32 +49,6 @@ START_TEST(trackpoint_middlebutton)
 }
 END_TEST
 
-static void
-test_trackpoint_scroll(struct litest_device *dev, double dx, double dy)
-{
-	struct libinput *li = dev->libinput;
-
-	litest_button_click(dev, BTN_MIDDLE, 1);
-
-	libinput_dispatch(li);
-	msleep(300);
-	libinput_dispatch(li);
-
-	/* Send two deltas, as the first one may be eaten up by an
-	 * acceleration filter. */
-	litest_event(dev, EV_REL, REL_X, dx);
-	litest_event(dev, EV_REL, REL_Y, dy);
-	litest_event(dev, EV_SYN, SYN_REPORT, 0);
-
-	litest_event(dev, EV_REL, REL_X, dx);
-	litest_event(dev, EV_REL, REL_Y, dy);
-	litest_event(dev, EV_SYN, SYN_REPORT, 0);
-
-	litest_button_click(dev, BTN_MIDDLE, 0);
-
-	libinput_dispatch(li);
-}
-
 START_TEST(trackpoint_scroll)
 {
 	struct litest_device *dev = litest_current_device();
@@ -82,19 +56,19 @@ START_TEST(trackpoint_scroll)
 
 	litest_drain_events(li);
 
-	test_trackpoint_scroll(dev, 1, 6);
+	litest_button_scroll(dev, BTN_MIDDLE, 1, 6);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 6);
-	test_trackpoint_scroll(dev, 1, -7);
+	litest_button_scroll(dev, BTN_MIDDLE, 1, -7);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -7);
-	test_trackpoint_scroll(dev, 8, 1);
+	litest_button_scroll(dev, BTN_MIDDLE, 8, 1);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 8);
-	test_trackpoint_scroll(dev, -9, 1);
+	litest_button_scroll(dev, BTN_MIDDLE, -9, 1);
 	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -9);
 
 	/* scroll smaller than the threshold should not generate events */
-	test_trackpoint_scroll(dev, 1, 1);
+	litest_button_scroll(dev, BTN_MIDDLE, 1, 1);
 	/* long middle press without movement should not generate events */
-	test_trackpoint_scroll(dev, 0, 0);
+	litest_button_scroll(dev, BTN_MIDDLE, 0, 0);
 
 	litest_assert_empty_queue(li);
 }
@@ -113,7 +87,7 @@ START_TEST(trackpoint_middlebutton_noscroll)
 	litest_drain_events(li);
 
 	/* A long middle button click + motion should get reported normally now */
-	test_trackpoint_scroll(dev, 0, 10);
+	litest_button_scroll(dev, BTN_MIDDLE, 0, 10);
 
 	litest_assert_button_event(li, BTN_MIDDLE, 1);
 

@@ -146,6 +146,9 @@ void litest_touch_move_to(struct litest_device *d,
 void litest_button_click(struct litest_device *d,
 			 unsigned int button,
 			 bool is_press);
+void litest_button_scroll(struct litest_device *d,
+			 unsigned int button,
+			 double dx, double dy);
 void litest_keyboard_key(struct litest_device *d,
 			 unsigned int key,
 			 bool is_press);
@@ -170,6 +173,7 @@ struct libevdev_uinput * litest_create_uinput_abs_device(const char *name,
 
 void litest_timeout_tap(void);
 void litest_timeout_softbuttons(void);
+void litest_timeout_buttonscroll(void);
 
 void litest_push_event_frame(struct litest_device *dev);
 void litest_pop_event_frame(struct litest_device *dev);

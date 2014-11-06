@@ -798,6 +798,34 @@ litest_button_click(struct litest_device *d, unsigned int button, bool is_press)
 }
 
 void
+litest_button_scroll(struct litest_device *dev,
+		     unsigned int button,
+		     double dx, double dy)
+{
+	struct libinput *li = dev->libinput;
+
+	litest_button_click(dev, button, 1);
+
+	libinput_dispatch(li);
+	litest_timeout_buttonscroll();
+	libinput_dispatch(li);
+
+	/* Send two deltas, as the first one may be eaten up by an
+	 * acceleration filter. */
+	litest_event(dev, EV_REL, REL_X, dx);
+	litest_event(dev, EV_REL, REL_Y, dy);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+	litest_event(dev, EV_REL, REL_X, dx);
+	litest_event(dev, EV_REL, REL_Y, dy);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+	litest_button_click(dev, button, 0);
+
+	libinput_dispatch(li);
+}
+
+void
 litest_keyboard_key(struct litest_device *d, unsigned int key, bool is_press)
 {
 	litest_button_click(d, key, is_press);
@@ -1152,6 +1180,12 @@ litest_timeout_tap(void)
 
 void
 litest_timeout_softbuttons(void)
+{
+	msleep(300);
+}
+
+void
+litest_timeout_buttonscroll(void)
 {
 	msleep(300);
 }
