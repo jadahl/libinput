@@ -60,6 +60,12 @@ test_trackpoint_scroll(struct litest_device *dev, double dx, double dy)
 	msleep(300);
 	libinput_dispatch(li);
 
+	/* Send two deltas, as the first one may be eaten up by an
+	 * acceleration filter. */
+	litest_event(dev, EV_REL, REL_X, dx);
+	litest_event(dev, EV_REL, REL_Y, dy);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
 	litest_event(dev, EV_REL, REL_X, dx);
 	litest_event(dev, EV_REL, REL_Y, dy);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
@@ -94,9 +100,43 @@ START_TEST(trackpoint_scroll)
 }
 END_TEST
 
+START_TEST(trackpoint_middlebutton_noscroll)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+
+	/* Disable middle button scrolling */
+	libinput_device_config_scroll_set_mode(dev->libinput_device,
+					LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
+
+	litest_drain_events(li);
+
+	/* A long middle button click + motion should get reported normally now */
+	test_trackpoint_scroll(dev, 0, 10);
+
+	litest_assert_button_event(li, BTN_MIDDLE, 1);
+
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+	ck_assert_int_eq(libinput_event_get_type(event), LIBINPUT_EVENT_POINTER_MOTION);
+	libinput_event_destroy(event);
+
+	litest_assert_button_event(li, BTN_MIDDLE, 0);
+
+	litest_assert_empty_queue(li);
+
+	/* Restore default scroll behavior */
+	libinput_device_config_scroll_set_mode(dev->libinput_device,
+		libinput_device_config_scroll_get_default_mode(
+			dev->libinput_device));
+}
+END_TEST
+
 int main(int argc, char **argv) {
 
 	litest_add("trackpoint:middlebutton", trackpoint_middlebutton, LITEST_POINTINGSTICK, LITEST_ANY);
+	litest_add("trackpoint:middlebutton", trackpoint_middlebutton_noscroll, LITEST_POINTINGSTICK, LITEST_ANY);
 	litest_add("trackpoint:scroll", trackpoint_scroll, LITEST_POINTINGSTICK, LITEST_ANY);
 
 	return litest_run(argc, argv);
