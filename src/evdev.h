@@ -239,6 +239,9 @@ evdev_device_get_size(struct evdev_device *device,
 		      double *w,
 		      double *h);
 
+int
+evdev_device_has_button(struct evdev_device *device, uint32_t code);
+
 double
 evdev_device_transform_x(struct evdev_device *device,
 			 double x,

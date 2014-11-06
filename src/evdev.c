@@ -1491,6 +1491,15 @@ evdev_device_get_size(struct evdev_device *device,
 	return 0;
 }
 
+int
+evdev_device_has_button(struct evdev_device *device, uint32_t code)
+{
+	if (!(device->seat_caps & EVDEV_DEVICE_POINTER))
+		return -1;
+
+	return libevdev_has_event_code(device->evdev, EV_KEY, code);
+}
+
 static inline bool
 evdev_is_scrolling(const struct evdev_device *device,
 		   enum libinput_pointer_axis axis)

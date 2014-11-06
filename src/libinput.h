@@ -1440,6 +1440,20 @@ libinput_device_get_size(struct libinput_device *device,
 			 double *width,
 			 double *height);
 
+/**
+ * @ingroup device
+ *
+ * Check if a @ref LIBINPUT_DEVICE_CAP_POINTER device has a button with the
+ * passed in code (see linux/input.h).
+ *
+ * @param device A current input device
+ * @param code button code to check for
+ *
+ * @return 1 if the device supports this button code, 0 if it does not, -1
+ * on error.
+ */
+int
+libinput_device_has_button(struct libinput_device *device, uint32_t code);
 
 /**
  * @defgroup config Device configuration
