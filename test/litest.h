@@ -48,6 +48,7 @@ enum litest_device_type {
 	LITEST_MS_SURFACE_COVER = -12,
 	LITEST_QEMU_TABLET = -13,
 	LITEST_XEN_VIRTUAL_POINTER = -14,
+	LITEST_VMWARE_VIRTMOUSE = -15,
 };
 
 enum litest_device_feature {

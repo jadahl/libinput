@@ -28,6 +28,7 @@ liblitest_la_SOURCES = \
 	litest-trackpoint.c \
 	litest-wacom-touch.c \
 	litest-xen-virtual-pointer.c \
+	litest-vmware-virtual-usb-mouse.c \
 	litest.c
 
 run_tests = \
