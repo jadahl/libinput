@@ -571,6 +571,19 @@ evdev_process_absolute(struct evdev_device *device,
 }
 
 static inline bool
+evdev_any_button_down(struct evdev_device *device)
+{
+	unsigned int button;
+
+	for (button = BTN_LEFT; button < BTN_JOYSTICK; button++) {
+		if (libevdev_has_event_code(device->evdev, EV_KEY, button) &&
+		    hw_is_key_down(device, button))
+			return true;
+	}
+	return false;
+}
+
+static inline bool
 evdev_need_touch_frame(struct evdev_device *device)
 {
 	if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
@@ -763,16 +776,11 @@ evdev_left_handed_has(struct libinput_device *device)
 static void
 evdev_change_to_left_handed(struct evdev_device *device)
 {
-	unsigned int button;
-
 	if (device->buttons.want_left_handed == device->buttons.left_handed)
 		return;
 
-	for (button = BTN_LEFT; button < BTN_JOYSTICK; button++) {
-		if (libevdev_has_event_code(device->evdev, EV_KEY, button) &&
-		    hw_is_key_down(device, button))
-			return;
-	}
+	if (evdev_any_button_down(device))
+		return;
 
 	device->buttons.left_handed = device->buttons.want_left_handed;
 }
