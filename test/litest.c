@@ -762,12 +762,18 @@ litest_touch_move_to(struct litest_device *d,
 		     unsigned int slot,
 		     double x_from, double y_from,
 		     double x_to, double y_to,
-		     int steps)
+		     int steps, int sleep_ms)
 {
-	for (int i = 0; i < steps - 1; i++)
+	for (int i = 0; i < steps - 1; i++) {
 		litest_touch_move(d, slot,
 				  x_from + (x_to - x_from)/steps * i,
 				  y_from + (y_to - y_from)/steps * i);
+		if (sleep_ms) {
+			libinput_dispatch(d->libinput);
+			msleep(sleep_ms);
+			libinput_dispatch(d->libinput);
+		}
+	}
 	litest_touch_move(d, slot, x_to, y_to);
 }
 

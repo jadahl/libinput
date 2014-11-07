@@ -138,7 +138,7 @@ void litest_touch_move_to(struct litest_device *d,
 			  unsigned int slot,
 			  double x_from, double y_from,
 			  double x_to, double y_to,
-			  int steps);
+			  int steps, int sleep_ms);
 void litest_button_click(struct litest_device *d,
 			 unsigned int button,
 			 bool is_press);

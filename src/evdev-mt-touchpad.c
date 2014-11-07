@@ -508,6 +508,10 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	int nfingers_down = 0;
 
+	/* No scrolling during tap-n-drag */
+	if (tp_tap_dragging(tp))
+		return 0;
+
 	/* Only count active touches for 2 finger scrolling */
 	tp_for_each_touch(tp, t) {
 		if (tp_touch_active(tp, t))

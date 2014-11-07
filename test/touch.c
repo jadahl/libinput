@@ -451,13 +451,13 @@ START_TEST(fake_mt_no_touch_events)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 5);
+	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 5, 10);
 	litest_touch_up(dev, 0);
 
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_down(dev, 1, 70, 70);
-	litest_touch_move_to(dev, 0, 50, 50, 90, 40, 10);
-	litest_touch_move_to(dev, 0, 70, 70, 40, 50, 10);
+	litest_touch_move_to(dev, 0, 50, 50, 90, 40, 10, 10);
+	litest_touch_move_to(dev, 0, 70, 70, 40, 50, 10, 10);
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
 
