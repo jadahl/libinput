@@ -549,21 +549,12 @@ evdev_process_relative(struct evdev_device *device,
 		break;
 	case REL_HWHEEL:
 		evdev_flush_pending_event(device, time);
-		switch (e->value) {
-		case -1:
-			/* Scroll left */
-		case 1:
-			/* Scroll right */
-			pointer_notify_axis(
-				base,
-				time,
-				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
-				e->value * DEFAULT_AXIS_STEP_DISTANCE);
-			break;
-		default:
-			break;
+		pointer_notify_axis(
+			base,
+			time,
+			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+			e->value * DEFAULT_AXIS_STEP_DISTANCE);
 
-		}
 	}
 }
 
