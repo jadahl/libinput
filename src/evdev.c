@@ -1517,14 +1517,47 @@ evdev_post_scroll(struct evdev_device *device,
 		  double dx,
 		  double dy)
 {
-	if (fabs(dy) >= device->scroll.threshold)
-		evdev_start_scrolling(device,
+	double trigger_horiz, trigger_vert;
+
+	if (!evdev_is_scrolling(device,
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
+		device->scroll.buildup_vertical += dy;
+	if (!evdev_is_scrolling(device,
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
+		device->scroll.buildup_horizontal += dx;
+
+	trigger_vert = device->scroll.buildup_vertical;
+	trigger_horiz = device->scroll.buildup_horizontal;
+
+	/* If we're not scrolling yet, use a distance trigger: moving
+	   past a certain distance starts scrolling */
+	if (!evdev_is_scrolling(device,
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) &&
+	    !evdev_is_scrolling(device,
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
+		if (fabs(trigger_vert) >= device->scroll.threshold)
+			evdev_start_scrolling(device,
+					      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		if (fabs(trigger_horiz) >= device->scroll.threshold)
+			evdev_start_scrolling(device,
+					      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
+	/* We're already scrolling in one direction. Require some
+	   trigger speed to start scrolling in the other direction */
+	} else if (!evdev_is_scrolling(device,
+			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
+		if (fabs(dy) >= device->scroll.threshold)
+			evdev_start_scrolling(device,
 				      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
-
-	if (fabs(dx) >= device->scroll.threshold)
-		evdev_start_scrolling(device,
+	} else if (!evdev_is_scrolling(device,
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL)) {
+		if (fabs(dx) >= device->scroll.threshold)
+			evdev_start_scrolling(device,
 				      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
+	}
 
+	/* We use the trigger to enable, but the delta from this event for
+	 * the actual scroll movement. Otherwise we get a jump once
+	 * scrolling engages */
 	if (dy != 0.0 &&
 	    evdev_is_scrolling(device,
 			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
@@ -1559,6 +1592,8 @@ evdev_stop_scroll(struct evdev_device *device, uint64_t time)
 				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				    0);
 
+	device->scroll.buildup_horizontal = 0;
+	device->scroll.buildup_vertical = 0;
 	device->scroll.direction = 0;
 }
 

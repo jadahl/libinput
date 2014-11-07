@@ -1455,6 +1455,50 @@ START_TEST(touchpad_2fg_scroll)
 }
 END_TEST
 
+START_TEST(touchpad_2fg_scroll_slow_distance)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 20, 30);
+	litest_touch_down(dev, 1, 40, 30);
+	litest_touch_move_to(dev, 0, 20, 30, 20, 50, 60, 10);
+	litest_touch_move_to(dev, 1, 40, 30, 40, 50, 60, 10);
+	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert_notnull(event);
+
+	/* last event is value 0, tested elsewhere */
+	while (libinput_next_event_type(li) != LIBINPUT_EVENT_NONE) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		ptrev = libinput_event_get_pointer_event(event);
+
+		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev),
+				 LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		ck_assert(libinput_event_pointer_get_axis_value(ptrev) > 0.0);
+
+		/* this is to verify we test the right thing, if the value
+		   is greater than scroll.threshold we triggered the wrong
+		   condition */
+		ck_assert(libinput_event_pointer_get_axis_value(ptrev) < 5.0);
+
+		libinput_event_destroy(event);
+		event = libinput_get_event(li);
+	}
+
+	litest_assert_empty_queue(li);
+	libinput_event_destroy(event);
+}
+END_TEST
+
 START_TEST(touchpad_scroll_natural_defaults)
 {
 	struct litest_device *dev = litest_current_device();
@@ -2073,6 +2117,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:topsoftbuttons", clickpad_topsoftbuttons_move_out_ignore, LITEST_TOPBUTTONPAD, LITEST_ANY);
 
 	litest_add("touchpad:scroll", touchpad_2fg_scroll, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:scroll", touchpad_2fg_scroll_slow_distance, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_defaults, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_enable_config, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);

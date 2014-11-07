@@ -104,6 +104,8 @@ struct evdev_device {
 		bool middle_button_scroll_active;
 		double threshold;
 		uint32_t direction;
+		double buildup_vertical;
+		double buildup_horizontal;
 	} scroll;
 
 	enum evdev_event_type pending_event;

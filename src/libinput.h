@@ -195,6 +195,12 @@ enum libinput_button_state {
  * @ingroup device
  *
  * Axes on a device that are not x or y coordinates.
+ *
+ * The two scroll axes @ref LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
+ * @ref LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL are engaged separately,
+ * depending on the device. libinput provides some scroll direction locking
+ * but it is up to the caller to determine which axis is needed and
+ * appropriate in the current interaction
  */
 enum libinput_pointer_axis {
 	LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL = 0,
