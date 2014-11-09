@@ -1517,11 +1517,11 @@ evdev_post_scroll(struct evdev_device *device,
 		  double dx,
 		  double dy)
 {
-	if (dy <= -device->scroll.threshold || dy >= device->scroll.threshold)
+	if (fabs(dy) >= device->scroll.threshold)
 		evdev_start_scrolling(device,
 				      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
 
-	if (dx <= -device->scroll.threshold || dx >= device->scroll.threshold)
+	if (fabs(dx) >= device->scroll.threshold)
 		evdev_start_scrolling(device,
 				      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 
