@@ -1491,6 +1491,26 @@ evdev_device_get_size(struct evdev_device *device,
 	return 0;
 }
 
+static inline bool
+evdev_is_scrolling(const struct evdev_device *device,
+		   enum libinput_pointer_axis axis)
+{
+	assert(axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL ||
+	       axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+
+	return (device->scroll.direction & (1 << axis)) != 0;
+}
+
+static inline void
+evdev_start_scrolling(struct evdev_device *device,
+		      enum libinput_pointer_axis axis)
+{
+	assert(axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL ||
+	       axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+
+	device->scroll.direction |= (1 << axis);
+}
+
 void
 evdev_post_scroll(struct evdev_device *device,
 		  uint64_t time,
@@ -1498,13 +1518,16 @@ evdev_post_scroll(struct evdev_device *device,
 		  double dy)
 {
 	if (dy <= -device->scroll.threshold || dy >= device->scroll.threshold)
-		device->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		evdev_start_scrolling(device,
+				      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
 
 	if (dx <= -device->scroll.threshold || dx >= device->scroll.threshold)
-		device->scroll.direction |= (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
+		evdev_start_scrolling(device,
+				      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 
 	if (dy != 0.0 &&
-	    (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))) {
+	    evdev_is_scrolling(device,
+			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
 		pointer_notify_axis(&device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
@@ -1512,7 +1535,8 @@ evdev_post_scroll(struct evdev_device *device,
 	}
 
 	if (dx != 0.0 &&
-	    (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))) {
+	    evdev_is_scrolling(device,
+			       LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL)) {
 		pointer_notify_axis(&device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
