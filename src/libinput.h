@@ -1804,7 +1804,7 @@ libinput_device_config_send_events_get_mode(struct libinput_device *device);
  *
  * @see libinput_device_config_send_events_get_modes
  * @see libinput_device_config_send_events_set_mode
- * @see libinput_device_config_send_events_get_default_mode
+ * @see libinput_device_config_send_events_get_mode
  */
 uint32_t
 libinput_device_config_send_events_get_default_mode(struct libinput_device *device);
