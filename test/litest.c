@@ -1096,9 +1096,10 @@ litest_assert_button_event(struct libinput *li, unsigned int button,
 	libinput_event_destroy(event);
 }
 
-void litest_assert_scroll(struct libinput *li,
-			  enum libinput_pointer_axis axis,
-			  int dir)
+void
+litest_assert_scroll(struct libinput *li,
+		     enum libinput_pointer_axis axis,
+		     int dir)
 {
 	struct libinput_event *event, *next_event;
 	struct libinput_event_pointer *ptrev;
