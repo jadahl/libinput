@@ -1105,7 +1105,7 @@ litest_assert_button_event(struct libinput *li, unsigned int button,
 void
 litest_assert_scroll(struct libinput *li,
 		     enum libinput_pointer_axis axis,
-		     int dir)
+		     int minimum_movement)
 {
 	struct libinput_event *event, *next_event;
 	struct libinput_event_pointer *ptrev;
@@ -1123,14 +1123,14 @@ litest_assert_scroll(struct libinput *li,
 
 		if (next_event) {
 			/* Normal scroll event, check dir */
-			if (dir > 0) {
+			if (minimum_movement > 0) {
 				ck_assert_int_ge(
 					libinput_event_pointer_get_axis_value(ptrev),
-					dir);
+					minimum_movement);
 			} else {
 				ck_assert_int_le(
 					libinput_event_pointer_get_axis_value(ptrev),
-					dir);
+					minimum_movement);
 			}
 		} else {
 			/* Last scroll event, must be 0 */

@@ -158,7 +158,7 @@ void litest_assert_button_event(struct libinput *li,
 				enum libinput_button_state state);
 void litest_assert_scroll(struct libinput *li,
 			  enum libinput_pointer_axis axis,
-			  int dir);
+			  int minimum_movement);
 
 struct libevdev_uinput * litest_create_uinput_device(const char *name,
 						     struct input_id *id,
