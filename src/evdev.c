@@ -968,6 +968,50 @@ evdev_init_sendevents(struct evdev_device *device,
 	dispatch->sendevents.config.get_default_mode = evdev_sendevents_get_default_mode;
 }
 
+static int
+evdev_scroll_config_natural_has(struct libinput_device *device)
+{
+	return 1;
+}
+
+static enum libinput_config_status
+evdev_scroll_config_natural_set(struct libinput_device *device,
+				int enabled)
+{
+	struct evdev_device *dev = (struct evdev_device *)device;
+
+	dev->scroll.natural_scrolling_enabled = enabled ? true : false;
+
+	return LIBINPUT_CONFIG_STATUS_SUCCESS;
+}
+
+static int
+evdev_scroll_config_natural_get(struct libinput_device *device)
+{
+	struct evdev_device *dev = (struct evdev_device *)device;
+
+	return dev->scroll.natural_scrolling_enabled ? 1 : 0;
+}
+
+static int
+evdev_scroll_config_natural_get_default(struct libinput_device *device)
+{
+	/* could enable this on Apple touchpads. could do that, could
+	 * very well do that... */
+	return 0;
+}
+
+void
+evdev_init_natural_scroll(struct evdev_device *device)
+{
+	device->scroll.config_natural.has = evdev_scroll_config_natural_has;
+	device->scroll.config_natural.set_enabled = evdev_scroll_config_natural_set;
+	device->scroll.config_natural.get_enabled = evdev_scroll_config_natural_get;
+	device->scroll.config_natural.get_default_enabled = evdev_scroll_config_natural_get_default;
+	device->scroll.natural_scrolling_enabled = false;
+	device->base.config.natural_scroll = &device->scroll.config_natural;
+}
+
 static struct evdev_dispatch *
 fallback_dispatch_create(struct libinput_device *device)
 {
@@ -1667,6 +1711,11 @@ evdev_post_scroll(struct evdev_device *device,
 		  double dy)
 {
 	double trigger_horiz, trigger_vert;
+
+	if (device->scroll.natural_scrolling_enabled) {
+		dx = -dx;
+		dy = -dy;
+	}
 
 	if (!evdev_is_scrolling(device,
 				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))

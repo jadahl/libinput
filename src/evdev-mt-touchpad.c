@@ -494,11 +494,6 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 
 	tp_filter_motion(tp, &dx, &dy, time);
 
-	if (tp->scroll.natural_scrolling_enabled) {
-		dx = -dx;
-		dy = -dy;
-	}
-
 	evdev_post_scroll(tp->device, time, dx, dy);
 }
 
@@ -907,47 +902,6 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	return 0;
 }
 
-static int
-tp_scroll_config_natural_has(struct libinput_device *device)
-{
-	return 1;
-}
-
-static enum libinput_config_status
-tp_scroll_config_natural_set(struct libinput_device *device,
-			     int enabled)
-{
-	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp = NULL;
-
-	dispatch = ((struct evdev_device *) device)->dispatch;
-	tp = container_of(dispatch, tp, base);
-
-	tp->scroll.natural_scrolling_enabled = enabled ? true : false;
-
-	return LIBINPUT_CONFIG_STATUS_SUCCESS;
-}
-
-static int
-tp_scroll_config_natural_get(struct libinput_device *device)
-{
-	struct evdev_dispatch *dispatch;
-	struct tp_dispatch *tp = NULL;
-
-	dispatch = ((struct evdev_device *) device)->dispatch;
-	tp = container_of(dispatch, tp, base);
-
-	return tp->scroll.natural_scrolling_enabled ? 1 : 0;
-}
-
-static int
-tp_scroll_config_natural_get_default(struct libinput_device *device)
-{
-	/* could enable this on Apple touchpads. could do that, could
-	 * very well do that... */
-	return 0;
-}
-
 static uint32_t
 tp_scroll_config_scroll_mode_get_modes(struct libinput_device *device)
 {
@@ -993,15 +947,10 @@ tp_scroll_config_scroll_mode_get_default_mode(struct libinput_device *device)
 }
 
 static int
-tp_init_scroll(struct tp_dispatch *tp)
+tp_init_scroll(struct tp_dispatch *tp, struct evdev_device *device)
 {
 
-	tp->scroll.config_natural.has = tp_scroll_config_natural_has;
-	tp->scroll.config_natural.set_enabled = tp_scroll_config_natural_set;
-	tp->scroll.config_natural.get_enabled = tp_scroll_config_natural_get;
-	tp->scroll.config_natural.get_default_enabled = tp_scroll_config_natural_get_default;
-	tp->scroll.natural_scrolling_enabled = false;
-	tp->device->base.config.natural_scroll = &tp->scroll.config_natural;
+	evdev_init_natural_scroll(device);
 
 	tp->scroll.config_mode.get_modes = tp_scroll_config_scroll_mode_get_modes;
 	tp->scroll.config_mode.set_mode = tp_scroll_config_scroll_mode_set_mode;
@@ -1096,7 +1045,7 @@ tp_init(struct tp_dispatch *tp,
 	if (tp_init_sendevents(tp, device) != 0)
 		return -1;
 
-	if (tp_init_scroll(tp) != 0)
+	if (tp_init_scroll(tp, device) != 0)
 		return -1;
 
 	device->seat_caps |= EVDEV_DEVICE_POINTER;

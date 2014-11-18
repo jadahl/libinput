@@ -115,6 +115,9 @@ struct evdev_device {
 		uint32_t direction;
 		double buildup_vertical;
 		double buildup_horizontal;
+
+		struct libinput_device_config_natural_scroll config_natural;
+		bool natural_scrolling_enabled;
 	} scroll;
 
 	enum evdev_event_type pending_event;
@@ -283,6 +286,9 @@ evdev_pointer_notify_button(struct evdev_device *device,
 			    uint32_t time,
 			    int button,
 			    enum libinput_button_state state);
+
+void
+evdev_init_natural_scroll(struct evdev_device *device);
 
 void
 evdev_post_scroll(struct evdev_device *device,
