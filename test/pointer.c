@@ -280,6 +280,9 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	const int scroll_step = 10;
 	int expected = amount * scroll_step;
 
+	if (libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device))
+		expected *= -1;
+
 	/* mouse scroll wheels are 'upside down' */
 	if (which == REL_WHEEL)
 		amount *= -1;
@@ -308,6 +311,56 @@ START_TEST(pointer_scroll_wheel)
 	struct litest_device *dev = litest_current_device();
 
 	litest_drain_events(dev->libinput);
+
+	test_wheel_event(dev, REL_WHEEL, -1);
+	test_wheel_event(dev, REL_WHEEL, 1);
+
+	test_wheel_event(dev, REL_WHEEL, -5);
+	test_wheel_event(dev, REL_WHEEL, 6);
+
+	if (libevdev_has_event_code(dev->evdev, EV_REL, REL_HWHEEL)) {
+		test_wheel_event(dev, REL_HWHEEL, -1);
+		test_wheel_event(dev, REL_HWHEEL, 1);
+
+		test_wheel_event(dev, REL_HWHEEL, -5);
+		test_wheel_event(dev, REL_HWHEEL, 6);
+	}
+}
+END_TEST
+
+START_TEST(pointer_scroll_natural_defaults)
+{
+	struct litest_device *dev = litest_current_device();
+
+	ck_assert_int_ge(libinput_device_config_scroll_has_natural_scroll(dev->libinput_device), 1);
+	ck_assert_int_eq(libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device), 0);
+	ck_assert_int_eq(libinput_device_config_scroll_get_default_natural_scroll_enabled(dev->libinput_device), 0);
+}
+END_TEST
+
+START_TEST(pointer_scroll_natural_enable_config)
+{
+	struct litest_device *dev = litest_current_device();
+	enum libinput_config_status status;
+
+	status = libinput_device_config_scroll_set_natural_scroll_enabled(dev->libinput_device, 1);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+	ck_assert_int_eq(libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device), 1);
+
+	status = libinput_device_config_scroll_set_natural_scroll_enabled(dev->libinput_device, 0);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+	ck_assert_int_eq(libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device), 0);
+}
+END_TEST
+
+START_TEST(pointer_scroll_natural_wheel)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+
+	litest_drain_events(dev->libinput);
+
+	libinput_device_config_scroll_set_natural_scroll_enabled(device, 1);
 
 	test_wheel_event(dev, REL_WHEEL, -1);
 	test_wheel_event(dev, REL_WHEEL, 1);
@@ -603,6 +656,9 @@ int main (int argc, char **argv) {
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
 	litest_add("pointer:scroll", pointer_scroll_button, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:scroll", pointer_scroll_natural_defaults, LITEST_WHEEL, LITEST_ANY);
+	litest_add("pointer:scroll", pointer_scroll_natural_enable_config, LITEST_WHEEL, LITEST_ANY);
+	litest_add("pointer:scroll", pointer_scroll_natural_wheel, LITEST_WHEEL, LITEST_ANY);
 	litest_add_no_device("pointer:seat button count", pointer_seat_button_count);
 
 	litest_add("pointer:calibration", pointer_no_calibration, LITEST_ANY, LITEST_TOUCH|LITEST_SINGLE_TOUCH|LITEST_ABSOLUTE);
