@@ -943,6 +943,31 @@ evdev_init_button_scroll(struct evdev_device *device,
 	return 0;
 }
 
+static void
+evdev_init_calibration(struct evdev_device *device,
+		       struct evdev_dispatch *dispatch)
+{
+	device->base.config.calibration = &dispatch->calibration;
+
+	dispatch->calibration.has_matrix = evdev_calibration_has_matrix;
+	dispatch->calibration.set_matrix = evdev_calibration_set_matrix;
+	dispatch->calibration.get_matrix = evdev_calibration_get_matrix;
+	dispatch->calibration.get_default_matrix = evdev_calibration_get_default_matrix;
+}
+
+static void
+evdev_init_sendevents(struct evdev_device *device,
+		      struct evdev_dispatch *dispatch)
+{
+	device->base.config.sendevents = &dispatch->sendevents.config;
+
+	dispatch->sendevents.current_mode = LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
+	dispatch->sendevents.config.get_modes = evdev_sendevents_get_modes;
+	dispatch->sendevents.config.set_mode = evdev_sendevents_set_mode;
+	dispatch->sendevents.config.get_mode = evdev_sendevents_get_mode;
+	dispatch->sendevents.config.get_default_mode = evdev_sendevents_get_default_mode;
+}
+
 static struct evdev_dispatch *
 fallback_dispatch_create(struct libinput_device *device)
 {
@@ -968,20 +993,8 @@ fallback_dispatch_create(struct libinput_device *device)
 		return NULL;
 	}
 
-	device->config.calibration = &dispatch->calibration;
-
-	dispatch->calibration.has_matrix = evdev_calibration_has_matrix;
-	dispatch->calibration.set_matrix = evdev_calibration_set_matrix;
-	dispatch->calibration.get_matrix = evdev_calibration_get_matrix;
-	dispatch->calibration.get_default_matrix = evdev_calibration_get_default_matrix;
-
-	device->config.sendevents = &dispatch->sendevents.config;
-
-	dispatch->sendevents.current_mode = LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
-	dispatch->sendevents.config.get_modes = evdev_sendevents_get_modes;
-	dispatch->sendevents.config.set_mode = evdev_sendevents_set_mode;
-	dispatch->sendevents.config.get_mode = evdev_sendevents_get_mode;
-	dispatch->sendevents.config.get_default_mode = evdev_sendevents_get_default_mode;
+	evdev_init_calibration(evdev_device, dispatch);
+	evdev_init_sendevents(evdev_device, dispatch);
 
 	return dispatch;
 }
