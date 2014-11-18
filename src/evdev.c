@@ -525,12 +525,25 @@ evdev_process_absolute_motion(struct evdev_device *device,
 	}
 }
 
+static void
+evdev_notify_axis(struct evdev_device *device,
+		  uint64_t time,
+		  enum libinput_pointer_axis axis,
+		  double value)
+{
+	if (device->scroll.natural_scrolling_enabled)
+		value *= -1;
+
+	pointer_notify_axis(&device->base,
+			    time,
+			    axis,
+			    value);
+}
+
 static inline void
 evdev_process_relative(struct evdev_device *device,
 		       struct input_event *e, uint64_t time)
 {
-	struct libinput_device *base = &device->base;
-
 	switch (e->code) {
 	case REL_X:
 		if (device->pending_event != EVDEV_RELATIVE_MOTION)
@@ -546,16 +559,16 @@ evdev_process_relative(struct evdev_device *device,
 		break;
 	case REL_WHEEL:
 		evdev_flush_pending_event(device, time);
-		pointer_notify_axis(
-			base,
+		evdev_notify_axis(
+			device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 			-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
 		break;
 	case REL_HWHEEL:
 		evdev_flush_pending_event(device, time);
-		pointer_notify_axis(
-			base,
+		evdev_notify_axis(
+			device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 			e->value * DEFAULT_AXIS_STEP_DISTANCE);
@@ -1037,6 +1050,9 @@ fallback_dispatch_create(struct libinput_device *device)
 		return NULL;
 	}
 
+	if (evdev_device->scroll.natural_scrolling_enabled)
+		evdev_init_natural_scroll(evdev_device);
+
 	evdev_init_calibration(evdev_device, dispatch);
 	evdev_init_sendevents(evdev_device, dispatch);
 
@@ -1388,6 +1404,8 @@ evdev_configure_device(struct evdev_device *device)
 
 		/* want left-handed config option */
 		device->buttons.want_left_handed = true;
+		/* want natural-scroll config option */
+		device->scroll.natural_scrolling_enabled = true;
 	}
 
 	if (has_rel && has_button) {
@@ -1712,11 +1730,6 @@ evdev_post_scroll(struct evdev_device *device,
 {
 	double trigger_horiz, trigger_vert;
 
-	if (device->scroll.natural_scrolling_enabled) {
-		dx = -dx;
-		dy = -dy;
-	}
-
 	if (!evdev_is_scrolling(device,
 				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
 		device->scroll.buildup_vertical += dy;
@@ -1759,19 +1772,19 @@ evdev_post_scroll(struct evdev_device *device,
 	if (dy != 0.0 &&
 	    evdev_is_scrolling(device,
 			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
-		pointer_notify_axis(&device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
-				    dy);
+		evdev_notify_axis(device,
+				  time,
+				  LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+				  dy);
 	}
 
 	if (dx != 0.0 &&
 	    evdev_is_scrolling(device,
 			       LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL)) {
-		pointer_notify_axis(&device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
-				    dx);
+		evdev_notify_axis(device,
+				  time,
+				  LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+				  dx);
 	}
 }
 

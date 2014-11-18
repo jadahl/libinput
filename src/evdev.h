@@ -117,6 +117,8 @@ struct evdev_device {
 		double buildup_horizontal;
 
 		struct libinput_device_config_natural_scroll config_natural;
+		/* set during device init if we want natural scrolling,
+		 * used at runtime to enable/disable the feature */
 		bool natural_scrolling_enabled;
 	} scroll;
 
