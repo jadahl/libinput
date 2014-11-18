@@ -272,7 +272,10 @@ handle_event_device_notify(struct libinput_event *ev)
 	else
 		type = "removed";
 
-	msg("%s %s\n", libinput_device_get_sysname(dev), type);
+	msg("%s %-30s %s\n",
+	    libinput_device_get_sysname(dev),
+	    libinput_device_get_name(dev),
+	    type);
 
 	if (libinput_device_config_tap_get_finger_count(dev) > 0) {
 		enum libinput_config_status status;

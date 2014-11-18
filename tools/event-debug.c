@@ -259,7 +259,8 @@ print_device_notify(struct libinput_event *ev)
 	double w, h;
 	uint32_t scroll_modes;
 
-	printf("%s	%s",
+	printf("%-30s	%s	%s",
+	       libinput_device_get_name(dev),
 	       libinput_seat_get_physical_name(seat),
 	       libinput_seat_get_logical_name(seat));
 
