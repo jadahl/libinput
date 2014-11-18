@@ -559,7 +559,7 @@ evdev_process_relative(struct evdev_device *device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 			e->value * DEFAULT_AXIS_STEP_DISTANCE);
-
+		break;
 	}
 }
 
