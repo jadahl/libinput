@@ -1228,7 +1228,7 @@ evdev_configure_device(struct evdev_device *device)
 			has_mt = 0;
 			has_touch = 0;
 		} else if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
-		    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
+			   libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
 			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
 			if (evdev_fix_abs_resolution(evdev,
 						     ABS_MT_POSITION_X,
