@@ -257,6 +257,7 @@ print_device_notify(struct libinput_event *ev)
 	struct libinput_device *dev = libinput_event_get_device(ev);
 	struct libinput_seat *seat = libinput_device_get_seat(dev);
 	double w, h;
+	uint32_t scroll_modes;
 
 	printf("%s	%s",
 	       libinput_seat_get_physical_name(seat),
@@ -265,7 +266,28 @@ print_device_notify(struct libinput_event *ev)
 	if (libinput_device_get_size(dev, &w, &h) == 0)
 		printf("\tsize %.2f/%.2fmm", w, h);
 
+	if (libinput_device_config_tap_get_finger_count((dev)))
+	    printf(" tap");
+	if (libinput_device_config_buttons_has_left_handed((dev)))
+	    printf(" left");
+	if (libinput_device_config_scroll_has_natural_scroll((dev)))
+	    printf(" scroll-nat");
+	if (libinput_device_config_calibration_has_matrix((dev)))
+	    printf(" calib");
+
+	scroll_modes = libinput_device_config_scroll_get_modes(dev);
+	if (scroll_modes != LIBINPUT_CONFIG_SCROLL_NO_SCROLL) {
+		printf(" scroll");
+		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_2FG)
+			printf("-2fg");
+		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_EDGE)
+			printf("-edge");
+		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
+			printf("-button");
+	}
+
 	printf("\n");
+
 }
 
 static void
