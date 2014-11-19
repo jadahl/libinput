@@ -615,7 +615,7 @@ START_TEST(pointer_scroll_button)
 	struct libinput *li = dev->libinput;
 
 	/* Make left button switch to scrolling mode */
-	libinput_device_config_scroll_set_mode(dev->libinput_device,
+	libinput_device_config_scroll_set_method(dev->libinput_device,
 					LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN);
 	libinput_device_config_scroll_set_button(dev->libinput_device,
 					BTN_LEFT);
@@ -639,8 +639,8 @@ START_TEST(pointer_scroll_button)
 	litest_assert_empty_queue(li);
 
 	/* Restore default scroll behavior */
-	libinput_device_config_scroll_set_mode(dev->libinput_device,
-		libinput_device_config_scroll_get_default_mode(
+	libinput_device_config_scroll_set_method(dev->libinput_device,
+		libinput_device_config_scroll_get_default_method(
 			dev->libinput_device));
 	libinput_device_config_scroll_set_button(dev->libinput_device,
 		libinput_device_config_scroll_get_default_button(

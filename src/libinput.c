@@ -1533,23 +1533,23 @@ libinput_device_config_buttons_get_default_left_handed(struct libinput_device *d
 }
 
 LIBINPUT_EXPORT uint32_t
-libinput_device_config_scroll_get_modes(struct libinput_device *device)
+libinput_device_config_scroll_get_methods(struct libinput_device *device)
 {
-	if (device->config.scroll_mode)
-		return device->config.scroll_mode->get_modes(device);
+	if (device->config.scroll_method)
+		return device->config.scroll_method->get_methods(device);
 	else
 		return 0;
 }
 
 LIBINPUT_EXPORT enum libinput_config_status
-libinput_device_config_scroll_set_mode(struct libinput_device *device,
-				       enum libinput_config_scroll_mode mode)
+libinput_device_config_scroll_set_method(struct libinput_device *device,
+					 enum libinput_config_scroll_method method)
 {
-	if ((libinput_device_config_scroll_get_modes(device) & mode) != mode)
+	if ((libinput_device_config_scroll_get_methods(device) & method) != method)
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
-	/* Check mode is a single valid mode */
-	switch (mode) {
+	/* Check method is a single valid method */
+	switch (method) {
 	case LIBINPUT_CONFIG_SCROLL_NO_SCROLL:
 	case LIBINPUT_CONFIG_SCROLL_2FG:
 	case LIBINPUT_CONFIG_SCROLL_EDGE:
@@ -1559,26 +1559,26 @@ libinput_device_config_scroll_set_mode(struct libinput_device *device,
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 	}
 
-	if (device->config.scroll_mode)
-		return device->config.scroll_mode->set_mode(device, mode);
-	else /* mode must be _NO_SCROLL to get here */
+	if (device->config.scroll_method)
+		return device->config.scroll_method->set_method(device, method);
+	else /* method must be _NO_SCROLL to get here */
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
-LIBINPUT_EXPORT enum libinput_config_scroll_mode
-libinput_device_config_scroll_get_mode(struct libinput_device *device)
+LIBINPUT_EXPORT enum libinput_config_scroll_method
+libinput_device_config_scroll_get_method(struct libinput_device *device)
 {
-	if (device->config.scroll_mode)
-		return device->config.scroll_mode->get_mode(device);
+	if (device->config.scroll_method)
+		return device->config.scroll_method->get_method(device);
 	else
 		return LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
 }
 
-LIBINPUT_EXPORT enum libinput_config_scroll_mode
-libinput_device_config_scroll_get_default_mode(struct libinput_device *device)
+LIBINPUT_EXPORT enum libinput_config_scroll_method
+libinput_device_config_scroll_get_default_method(struct libinput_device *device)
 {
-	if (device->config.scroll_mode)
-		return device->config.scroll_mode->get_default_mode(device);
+	if (device->config.scroll_method)
+		return device->config.scroll_method->get_default_method(device);
 	else
 		return LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
 }
@@ -1587,32 +1587,32 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_scroll_set_button(struct libinput_device *device,
 					 uint32_t button)
 {
-	if ((libinput_device_config_scroll_get_modes(device) &
+	if ((libinput_device_config_scroll_get_methods(device) &
 	     LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN) == 0)
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	if (button && !libinput_device_has_button(device, button))
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 
-	return device->config.scroll_mode->set_button(device, button);
+	return device->config.scroll_method->set_button(device, button);
 }
 
 LIBINPUT_EXPORT uint32_t
 libinput_device_config_scroll_get_button(struct libinput_device *device)
 {
-	if ((libinput_device_config_scroll_get_modes(device) &
+	if ((libinput_device_config_scroll_get_methods(device) &
 	     LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN) == 0)
 		return 0;
 
-	return device->config.scroll_mode->get_button(device);
+	return device->config.scroll_method->get_button(device);
 }
 
 LIBINPUT_EXPORT uint32_t
 libinput_device_config_scroll_get_default_button(struct libinput_device *device)
 {
-	if ((libinput_device_config_scroll_get_modes(device) &
+	if ((libinput_device_config_scroll_get_methods(device) &
 	     LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN) == 0)
 		return 0;
 
-	return device->config.scroll_mode->get_default_button(device);
+	return device->config.scroll_method->get_default_button(device);
 }

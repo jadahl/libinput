@@ -257,7 +257,7 @@ print_device_notify(struct libinput_event *ev)
 	struct libinput_device *dev = libinput_event_get_device(ev);
 	struct libinput_seat *seat = libinput_device_get_seat(dev);
 	double w, h;
-	uint32_t scroll_modes;
+	uint32_t scroll_methods;
 
 	printf("%-30s	%s	%s",
 	       libinput_device_get_name(dev),
@@ -276,14 +276,14 @@ print_device_notify(struct libinput_event *ev)
 	if (libinput_device_config_calibration_has_matrix((dev)))
 	    printf(" calib");
 
-	scroll_modes = libinput_device_config_scroll_get_modes(dev);
-	if (scroll_modes != LIBINPUT_CONFIG_SCROLL_NO_SCROLL) {
+	scroll_methods = libinput_device_config_scroll_get_methods(dev);
+	if (scroll_methods != LIBINPUT_CONFIG_SCROLL_NO_SCROLL) {
 		printf(" scroll");
-		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_2FG)
+		if (scroll_methods & LIBINPUT_CONFIG_SCROLL_2FG)
 			printf("-2fg");
-		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_EDGE)
+		if (scroll_methods & LIBINPUT_CONFIG_SCROLL_EDGE)
 			printf("-edge");
-		if (scroll_modes & LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
+		if (scroll_methods & LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
 			printf("-button");
 	}
 

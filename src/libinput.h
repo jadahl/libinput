@@ -2043,10 +2043,10 @@ int
 libinput_device_config_buttons_get_default_left_handed(struct libinput_device *device);
 
 /**
- * The scroll mode of a device selects when to generate scroll axis events
+ * The scroll method of a device selects when to generate scroll axis events
  * instead of pointer motion events.
  */
-enum libinput_config_scroll_mode {
+enum libinput_config_scroll_method {
 	/**
 	 * Never send scroll events instead of pointer motion events.
 	 * Note scroll wheels, etc. will still send scroll events.
@@ -2071,104 +2071,104 @@ enum libinput_config_scroll_mode {
 /**
  * @ingroup config
  *
- * Check which scroll modes a device supports. The mode defines when to
+ * Check which scroll methods a device supports. The method defines when to
  * generate scroll axis events instead of pointer motion events.
  *
  * @param device The device to configure
  *
- * @return A bitmask of possible modes.
+ * @return A bitmask of possible methods.
  *
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_button
  * @see libinput_device_config_scroll_get_default_button
  */
 uint32_t
-libinput_device_config_scroll_get_modes(struct libinput_device *device);
+libinput_device_config_scroll_get_methods(struct libinput_device *device);
 
 /**
  * @ingroup config
  *
- * Set the scroll mode for this device. The mode defines when to
+ * Set the scroll method for this device. The method defines when to
  * generate scroll axis events instead of pointer motion events.
  *
  * @note Setting @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN enables
- * the scroll mode, but scrolling is only activated when the configured
+ * the scroll method, but scrolling is only activated when the configured
  * button is held down. If no button is set, i.e.
  * libinput_device_config_scroll_get_button() returns 0, scrolling
  * cannot activate.
  *
  * @param device The device to configure
- * @param mode The scroll mode for this device.
+ * @param method The scroll method for this device.
  *
  * @return A config status code.
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_get_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_get_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_button
  * @see libinput_device_config_scroll_get_default_button
  */
 enum libinput_config_status
-libinput_device_config_scroll_set_mode(struct libinput_device *device,
-				       enum libinput_config_scroll_mode mode);
+libinput_device_config_scroll_set_method(struct libinput_device *device,
+					 enum libinput_config_scroll_method method);
 
 /**
  * @ingroup config
  *
- * Get the scroll mode for this device. The mode defines when to
+ * Get the scroll method for this device. The method defines when to
  * generate scroll axis events instead of pointer motion events.
  *
  * @param device The device to configure
- * @return The current scroll mode for this device.
+ * @return The current scroll method for this device.
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_button
  * @see libinput_device_config_scroll_get_default_button
  */
-enum libinput_config_scroll_mode
-libinput_device_config_scroll_get_mode(struct libinput_device *device);
+enum libinput_config_scroll_method
+libinput_device_config_scroll_get_method(struct libinput_device *device);
 
 /**
  * @ingroup config
  *
- * Get the default scroll mode for this device. The mode defines when to
+ * Get the default scroll method for this device. The method defines when to
  * generate scroll axis events instead of pointer motion events.
  *
  * @param device The device to configure
- * @return The default scroll mode for this device.
+ * @return The default scroll method for this device.
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_button
  * @see libinput_device_config_scroll_get_default_button
  */
-enum libinput_config_scroll_mode
-libinput_device_config_scroll_get_default_mode(struct libinput_device *device);
+enum libinput_config_scroll_method
+libinput_device_config_scroll_get_default_method(struct libinput_device *device);
 
 /**
  * @ingroup config
  *
- * Set the button for the @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN mode
+ * Set the button for the @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN method
  * for this device.
  *
- * When the current scroll mode is set to @ref
+ * When the current scroll method is set to @ref
  * LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN, no button press/release events
  * will be send for the configured button.
  *
  * When the configured button is pressed, any motion events along a
  * scroll-capable axis are turned into scroll axis events.
  *
- * @note Setting the button does not change the scroll mode. To change the
- * scroll mode call libinput_device_config_scroll_set_mode().
+ * @note Setting the button does not change the scroll method. To change the
+ * scroll method call libinput_device_config_scroll_set_method().
  *
  * If the button is 0, button scrolling is effectively disabled.
  *
@@ -2181,10 +2181,10 @@ libinput_device_config_scroll_get_default_mode(struct libinput_device *device);
  * @retval LIBINPUT_CONFIG_STATUS_INVALID the given button does not
  * exist on this device
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_get_button
  * @see libinput_device_config_scroll_get_default_button
  */
@@ -2195,24 +2195,24 @@ libinput_device_config_scroll_set_button(struct libinput_device *device,
 /**
  * @ingroup config
  *
- * Get the button for the @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN mode for
+ * Get the button for the @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN method for
  * this device.
  *
- * If @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN scroll mode is not supported,
+ * If @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN scroll method is not supported,
  * or no button is set, this function returns 0.
  *
  * @note The return value is independent of the currently selected
- * scroll-mode. For button scrolling to activate, a device must have the
- * @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN mode enabled, and a non-zero
+ * scroll-method. For button scrolling to activate, a device must have the
+ * @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN method enabled, and a non-zero
  * button set as scroll button.
  *
  * @param device The device to configure
  * @return The button which when pressed switches to sending scroll events
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_default_button
  */
@@ -2222,19 +2222,19 @@ libinput_device_config_scroll_get_button(struct libinput_device *device);
 /**
  * @ingroup config
  *
- * Get the default button for LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN mode
+ * Get the default button for LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN method
  * for this device.
  *
- * If @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN scroll mode is not supported,
+ * If @ref LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN scroll method is not supported,
  * or no default button is set, this function returns 0.
  *
  * @param device The device to configure
- * @return The default button for LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN mode
+ * @return The default button for LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN method
  *
- * @see libinput_device_config_scroll_get_modes
- * @see libinput_device_config_scroll_set_mode
- * @see libinput_device_config_scroll_get_mode
- * @see libinput_device_config_scroll_get_default_mode
+ * @see libinput_device_config_scroll_get_methods
+ * @see libinput_device_config_scroll_set_method
+ * @see libinput_device_config_scroll_get_method
+ * @see libinput_device_config_scroll_get_default_method
  * @see libinput_device_config_scroll_set_button
  * @see libinput_device_config_scroll_get_button
  */

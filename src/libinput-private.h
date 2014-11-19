@@ -132,12 +132,12 @@ struct libinput_device_config_left_handed {
 	int (*get_default)(struct libinput_device *device);
 };
 
-struct libinput_device_config_scroll_mode {
-	uint32_t (*get_modes)(struct libinput_device *device);
-	enum libinput_config_status (*set_mode)(struct libinput_device *device,
-						enum libinput_config_scroll_mode mode);
-	enum libinput_config_scroll_mode (*get_mode)(struct libinput_device *device);
-	enum libinput_config_scroll_mode (*get_default_mode)(struct libinput_device *device);
+struct libinput_device_config_scroll_method {
+	uint32_t (*get_methods)(struct libinput_device *device);
+	enum libinput_config_status (*set_method)(struct libinput_device *device,
+						  enum libinput_config_scroll_method method);
+	enum libinput_config_scroll_method (*get_method)(struct libinput_device *device);
+	enum libinput_config_scroll_method (*get_default_method)(struct libinput_device *device);
 	enum libinput_config_status (*set_button)(struct libinput_device *device,
 						  uint32_t button);
 	uint32_t (*get_button)(struct libinput_device *device);
@@ -151,7 +151,7 @@ struct libinput_device_config {
 	struct libinput_device_config_accel *accel;
 	struct libinput_device_config_natural_scroll *natural_scroll;
 	struct libinput_device_config_left_handed *left_handed;
-	struct libinput_device_config_scroll_mode *scroll_mode;
+	struct libinput_device_config_scroll_method *scroll_method;
 };
 
 struct libinput_device {

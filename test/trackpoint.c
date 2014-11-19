@@ -81,7 +81,7 @@ START_TEST(trackpoint_middlebutton_noscroll)
 	struct libinput_event *event;
 
 	/* Disable middle button scrolling */
-	libinput_device_config_scroll_set_mode(dev->libinput_device,
+	libinput_device_config_scroll_set_method(dev->libinput_device,
 					LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
 
 	litest_drain_events(li);
@@ -101,8 +101,8 @@ START_TEST(trackpoint_middlebutton_noscroll)
 	litest_assert_empty_queue(li);
 
 	/* Restore default scroll behavior */
-	libinput_device_config_scroll_set_mode(dev->libinput_device,
-		libinput_device_config_scroll_get_default_mode(
+	libinput_device_config_scroll_set_method(dev->libinput_device,
+		libinput_device_config_scroll_get_default_method(
 			dev->libinput_device));
 }
 END_TEST

@@ -202,8 +202,8 @@ struct tp_dispatch {
 	} buttons;				/* physical buttons */
 
 	struct {
-		struct libinput_device_config_scroll_mode config_mode;
-		enum libinput_config_scroll_mode mode;
+		struct libinput_device_config_scroll_method config_method;
+		enum libinput_config_scroll_method method;
 	} scroll;
 
 	enum touchpad_event queued;

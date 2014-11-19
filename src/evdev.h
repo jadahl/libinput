@@ -100,16 +100,16 @@ struct evdev_device {
 
 	struct {
 		struct libinput_timer timer;
-		struct libinput_device_config_scroll_mode config;
-		/* Currently enabled mode, button */
-		enum libinput_config_scroll_mode mode;
+		struct libinput_device_config_scroll_method config;
+		/* Currently enabled method, button */
+		enum libinput_config_scroll_method method;
 		uint32_t button;
 		/* set during device init, used at runtime to delay changes
 		 * until all buttons are up */
-		enum libinput_config_scroll_mode want_mode;
+		enum libinput_config_scroll_method want_method;
 		uint32_t want_button;
 		/* Checks if buttons are down and commits the setting */
-		void (*change_scroll_mode)(struct evdev_device *device);
+		void (*change_scroll_method)(struct evdev_device *device);
 		bool button_scroll_active;
 		double threshold;
 		uint32_t direction;

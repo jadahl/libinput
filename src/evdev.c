@@ -125,8 +125,8 @@ evdev_pointer_notify_button(struct evdev_device *device,
 			device->buttons.change_to_left_handed(device);
 
 		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
-		    device->scroll.change_scroll_mode)
-			device->scroll.change_scroll_mode(device);
+		    device->scroll.change_scroll_method)
+			device->scroll.change_scroll_method(device);
 	}
 
 }
@@ -217,7 +217,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		device->rel.dy = 0;
 
 		/* Use unaccelerated deltas for pointing stick scroll */
-		if (device->scroll.mode == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
+		if (device->scroll.method == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
 		    hw_is_key_down(device, device->scroll.button)) {
 			if (device->scroll.button_scroll_active)
 				evdev_post_scroll(device, time,
@@ -460,7 +460,7 @@ evdev_process_key(struct evdev_device *device,
 				   LIBINPUT_KEY_STATE_RELEASED);
 		break;
 	case EVDEV_KEY_TYPE_BUTTON:
-		if (device->scroll.mode == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
+		if (device->scroll.method == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
 		    e->code == device->scroll.button) {
 			evdev_button_scroll_button(device, time, e->value);
 			break;
@@ -848,49 +848,49 @@ evdev_init_left_handed(struct evdev_device *device,
 }
 
 static uint32_t
-evdev_scroll_get_modes(struct libinput_device *device)
+evdev_scroll_get_methods(struct libinput_device *device)
 {
 	return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
 }
 
 static void
-evdev_change_scroll_mode(struct evdev_device *device)
+evdev_change_scroll_method(struct evdev_device *device)
 {
-	if (device->scroll.want_mode == device->scroll.mode &&
+	if (device->scroll.want_method == device->scroll.method &&
 	    device->scroll.want_button == device->scroll.button)
 		return;
 
 	if (evdev_any_button_down(device))
 		return;
 
-	device->scroll.mode = device->scroll.want_mode;
+	device->scroll.method = device->scroll.want_method;
 	device->scroll.button = device->scroll.want_button;
 }
 
 static enum libinput_config_status
-evdev_scroll_set_mode(struct libinput_device *device,
-		      enum libinput_config_scroll_mode mode)
+evdev_scroll_set_method(struct libinput_device *device,
+			enum libinput_config_scroll_method method)
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 
-	evdev->scroll.want_mode = mode;
-	evdev->scroll.change_scroll_mode(evdev);
+	evdev->scroll.want_method = method;
+	evdev->scroll.change_scroll_method(evdev);
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
-static enum libinput_config_scroll_mode
-evdev_scroll_get_mode(struct libinput_device *device)
+static enum libinput_config_scroll_method
+evdev_scroll_get_method(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device *)device;
 
 	/* return the wanted configuration, even if it hasn't taken
 	 * effect yet! */
-	return evdev->scroll.want_mode;
+	return evdev->scroll.want_method;
 }
 
-static enum libinput_config_scroll_mode
-evdev_scroll_get_default_mode(struct libinput_device *device)
+static enum libinput_config_scroll_method
+evdev_scroll_get_default_method(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device *)device;
 
@@ -907,7 +907,7 @@ evdev_scroll_set_button(struct libinput_device *device,
 	struct evdev_device *evdev = (struct evdev_device*)device;
 
 	evdev->scroll.want_button = button;
-	evdev->scroll.change_scroll_mode(evdev);
+	evdev->scroll.change_scroll_method(evdev);
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
@@ -935,23 +935,23 @@ evdev_scroll_get_default_button(struct libinput_device *device)
 
 static int
 evdev_init_button_scroll(struct evdev_device *device,
-			 void (*change_scroll_mode)(struct evdev_device *))
+			 void (*change_scroll_method)(struct evdev_device *))
 {
 	libinput_timer_init(&device->scroll.timer, device->base.seat->libinput,
 			    evdev_button_scroll_timeout, device);
-	device->scroll.config.get_modes = evdev_scroll_get_modes;
-	device->scroll.config.set_mode = evdev_scroll_set_mode;
-	device->scroll.config.get_mode = evdev_scroll_get_mode;
-	device->scroll.config.get_default_mode = evdev_scroll_get_default_mode;
+	device->scroll.config.get_methods = evdev_scroll_get_methods;
+	device->scroll.config.set_method = evdev_scroll_set_method;
+	device->scroll.config.get_method = evdev_scroll_get_method;
+	device->scroll.config.get_default_method = evdev_scroll_get_default_method;
 	device->scroll.config.set_button = evdev_scroll_set_button;
 	device->scroll.config.get_button = evdev_scroll_get_button;
 	device->scroll.config.get_default_button = evdev_scroll_get_default_button;
-	device->base.config.scroll_mode = &device->scroll.config;
-	device->scroll.mode = evdev_scroll_get_default_mode((struct libinput_device *)device);
-	device->scroll.want_mode = device->scroll.mode;
+	device->base.config.scroll_method = &device->scroll.config;
+	device->scroll.method = evdev_scroll_get_default_method((struct libinput_device *)device);
+	device->scroll.want_method = device->scroll.method;
 	device->scroll.button = evdev_scroll_get_default_button((struct libinput_device *)device);
 	device->scroll.want_button = device->scroll.button;
-	device->scroll.change_scroll_mode = change_scroll_mode;
+	device->scroll.change_scroll_method = change_scroll_method;
 
 	return 0;
 }
@@ -1045,7 +1045,7 @@ fallback_dispatch_create(struct libinput_device *device)
 
 	if (evdev_device->scroll.want_button &&
 	    evdev_init_button_scroll(evdev_device,
-				     evdev_change_scroll_mode) == -1) {
+				     evdev_change_scroll_method) == -1) {
 		free(dispatch);
 		return NULL;
 	}

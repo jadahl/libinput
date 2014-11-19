@@ -503,7 +503,7 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	int nfingers_down = 0;
 
-	if (tp->scroll.mode != LIBINPUT_CONFIG_SCROLL_2FG)
+	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
 		return 0;
 
 	/* No scrolling during tap-n-drag */
@@ -903,45 +903,45 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 }
 
 static uint32_t
-tp_scroll_config_scroll_mode_get_modes(struct libinput_device *device)
+tp_scroll_config_scroll_method_get_methods(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
-	uint32_t modes = LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
+	uint32_t methods = LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
 
 	if (tp->ntouches >= 2)
-		modes |= LIBINPUT_CONFIG_SCROLL_2FG;
+		methods |= LIBINPUT_CONFIG_SCROLL_2FG;
 
-	return modes;
+	return methods;
 }
 
 static enum libinput_config_status
-tp_scroll_config_scroll_mode_set_mode(struct libinput_device *device,
-		        enum libinput_config_scroll_mode mode)
+tp_scroll_config_scroll_method_set_method(struct libinput_device *device,
+		        enum libinput_config_scroll_method method)
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
 
-	if (mode == tp->scroll.mode)
+	if (method == tp->scroll.method)
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
 
 	evdev_stop_scroll(evdev, libinput_now(device->seat->libinput));
-	tp->scroll.mode = mode;
+	tp->scroll.method = method;
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
 
-static enum libinput_config_scroll_mode
-tp_scroll_config_scroll_mode_get_mode(struct libinput_device *device)
+static enum libinput_config_scroll_method
+tp_scroll_config_scroll_method_get_method(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
 
-	return tp->scroll.mode;
+	return tp->scroll.method;
 }
 
-static enum libinput_config_scroll_mode
-tp_scroll_config_scroll_mode_get_default_mode(struct libinput_device *device)
+static enum libinput_config_scroll_method
+tp_scroll_config_scroll_method_get_default_method(struct libinput_device *device)
 {
 	return LIBINPUT_CONFIG_SCROLL_2FG;
 }
@@ -952,12 +952,12 @@ tp_init_scroll(struct tp_dispatch *tp, struct evdev_device *device)
 
 	evdev_init_natural_scroll(device);
 
-	tp->scroll.config_mode.get_modes = tp_scroll_config_scroll_mode_get_modes;
-	tp->scroll.config_mode.set_mode = tp_scroll_config_scroll_mode_set_mode;
-	tp->scroll.config_mode.get_mode = tp_scroll_config_scroll_mode_get_mode;
-	tp->scroll.config_mode.get_default_mode = tp_scroll_config_scroll_mode_get_default_mode;
-	tp->scroll.mode = tp_scroll_config_scroll_mode_get_default_mode(&tp->device->base);
-	tp->device->base.config.scroll_mode = &tp->scroll.config_mode;
+	tp->scroll.config_method.get_methods = tp_scroll_config_scroll_method_get_methods;
+	tp->scroll.config_method.set_method = tp_scroll_config_scroll_method_set_method;
+	tp->scroll.config_method.get_method = tp_scroll_config_scroll_method_get_method;
+	tp->scroll.config_method.get_default_method = tp_scroll_config_scroll_method_get_default_method;
+	tp->scroll.method = tp_scroll_config_scroll_method_get_default_method(&tp->device->base);
+	tp->device->base.config.scroll_method = &tp->scroll.config_method;
 
 	/* In mm for touchpads with valid resolution, see tp_init_accel() */
 	tp->device->scroll.threshold = 5.0;
