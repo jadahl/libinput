@@ -42,11 +42,13 @@ static struct udev_seat *
 udev_seat_get_named(struct udev_input *input, const char *seat_name);
 
 static int
-device_added(struct udev_device *udev_device, struct udev_input *input)
+device_added(struct udev_device *udev_device,
+	     struct udev_input *input,
+	     const char *seat_name)
 {
 	struct evdev_device *device;
 	const char *devnode;
-	const char *device_seat, *seat_name, *output_name;
+	const char *device_seat, *output_name;
 	const char *calibration_values;
 	float calibration[6];
 	struct udev_seat *seat;
@@ -61,7 +63,8 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 	devnode = udev_device_get_devnode(udev_device);
 
 	/* Search for matching logical seat */
-	seat_name = udev_device_get_property_value(udev_device, "WL_SEAT");
+	if (!seat_name)
+		seat_name = udev_device_get_property_value(udev_device, "WL_SEAT");
 	if (!seat_name)
 		seat_name = default_seat_name;
 
@@ -161,7 +164,7 @@ udev_input_add_devices(struct udev_input *input, struct udev *udev)
 			continue;
 		}
 
-		if (device_added(device, input) < 0) {
+		if (device_added(device, input, NULL) < 0) {
 			udev_device_unref(device);
 			udev_enumerate_unref(e);
 			return -1;
@@ -193,7 +196,7 @@ evdev_udev_handler(void *data)
 		goto out;
 
 	if (!strcmp(action, "add"))
-		device_added(udev_device, input);
+		device_added(udev_device, input, NULL);
 	else if (!strcmp(action, "remove"))
 		device_removed(udev_device, input);
 
