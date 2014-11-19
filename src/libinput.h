@@ -1373,6 +1373,32 @@ libinput_device_get_seat(struct libinput_device *device);
 /**
  * @ingroup device
  *
+ * Change the logical seat associated with this device by removing the
+ * device and adding it to the new seat.
+ *
+ * This command is identical to physically unplugging the device, then
+ * re-plugging it as member of the new seat,
+ * @ref LIBINPUT_EVENT_DEVICE_REMOVED and @ref LIBINPUT_EVENT_DEVICE_ADDED
+ * events are sent accordingly. Those events mark the end of the lifetime
+ * of this device and the start of a new device.
+ *
+ * If the logical seat name already exists in the device's physical seat,
+ * the device is added to this seat. Otherwise, a new seat is created.
+ *
+ * @note This change applies to this device until removal or @ref
+ * libinput_suspend(), whichever happens earlier.
+ *
+ * @param device A previously obtained device
+ * @param name The new logical seat name
+ * @return 0 on success, non-zero on error
+ */
+int
+libinput_device_set_seat_logical_name(struct libinput_device *device,
+				      const char *name);
+
+/**
+ * @ingroup device
+ *
  * Update the LEDs on the device, if any. If the device does not have
  * LEDs, or does not have one or more of the LEDs given in the mask, this
  * function does nothing.

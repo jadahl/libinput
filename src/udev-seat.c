@@ -332,10 +332,29 @@ udev_seat_get_named(struct udev_input *input, const char *seat_name)
 	return NULL;
 }
 
+static int
+udev_device_change_seat(struct libinput_device *device,
+			const char *seat_name)
+{
+	struct libinput *libinput = device->seat->libinput;
+	struct udev_input *input = (struct udev_input *)libinput;
+	struct evdev_device *evdev_device = (struct evdev_device *)device;
+	struct udev_device *udev_device = evdev_device->udev_device;
+	int rc;
+
+	udev_device_ref(udev_device);
+	device_removed(udev_device, input);
+	rc = device_added(udev_device, input, seat_name);
+	udev_device_unref(udev_device);
+
+	return rc;
+}
+
 static const struct libinput_interface_backend interface_backend = {
 	.resume = udev_input_enable,
 	.suspend = udev_input_disable,
 	.destroy = udev_input_destroy,
+	.device_change_seat = udev_device_change_seat,
 };
 
 LIBINPUT_EXPORT struct libinput *

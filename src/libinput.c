@@ -1213,6 +1213,19 @@ libinput_device_get_seat(struct libinput_device *device)
 	return device->seat;
 }
 
+LIBINPUT_EXPORT int
+libinput_device_set_seat_logical_name(struct libinput_device *device,
+				      const char *name)
+{
+	struct libinput *libinput = device->seat->libinput;
+
+	if (name == NULL)
+		return -1;
+
+	return libinput->interface_backend->device_change_seat(device,
+							       name);
+}
+
 LIBINPUT_EXPORT void
 libinput_device_led_update(struct libinput_device *device,
 			   enum libinput_led leds)

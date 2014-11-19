@@ -235,10 +235,30 @@ path_create_device(struct libinput *libinput,
 	return device;
 }
 
+static int
+path_device_change_seat(struct libinput_device *device,
+			const char *seat_name)
+{
+	struct libinput *libinput = device->seat->libinput;
+	struct evdev_device *evdev_device = (struct evdev_device *)device;
+	struct udev_device *udev_device = NULL;
+	int rc = -1;
+
+	udev_device = evdev_device->udev_device;
+	udev_device_ref(udev_device);
+	libinput_path_remove_device(device);
+
+	if (path_create_device(libinput, udev_device, seat_name) != NULL)
+		rc = 0;
+	udev_device_unref(udev_device);
+	return rc;
+}
+
 static const struct libinput_interface_backend interface_backend = {
 	.resume = path_input_enable,
 	.suspend = path_input_disable,
 	.destroy = path_input_destroy,
+	.device_change_seat = path_device_change_seat,
 };
 
 LIBINPUT_EXPORT struct libinput *

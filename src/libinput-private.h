@@ -36,6 +36,8 @@ struct libinput_interface_backend {
 	int (*resume)(struct libinput *libinput);
 	void (*suspend)(struct libinput *libinput);
 	void (*destroy)(struct libinput *libinput);
+	int (*device_change_seat)(struct libinput_device *device,
+				  const char *seat_name);
 };
 
 struct libinput {
