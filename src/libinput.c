@@ -1591,7 +1591,7 @@ libinput_device_config_scroll_set_button(struct libinput_device *device,
 	     LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN) == 0)
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
-	if (!libinput_device_has_button(device, button))
+	if (button && !libinput_device_has_button(device, button))
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 
 	return device->config.scroll_mode->set_button(device, button);

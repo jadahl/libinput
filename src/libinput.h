@@ -2169,6 +2169,8 @@ libinput_device_config_scroll_get_default_mode(struct libinput_device *device);
  * @note Setting the button does not change the scroll mode. To change the
  * scroll mode call libinput_device_config_scroll_set_mode().
  *
+ * If the button is 0, button scrolling is effectively disabled.
+ *
  * @param device The device to configure
  * @param button The button which when pressed switches to sending scroll events
  *
