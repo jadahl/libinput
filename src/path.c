@@ -236,6 +236,37 @@ path_input_destroy(struct libinput *input)
 
 }
 
+static struct libinput_device *
+path_create_device(struct libinput *libinput,
+		   const char *path)
+{
+	struct path_input *input = (struct path_input*)libinput;
+	struct path_device *dev;
+	struct libinput_device *device;
+
+	dev = zalloc(sizeof *dev);
+	if (!dev)
+		return NULL;
+
+	dev->path = strdup(path);
+	if (!dev->path) {
+		free(dev);
+		return NULL;
+	}
+
+	list_insert(&input->path_list, &dev->link);
+
+	device = path_device_enable(input, dev->path);
+
+	if (!device) {
+		list_remove(&dev->link);
+		free(dev->path);
+		free(dev);
+	}
+
+	return device;
+}
+
 static const struct libinput_interface_backend interface_backend = {
 	.resume = path_input_enable,
 	.suspend = path_input_disable,
@@ -275,36 +306,12 @@ LIBINPUT_EXPORT struct libinput_device *
 libinput_path_add_device(struct libinput *libinput,
 			 const char *path)
 {
-	struct path_input *input = (struct path_input*)libinput;
-	struct path_device *dev;
-	struct libinput_device *device;
-
 	if (libinput->interface_backend != &interface_backend) {
 		log_bug_client(libinput, "Mismatching backends.\n");
 		return NULL;
 	}
 
-	dev = zalloc(sizeof *dev);
-	if (!dev)
-		return NULL;
-
-	dev->path = strdup(path);
-	if (!dev->path) {
-		free(dev);
-		return NULL;
-	}
-
-	list_insert(&input->path_list, &dev->link);
-
-	device = path_device_enable(input, dev->path);
-
-	if (!device) {
-		list_remove(&dev->link);
-		free(dev->path);
-		free(dev);
-	}
-
-	return device;
+	return path_create_device(libinput, path);
 }
 
 LIBINPUT_EXPORT void
