@@ -175,6 +175,81 @@ START_TEST(udev_added_seat_default)
 }
 END_TEST
 
+/**
+ * This test only works if there's at least one device in the system that is
+ * assigned the default seat. Should cover the 99% case.
+ */
+START_TEST(udev_change_seat)
+{
+	struct libinput *li;
+	struct udev *udev;
+	struct libinput_event *event;
+	struct libinput_device *device;
+	struct libinput_seat *seat1, *seat2;
+	const char *seat1_name;
+	const char *seat2_name = "new seat";
+	int rc;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_udev_create_context(&simple_interface, NULL, udev);
+	ck_assert(li != NULL);
+	ck_assert_int_eq(libinput_udev_assign_seat(li, "seat0"), 0);
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_ADDED);
+
+	device = libinput_event_get_device(event);
+	libinput_device_ref(device);
+
+	seat1 = libinput_device_get_seat(device);
+	libinput_seat_ref(seat1);
+
+	seat1_name = libinput_seat_get_logical_name(seat1);
+	libinput_event_destroy(event);
+
+	litest_drain_events(li);
+
+	rc = libinput_device_set_seat_logical_name(device,
+						   seat2_name);
+	ck_assert_int_eq(rc, 0);
+
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_REMOVED);
+
+	ck_assert(libinput_event_get_device(event) == device);
+	libinput_event_destroy(event);
+
+	event = libinput_get_event(li);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_ADDED);
+	ck_assert(libinput_event_get_device(event) != device);
+	libinput_device_unref(device);
+
+	device = libinput_event_get_device(event);
+	seat2 = libinput_device_get_seat(device);
+
+	ck_assert_str_ne(libinput_seat_get_logical_name(seat2),
+			 seat1_name);
+	ck_assert_str_eq(libinput_seat_get_logical_name(seat2),
+			 seat2_name);
+	libinput_event_destroy(event);
+
+	libinput_seat_unref(seat1);
+
+	libinput_unref(li);
+	udev_unref(udev);
+}
+END_TEST
+
 START_TEST(udev_double_suspend)
 {
 	struct libinput *li;
@@ -414,7 +489,8 @@ main(int argc, char **argv)
 	litest_add_no_device("udev:create", udev_create_seat0);
 	litest_add_no_device("udev:create", udev_create_empty_seat);
 
-	litest_add_no_device("udev:seat events", udev_added_seat_default);
+	litest_add_no_device("udev:seat", udev_added_seat_default);
+	litest_add_no_device("udev:seat", udev_change_seat);
 
 	litest_add_for_device("udev:suspend", udev_double_suspend, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add_for_device("udev:suspend", udev_double_resume, LITEST_SYNAPTICS_CLICKPAD);

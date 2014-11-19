@@ -162,6 +162,74 @@ START_TEST(path_added_seat)
 }
 END_TEST
 
+START_TEST(path_seat_change)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_device *device;
+	struct libinput_seat *seat1, *seat2;
+	const char *seat1_name;
+	const char *seat2_name = "new seat";
+	int rc;
+
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_ADDED);
+
+	device = libinput_event_get_device(event);
+	libinput_device_ref(device);
+
+	seat1 = libinput_device_get_seat(device);
+	libinput_seat_ref(seat1);
+
+	seat1_name = libinput_seat_get_logical_name(seat1);
+	libinput_event_destroy(event);
+
+	litest_drain_events(li);
+
+	rc = libinput_device_set_seat_logical_name(device,
+						   seat2_name);
+	ck_assert_int_eq(rc, 0);
+
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_REMOVED);
+
+	ck_assert(libinput_event_get_device(event) == device);
+	libinput_event_destroy(event);
+
+	event = libinput_get_event(li);
+	ck_assert(event != NULL);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_DEVICE_ADDED);
+	ck_assert(libinput_event_get_device(event) != device);
+	libinput_device_unref(device);
+
+	device = libinput_event_get_device(event);
+	seat2 = libinput_device_get_seat(device);
+
+	ck_assert_str_ne(libinput_seat_get_logical_name(seat2),
+			 seat1_name);
+	ck_assert_str_eq(libinput_seat_get_logical_name(seat2),
+			 seat2_name);
+	libinput_event_destroy(event);
+
+	libinput_seat_unref(seat1);
+
+	/* litest: swap the new device in, so cleanup works */
+	libinput_device_unref(dev->libinput_device);
+	libinput_device_ref(device);
+	dev->libinput_device = device;
+}
+END_TEST
+
 START_TEST(path_added_device)
 {
 	struct litest_device *dev = litest_current_device();
@@ -805,7 +873,8 @@ main(int argc, char **argv)
 	litest_add_no_device("path:suspend", path_add_device_suspend_resume);
 	litest_add_no_device("path:suspend", path_add_device_suspend_resume_fail);
 	litest_add_no_device("path:suspend", path_add_device_suspend_resume_remove_device);
-	litest_add_for_device("path:seat events", path_added_seat, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("path:seat", path_added_seat, LITEST_SYNAPTICS_CLICKPAD);
+	litest_add_for_device("path:seat", path_seat_change, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add("path:device events", path_added_device, LITEST_ANY, LITEST_ANY);
 	litest_add("path:device events", path_device_sysname, LITEST_ANY, LITEST_ANY);
 	litest_add_for_device("path:device events", path_add_device, LITEST_SYNAPTICS_CLICKPAD);
