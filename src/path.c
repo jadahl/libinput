@@ -111,7 +111,8 @@ path_seat_get_named(struct path_input *input,
 
 static struct libinput_device *
 path_device_enable(struct path_input *input,
-		   struct udev_device *udev_device)
+		   struct udev_device *udev_device,
+		   const char *seat_logical_name_override)
 {
 	struct path_seat *seat;
 	struct evdev_device *device = NULL;
@@ -119,12 +120,24 @@ path_device_enable(struct path_input *input,
 	const char *seat_prop;
 	const char *devnode;
 
+	devnode = udev_device_get_devnode(udev_device);
+
 	seat_prop = udev_device_get_property_value(udev_device, "ID_SEAT");
 	seat_name = strdup(seat_prop ? seat_prop : default_seat);
 
-	seat_prop = udev_device_get_property_value(udev_device, "WL_SEAT");
-	seat_logical_name = strdup(seat_prop ? seat_prop : default_seat_name);
-	devnode = udev_device_get_devnode(udev_device);
+	if (seat_logical_name_override) {
+		seat_logical_name = strdup(seat_logical_name_override);
+	} else {
+		seat_prop = udev_device_get_property_value(udev_device, "WL_SEAT");
+		seat_logical_name = strdup(seat_prop ? seat_prop : default_seat_name);
+	}
+
+	if (!seat_logical_name) {
+		log_error(&input->base,
+			  "failed to create seat name for device '%s'.\n",
+			  devnode);
+		goto out;
+	}
 
 	seat = path_seat_get_named(input, seat_name, seat_logical_name);
 
@@ -170,7 +183,7 @@ path_input_enable(struct libinput *libinput)
 	struct path_device *dev;
 
 	list_for_each(dev, &input->path_list, link) {
-		if (path_device_enable(input, dev->udev_device) == NULL) {
+		if (path_device_enable(input, dev->udev_device, NULL) == NULL) {
 			path_input_disable(libinput);
 			return -1;
 		}
@@ -196,7 +209,8 @@ path_input_destroy(struct libinput *input)
 
 static struct libinput_device *
 path_create_device(struct libinput *libinput,
-		   struct udev_device *udev_device)
+		   struct udev_device *udev_device,
+		   const char *seat_name)
 {
 	struct path_input *input = (struct path_input*)libinput;
 	struct path_device *dev;
@@ -210,7 +224,7 @@ path_create_device(struct libinput *libinput,
 
 	list_insert(&input->path_list, &dev->link);
 
-	device = path_device_enable(input, udev_device);
+	device = path_device_enable(input, udev_device, seat_name);
 
 	if (!device) {
 		udev_device_unref(dev->udev_device);
@@ -287,7 +301,7 @@ libinput_path_add_device(struct libinput *libinput,
 		return NULL;
 	}
 
-	device = path_create_device(libinput, udev_device);
+	device = path_create_device(libinput, udev_device, NULL);
 	udev_device_unref(udev_device);
 	return device;
 }
