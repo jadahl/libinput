@@ -34,7 +34,7 @@ struct path_input {
 
 struct path_device {
 	struct list link;
-	char *path;
+	struct udev_device *udev_device;
 };
 
 struct path_seat {

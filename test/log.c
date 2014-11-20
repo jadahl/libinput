@@ -125,11 +125,13 @@ START_TEST(log_priority)
 
 	libinput_path_add_device(li, "/tmp");
 
-	ck_assert_int_eq(log_handler_called, 0);
+	ck_assert_int_eq(log_handler_called, 1);
 
 	libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_INFO);
-	libinput_path_add_device(li, "/tmp");
-	ck_assert_int_gt(log_handler_called, 0);
+	/* event0 is usually Lid Switch which prints an info that
+	   we don't handle it */
+	libinput_path_add_device(li, "/dev/input/event0");
+	ck_assert_int_gt(log_handler_called, 1);
 
 	log_handler_called = 0;
 
