@@ -430,12 +430,12 @@ libinput_event_keyboard_get_base_event(struct libinput_event_keyboard *event);
 /**
  * @ingroup event_keyboard
  *
- * For the key of a LIBINPUT_EVENT_KEYBOARD_KEY event, return the total number
+ * For the key of a @ref LIBINPUT_EVENT_KEYBOARD_KEY event, return the total number
  * of keys pressed on all devices on the associated seat after the event was
  * triggered.
  *
  " @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_KEYBOARD_KEY. For other events, this function returns 0.
+ * @ref LIBINPUT_EVENT_KEYBOARD_KEY. For other events, this function returns 0.
  *
  * @return the seat wide pressed key count for the key of this event
  */
@@ -462,14 +462,14 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event);
  * @ingroup event_pointer
  *
  * Return the delta between the last event and the current event. For pointer
- * events that are not of type LIBINPUT_EVENT_POINTER_MOTION, this function
- * returns 0.
+ * events that are not of type @ref LIBINPUT_EVENT_POINTER_MOTION, this
+ * function returns 0.
  *
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION.
  *
  * @return the relative x movement since the last event
  */
@@ -480,14 +480,14 @@ libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
  * @ingroup event_pointer
  *
  * Return the delta between the last event and the current event. For pointer
- * events that are not of type LIBINPUT_EVENT_POINTER_MOTION, this function
- * returns 0.
+ * events that are not of type @ref LIBINPUT_EVENT_POINTER_MOTION, this
+ * function returns 0.
  *
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION.
  *
  * @return the relative y movement since the last event
  */
@@ -502,10 +502,10 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
  * coordinate, use libinput_event_pointer_get_absolute_x_transformed().
  *
  * For pointer events that are not of type
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
  * @return the current absolute x coordinate
  */
@@ -520,10 +520,10 @@ libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event);
  * coordinate, use libinput_event_pointer_get_absolute_y_transformed().
  *
  * For pointer events that are not of type
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
  * @return the current absolute y coordinate
  */
@@ -537,11 +537,11 @@ libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event);
  * screen coordinates.
  *
  * For pointer events that are not of type
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this function is
- * undefined.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this
+ * function is undefined.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
  * @param event The libinput pointer event
  * @param width The current output screen width
@@ -559,11 +559,11 @@ libinput_event_pointer_get_absolute_x_transformed(
  * screen coordinates.
  *
  * For pointer events that are not of type
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this function is
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE, the return value of this function is
  * undefined.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
+ * @ref LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE.
  *
  * @param event The libinput pointer event
  * @param height The current output screen height
@@ -578,11 +578,11 @@ libinput_event_pointer_get_absolute_y_transformed(
  * @ingroup event_pointer
  *
  * Return the button that triggered this event.
- * For pointer events that are not of type LIBINPUT_EVENT_POINTER_BUTTON,
- * this function returns 0.
+ * For pointer events that are not of type @ref
+ * LIBINPUT_EVENT_POINTER_BUTTON, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_BUTTON.
+ * @ref LIBINPUT_EVENT_POINTER_BUTTON.
  *
  * @return the button triggering this event
  */
@@ -593,11 +593,11 @@ libinput_event_pointer_get_button(struct libinput_event_pointer *event);
  * @ingroup event_pointer
  *
  * Return the button state that triggered this event.
- * For pointer events that are not of type LIBINPUT_EVENT_POINTER_BUTTON,
- * this function returns 0.
+ * For pointer events that are not of type @ref
+ * LIBINPUT_EVENT_POINTER_BUTTON, this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_BUTTON.
+ * @ref LIBINPUT_EVENT_POINTER_BUTTON.
  *
  * @return the button state triggering this event
  */
@@ -607,12 +607,13 @@ libinput_event_pointer_get_button_state(struct libinput_event_pointer *event);
 /**
  * @ingroup event_pointer
  *
- * For the button of a LIBINPUT_EVENT_POINTER_BUTTON event, return the total
- * number of buttons pressed on all devices on the associated seat after the
- * the event was triggered.
+ * For the button of a @ref LIBINPUT_EVENT_POINTER_BUTTON event, return the
+ * total number of buttons pressed on all devices on the associated seat
+ * after the the event was triggered.
  *
  " @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_BUTTON. For other events, this function returns 0.
+ * @ref LIBINPUT_EVENT_POINTER_BUTTON. For other events, this function
+ * returns 0.
  *
  * @return the seat wide pressed button count for the key of this event
  */
@@ -624,11 +625,11 @@ libinput_event_pointer_get_seat_button_count(
  * @ingroup event_pointer
  *
  * Return the axis that triggered this event.
- * For pointer events that are not of type LIBINPUT_EVENT_POINTER_AXIS,
+ * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
  * this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_AXIS.
+ * @ref LIBINPUT_EVENT_POINTER_AXIS.
  *
  * @return the axis triggering this event
  */
@@ -640,18 +641,18 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  *
  * Return the axis value of the given axis. The interpretation of the value
  * is dependent on the axis. For the two scrolling axes
- * LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
- * LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, the value of the event is in
+ * @ref LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
+ * @ref LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, the value of the event is in
  * relative scroll units, with the positive direction being down or right,
  * respectively. The dimension of a scroll unit is equal to one unit of
  * motion in the respective axis, where applicable (e.g. touchpad two-finger
  * scrolling).
  *
- * For pointer events that are not of type LIBINPUT_EVENT_POINTER_AXIS,
+ * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
  * this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_AXIS.
+ * @ref LIBINPUT_EVENT_POINTER_AXIS.
  *
  * @return the axis value of this event
  */
@@ -690,8 +691,8 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
  * If the touch event has no assigned slot, for example if it is from a
  * single touch device, this function returns -1.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_CANCEL or
- * LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should not be called for @ref
+ * LIBINPUT_EVENT_TOUCH_CANCEL or @ref LIBINPUT_EVENT_TOUCH_FRAME.
  *
  * @return The slot of this touch event
  */
@@ -707,8 +708,8 @@ libinput_event_touch_get_slot(struct libinput_event_touch *event);
  * Events from single touch devices will be represented as one individual
  * touch point per device.
  *
- * @note this function should not be called for LIBINPUT_EVENT_TOUCH_CANCEL or
- * LIBINPUT_EVENT_TOUCH_FRAME.
+ * @note this function should not be called for @ref
+ * LIBINPUT_EVENT_TOUCH_CANCEL or @ref LIBINPUT_EVENT_TOUCH_FRAME.
  *
  * @return The seat slot of the touch event
  */
@@ -722,8 +723,8 @@ libinput_event_touch_get_seat_slot(struct libinput_event_touch *event);
  * the top left corner of the device. To get the corresponding output screen
  * coordinate, use libinput_event_touch_get_x_transformed().
  *
- * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
- * LIBINPUT_EVENT_TOUCH_MOTION.
+ * @note this function should only be called for @ref
+ * LIBINPUT_EVENT_TOUCH_DOWN and @ref LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @return the current absolute x coordinate
@@ -738,10 +739,10 @@ libinput_event_touch_get_x(struct libinput_event_touch *event);
  * the top left corner of the device. To get the corresponding output screen
  * coordinate, use libinput_event_touch_get_y_transformed().
  *
- * For LIBINPUT_EVENT_TOUCH_UP 0 is returned.
+ * For @ref LIBINPUT_EVENT_TOUCH_UP 0 is returned.
  *
- * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
- * LIBINPUT_EVENT_TOUCH_MOTION.
+ * @note this function should only be called for @ref LIBINPUT_EVENT_TOUCH_DOWN and
+ * @ref LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @return the current absolute y coordinate
@@ -755,8 +756,8 @@ libinput_event_touch_get_y(struct libinput_event_touch *event);
  * Return the current absolute x coordinate of the touch event, transformed to
  * screen coordinates.
  *
- * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
- * LIBINPUT_EVENT_TOUCH_MOTION.
+ * @note this function should only be called for @ref
+ * LIBINPUT_EVENT_TOUCH_DOWN and @ref LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @param width The current output screen width
@@ -772,8 +773,8 @@ libinput_event_touch_get_x_transformed(struct libinput_event_touch *event,
  * Return the current absolute y coordinate of the touch event, transformed to
  * screen coordinates.
  *
- * @note this function should only be called for LIBINPUT_EVENT_TOUCH_DOWN and
- * LIBINPUT_EVENT_TOUCH_MOTION.
+ * @note this function should only be called for @ref
+ * LIBINPUT_EVENT_TOUCH_DOWN and @ref LIBINPUT_EVENT_TOUCH_MOTION.
  *
  * @param event The libinput touch event
  * @param height The current output screen height
@@ -916,8 +917,8 @@ libinput_path_add_device(struct libinput *libinput,
  * libinput_path_add_device().
  *
  * Events already processed from this input device are kept in the queue,
- * the LIBINPUT_EVENT_DEVICE_REMOVED event marks the end of events for this
- * device.
+ * the @ref LIBINPUT_EVENT_DEVICE_REMOVED event marks the end of events for
+ * this device.
  *
  * If no matching device exists, this function does nothing.
  *
