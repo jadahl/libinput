@@ -565,12 +565,12 @@ tp_init_buttons(struct tp_dispatch *tp,
 		if (tp->buttons.is_clickpad)
 			log_bug_kernel(libinput,
 				       "%s: clickpad advertising right button\n",
-				       device->sysname);
+				       device->devname);
 	} else {
 		if (!tp->buttons.is_clickpad)
 			log_bug_kernel(libinput,
 				       "%s: non clickpad without right button?\n",
-				       device->sysname);
+				       device->devname);
 	}
 
 	absinfo_x = device->abs.absinfo_x;
