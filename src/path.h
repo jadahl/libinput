@@ -28,6 +28,7 @@
 
 struct path_input {
 	struct libinput base;
+	struct udev *udev;
 	struct list path_list;
 };
 

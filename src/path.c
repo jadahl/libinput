@@ -110,21 +110,17 @@ path_seat_get_named(struct path_input *input,
 }
 
 static int
-path_get_udev_properties(const char *path,
+path_get_udev_properties(struct udev *udev,
+			 const char *path,
 			 char **sysname,
 			 char **syspath,
 			 char **seat_name,
 			 char **seat_logical_name)
 {
-	struct udev *udev = NULL;
 	struct udev_device *device = NULL;
 	struct stat st;
 	const char *seat;
 	int rc = -1;
-
-	udev = udev_new();
-	if (!udev)
-		goto out;
 
 	if (stat(path, &st) < 0)
 		goto out;
@@ -147,8 +143,6 @@ path_get_udev_properties(const char *path,
 out:
 	if (device)
 		udev_device_unref(device);
-	if (udev)
-		udev_unref(udev);
 	return rc;
 }
 
@@ -160,8 +154,12 @@ path_device_enable(struct path_input *input, const char *devnode)
 	char *sysname = NULL, *syspath = NULL;
 	char *seat_name = NULL, *seat_logical_name = NULL;
 
-	if (path_get_udev_properties(devnode, &sysname, &syspath,
-				     &seat_name, &seat_logical_name) == -1) {
+	if (path_get_udev_properties(input->udev,
+				     devnode,
+				     &sysname,
+				     &syspath,
+				     &seat_name,
+				     &seat_logical_name) == -1) {
 		log_info(&input->base,
 			 "failed to obtain sysname for device '%s'.\n",
 			 devnode);
@@ -229,6 +227,8 @@ path_input_destroy(struct libinput *input)
 	struct path_input *path_input = (struct path_input*)input;
 	struct path_device *dev, *tmp;
 
+	udev_unref(path_input->udev);
+
 	list_for_each_safe(dev, tmp, &path_input->path_list, link) {
 		free(dev->path);
 		free(dev);
@@ -247,20 +247,25 @@ libinput_path_create_context(const struct libinput_interface *interface,
 			     void *user_data)
 {
 	struct path_input *input;
+	struct udev *udev;
 
 	if (!interface)
 		return NULL;
 
-	input = zalloc(sizeof *input);
-	if (!input)
+	udev = udev_new();
+	if (!udev)
 		return NULL;
 
-	if (libinput_init(&input->base, interface,
+	input = zalloc(sizeof *input);
+	if (!input ||
+	    libinput_init(&input->base, interface,
 			  &interface_backend, user_data) != 0) {
+		udev_unref(udev);
 		free(input);
 		return NULL;
 	}
 
+	input->udev = udev;
 	list_init(&input->path_list);
 
 	return &input->base;
