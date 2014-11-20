@@ -159,7 +159,6 @@ struct libinput_device {
 	struct list link;
 	struct list event_listeners;
 	void *user_data;
-	int terminated;
 	int refcount;
 	struct libinput_device_config config;
 };
