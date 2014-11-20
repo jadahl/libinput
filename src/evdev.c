@@ -240,7 +240,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		if (device->mt.slots[slot].seat_slot != -1) {
 			log_bug_kernel(libinput,
 				       "%s: Driver sent multiple touch down for the "
-				       "same slot", device->devnode);
+				       "same slot",
+				       udev_device_get_devnode(device->udev_device));
 			break;
 		}
 
@@ -292,7 +293,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		if (device->abs.seat_slot != -1) {
 			log_bug_kernel(libinput,
 				       "%s: Driver sent multiple touch down for the "
-				       "same slot", device->devnode);
+				       "same slot",
+				       udev_device_get_devnode(device->udev_device));
 			break;
 		}
 
@@ -1218,20 +1220,9 @@ evdev_need_mtdev(struct evdev_device *device)
 static void
 evdev_tag_device(struct evdev_device *device)
 {
-	struct udev *udev;
-	struct udev_device *udev_device = NULL;
-
-	udev = udev_new();
-	if (!udev)
-		return;
-
-	udev_device = udev_device_new_from_syspath(udev, device->syspath);
-	if (udev_device) {
-		if (device->dispatch->interface->tag_device)
-			device->dispatch->interface->tag_device(device, udev_device);
-		udev_device_unref(udev_device);
-	}
-	udev_unref(udev);
+	if (device->dispatch->interface->tag_device)
+		device->dispatch->interface->tag_device(device,
+							device->udev_device);
 }
 
 static inline int
@@ -1266,6 +1257,7 @@ evdev_configure_device(struct evdev_device *device)
 	int active_slot;
 	int slot;
 	unsigned int i;
+	const char *devnode = udev_device_get_devnode(device->udev_device);
 
 	has_rel = 0;
 	has_abs = 0;
@@ -1364,7 +1356,7 @@ evdev_configure_device(struct evdev_device *device)
 			device->dispatch = evdev_mt_touchpad_create(device);
 			log_info(libinput,
 				 "input device '%s', %s is a touchpad\n",
-				 device->devname, device->devnode);
+				 device->devname, devnode);
 			return device->dispatch == NULL ? -1 : 0;
 		}
 
@@ -1397,7 +1389,7 @@ evdev_configure_device(struct evdev_device *device)
 
 		log_info(libinput,
 			 "input device '%s', %s is a pointer caps =%s%s%s\n",
-			 device->devname, device->devnode,
+			 device->devname, devnode,
 			 has_abs ? " absolute-motion" : "",
 			 has_rel ? " relative-motion": "",
 			 has_button ? " button" : "");
@@ -1417,13 +1409,13 @@ evdev_configure_device(struct evdev_device *device)
 		device->seat_caps |= EVDEV_DEVICE_KEYBOARD;
 		log_info(libinput,
 			 "input device '%s', %s is a keyboard\n",
-			 device->devname, device->devnode);
+			 device->devname, devnode);
 	}
 	if (has_touch && !has_button) {
 		device->seat_caps |= EVDEV_DEVICE_TOUCH;
 		log_info(libinput,
 			 "input device '%s', %s is a touch device\n",
-			 device->devname, device->devnode);
+			 device->devname, devnode);
 	}
 
 	return 0;
@@ -1457,15 +1449,14 @@ evdev_notify_added_device(struct evdev_device *device)
 
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
-		    const char *devnode,
-		    const char *sysname,
-		    const char *syspath)
+		    struct udev_device *udev_device)
 {
 	struct libinput *libinput = seat->libinput;
 	struct evdev_device *device = NULL;
 	int rc;
 	int fd;
 	int unhandled_device = 0;
+	const char *devnode = udev_device_get_devnode(udev_device);
 
 	/* Use non-blocking mode so that we can loop on read on
 	 * evdev_device_data() until all events on the fd are
@@ -1494,9 +1485,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->seat_caps = 0;
 	device->is_mt = 0;
 	device->mtdev = NULL;
-	device->devnode = strdup(devnode);
-	device->sysname = strdup(sysname);
-	device->syspath = strdup(syspath);
+	device->udev_device = udev_device_ref(udev_device);
 	device->rel.dx = 0;
 	device->rel.dy = 0;
 	device->abs.seat_slot = -1;
@@ -1565,7 +1554,7 @@ evdev_device_get_output(struct evdev_device *device)
 const char *
 evdev_device_get_sysname(struct evdev_device *device)
 {
-	return device->sysname;
+	return udev_device_get_sysname(device->udev_device);
 }
 
 const char *
@@ -1919,32 +1908,25 @@ evdev_device_suspend(struct evdev_device *device)
 }
 
 static int
-evdev_device_compare_syspath(struct evdev_device *device, int fd)
+evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
 {
-	struct udev *udev = NULL;
-	struct udev_device *udev_device = NULL;
-	const char *syspath;
+	struct udev *udev = udev_device_get_udev(udev_device);
+	struct udev_device *udev_device_new;
 	struct stat st;
 	int rc = 1;
-
-	udev = udev_new();
-	if (!udev)
-		goto out;
 
 	if (fstat(fd, &st) < 0)
 		goto out;
 
-	udev_device = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
-	if (!device)
+	udev_device_new = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
+	if (!udev_device_new)
 		goto out;
 
-	syspath = udev_device_get_syspath(udev_device);
-	rc = strcmp(syspath, device->syspath);
+	rc = strcmp(udev_device_get_syspath(udev_device_new),
+		    udev_device_get_syspath(udev_device));
 out:
-	if (udev_device)
-		udev_device_unref(udev_device);
-	if (udev)
-		udev_unref(udev);
+	if (udev_device_new)
+		udev_device_unref(udev_device_new);
 	return rc;
 }
 
@@ -1953,19 +1935,21 @@ evdev_device_resume(struct evdev_device *device)
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	int fd;
+	const char *devnode;
 
 	if (device->fd != -1)
 		return 0;
 
-	if (device->syspath == NULL)
+	if (device->was_removed)
 		return -ENODEV;
 
-	fd = open_restricted(libinput, device->devnode, O_RDWR | O_NONBLOCK);
+	devnode = udev_device_get_devnode(device->udev_device);
+	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
 
 	if (fd < 0)
 		return -errno;
 
-	if (evdev_device_compare_syspath(device, fd)) {
+	if (evdev_device_compare_syspath(device->udev_device, fd)) {
 		close_restricted(libinput, fd);
 		return -ENODEV;
 	}
@@ -2008,10 +1992,9 @@ evdev_device_remove(struct evdev_device *device)
 
 	evdev_device_suspend(device);
 
-	/* A device may be removed while suspended. Free the syspath to
+	/* A device may be removed while suspended, mark it to
 	 * skip re-opening a different device with the same node */
-	free(device->syspath);
-	device->syspath = NULL;
+	device->was_removed = true;
 
 	list_remove(&device->base.link);
 
@@ -2031,9 +2014,7 @@ evdev_device_destroy(struct evdev_device *device)
 	filter_destroy(device->pointer.filter);
 	libinput_seat_unref(device->base.seat);
 	libevdev_free(device->evdev);
+	udev_device_unref(device->udev_device);
 	free(device->mt.slots);
-	free(device->devnode);
-	free(device->sysname);
-	free(device->syspath);
 	free(device);
 }

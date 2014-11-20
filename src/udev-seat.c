@@ -46,8 +46,6 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 {
 	struct evdev_device *device;
 	const char *devnode;
-	const char *sysname;
-	const char *syspath;
 	const char *device_seat, *seat_name, *output_name;
 	const char *calibration_values;
 	float calibration[6];
@@ -61,8 +59,6 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 		return 0;
 
 	devnode = udev_device_get_devnode(udev_device);
-	sysname = udev_device_get_sysname(udev_device);
-	syspath = udev_device_get_syspath(udev_device);
 
 	/* Search for matching logical seat */
 	seat_name = udev_device_get_property_value(udev_device, "WL_SEAT");
@@ -79,7 +75,7 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 			return -1;
 	}
 
-	device = evdev_device_create(&seat->base, devnode, sysname, syspath);
+	device = evdev_device_create(&seat->base, udev_device);
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
@@ -123,18 +119,20 @@ device_added(struct udev_device *udev_device, struct udev_input *input)
 static void
 device_removed(struct udev_device *udev_device, struct udev_input *input)
 {
-	const char *devnode;
 	struct evdev_device *device, *next;
 	struct udev_seat *seat;
+	const char *syspath;
 
-	devnode = udev_device_get_devnode(udev_device);
+	syspath = udev_device_get_syspath(udev_device);
 	list_for_each(seat, &input->base.seat_list, base.link) {
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
-			if (!strcmp(device->devnode, devnode)) {
+			if (!strcmp(syspath,
+				    udev_device_get_syspath(device->udev_device))) {
 				log_info(&input->base,
 					 "input device %s, %s removed\n",
-					 device->devname, device->devnode);
+					 device->devname,
+					 udev_device_get_devnode(device->udev_device));
 				evdev_device_remove(device);
 				break;
 			}

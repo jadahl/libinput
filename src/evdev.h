@@ -68,11 +68,10 @@ struct evdev_device {
 
 	struct evdev_dispatch *dispatch;
 	struct libevdev *evdev;
+	struct udev_device *udev_device;
 	char *output_name;
-	char *devnode;
-	char *sysname;
-	char *syspath;
 	const char *devname;
+	bool was_removed;
 	int fd;
 	struct {
 		const struct input_absinfo *absinfo_x, *absinfo_y;
@@ -203,9 +202,7 @@ struct evdev_dispatch {
 
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
-		    const char *devnode,
-		    const char *sysname,
-		    const char *syspath);
+		    struct udev_device *device);
 
 int
 evdev_device_init_pointer_acceleration(struct evdev_device *device);

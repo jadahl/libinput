@@ -115,13 +115,9 @@ path_device_enable(struct path_input *input,
 {
 	struct path_seat *seat;
 	struct evdev_device *device = NULL;
-	char *sysname = NULL, *syspath = NULL;
 	char *seat_name = NULL, *seat_logical_name = NULL;
 	const char *seat_prop;
 	const char *devnode;
-
-	sysname = strdup(udev_device_get_sysname(udev_device));
-	syspath = strdup(udev_device_get_syspath(udev_device));
 
 	seat_prop = udev_device_get_property_value(udev_device, "ID_SEAT");
 	seat_name = strdup(seat_prop ? seat_prop : default_seat);
@@ -144,7 +140,7 @@ path_device_enable(struct path_input *input,
 		}
 	}
 
-	device = evdev_device_create(&seat->base, devnode, sysname, syspath);
+	device = evdev_device_create(&seat->base, udev_device);
 	libinput_seat_unref(&seat->base);
 
 	if (device == EVDEV_UNHANDLED_DEVICE) {
@@ -161,8 +157,6 @@ path_device_enable(struct path_input *input,
 	}
 
 out:
-	free(sysname);
-	free(syspath);
 	free(seat_name);
 	free(seat_logical_name);
 
@@ -313,8 +307,7 @@ libinput_path_remove_device(struct libinput_device *device)
 	}
 
 	list_for_each(dev, &input->path_list, link) {
-		const char *devnode = udev_device_get_devnode(dev->udev_device);
-		if (strcmp(evdev->devnode, devnode) == 0) {
+		if (dev->udev_device == evdev->udev_device) {
 			list_remove(&dev->link);
 			udev_device_unref(dev->udev_device);
 			free(dev);
