@@ -1462,7 +1462,7 @@ evdev_device_create(struct libinput_seat *seat,
 		    const char *syspath)
 {
 	struct libinput *libinput = seat->libinput;
-	struct evdev_device *device;
+	struct evdev_device *device = NULL;
 	int rc;
 	int fd;
 	int unhandled_device = 0;
@@ -1480,7 +1480,7 @@ evdev_device_create(struct libinput_seat *seat,
 
 	device = zalloc(sizeof *device);
 	if (device == NULL)
-		return NULL;
+		goto err;
 
 	libinput_device_init(&device->base, seat);
 	libinput_seat_ref(seat);
@@ -1543,7 +1543,8 @@ evdev_device_create(struct libinput_seat *seat,
 err:
 	if (fd >= 0)
 		close_restricted(libinput, fd);
-	evdev_device_destroy(device);
+	if (device)
+		evdev_device_destroy(device);
 
 	return unhandled_device ? EVDEV_UNHANDLED_DEVICE :  NULL;
 }
