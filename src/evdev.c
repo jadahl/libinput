@@ -1447,6 +1447,29 @@ evdev_notify_added_device(struct evdev_device *device)
 	notify_added_device(&device->base);
 }
 
+static int
+evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
+{
+	struct udev *udev = udev_device_get_udev(udev_device);
+	struct udev_device *udev_device_new;
+	struct stat st;
+	int rc = 1;
+
+	if (fstat(fd, &st) < 0)
+		goto out;
+
+	udev_device_new = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
+	if (!udev_device_new)
+		goto out;
+
+	rc = strcmp(udev_device_get_syspath(udev_device_new),
+		    udev_device_get_syspath(udev_device));
+out:
+	if (udev_device_new)
+		udev_device_unref(udev_device_new);
+	return rc;
+}
+
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    struct udev_device *udev_device)
@@ -1468,6 +1491,9 @@ evdev_device_create(struct libinput_seat *seat,
 			 devnode, strerror(-fd));
 		return NULL;
 	}
+
+	if (evdev_device_compare_syspath(udev_device, fd) != 0)
+		goto err;
 
 	device = zalloc(sizeof *device);
 	if (device == NULL)
@@ -1905,29 +1931,6 @@ evdev_device_suspend(struct evdev_device *device)
 	}
 
 	return 0;
-}
-
-static int
-evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
-{
-	struct udev *udev = udev_device_get_udev(udev_device);
-	struct udev_device *udev_device_new;
-	struct stat st;
-	int rc = 1;
-
-	if (fstat(fd, &st) < 0)
-		goto out;
-
-	udev_device_new = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
-	if (!udev_device_new)
-		goto out;
-
-	rc = strcmp(udev_device_get_syspath(udev_device_new),
-		    udev_device_get_syspath(udev_device));
-out:
-	if (udev_device_new)
-		udev_device_unref(udev_device_new);
-	return rc;
 }
 
 int
