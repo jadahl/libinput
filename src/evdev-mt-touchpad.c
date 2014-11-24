@@ -1146,6 +1146,40 @@ tp_change_to_left_handed(struct evdev_device *device)
 	device->buttons.left_handed = device->buttons.want_left_handed;
 }
 
+struct model_lookup_t {
+	uint16_t vendor;
+	uint16_t product_start;
+	uint16_t product_end;
+	enum touchpad_model model;
+};
+
+static struct model_lookup_t model_lookup_table[] = {
+	{ 0x0002, 0x0007, 0x0007, MODEL_SYNAPTICS },
+	{ 0x0002, 0x0008, 0x0008, MODEL_ALPS },
+	{ 0x0002, 0x000e, 0x000e, MODEL_ELANTECH },
+	{ 0x05ac,      0, 0x0222, MODEL_APPLETOUCH },
+	{ 0x05ac, 0x0223, 0x0228, MODEL_UNIBODY_MACBOOK },
+	{ 0x05ac, 0x0229, 0x022b, MODEL_APPLETOUCH },
+	{ 0x05ac, 0x022c, 0xffff, MODEL_UNIBODY_MACBOOK },
+	{ 0, 0, 0, 0 }
+};
+
+static enum touchpad_model
+tp_get_model(struct evdev_device *device)
+{
+	struct model_lookup_t *lookup;
+	uint16_t vendor  = libevdev_get_id_vendor(device->evdev);
+	uint16_t product = libevdev_get_id_product(device->evdev);
+
+	for (lookup = model_lookup_table; lookup->vendor; lookup++) {
+		if (lookup->vendor == vendor &&
+		    lookup->product_start <= product &&
+		    product <= lookup->product_end)
+			return lookup->model;
+	}
+	return MODEL_UNKNOWN;
+}
+
 struct evdev_dispatch *
 evdev_mt_touchpad_create(struct evdev_device *device)
 {
@@ -1154,6 +1188,8 @@ evdev_mt_touchpad_create(struct evdev_device *device)
 	tp = zalloc(sizeof *tp);
 	if (!tp)
 		return NULL;
+
+	tp->model = tp_get_model(device);
 
 	if (tp_init(tp, device) != 0) {
 		tp_destroy(&tp->base);

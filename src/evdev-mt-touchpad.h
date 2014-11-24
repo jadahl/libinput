@@ -42,6 +42,15 @@ enum touchpad_event {
 	TOUCHPAD_EVENT_BUTTON_RELEASE	= (1 << 2),
 };
 
+enum touchpad_model {
+	MODEL_UNKNOWN = 0,
+	MODEL_SYNAPTICS,
+	MODEL_ALPS,
+	MODEL_APPLETOUCH,
+	MODEL_ELANTECH,
+	MODEL_UNIBODY_MACBOOK
+};
+
 enum touch_state {
 	TOUCH_NONE = 0,
 	TOUCH_BEGIN,
@@ -156,6 +165,7 @@ struct tp_dispatch {
 	unsigned int slot;			/* current slot */
 	bool has_mt;
 	bool semi_mt;
+	enum touchpad_model model;
 
 	unsigned int real_touches;		/* number of slots */
 	unsigned int ntouches;			/* no slots inc. fakes */
