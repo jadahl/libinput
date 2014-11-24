@@ -399,6 +399,65 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 }
 
 static void
+tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+{
+	struct tp_touch *t;
+	int nchanged = 0;
+	double dx = 0, dy =0;
+	double tmpx, tmpy;
+
+	tp_for_each_touch(tp, t) {
+		if (tp_touch_active(tp, t) && t->dirty) {
+			nchanged++;
+			tp_get_delta(t, &tmpx, &tmpy);
+
+			dx += tmpx;
+			dy += tmpy;
+		}
+		/* Stop spurious MOTION events at the end of scrolling */
+		t->is_pointer = false;
+	}
+
+	if (nchanged == 0)
+		return;
+
+	dx /= nchanged;
+	dy /= nchanged;
+
+	tp_filter_motion(tp, &dx, &dy, time);
+
+	evdev_post_scroll(tp->device, time, dx, dy);
+}
+
+static int
+tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
+{
+	struct tp_touch *t;
+	int nfingers_down = 0;
+
+	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
+		return 0;
+
+	/* No scrolling during tap-n-drag */
+	if (tp_tap_dragging(tp))
+		return 0;
+
+	/* Only count active touches for 2 finger scrolling */
+	tp_for_each_touch(tp, t) {
+		if (tp_touch_active(tp, t))
+			nfingers_down++;
+	}
+
+	if (nfingers_down != 2) {
+		evdev_stop_scroll(tp->device, time);
+		return 0;
+	}
+
+	tp_post_twofinger_scroll(tp, time);
+	return 1;
+}
+
+static void
 tp_process_state(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
@@ -464,65 +523,6 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 	tp->buttons.old_state = tp->buttons.state;
 
 	tp->queued = TOUCHPAD_EVENT_NONE;
-}
-
-static void
-tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
-{
-	struct tp_touch *t;
-	int nchanged = 0;
-	double dx = 0, dy =0;
-	double tmpx, tmpy;
-
-	tp_for_each_touch(tp, t) {
-		if (tp_touch_active(tp, t) && t->dirty) {
-			nchanged++;
-			tp_get_delta(t, &tmpx, &tmpy);
-
-			dx += tmpx;
-			dy += tmpy;
-		}
-		/* Stop spurious MOTION events at the end of scrolling */
-		t->is_pointer = false;
-	}
-
-	if (nchanged == 0)
-		return;
-
-	dx /= nchanged;
-	dy /= nchanged;
-
-	tp_filter_motion(tp, &dx, &dy, time);
-
-	evdev_post_scroll(tp->device, time, dx, dy);
-}
-
-static int
-tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
-{
-	struct tp_touch *t;
-	int nfingers_down = 0;
-
-	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
-		return 0;
-
-	/* No scrolling during tap-n-drag */
-	if (tp_tap_dragging(tp))
-		return 0;
-
-	/* Only count active touches for 2 finger scrolling */
-	tp_for_each_touch(tp, t) {
-		if (tp_touch_active(tp, t))
-			nfingers_down++;
-	}
-
-	if (nfingers_down != 2) {
-		evdev_stop_scroll(tp->device, time);
-		return 0;
-	}
-
-	tp_post_twofinger_scroll(tp, time);
-	return 1;
 }
 
 static void
