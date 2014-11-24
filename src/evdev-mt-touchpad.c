@@ -56,7 +56,7 @@ tp_motion_history_offset(struct tp_touch *t, int offset)
 	return &t->history.samples[offset_index];
 }
 
-static void
+void
 tp_filter_motion(struct tp_dispatch *tp,
 	         double *dx, double *dy, uint64_t time)
 {
@@ -339,7 +339,9 @@ tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 {
 	return (t->state == TOUCH_BEGIN || t->state == TOUCH_UPDATE) &&
 		!t->palm.is_palm &&
-		!t->pinned.is_pinned && tp_button_touch_active(tp, t);
+		!t->pinned.is_pinned &&
+		tp_button_touch_active(tp, t) &&
+		tp_edge_scroll_touch_active(tp, t);
 }
 
 void
@@ -430,15 +432,12 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 }
 
 static int
-tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
+tp_twofinger_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	int nfingers_down = 0;
 
-	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
-		return 0;
-
-	/* No scrolling during tap-n-drag */
+	/* No 2fg scrolling during tap-n-drag */
 	if (tp_tap_dragging(tp))
 		return 0;
 
@@ -455,6 +454,60 @@ tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
 
 	tp_post_twofinger_scroll(tp, time);
 	return 1;
+}
+
+static void
+tp_scroll_handle_state(struct tp_dispatch *tp, uint64_t time)
+{
+	/* Note this must be always called, so that it knows the state of
+	 * touches when the scroll-mode changes.
+	 */
+	tp_edge_scroll_handle_state(tp, time);
+}
+
+static int
+tp_post_scroll_events(struct tp_dispatch *tp, uint64_t time)
+{
+	struct libinput *libinput = tp->device->base.seat->libinput;
+
+	switch (tp->scroll.method) {
+	case LIBINPUT_CONFIG_SCROLL_NO_SCROLL:
+		break;
+	case LIBINPUT_CONFIG_SCROLL_2FG:
+		return tp_twofinger_scroll_post_events(tp, time);
+	case LIBINPUT_CONFIG_SCROLL_EDGE:
+		return tp_edge_scroll_post_events(tp, time);
+	case LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN:
+		log_bug_libinput(libinput, "Unexpected scroll mode\n");
+		break;
+	}
+	return 0;
+}
+
+static void
+tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
+{
+	struct libinput *libinput = tp->device->base.seat->libinput;
+
+	switch (tp->scroll.method) {
+	case LIBINPUT_CONFIG_SCROLL_NO_SCROLL:
+		break;
+	case LIBINPUT_CONFIG_SCROLL_2FG:
+		evdev_stop_scroll(tp->device, time);
+		break;
+	case LIBINPUT_CONFIG_SCROLL_EDGE:
+		tp_edge_scroll_stop_events(tp, time);
+		break;
+	case LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN:
+		log_bug_libinput(libinput, "Unexpected scroll mode\n");
+		break;
+	}
+}
+
+static void
+tp_destroy_scroll(struct tp_dispatch *tp)
+{
+	tp_destroy_edge_scroll(tp);
 }
 
 static void
@@ -490,6 +543,7 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 	}
 
 	tp_button_handle_state(tp, time);
+	tp_scroll_handle_state(tp, time);
 
 	/*
 	 * We have a physical button down event on a clickpad. To avoid
@@ -525,6 +579,7 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 	tp->queued = TOUCHPAD_EVENT_NONE;
 }
 
+
 static void
 tp_post_events(struct tp_dispatch *tp, uint64_t time)
 {
@@ -542,7 +597,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	filter_motion |= tp_post_button_events(tp, time);
 
 	if (filter_motion || tp->sendevents.trackpoint_active) {
-		evdev_stop_scroll(tp->device, time);
+		tp_stop_scroll_events(tp, time);
 		return;
 	}
 
@@ -621,6 +676,7 @@ tp_destroy(struct evdev_dispatch *dispatch)
 	tp_destroy_tap(tp);
 	tp_destroy_buttons(tp);
 	tp_destroy_sendevents(tp);
+	tp_destroy_scroll(tp);
 
 	free(tp->touches);
 	free(tp);
@@ -912,6 +968,9 @@ tp_scroll_config_scroll_method_get_methods(struct libinput_device *device)
 	if (tp->ntouches >= 2)
 		methods |= LIBINPUT_CONFIG_SCROLL_2FG;
 
+	if (!tp->buttons.is_clickpad)
+		methods |= LIBINPUT_CONFIG_SCROLL_EDGE;
+
 	return methods;
 }
 
@@ -925,7 +984,7 @@ tp_scroll_config_scroll_method_set_method(struct libinput_device *device,
 	if (method == tp->scroll.method)
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
 
-	evdev_stop_scroll(evdev, libinput_now(device->seat->libinput));
+	tp_stop_scroll_events(tp, libinput_now(device->seat->libinput));
 	tp->scroll.method = method;
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
@@ -941,14 +1000,28 @@ tp_scroll_config_scroll_method_get_method(struct libinput_device *device)
 }
 
 static enum libinput_config_scroll_method
+tp_scroll_get_default_method(struct tp_dispatch *tp)
+{
+	if (tp->ntouches >= 2)
+		return LIBINPUT_CONFIG_SCROLL_2FG;
+	else
+		return LIBINPUT_CONFIG_SCROLL_EDGE;
+}
+
+static enum libinput_config_scroll_method
 tp_scroll_config_scroll_method_get_default_method(struct libinput_device *device)
 {
-	return LIBINPUT_CONFIG_SCROLL_2FG;
+	struct evdev_device *evdev = (struct evdev_device*)device;
+	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
+
+	return tp_scroll_get_default_method(tp);
 }
 
 static int
 tp_init_scroll(struct tp_dispatch *tp, struct evdev_device *device)
 {
+	if (tp_edge_scroll_init(tp, device) != 0)
+		return -1;
 
 	evdev_init_natural_scroll(device);
 
@@ -956,7 +1029,7 @@ tp_init_scroll(struct tp_dispatch *tp, struct evdev_device *device)
 	tp->scroll.config_method.set_method = tp_scroll_config_scroll_method_set_method;
 	tp->scroll.config_method.get_method = tp_scroll_config_scroll_method_get_method;
 	tp->scroll.config_method.get_default_method = tp_scroll_config_scroll_method_get_default_method;
-	tp->scroll.method = tp_scroll_config_scroll_method_get_default_method(&tp->device->base);
+	tp->scroll.method = tp_scroll_get_default_method(tp);
 	tp->device->base.config.scroll_method = &tp->scroll.config_method;
 
 	/* In mm for touchpads with valid resolution, see tp_init_accel() */

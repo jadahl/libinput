@@ -103,6 +103,20 @@ enum tp_tap_touch_state {
 	TAP_TOUCH_STATE_DEAD,		/**< exceeded motion/timeout */
 };
 
+/* For edge scrolling, so we only care about right and bottom */
+enum tp_edge {
+	EDGE_NONE = 0,
+	EDGE_RIGHT = (1 << 0),
+	EDGE_BOTTOM = (1 << 1),
+};
+
+enum tp_edge_scroll_touch_state {
+	EDGE_SCROLL_TOUCH_STATE_NONE,
+	EDGE_SCROLL_TOUCH_STATE_EDGE_NEW,
+	EDGE_SCROLL_TOUCH_STATE_EDGE,
+	EDGE_SCROLL_TOUCH_STATE_AREA,
+};
+
 struct tp_motion {
 	int32_t x;
 	int32_t y;
@@ -149,6 +163,14 @@ struct tp_touch {
 	struct {
 		enum tp_tap_touch_state state;
 	} tap;
+
+	struct {
+		enum tp_edge_scroll_touch_state state;
+		uint32_t edge;
+		int direction;
+		double threshold;
+		struct libinput_timer timer;
+	} scroll;
 
 	struct {
 		bool is_palm;
@@ -214,6 +236,8 @@ struct tp_dispatch {
 	struct {
 		struct libinput_device_config_scroll_method config_method;
 		enum libinput_config_scroll_method method;
+		int32_t right_edge;
+		int32_t bottom_edge;
 	} scroll;
 
 	enum touchpad_event queued;
@@ -249,6 +273,10 @@ tp_get_delta(struct tp_touch *t, double *dx, double *dy);
 
 void
 tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
+
+void
+tp_filter_motion(struct tp_dispatch *tp,
+	         double *dx, double *dy, uint64_t time);
 
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time);
@@ -303,5 +331,23 @@ tp_tap_resume(struct tp_dispatch *tp, uint64_t time);
 
 bool
 tp_tap_dragging(struct tp_dispatch *tp);
+
+int
+tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device);
+
+void
+tp_destroy_edge_scroll(struct tp_dispatch *tp);
+
+void
+tp_edge_scroll_handle_state(struct tp_dispatch *tp, uint64_t time);
+
+int
+tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time);
+
+int
+tp_edge_scroll_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
 
 #endif
