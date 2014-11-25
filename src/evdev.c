@@ -1460,7 +1460,7 @@ static int
 evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
 {
 	struct udev *udev = udev_device_get_udev(udev_device);
-	struct udev_device *udev_device_new;
+	struct udev_device *udev_device_new = NULL;
 	struct stat st;
 	int rc = 1;
 
