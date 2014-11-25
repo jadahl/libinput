@@ -1266,6 +1266,15 @@ evdev_configure_device(struct evdev_device *device)
 	has_keyboard = 0;
 	has_touch = 0;
 
+        for (i = BTN_JOYSTICK; i < BTN_DIGI; i++) {
+                if (libevdev_has_event_code(evdev, EV_KEY, i)) {
+                        log_info(libinput,
+                                 "input device '%s', %s is a joystick, ignoring\n",
+                                 device->devname, devnode);
+                        return -1;
+                }
+        }
+
 	if (libevdev_has_event_type(evdev, EV_ABS)) {
 
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
