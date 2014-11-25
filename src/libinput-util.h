@@ -296,4 +296,6 @@ struct ratelimit {
 void ratelimit_init(struct ratelimit *r, uint64_t ival_ms, unsigned int burst);
 enum ratelimit_state ratelimit_test(struct ratelimit *r);
 
+int parse_mouse_dpi_property(const char *prop);
+
 #endif /* LIBINPUT_UTIL_H */

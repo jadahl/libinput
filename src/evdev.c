@@ -1226,6 +1226,30 @@ evdev_tag_device(struct evdev_device *device)
 }
 
 static inline int
+evdev_read_dpi_prop(struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	const char *mouse_dpi;
+	int dpi = DEFAULT_MOUSE_DPI;
+
+	mouse_dpi = udev_device_get_property_value(device->udev_device,
+						   "MOUSE_DPI");
+	if (mouse_dpi) {
+		dpi = parse_mouse_dpi_property(mouse_dpi);
+		if (!dpi) {
+			log_error(libinput, "Mouse DPI property for '%s' is "
+					    "present but invalid, using %d "
+					    "DPI instead\n",
+					    device->devname,
+					    DEFAULT_MOUSE_DPI);
+			dpi = DEFAULT_MOUSE_DPI;
+		}
+	}
+
+	return dpi;
+}
+
+static inline int
 evdev_fix_abs_resolution(struct libevdev *evdev,
 			 unsigned int code,
 			 const struct input_absinfo *absinfo)
@@ -1530,7 +1554,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->devname = libevdev_get_name(device->evdev);
 	device->scroll.threshold = 5.0; /* Default may be overridden */
 	device->scroll.direction = 0;
-	device->dpi = DEFAULT_MOUSE_DPI;
+	device->dpi = evdev_read_dpi_prop(device);
 	/* at most 5 SYN_DROPPED log-messages per 30s */
 	ratelimit_init(&device->syn_drop_limit, 30ULL * 1000, 5);
 

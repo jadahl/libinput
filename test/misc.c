@@ -529,6 +529,47 @@ START_TEST(ratelimit_helpers)
 }
 END_TEST
 
+struct parser_test {
+	char *tag;
+	int expected_dpi;
+};
+
+START_TEST(dpi_parser)
+{
+	struct parser_test tests[] = {
+		{ "450 *1800 3200", 1800 },
+		{ "*450 1800 3200", 450 },
+		{ "450 1800 *3200", 3200 },
+		{ "450 1800 3200", 3200 },
+		{ "450 1800 failboat", 0 },
+		{ "450 1800 *failboat", 0 },
+		{ "0 450 1800 *3200", 0 },
+		{ "450@37 1800@12 *3200@6", 3200 },
+		{ "450@125 1800@125   *3200@125  ", 3200 },
+		{ "450@125 *1800@125  3200@125", 1800 },
+		{ "*this @string fails", 0 },
+		{ "12@34 *45@", 0 },
+		{ "12@a *45@", 0 },
+		{ "12@a *45@25", 0 },
+		{ "                                      * 12, 450, 800", 0 },
+		{ "                                      *12, 450, 800", 12 },
+		{ "*12, *450, 800", 12 },
+		{ "*-23412, 450, 800", 0 },
+		{ "112@125, 450@125, 800@125, 900@-125", 0 },
+		{ "", 0 },
+		{ "   ", 0 },
+		{ "* ", 0 },
+		{ NULL }
+	};
+	int i, dpi;
+
+	for (i = 0; tests[i].tag != NULL; i++) {
+		dpi = parse_mouse_dpi_property(tests[i].tag);
+		ck_assert_int_eq(dpi, tests[i].expected_dpi);
+	}
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_no_device("events:conversion", event_conversion_pointer);
@@ -540,6 +581,7 @@ int main (int argc, char **argv) {
 
 	litest_add_no_device("misc:matrix", matrix_helpers);
 	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
+	litest_add_no_device("misc:dpi parser", dpi_parser);
 
 	return litest_run(argc, argv);
 }

@@ -28,7 +28,9 @@
 
 #include "config.h"
 
+#include <ctype.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -112,4 +114,57 @@ ratelimit_test(struct ratelimit *r)
 	}
 
 	return RATELIMIT_EXCEEDED;
+}
+
+/* Helper function to parse the mouse DPI tag from udev.
+ * The tag is of the form:
+ * MOUSE_DPI=400 *1000 2000
+ * or
+ * MOUSE_DPI=400@125 *1000@125 2000@125
+ * Where the * indicates the default value and @number indicates device poll
+ * rate.
+ * Numbers should be in ascending order, and if rates are present they should
+ * be present for all entries.
+ *
+ * When parsing the mouse DPI property, if we find an error we just return 0
+ * since it's obviously invalid, the caller will treat that as an error and
+ * use a reasonable default instead. If the property contains multiple DPI
+ * settings but none flagged as default, we return the last because we're
+ * lazy and that's a silly way to set the property anyway.
+ */
+int
+parse_mouse_dpi_property(const char *prop)
+{
+	bool is_default = false;
+	int nread, dpi = 0, rate;
+
+	while (*prop != 0) {
+		if (*prop == ' ') {
+			prop++;
+			continue;
+		}
+		if (*prop == '*') {
+			prop++;
+			is_default = true;
+			if (!isdigit(prop[0]))
+				return 0;
+		}
+
+		/* While we don't do anything with the rate right now we
+		 * will validate that, if it's present, it is non-zero and
+		 * positive
+		 */
+		rate = 1;
+		nread = 0;
+		sscanf(prop, "%d@%d%n", &dpi, &rate, &nread);
+		if (!nread)
+			sscanf(prop, "%d%n", &dpi, &nread);
+		if (!nread || dpi <= 0 || rate <= 0 || prop[nread] == '@')
+			return 0;
+
+		if (is_default)
+			break;
+		prop += nread;
+	}
+	return dpi;
 }
