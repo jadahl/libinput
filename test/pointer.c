@@ -140,6 +140,57 @@ START_TEST(pointer_motion_absolute)
 END_TEST
 
 static void
+test_noaccel_event(struct litest_device *dev, int dx, int dy)
+{
+      struct libinput *li = dev->libinput;
+      struct libinput_event *event;
+      struct libinput_event_pointer *ptrev;
+      double ev_dx, ev_dy;
+
+      litest_event(dev, EV_REL, REL_X, dx);
+      litest_event(dev, EV_REL, REL_Y, dy);
+      litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+      libinput_dispatch(li);
+
+      event = libinput_get_event(li);
+      ck_assert(event != NULL);
+      ck_assert_int_eq(libinput_event_get_type(event),
+                       LIBINPUT_EVENT_POINTER_MOTION);
+
+      ptrev = libinput_event_get_pointer_event(event);
+      ck_assert(ptrev != NULL);
+
+      ev_dx = libinput_event_pointer_get_dx_noaccel(ptrev);
+      ev_dy = libinput_event_pointer_get_dy_noaccel(ptrev);
+
+      ck_assert_int_eq(dx, ev_dx);
+      ck_assert_int_eq(dy, ev_dy);
+
+      libinput_event_destroy(event);
+
+      litest_drain_events(dev->libinput);
+}
+
+START_TEST(pointer_motion_noaccel)
+{
+      struct litest_device *dev = litest_current_device();
+
+      litest_drain_events(dev->libinput);
+
+      test_noaccel_event(dev, 1, 0);
+      test_noaccel_event(dev, 1, 1);
+      test_noaccel_event(dev, 1, -1);
+      test_noaccel_event(dev, 0, 1);
+
+      test_noaccel_event(dev, -1, 0);
+      test_noaccel_event(dev, -1, 1);
+      test_noaccel_event(dev, -1, -1);
+      test_noaccel_event(dev, 0, -1);
+}
+END_TEST
+
+static void
 test_button_event(struct litest_device *dev, unsigned int button, int state)
 {
 	struct libinput *li = dev->libinput;
@@ -652,6 +703,7 @@ int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
+	litest_add("pointer:motion", pointer_motion_noaccel, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);

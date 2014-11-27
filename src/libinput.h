@@ -497,6 +497,36 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event);
 /**
  * @ingroup event_pointer
  *
+ * Return the relative delta of the non-accelerated motion vector of the
+ * current event. For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION, this function returns 0.
+ *
+ * @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_MOTION.
+ *
+ * @return the non-accelerated relative x movement since the last event
+ */
+double
+libinput_event_pointer_get_dx_noaccel(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
+ * Return the relative delta of the non-accelerated motion vector of the
+ * current event. For pointer events that are not of type
+ * LIBINPUT_EVENT_POINTER_MOTION, this function returns 0.
+ *
+ * @note It is an application bug to call this function for events other than
+ * LIBINPUT_EVENT_POINTER_MOTION.
+ *
+ * @return the non-accelerated relative y movement since the last event
+ */
+double
+libinput_event_pointer_get_dy_noaccel(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
  * Return the current absolute x coordinate of the pointer event, in mm from
  * the top left corner of the device. To get the corresponding output screen
  * coordinate, use libinput_event_pointer_get_absolute_x_transformed().

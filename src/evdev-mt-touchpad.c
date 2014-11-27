@@ -58,12 +58,19 @@ tp_motion_history_offset(struct tp_touch *t, int offset)
 
 void
 tp_filter_motion(struct tp_dispatch *tp,
-	         double *dx, double *dy, uint64_t time)
+	         double *dx, double *dy,
+	         double *dx_noaccel, double *dy_noaccel,
+		 uint64_t time)
 {
 	struct motion_params motion;
 
 	motion.dx = *dx * tp->accel.x_scale_coeff;
 	motion.dy = *dy * tp->accel.y_scale_coeff;
+
+	if (dx_noaccel)
+		*dx_noaccel = motion.dx;
+	if (dy_noaccel)
+		*dy_noaccel = motion.dy;
 
 	if (motion.dx != 0.0 || motion.dy != 0.0)
 		filter_dispatch(tp->device->pointer.filter, &motion, tp, time);
@@ -426,7 +433,7 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	dx /= nchanged;
 	dy /= nchanged;
 
-	tp_filter_motion(tp, &dx, &dy, time);
+	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
 	evdev_post_scroll(tp->device, time, dx, dy);
 }
@@ -586,6 +593,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t = tp_current_touch(tp);
 	double dx, dy;
 	int filter_motion = 0;
+	double dx_noaccel, dy_noaccel;
 
 	/* Only post (top) button events while suspended */
 	if (tp->device->suspended) {
@@ -617,10 +625,12 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 		return;
 
 	tp_get_delta(t, &dx, &dy);
-	tp_filter_motion(tp, &dx, &dy, time);
+	tp_filter_motion(tp, &dx, &dy, &dx_noaccel, &dy_noaccel, time);
 
-	if (dx != 0.0 || dy != 0.0)
-		pointer_notify_motion(&tp->device->base, time, dx, dy);
+	if (dx != 0.0 || dy != 0.0 || dx_noaccel != 0.0 || dy_noaccel != 0.0) {
+		pointer_notify_motion(&tp->device->base, time,
+				      dx, dy, dx_noaccel, dy_noaccel);
+	}
 }
 
 static void

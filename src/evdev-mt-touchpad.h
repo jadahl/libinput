@@ -276,7 +276,9 @@ tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
 
 void
 tp_filter_motion(struct tp_dispatch *tp,
-	         double *dx, double *dy, uint64_t time);
+	         double *dx, double *dy,
+	         double *dx_noaccel, double *dy_noaccel,
+		 uint64_t time);
 
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time);

@@ -198,6 +198,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	struct motion_params motion;
+	double dx_noaccel, dy_noaccel;
 	int32_t cx, cy;
 	int32_t x, y;
 	int slot;
@@ -211,8 +212,10 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 	case EVDEV_NONE:
 		return;
 	case EVDEV_RELATIVE_MOTION:
-		motion.dx = device->rel.dx / ((double)device->dpi / DEFAULT_MOUSE_DPI);
-		motion.dy = device->rel.dy / ((double)device->dpi / DEFAULT_MOUSE_DPI);
+		dx_noaccel = device->rel.dx / ((double) device->dpi /
+					       DEFAULT_MOUSE_DPI);
+		dy_noaccel = device->rel.dy / ((double) device->dpi /
+					       DEFAULT_MOUSE_DPI);
 		device->rel.dx = 0;
 		device->rel.dy = 0;
 
@@ -221,17 +224,23 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		    hw_is_key_down(device, device->scroll.button)) {
 			if (device->scroll.button_scroll_active)
 				evdev_post_scroll(device, time,
-						  motion.dx, motion.dy);
+						  dx_noaccel, dx_noaccel);
 			break;
 		}
 
 		/* Apply pointer acceleration. */
+		motion.dx = dx_noaccel;
+		motion.dy = dy_noaccel;
 		filter_dispatch(device->pointer.filter, &motion, device, time);
 
-		if (motion.dx == 0.0 && motion.dy == 0.0)
+		if (motion.dx == 0.0 && motion.dy == 0.0 &&
+		    dx_noaccel == 0.0 && dy_noaccel == 0.0) {
 			break;
+		}
 
-		pointer_notify_motion(base, time, motion.dx, motion.dy);
+		pointer_notify_motion(base, time,
+				      motion.dx, motion.dy,
+				      dx_noaccel, dy_noaccel);
 		break;
 	case EVDEV_ABSOLUTE_MT_DOWN:
 		if (!(device->seat_caps & EVDEV_DEVICE_TOUCH))
