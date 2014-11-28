@@ -29,7 +29,7 @@
 #include <stdint.h>
 
 struct motion_params {
-	double dx, dy; /* in units/ms @ 400dpi */
+	double dx, dy; /* in units/ms @ DEFAULT_MOUSE_DPI resolution */
 };
 
 struct motion_filter;
