@@ -940,6 +940,19 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	if (res_x > 1 && res_y > 1) {
 		tp->accel.x_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_x;
 		tp->accel.y_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_y;
+
+		/* FIXME: once normalized, touchpads see the same
+		   acceleration as mice. that is technically correct but
+		   subjectively wrong, we expect a touchpad to be a lot
+		   slower than a mouse.
+		   For now, apply a magic factor here until this is
+		   fixed in the actual filter code.
+		 */
+		{
+			const double MAGIC = 0.4;
+			tp->accel.x_scale_coeff *= MAGIC;
+			tp->accel.y_scale_coeff *= MAGIC;
+		}
 	} else {
 	/*
 	 * For touchpads where the driver does not provide resolution, fall
