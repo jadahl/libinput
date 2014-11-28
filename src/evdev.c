@@ -42,8 +42,6 @@
 
 #define DEFAULT_AXIS_STEP_DISTANCE 10
 #define DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT 200
-/* The HW DPI rate we normalize to before calculating pointer acceleration */
-#define DEFAULT_MOUSE_DPI 400
 
 enum evdev_key_type {
 	EVDEV_KEY_TYPE_NONE,

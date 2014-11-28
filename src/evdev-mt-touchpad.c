@@ -932,17 +932,14 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 
 	/*
 	 * Not all touchpads report the same amount of units/mm (resolution).
-	 * Normalize motion events to a resolution of 15.74 units/mm
-	 * (== 400 dpi) as base (unaccelerated) speed. This also evens out any
-	 * differences in x and y resolution, so that a circle on the
+	 * Normalize motion events to the default mouse DPI as base
+	 * (unaccelerated) speed. This also evens out any differences in x
+	 * and y resolution, so that a circle on the
 	 * touchpad does not turn into an elipse on the screen.
-	 *
-	 * We pick 400dpi as thats one of the many default resolutions
-	 * for USB mice, so we end up with a similar base speed on the device.
 	 */
 	if (res_x > 1 && res_y > 1) {
-		tp->accel.x_scale_coeff = (400/25.4) / res_x;
-		tp->accel.y_scale_coeff = (400/25.4) / res_y;
+		tp->accel.x_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_x;
+		tp->accel.y_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_y;
 	} else {
 	/*
 	 * For touchpads where the driver does not provide resolution, fall

@@ -28,6 +28,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/* The HW DPI rate we normalize to before calculating pointer acceleration */
+#define DEFAULT_MOUSE_DPI 400
+
 struct motion_params {
 	double dx, dy; /* in units/ms @ DEFAULT_MOUSE_DPI resolution */
 };
