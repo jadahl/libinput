@@ -651,6 +651,12 @@ libinput_seat_get_user_data(struct libinput_seat *seat)
 	return seat->user_data;
 }
 
+LIBINPUT_EXPORT struct libinput *
+libinput_seat_get_context(struct libinput_seat *seat)
+{
+	return seat->libinput;
+}
+
 LIBINPUT_EXPORT const char *
 libinput_seat_get_physical_name(struct libinput_seat *seat)
 {
@@ -1175,6 +1181,12 @@ LIBINPUT_EXPORT void *
 libinput_device_get_user_data(struct libinput_device *device)
 {
 	return device->user_data;
+}
+
+LIBINPUT_EXPORT struct libinput *
+libinput_device_get_context(struct libinput_device *device)
+{
+	return libinput_seat_get_context(device->seat);
 }
 
 LIBINPUT_EXPORT const char *

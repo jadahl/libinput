@@ -1202,6 +1202,17 @@ libinput_seat_get_user_data(struct libinput_seat *seat);
 /**
  * @ingroup seat
  *
+ * Get the libinput context from the seat.
+ *
+ * @param seat A previously obtained seat
+ * @return The libinput context for this seat.
+ */
+struct libinput *
+libinput_seat_get_context(struct libinput_seat *seat);
+
+/**
+ * @ingroup seat
+ *
  * Return the physical name of the seat. For libinput contexts created from
  * udev, this is always the same value as passed into
  * libinput_udev_assign_seat() and all seats from that context will have
@@ -1287,6 +1298,17 @@ libinput_device_set_user_data(struct libinput_device *device, void *user_data);
  */
 void *
 libinput_device_get_user_data(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
+ * Get the libinput context from the device.
+ *
+ * @param device A previously obtained device
+ * @return The libinput context for this device.
+ */
+struct libinput *
+libinput_device_get_context(struct libinput_device *device);
 
 /**
  * @ingroup device
