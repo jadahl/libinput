@@ -599,6 +599,25 @@ START_TEST(device_disable_topsoftbutton)
 }
 END_TEST
 
+START_TEST(device_ids)
+{
+	struct litest_device *dev = litest_current_device();
+	const char *name;
+	unsigned int pid, vid;
+
+	name = libevdev_get_name(dev->evdev);
+	pid = libevdev_get_id_product(dev->evdev);
+	vid = libevdev_get_id_vendor(dev->evdev);
+
+	ck_assert_str_eq(name,
+			 libinput_device_get_name(dev->libinput_device));
+	ck_assert_int_eq(pid,
+			 libinput_device_get_id_product(dev->libinput_device));
+	ck_assert_int_eq(vid,
+			 libinput_device_get_id_vendor(dev->libinput_device));
+}
+END_TEST
+
 int main (int argc, char **argv)
 {
 	litest_add("device:sendevents", device_sendevents_config, LITEST_ANY, LITEST_TOUCHPAD);
@@ -619,6 +638,7 @@ int main (int argc, char **argv)
 	litest_add("device:sendevents", device_disable_release_tap_n_drag, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("device:sendevents", device_disable_release_softbutton, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 	litest_add("device:sendevents", device_disable_topsoftbutton, LITEST_TOPBUTTONPAD, LITEST_ANY);
+	litest_add("device:id", device_ids, LITEST_ANY, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

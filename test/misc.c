@@ -391,25 +391,6 @@ START_TEST(context_ref_counting)
 }
 END_TEST
 
-START_TEST(device_ids)
-{
-	struct litest_device *dev = litest_current_device();
-	const char *name;
-	unsigned int pid, vid;
-
-	name = libevdev_get_name(dev->evdev);
-	pid = libevdev_get_id_product(dev->evdev);
-	vid = libevdev_get_id_vendor(dev->evdev);
-
-	ck_assert_str_eq(name,
-			 libinput_device_get_name(dev->libinput_device));
-	ck_assert_int_eq(pid,
-			 libinput_device_get_id_product(dev->libinput_device));
-	ck_assert_int_eq(vid,
-			 libinput_device_get_id_vendor(dev->libinput_device));
-}
-END_TEST
-
 START_TEST(config_status_string)
 {
 	const char *strs[3];
@@ -555,7 +536,6 @@ int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_key);
 	litest_add_no_device("events:conversion", event_conversion_touch);
 	litest_add_no_device("context:refcount", context_ref_counting);
-	litest_add("device:id", device_ids, LITEST_ANY, LITEST_ANY);
 	litest_add_no_device("config:status string", config_status_string);
 
 	litest_add_no_device("misc:matrix", matrix_helpers);
