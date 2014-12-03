@@ -124,6 +124,10 @@ extern "C" {
  * <dd>Assigns the logical seat for this device. See
  * libinput_seat_get_logical_name()
  * context. Defaults to "default".</dd>
+ * <dt>MOUSE_DPI</dt>
+ * <dd>HW resolution and sampling frequency of a relative pointer device.
+ * See @ref motion_normalization for details.
+ * </dd>
  * </dl>
  *
  * Below is an example udev rule to assign "seat1" to a device from vendor
@@ -133,6 +137,57 @@ extern "C" {
  * ENV{ID_MODEL_ID}=="034b", ENV{ID_SEAT}="seat1"
  * @endcode
  *
+ */
+
+/**
+ * @page motion_normalization Normalization of relative motion
+ *
+ * Most relative input devices generate input in so-called "mickeys". A
+ * mickey is in device-specific units that depend on the resolution
+ * of the sensor. Most optical mice use sensors with 1000dpi resolution, but
+ * some devices range from 100dpi to well above 8000dpi.
+ *
+ * Without a physical reference point, a relative coordinate cannot be
+ * interpreted correctly. A delta of 10 mickeys may be a millimeter of
+ * physical movement or 10 millimeters, depending on the sensor. This
+ * affects pointer acceleration in libinput and interpretation of relative
+ * coordinates in callers.
+ *
+ * libinput normalizes all relative input to a physical resolution of
+ * 1000dpi, the same delta from two different devices thus represents the
+ * same physical movement of those two devices (within sensor error
+ * margins).
+ *
+ * Devices usually do not advertise their resolution and libinput relies on
+ * the udev property MOUSE_DPI for this information.
+ *
+ * The format of the property for single-resolution mice is:
+ * @code
+ *      MOUSE_DPI=resolution@frequency
+ * @endcode
+ *
+ * The resolution is in dots per inch, the frequency in Hz.
+ * The format of the property for multi-resolution mice may list multiple
+ * resolutions and frequencies:
+ * @code
+ *      MOUSE_DPI=r1@f1 *r2@f2 r3@f3
+ * @endcode
+ *
+ * The default frequency must be pre-fixed with an asterisk.
+ *
+ * For example, these two properties are valid:
+ * @code
+ *      MOUSE_DPI=800@125
+ *      MOUSE_DPI=400@125 800@125 *1000@500 5500@500
+ * @endcode
+ *
+ * The behavior for a malformed property is undefined.
+ *
+ * If the property is unset, libinput assumes the resolution is 1000dpi.
+ *
+ * Note that HW does not usually provide information about the resolution
+ * changes, libinput will thus not detect when a resolution changes to the
+ * non-default value.
  */
 
 /**
@@ -468,6 +523,9 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event);
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
  *
+ * Relative motion deltas are normalized to represent those of a device with
+ * 1000dpi resolution. See @ref motion_normalization for more details.
+ *
  * @note It is an application bug to call this function for events other than
  * @ref LIBINPUT_EVENT_POINTER_MOTION.
  *
@@ -485,6 +543,9 @@ libinput_event_pointer_get_dx(struct libinput_event_pointer *event);
  *
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
+ *
+ * Relative motion deltas are normalized to represent those of a device with
+ * 1000dpi resolution. See @ref motion_normalization for more details.
  *
  * @note It is an application bug to call this function for events other than
  * @ref LIBINPUT_EVENT_POINTER_MOTION.
