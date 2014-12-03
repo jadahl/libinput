@@ -2170,6 +2170,8 @@ int
 libinput_device_config_buttons_get_default_left_handed(struct libinput_device *device);
 
 /**
+ * @ingroup config
+ *
  * The scroll method of a device selects when to generate scroll axis events
  * instead of pointer motion events.
  */
