@@ -810,12 +810,6 @@ litest_button_scroll(struct litest_device *dev,
 	litest_timeout_buttonscroll();
 	libinput_dispatch(li);
 
-	/* Send two deltas, as the first one may be eaten up by an
-	 * acceleration filter. */
-	litest_event(dev, EV_REL, REL_X, dx);
-	litest_event(dev, EV_REL, REL_Y, dy);
-	litest_event(dev, EV_SYN, SYN_REPORT, 0);
-
 	litest_event(dev, EV_REL, REL_X, dx);
 	litest_event(dev, EV_REL, REL_Y, dy);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
