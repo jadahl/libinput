@@ -683,7 +683,7 @@ tp_destroy(struct evdev_dispatch *dispatch)
 }
 
 static void
-tp_clear_state(struct tp_dispatch *tp, struct evdev_device *device)
+tp_clear_state(struct tp_dispatch *tp)
 {
 	uint64_t now = libinput_now(tp->device->base.seat->libinput);
 	struct tp_touch *t;
@@ -712,7 +712,7 @@ tp_clear_state(struct tp_dispatch *tp, struct evdev_device *device)
 static void
 tp_suspend(struct tp_dispatch *tp, struct evdev_device *device)
 {
-	tp_clear_state(tp, device);
+	tp_clear_state(tp);
 
 	/* On devices with top softwarebuttons we don't actually suspend the
 	 * device, to keep the "trackpoint" buttons working. tp_post_events()
@@ -732,7 +732,7 @@ tp_resume(struct tp_dispatch *tp, struct evdev_device *device)
 {
 	if (tp->buttons.has_topbuttons) {
 		/* tap state-machine is offline while suspended, reset state */
-		tp_clear_state(tp, device);
+		tp_clear_state(tp);
 		/* restore original topbutton area size */
 		tp_init_softbuttons(tp, device, 1.0);
 		evdev_notify_resumed_device(device);
