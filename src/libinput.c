@@ -1462,11 +1462,11 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_accel_set_speed(struct libinput_device *device,
 				       double speed)
 {
-	if (!libinput_device_config_accel_is_available(device))
-		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
-
 	if (speed < -1.0 || speed > 1.0)
 		return LIBINPUT_CONFIG_STATUS_INVALID;
+
+	if (!libinput_device_config_accel_is_available(device))
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	return device->config.accel->set_speed(device, speed);
 }
@@ -1576,9 +1576,6 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_scroll_set_method(struct libinput_device *device,
 					 enum libinput_config_scroll_method method)
 {
-	if ((libinput_device_config_scroll_get_methods(device) & method) != method)
-		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
-
 	/* Check method is a single valid method */
 	switch (method) {
 	case LIBINPUT_CONFIG_SCROLL_NO_SCROLL:
@@ -1589,6 +1586,9 @@ libinput_device_config_scroll_set_method(struct libinput_device *device,
 	default:
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 	}
+
+	if ((libinput_device_config_scroll_get_methods(device) & method) != method)
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	if (device->config.scroll_method)
 		return device->config.scroll_method->set_method(device, method);
@@ -1618,12 +1618,12 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_scroll_set_button(struct libinput_device *device,
 					 uint32_t button)
 {
+	if (button && !libinput_device_has_button(device, button))
+		return LIBINPUT_CONFIG_STATUS_INVALID;
+
 	if ((libinput_device_config_scroll_get_methods(device) &
 	     LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN) == 0)
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
-
-	if (button && !libinput_device_has_button(device, button))
-		return LIBINPUT_CONFIG_STATUS_INVALID;
 
 	return device->config.scroll_method->set_button(device, button);
 }
