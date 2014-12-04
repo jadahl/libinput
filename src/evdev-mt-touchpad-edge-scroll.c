@@ -338,7 +338,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 		}
 
 		tp_get_delta(t, &dx, &dy);
-		tp_filter_motion(tp, &dx, &dy, time);
+		tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
 		if (fabs(*delta) < t->scroll.threshold)
 			continue;

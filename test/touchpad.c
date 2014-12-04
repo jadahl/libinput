@@ -1173,8 +1173,12 @@ START_TEST(clickpad_softbutton_left_2nd_fg_move)
 		x = libinput_event_pointer_get_dx(p);
 		y = libinput_event_pointer_get_dy(p);
 
-		ck_assert(x > 0);
-		ck_assert(y == 0);
+		/* Ignore events only containing an unaccelerated motion
+		 * vector. */
+		if (x != 0 || y != 0) {
+			ck_assert(x > 0);
+			ck_assert(y == 0);
+		}
 
 		libinput_event_destroy(event);
 		libinput_dispatch(li);

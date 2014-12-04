@@ -59,6 +59,8 @@ struct libinput_event_pointer {
 	uint32_t time;
 	double x;
 	double y;
+	double dx_unaccel;
+	double dy_unaccel;
 	uint32_t button;
 	uint32_t seat_button_count;
 	enum libinput_button_state state;
@@ -301,6 +303,20 @@ LIBINPUT_EXPORT double
 libinput_event_pointer_get_dy(struct libinput_event_pointer *event)
 {
 	return event->y;
+}
+
+LIBINPUT_EXPORT double
+libinput_event_pointer_get_dx_unaccelerated(
+	struct libinput_event_pointer *event)
+{
+	return event->dx_unaccel;
+}
+
+LIBINPUT_EXPORT double
+libinput_event_pointer_get_dy_unaccelerated(
+	struct libinput_event_pointer *event)
+{
+	return event->dy_unaccel;
 }
 
 LIBINPUT_EXPORT double
@@ -891,7 +907,9 @@ void
 pointer_notify_motion(struct libinput_device *device,
 		      uint64_t time,
 		      double dx,
-		      double dy)
+		      double dy,
+		      double dx_unaccel,
+		      double dy_unaccel)
 {
 	struct libinput_event_pointer *motion_event;
 
@@ -903,6 +921,8 @@ pointer_notify_motion(struct libinput_device *device,
 		.time = time,
 		.x = dx,
 		.y = dy,
+		.dx_unaccel = dx_unaccel,
+		.dy_unaccel = dy_unaccel,
 	};
 
 	post_device_event(device, time,

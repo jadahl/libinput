@@ -29,15 +29,43 @@
 #include <libinput.h>
 #include <math.h>
 #include <unistd.h>
+#include <values.h>
 
 #include "libinput-util.h"
 #include "litest.h"
+
+static struct libinput_event_pointer *
+get_accelerated_motion_event(struct libinput *li)
+{
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+
+	while (1) {
+		event = libinput_get_event(li);
+		ck_assert_notnull(event);
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 LIBINPUT_EVENT_POINTER_MOTION);
+
+		ptrev = libinput_event_get_pointer_event(event);
+		ck_assert_notnull(ptrev);
+
+		if (fabs(libinput_event_pointer_get_dx(ptrev)) < DBL_MIN &&
+		    fabs(libinput_event_pointer_get_dy(ptrev)) < DBL_MIN) {
+			libinput_event_destroy(event);
+			continue;
+		}
+
+		return ptrev;
+	}
+
+	ck_abort_msg("No accelerated pointer motion event found");
+	return NULL;
+}
 
 static void
 test_relative_event(struct litest_device *dev, int dx, int dy)
 {
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
 	double ev_dx, ev_dy;
 	double expected_dir;
@@ -56,12 +84,7 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 
 	libinput_dispatch(li);
 
-	event = libinput_get_event(li);
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event), LIBINPUT_EVENT_POINTER_MOTION);
-
-	ptrev = libinput_event_get_pointer_event(event);
-	ck_assert(ptrev != NULL);
+	ptrev = get_accelerated_motion_event(li);
 
 	expected_length = sqrt(4 * dx*dx + 4 * dy*dy);
 	expected_dir = atan2(dx, dy);
@@ -78,7 +101,7 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	 * indifference). */
 	ck_assert(fabs(expected_dir - actual_dir) < M_PI_2);
 
-	libinput_event_destroy(event);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
 
 	litest_drain_events(dev->libinput);
 }
@@ -136,6 +159,57 @@ START_TEST(pointer_motion_absolute)
 	test_absolute_event(dev, 0, 100);
 	test_absolute_event(dev, 100, 0);
 	test_absolute_event(dev, 50, 50);
+}
+END_TEST
+
+static void
+test_unaccel_event(struct litest_device *dev, int dx, int dy)
+{
+      struct libinput *li = dev->libinput;
+      struct libinput_event *event;
+      struct libinput_event_pointer *ptrev;
+      double ev_dx, ev_dy;
+
+      litest_event(dev, EV_REL, REL_X, dx);
+      litest_event(dev, EV_REL, REL_Y, dy);
+      litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+      libinput_dispatch(li);
+
+      event = libinput_get_event(li);
+      ck_assert_notnull(event);
+      ck_assert_int_eq(libinput_event_get_type(event),
+                       LIBINPUT_EVENT_POINTER_MOTION);
+
+      ptrev = libinput_event_get_pointer_event(event);
+      ck_assert(ptrev != NULL);
+
+      ev_dx = libinput_event_pointer_get_dx_unaccelerated(ptrev);
+      ev_dy = libinput_event_pointer_get_dy_unaccelerated(ptrev);
+
+      ck_assert_int_eq(dx, ev_dx);
+      ck_assert_int_eq(dy, ev_dy);
+
+      libinput_event_destroy(event);
+
+      litest_drain_events(dev->libinput);
+}
+
+START_TEST(pointer_motion_unaccel)
+{
+      struct litest_device *dev = litest_current_device();
+
+      litest_drain_events(dev->libinput);
+
+      test_unaccel_event(dev, 10, 0);
+      test_unaccel_event(dev, 10, 10);
+      test_unaccel_event(dev, 10, -10);
+      test_unaccel_event(dev, 0, 10);
+
+      test_unaccel_event(dev, -10, 0);
+      test_unaccel_event(dev, -10, 10);
+      test_unaccel_event(dev, -10, -10);
+      test_unaccel_event(dev, 0, -10);
 }
 END_TEST
 
@@ -652,6 +726,7 @@ int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
+	litest_add("pointer:motion", pointer_motion_unaccel, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add_no_device("pointer:button_auto_release", pointer_button_auto_release);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);

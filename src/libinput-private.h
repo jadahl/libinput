@@ -259,7 +259,9 @@ void
 pointer_notify_motion(struct libinput_device *device,
 		      uint64_t time,
 		      double dx,
-		      double dy);
+		      double dy,
+		      double dx_noaccel,
+		      double dy_noaccel);
 
 void
 pointer_notify_motion_absolute(struct libinput_device *device,
