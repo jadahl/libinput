@@ -11,8 +11,6 @@ AM_CXXFLAGS = $(GCC_CXXFLAGS)
 TEST_LIBS = liblitest.la $(CHECK_LIBS) $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS) $(top_builddir)/src/libinput.la
 noinst_LTLIBRARIES = liblitest.la
 liblitest_la_SOURCES = \
-	../src/libinput-util.h \
-	../src/libinput-util.c \
 	litest.h \
 	litest-int.h \
 	litest-alps-semi-mt.c \
@@ -30,6 +28,7 @@ liblitest_la_SOURCES = \
 	litest-xen-virtual-pointer.c \
 	litest-vmware-virtual-usb-mouse.c \
 	litest.c
+liblitest_la_LIBADD = $(top_builddir)/src/libinput-util.la
 
 run_tests = \
 	test-udev \
@@ -103,7 +102,7 @@ test_build_std_gnuc90_CFLAGS = -std=gnu90 -Werror
 # test for linking with the minimal linker flags
 test_build_linker_SOURCES = build-pedantic.c
 test_build_linker_CFLAGS = -I$(top_srcdir)/src
-test_build_linker_LDADD = $(top_builddir)/src/libinput.la
+test_build_linker_LDADD = $(top_builddir)/src/libinput.la $(top_builddir)/src/libinput-util.la
 
 # test including from C++
 test_build_cxx_SOURCES = build-cxx.cc

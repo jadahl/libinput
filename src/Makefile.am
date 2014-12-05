@@ -1,4 +1,5 @@
 lib_LTLIBRARIES = libinput.la
+noinst_LTLIBRARIES = libinput-util.la
 
 include_HEADERS =			\
 	libinput.h
@@ -7,8 +8,6 @@ libinput_la_SOURCES =			\
 	libinput.c			\
 	libinput.h			\
 	libinput-private.h		\
-	libinput-util.c			\
-	libinput-util.h			\
 	evdev.c				\
 	evdev.h				\
 	evdev-mt-touchpad.c		\
@@ -29,12 +28,23 @@ libinput_la_SOURCES =			\
 
 libinput_la_LIBADD = $(MTDEV_LIBS) \
 		     $(LIBUDEV_LIBS) \
-		     $(LIBEVDEV_LIBS)
+		     $(LIBEVDEV_LIBS) \
+		     libinput-util.la
+
 libinput_la_CFLAGS = -I$(top_srcdir)/include \
 		     $(MTDEV_CFLAGS)	\
 		     $(LIBUDEV_CFLAGS)	\
 		     $(LIBEVDEV_CFLAGS)	\
 		     $(GCC_CFLAGS)
+
+libinput_util_la_SOURCES = \
+	libinput-util.c		\
+	libinput-util.h
+
+libinput_util_la_LIBADD =
+libinput_util_la_CFLAGS = -I$(top_srcdir)/include \
+			  $(LIBUDEV_CFLAGS) \
+			  $(GCC_CFLAGS)
 
 libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION) -shared
 
