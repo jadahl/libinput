@@ -858,6 +858,7 @@ tp_tag_device(struct evdev_device *device,
 
 static struct evdev_dispatch_interface tp_interface = {
 	tp_process,
+	NULL, /* remove */
 	tp_destroy,
 	tp_device_added,
 	tp_device_removed,

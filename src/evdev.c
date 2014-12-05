@@ -737,6 +737,7 @@ evdev_calibration_get_default_matrix(struct libinput_device *libinput_device,
 
 struct evdev_dispatch_interface fallback_interface = {
 	fallback_process,
+	NULL, /* remove */
 	fallback_destroy,
 	NULL, /* device_added */
 	NULL, /* device_removed */
@@ -2040,6 +2041,9 @@ evdev_device_remove(struct evdev_device *device)
 	}
 
 	evdev_device_suspend(device);
+
+	if (device->dispatch->interface->remove)
+		device->dispatch->interface->remove(device->dispatch);
 
 	/* A device may be removed while suspended, mark it to
 	 * skip re-opening a different device with the same node */

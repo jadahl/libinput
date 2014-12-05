@@ -166,6 +166,9 @@ struct evdev_dispatch_interface {
 			struct input_event *event,
 			uint64_t time);
 
+	/* Device is being removed (may be NULL) */
+	void (*remove)(struct evdev_dispatch *dispatch);
+
 	/* Destroy an event dispatch handler and free all its resources. */
 	void (*destroy)(struct evdev_dispatch *dispatch);
 
