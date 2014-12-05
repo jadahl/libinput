@@ -603,7 +603,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 }
 
 void
-tp_destroy_buttons(struct tp_dispatch *tp)
+tp_remove_buttons(struct tp_dispatch *tp)
 {
 	struct tp_touch *t;
 

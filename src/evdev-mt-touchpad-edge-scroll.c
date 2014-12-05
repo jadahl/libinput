@@ -271,7 +271,7 @@ tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device)
 }
 
 void
-tp_destroy_edge_scroll(struct tp_dispatch *tp)
+tp_remove_edge_scroll(struct tp_dispatch *tp)
 {
 	struct tp_touch *t;
 

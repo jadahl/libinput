@@ -287,7 +287,7 @@ int
 tp_init_tap(struct tp_dispatch *tp);
 
 void
-tp_destroy_tap(struct tp_dispatch *tp);
+tp_remove_tap(struct tp_dispatch *tp);
 
 int
 tp_init_buttons(struct tp_dispatch *tp, struct evdev_device *device);
@@ -298,7 +298,7 @@ tp_init_softbuttons(struct tp_dispatch *tp,
 		    double topbutton_size_mult);
 
 void
-tp_destroy_buttons(struct tp_dispatch *tp);
+tp_remove_buttons(struct tp_dispatch *tp);
 
 int
 tp_process_button(struct tp_dispatch *tp,
@@ -338,7 +338,7 @@ int
 tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device);
 
 void
-tp_destroy_edge_scroll(struct tp_dispatch *tp);
+tp_remove_edge_scroll(struct tp_dispatch *tp);
 
 void
 tp_edge_scroll_handle_state(struct tp_dispatch *tp, uint64_t time);

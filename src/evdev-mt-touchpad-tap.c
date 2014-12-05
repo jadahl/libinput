@@ -720,7 +720,7 @@ tp_init_tap(struct tp_dispatch *tp)
 }
 
 void
-tp_destroy_tap(struct tp_dispatch *tp)
+tp_remove_tap(struct tp_dispatch *tp)
 {
 	libinput_timer_cancel(&tp->tap.timer);
 }

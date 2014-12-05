@@ -512,9 +512,9 @@ tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
 }
 
 static void
-tp_destroy_scroll(struct tp_dispatch *tp)
+tp_remove_scroll(struct tp_dispatch *tp)
 {
-	tp_destroy_edge_scroll(tp);
+	tp_remove_edge_scroll(tp);
 }
 
 static void
@@ -668,7 +668,7 @@ tp_process(struct evdev_dispatch *dispatch,
 }
 
 static void
-tp_destroy_sendevents(struct tp_dispatch *tp)
+tp_remove_sendevents(struct tp_dispatch *tp)
 {
 	libinput_timer_cancel(&tp->sendevents.trackpoint_timer);
 
@@ -678,15 +678,23 @@ tp_destroy_sendevents(struct tp_dispatch *tp)
 }
 
 static void
+tp_remove(struct evdev_dispatch *dispatch)
+{
+	struct tp_dispatch *tp =
+		(struct tp_dispatch*)dispatch;
+
+	tp_remove_tap(tp);
+	tp_remove_buttons(tp);
+	tp_remove_sendevents(tp);
+	tp_remove_scroll(tp);
+}
+
+static void
 tp_destroy(struct evdev_dispatch *dispatch)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch*)dispatch;
 
-	tp_destroy_tap(tp);
-	tp_destroy_buttons(tp);
-	tp_destroy_sendevents(tp);
-	tp_destroy_scroll(tp);
 
 	free(tp->touches);
 	free(tp);
@@ -858,7 +866,7 @@ tp_tag_device(struct evdev_device *device,
 
 static struct evdev_dispatch_interface tp_interface = {
 	tp_process,
-	NULL, /* remove */
+	tp_remove,
 	tp_destroy,
 	tp_device_added,
 	tp_device_removed,
