@@ -93,7 +93,8 @@ device_added(struct udev_device *udev_device,
 		udev_device_get_property_value(udev_device,
 					       "LIBINPUT_CALIBRATION_MATRIX");
 
-	if (calibration_values && sscanf(calibration_values,
+	if (device->abs.absinfo_x && device->abs.absinfo_y &&
+	    calibration_values && sscanf(calibration_values,
 					 "%f %f %f %f %f %f",
 					 &calibration[0],
 					 &calibration[1],
