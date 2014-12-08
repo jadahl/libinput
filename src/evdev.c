@@ -2031,7 +2031,7 @@ evdev_device_remove(struct evdev_device *device)
 	struct libinput_device *dev;
 
 	list_for_each(dev, &device->base.seat->devices_list, link) {
-		struct evdev_device *d = (struct evdev_device*)dev;;
+		struct evdev_device *d = (struct evdev_device*)dev;
 		if (dev == &device->base)
 			continue;
 
