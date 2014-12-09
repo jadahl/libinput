@@ -1554,33 +1554,6 @@ libinput_device_led_update(struct libinput_device *device,
 /**
  * @ingroup device
  *
- * Set the bitmask in keys to the bitmask of the keys present on the device
- * (see linux/input.h), up to size characters.
- *
- * @param device A current input device
- * @param keys An array filled with the bitmask for the keys
- * @param size Size of the keys array
- *
- * @return The number of valid bytes in keys, or a negative errno on failure
- */
-int
-libinput_device_get_keys(struct libinput_device *device,
-			 char *keys, size_t size)
-	LIBINPUT_ATTRIBUTE_DEPRECATED;
-
-/**
- * @ingroup device
- *
- * @deprecated Use libinput_device_config_calibration_set_matrix() instead.
- */
-void
-libinput_device_calibrate(struct libinput_device *device,
-			  float calibration[6])
-	LIBINPUT_ATTRIBUTE_DEPRECATED;
-
-/**
- * @ingroup device
- *
  * Check if the given device has the specified capability
  *
  * @return 1 if the given device has the capability or 0 if not

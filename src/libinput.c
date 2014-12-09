@@ -1272,22 +1272,6 @@ libinput_device_led_update(struct libinput_device *device,
 }
 
 LIBINPUT_EXPORT int
-libinput_device_get_keys(struct libinput_device *device,
-			 char *keys, size_t size)
-{
-	return evdev_device_get_keys((struct evdev_device *) device,
-				     keys,
-				     size);
-}
-
-LIBINPUT_EXPORT void
-libinput_device_calibrate(struct libinput_device *device,
-			  float calibration[6])
-{
-	evdev_device_calibrate((struct evdev_device *) device, calibration);
-}
-
-LIBINPUT_EXPORT int
 libinput_device_has_capability(struct libinput_device *device,
 			       enum libinput_device_capability capability)
 {

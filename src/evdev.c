@@ -1605,13 +1605,6 @@ err:
 	return unhandled_device ? EVDEV_UNHANDLED_DEVICE :  NULL;
 }
 
-int
-evdev_device_get_keys(struct evdev_device *device, char *keys, size_t size)
-{
-	memset(keys, 0, size);
-	return 0;
-}
-
 const char *
 evdev_device_get_output(struct evdev_device *device)
 {
