@@ -306,9 +306,38 @@ struct libinput;
 struct libinput_device;
 struct libinput_seat;
 
+/**
+ * @ingroup event
+ * @struct libinput_event
+ *
+ * The base event type. Use libinput_event_get_pointer_event() or similar to
+ * get the actual event type.
+ */
 struct libinput_event;
+
+/**
+ * @ingroup event
+ * @struct libinput_event_device_notify
+ *
+ * An event notifying the caller of a device being added or removed.
+ */
 struct libinput_event_device_notify;
+
+/**
+ * @ingroup event_keyboard
+ * @struct libinput_event_keyboard
+ *
+ * A keyboard event representing a key press/release.
+ */
 struct libinput_event_keyboard;
+
+/**
+ * @ingroup event_pointer
+ * @struct libinput_event_pointer
+ *
+ * A pointer event representing relative or absolute pointer movement,
+ * a button press/release or scroll axis events.
+ */
 struct libinput_event_pointer;
 
 /**
