@@ -586,31 +586,12 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 	tp->queued = TOUCHPAD_EVENT_NONE;
 }
 
-
 static void
-tp_post_events(struct tp_dispatch *tp, uint64_t time)
+tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t = tp_current_touch(tp);
 	double dx, dy;
-	int filter_motion = 0;
 	double dx_unaccel, dy_unaccel;
-
-	/* Only post (top) button events while suspended */
-	if (tp->device->suspended) {
-		tp_post_button_events(tp, time);
-		return;
-	}
-
-	filter_motion |= tp_tap_handle_state(tp, time);
-	filter_motion |= tp_post_button_events(tp, time);
-
-	if (filter_motion || tp->sendevents.trackpoint_active) {
-		tp_stop_scroll_events(tp, time);
-		return;
-	}
-
-	if (tp_post_scroll_events(tp, time) != 0)
-		return;
 
 	if (!t->is_pointer) {
 		tp_for_each_touch(tp, t) {
@@ -631,6 +612,31 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 		pointer_notify_motion(&tp->device->base, time,
 				      dx, dy, dx_unaccel, dy_unaccel);
 	}
+}
+
+static void
+tp_post_events(struct tp_dispatch *tp, uint64_t time)
+{
+	int filter_motion = 0;
+
+	/* Only post (top) button events while suspended */
+	if (tp->device->suspended) {
+		tp_post_button_events(tp, time);
+		return;
+	}
+
+	filter_motion |= tp_tap_handle_state(tp, time);
+	filter_motion |= tp_post_button_events(tp, time);
+
+	if (filter_motion || tp->sendevents.trackpoint_active) {
+		tp_stop_scroll_events(tp, time);
+		return;
+	}
+
+	if (tp_post_scroll_events(tp, time) != 0)
+		return;
+
+	tp_post_pointer_motion(tp, time);
 }
 
 static void
