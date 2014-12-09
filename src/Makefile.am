@@ -46,7 +46,8 @@ libinput_util_la_CFLAGS = -I$(top_srcdir)/include \
 			  $(LIBUDEV_CFLAGS) \
 			  $(GCC_CFLAGS)
 
-libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION) -shared
+libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION) -shared \
+		      -Wl,--version-script=$(srcdir)/libinput.sym
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libinput.pc
@@ -54,4 +55,4 @@ pkgconfig_DATA = libinput.pc
 AM_CFLAGS = $(GCC_CFLAGS)
 
 DISTCLEANFILES = libinput-version.h
-EXTRA_DIST = libinput-version.h.in
+EXTRA_DIST = libinput-version.h.in libinput.sym
