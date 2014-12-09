@@ -473,7 +473,6 @@ libinput_event_keyboard_get_key(struct libinput_event_keyboard *event);
 enum libinput_key_state
 libinput_event_keyboard_get_key_state(struct libinput_event_keyboard *event);
 
-
 /**
  * @ingroup event_keyboard
  *
@@ -769,7 +768,6 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
  */
 struct libinput_event *
 libinput_event_pointer_get_base_event(struct libinput_event_pointer *event);
-
 
 /**
  * @defgroup event_touch Touch events
