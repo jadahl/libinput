@@ -177,7 +177,7 @@ tp_estimate_delta(int x0, int x1, int x2, int x3)
 void
 tp_get_delta(struct tp_touch *t, double *dx, double *dy)
 {
-	if (t->history.count < 4) {
+	if (t->history.count < TOUCHPAD_MIN_SAMPLES) {
 		*dx = 0;
 		*dy = 0;
 		return;
@@ -602,9 +602,7 @@ tp_get_pointer_delta(struct tp_dispatch *tp, double *dx, double *dy)
 		}
 	}
 
-	if (!t->is_pointer ||
-	    !t->dirty ||
-	    t->history.count < TOUCHPAD_MIN_SAMPLES)
+	if (!t->is_pointer || !t->dirty)
 		return;
 
 	tp_get_delta(t, dx, dy);
