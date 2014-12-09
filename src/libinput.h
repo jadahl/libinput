@@ -36,13 +36,6 @@ extern "C" {
 #define LIBINPUT_ATTRIBUTE_DEPRECATED __attribute__ ((deprecated))
 
 /**
- * @mainpage
- * libinput is a generic input device handling library. It abstracts
- * commonly-used concepts such as keyboard, pointer and touchpad handling
- * behind an API.
- */
-
-/**
  * @page tpbuttons Touchpad button behavior
  *
  * For touchpad devices without physical buttons, libinput enables an

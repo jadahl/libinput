@@ -5,7 +5,8 @@ if HAVE_DOXYGEN
 noinst_DATA = html/index.html
 
 header_files = \
-	$(top_srcdir)/src/libinput.h
+	$(top_srcdir)/src/libinput.h \
+	$(top_srcdir)/README.txt
 
 html/index.html: libinput.doxygen $(header_files)
 	$(AM_V_GEN)$(DOXYGEN) $<
