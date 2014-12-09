@@ -448,6 +448,10 @@ tp_twofinger_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 	if (tp_tap_dragging(tp))
 		return 0;
 
+	/* No 2fg scrolling while a clickpad is clicked */
+	if (tp->buttons.is_clickpad && tp->buttons.state)
+		return 0;
+
 	/* Only count active touches for 2 finger scrolling */
 	tp_for_each_touch(tp, t) {
 		if (tp_touch_active(tp, t))
@@ -587,11 +591,9 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 }
 
 static void
-tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
+tp_get_pointer_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
 	struct tp_touch *t = tp_current_touch(tp);
-	double dx, dy;
-	double dx_unaccel, dy_unaccel;
 
 	if (!t->is_pointer) {
 		tp_for_each_touch(tp, t) {
@@ -605,7 +607,40 @@ tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 	    t->history.count < TOUCHPAD_MIN_SAMPLES)
 		return;
 
-	tp_get_delta(t, &dx, &dy);
+	tp_get_delta(t, dx, dy);
+}
+
+static void
+tp_get_active_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+{
+	struct tp_touch *t;
+	double tdx, tdy;
+	unsigned int i;
+
+	for (i = 0; i < tp->real_touches; i++) {
+		t = tp_get_touch(tp, i);
+
+		if (!tp_touch_active(tp, t) || !t->dirty)
+			continue;
+
+		tp_get_delta(t, &tdx, &tdy);
+		*dx += tdx;
+		*dy += tdy;
+	}
+}
+
+static void
+tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
+{
+	double dx = 0.0, dy = 0.0;
+	double dx_unaccel, dy_unaccel;
+
+	/* When a clickpad is clicked, combine motion of all active touches */
+	if (tp->buttons.is_clickpad && tp->buttons.state)
+		tp_get_active_touches_delta(tp, &dx, &dy);
+	else
+		tp_get_pointer_delta(tp, &dx, &dy);
+
 	tp_filter_motion(tp, &dx, &dy, &dx_unaccel, &dy_unaccel, time);
 
 	if (dx != 0.0 || dy != 0.0 || dx_unaccel != 0.0 || dy_unaccel != 0.0) {
