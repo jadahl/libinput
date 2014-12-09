@@ -335,6 +335,9 @@ struct libinput_seat;
  *
  * The base event type. Use libinput_event_get_pointer_event() or similar to
  * get the actual event type.
+ *
+ * @warning Unlike other structs events are considered transient and
+ * <b>not</b> refcounted.
  */
 struct libinput_event;
 
@@ -382,7 +385,12 @@ struct libinput_event_touch;
 /**
  * @ingroup event
  *
- * Destroy the event.
+ * Destroy the event, freeing all associated resources. Resources obtained
+ * from this event must be considered invalid after this call.
+ *
+ * @warning Unlike other structs events are considered transient and
+ * <b>not</b> refcounted. Calling libinput_event_destroy() <b>will</b>
+ * destroy the event.
  *
  * @param event An event retrieved by libinput_get_event().
  */
