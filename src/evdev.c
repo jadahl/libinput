@@ -1986,6 +1986,8 @@ evdev_device_resume(struct evdev_device *device)
 	struct libinput *libinput = device->base.seat->libinput;
 	int fd;
 	const char *devnode;
+	struct input_event ev;
+	enum libevdev_read_status status;
 
 	if (device->fd != -1)
 		return 0;
@@ -2011,6 +2013,20 @@ evdev_device_resume(struct evdev_device *device)
 		if (!device->mtdev)
 			return -ENODEV;
 	}
+
+	libevdev_change_fd(device->evdev, fd);
+	libevdev_set_clock_id(device->evdev, CLOCK_MONOTONIC);
+
+	/* re-sync libevdev's view of the device, but discard the actual
+	   events. Our device is in a neutral state already */
+	libevdev_next_event(device->evdev,
+			    LIBEVDEV_READ_FLAG_FORCE_SYNC,
+			    &ev);
+	do {
+		status = libevdev_next_event(device->evdev,
+					     LIBEVDEV_READ_FLAG_SYNC,
+					     &ev);
+	} while (status == LIBEVDEV_READ_STATUS_SYNC);
 
 	device->source =
 		libinput_add_fd(libinput, fd, evdev_device_dispatch, device);
