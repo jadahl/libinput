@@ -185,9 +185,9 @@ extern "C" {
  *
  * If the property is unset, libinput assumes the resolution is 1000dpi.
  *
- * Note that HW does not usually provide information about the resolution
- * changes, libinput will thus not detect when a resolution changes to the
- * non-default value.
+ * Note that HW does not usually provide information about run-time
+ * resolution changes, libinput will thus not detect when a resolution
+ * changes to the non-default value.
  */
 
 /**
