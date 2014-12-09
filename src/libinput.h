@@ -302,8 +302,31 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_TOUCH_FRAME
 };
 
+/**
+ * @ingroup base
+ * @struct libinput
+ *
+ * A handle for accessing libinput. This struct is refcounted, use
+ * libinput_ref() and libinput_unref().
+ */
 struct libinput;
+
+/**
+ * @ingroup device
+ * @struct libinput_device
+ *
+ * A base handle for accessing libinput devices. This struct is
+ * refcounted, use libinput_device_ref() and libinput_device_unref().
+ */
 struct libinput_device;
+
+/**
+ * @ingroup seat
+ * @struct libinput_seat
+ *
+ * The base handle for accessing libinput seats. This struct is
+ * refcounted, use libinput_seat_ref() and libinput_seat_unref().
+ */
 struct libinput_seat;
 
 /**
@@ -919,6 +942,17 @@ libinput_event_touch_get_base_event(struct libinput_event_touch *event);
  * @defgroup base Initialization and manipulation of libinput contexts
  */
 
+/**
+ * @ingroup base
+ * @struct libinput_interface
+ *
+ * libinput does not open file descriptors to devices directly, instead
+ * open_restricted() and close_restricted() are called for each path that
+ * must be opened.
+ *
+ * @see libinput_udev_create_context
+ * @see libinput_path_create_context
+ */
 struct libinput_interface {
 	/**
 	 * Open the device at the given path with the flags provided and
