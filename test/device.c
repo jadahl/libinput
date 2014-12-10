@@ -121,6 +121,8 @@ START_TEST(device_disable)
 	struct libinput *li = dev->libinput;
 	struct libinput_device *device;
 	enum libinput_config_status status;
+	struct libinput_event *event;
+	struct litest_device *tmp;
 
 	device = dev->libinput_device;
 
@@ -138,11 +140,30 @@ START_TEST(device_disable)
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_assert_empty_queue(li);
 
+	/* create a new device so the resumed fd isn't the same as the
+	   suspended one */
+	tmp = litest_add_device(li, LITEST_KEYBOARD);
+	ck_assert_notnull(tmp);
+	litest_drain_events(li);
+
 	/* no event from resuming */
 	status = libinput_device_config_send_events_set_mode(device,
 			LIBINPUT_CONFIG_SEND_EVENTS_ENABLED);
 	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
 	litest_assert_empty_queue(li);
+
+	/* event from renabled device */
+	litest_event(dev, EV_REL, REL_X, 10);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ck_assert_notnull(event);
+	ck_assert_int_eq(libinput_event_get_type(event),
+			 LIBINPUT_EVENT_POINTER_MOTION);
+	libinput_event_destroy(event);
+
+	litest_delete_device(tmp);
 }
 END_TEST
 
