@@ -897,6 +897,54 @@ litest_drain_events(struct libinput *li)
 	}
 }
 
+static const char *
+litest_event_type_str(struct libinput_event *event)
+{
+	const char *str = NULL;
+
+	switch (libinput_event_get_type(event)) {
+	case LIBINPUT_EVENT_NONE:
+		abort();
+	case LIBINPUT_EVENT_DEVICE_ADDED:
+		str = "ADDED";
+		break;
+	case LIBINPUT_EVENT_DEVICE_REMOVED:
+		str = "REMOVED";
+		break;
+	case LIBINPUT_EVENT_KEYBOARD_KEY:
+		str = "KEY";
+		break;
+	case LIBINPUT_EVENT_POINTER_MOTION:
+		str = "MOTION";
+		break;
+	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
+		str = "ABSOLUTE";
+		break;
+	case LIBINPUT_EVENT_POINTER_BUTTON:
+		str = "BUTTON";
+		break;
+	case LIBINPUT_EVENT_POINTER_AXIS:
+		str = "AXIS";
+		break;
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+		str = "TOUCH DOWN";
+		break;
+	case LIBINPUT_EVENT_TOUCH_UP:
+		str = "TOUCH UP";
+		break;
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+		str = "TOUCH MOTION";
+		break;
+	case LIBINPUT_EVENT_TOUCH_CANCEL:
+		str = "TOUCH CANCEL";
+		break;
+	case LIBINPUT_EVENT_TOUCH_FRAME:
+		str = "TOUCH FRAME";
+		break;
+	}
+	return str;
+}
+
 static void
 litest_print_event(struct libinput_event *event)
 {
@@ -909,26 +957,26 @@ litest_print_event(struct libinput_event *event)
 	type = libinput_event_get_type(event);
 
 	fprintf(stderr,
-		"device %s type %d ",
+		"device %s type %s ",
 		libinput_device_get_sysname(dev),
-		type);
+		litest_event_type_str(event));
 	switch (type) {
 	case LIBINPUT_EVENT_POINTER_MOTION:
 		p = libinput_event_get_pointer_event(event);
 		x = libinput_event_pointer_get_dx(p);
 		y = libinput_event_pointer_get_dy(p);
-		fprintf(stderr, "motion: %.2f/%.2f", x, y);
+		fprintf(stderr, "%.2f/%.2f", x, y);
 		break;
 	case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
 		p = libinput_event_get_pointer_event(event);
 		x = libinput_event_pointer_get_absolute_x(p);
 		y = libinput_event_pointer_get_absolute_y(p);
-		fprintf(stderr, "motion: %.2f/%.2f", x, y);
+		fprintf(stderr, "%.2f/%.2f", x, y);
 		break;
 	case LIBINPUT_EVENT_POINTER_BUTTON:
 		p = libinput_event_get_pointer_event(event);
 		fprintf(stderr,
-			"button: %d state %d",
+			"button %d state %d",
 			libinput_event_pointer_get_button(p),
 			libinput_event_pointer_get_button_state(p));
 		break;
