@@ -980,6 +980,15 @@ litest_print_event(struct libinput_event *event)
 			libinput_event_pointer_get_button(p),
 			libinput_event_pointer_get_button_state(p));
 		break;
+	case LIBINPUT_EVENT_POINTER_AXIS:
+		p = libinput_event_get_pointer_event(event);
+		fprintf(stderr,
+			"axis %s value %.2f",
+			libinput_event_pointer_get_axis(p) ==
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL ?
+				"vert" : "horiz",
+			libinput_event_pointer_get_axis_value(p));
+		break;
 	default:
 		break;
 	}
