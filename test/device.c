@@ -593,7 +593,7 @@ START_TEST(device_disable_topsoftbutton)
 	event = libinput_get_event(li);
 	ck_assert_int_eq(libinput_event_get_type(event),
 			 LIBINPUT_EVENT_POINTER_BUTTON);
-	ck_assert_int_eq(libinput_event_get_device(event),
+	ck_assert_ptr_eq(libinput_event_get_device(event),
 			 trackpoint->libinput_device);
 	ptrevent = libinput_event_get_pointer_event(event);
 	ck_assert_int_eq(libinput_event_pointer_get_button(ptrevent),
@@ -605,7 +605,7 @@ START_TEST(device_disable_topsoftbutton)
 	event = libinput_get_event(li);
 	ck_assert_int_eq(libinput_event_get_type(event),
 			 LIBINPUT_EVENT_POINTER_BUTTON);
-	ck_assert_int_eq(libinput_event_get_device(event),
+	ck_assert_ptr_eq(libinput_event_get_device(event),
 			 trackpoint->libinput_device);
 	ptrevent = libinput_event_get_pointer_event(event);
 	ck_assert_int_eq(libinput_event_pointer_get_button(ptrevent),
