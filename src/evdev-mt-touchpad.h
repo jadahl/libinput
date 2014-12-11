@@ -53,6 +53,7 @@ enum touchpad_model {
 
 enum touch_state {
 	TOUCH_NONE = 0,
+	TOUCH_HOVERING,
 	TOUCH_BEGIN,
 	TOUCH_UPDATE,
 	TOUCH_END
@@ -130,6 +131,7 @@ struct tp_motion {
 struct tp_touch {
 	struct tp_dispatch *tp;
 	enum touch_state state;
+	bool has_ended;				/* TRACKING_ID == -1 */
 	bool dirty;
 	bool is_pointer;			/* the pointer-controlling touch */
 	int32_t x;

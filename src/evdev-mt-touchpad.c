@@ -178,26 +178,53 @@ tp_fake_finger_set(struct tp_dispatch *tp,
 }
 
 static inline void
-tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
+tp_new_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	if (t->state == TOUCH_BEGIN || t->state == TOUCH_UPDATE)
+	if (t->state == TOUCH_BEGIN ||
+	    t->state == TOUCH_UPDATE ||
+	    t->state == TOUCH_HOVERING)
 		return;
 
+	/* we begin the touch as hovering because until BTN_TOUCH happens we
+	 * don't know if it's a touch down or not. And BTN_TOUCH may happen
+	 * after ABS_MT_TRACKING_ID */
 	tp_motion_history_reset(t);
 	t->dirty = true;
-	t->state = TOUCH_BEGIN;
+	t->has_ended = false;
+	t->state = TOUCH_HOVERING;
 	t->pinned.is_pinned = false;
 	t->millis = time;
-	tp->nfingers_down++;
-	assert(tp->nfingers_down >= 1);
 	tp->queued |= TOUCHPAD_EVENT_MOTION;
 }
 
 static inline void
+tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
+{
+	t->dirty = true;
+	t->state = TOUCH_BEGIN;
+	t->millis = time;
+	tp->nfingers_down++;
+	assert(tp->nfingers_down >= 1);
+}
+
+/**
+ * End a touch, even if the touch sequence is still active.
+ */
+static inline void
 tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	if (t->state == TOUCH_END || t->state == TOUCH_NONE)
+	switch (t->state) {
+	case TOUCH_HOVERING:
+		t->state = TOUCH_NONE;
+		/* fallthough */
+	case TOUCH_NONE:
+	case TOUCH_END:
 		return;
+	case TOUCH_BEGIN:
+	case TOUCH_UPDATE:
+		break;
+
+	}
 
 	t->dirty = true;
 	t->is_pointer = false;
@@ -208,6 +235,16 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	assert(tp->nfingers_down >= 1);
 	tp->nfingers_down--;
 	tp->queued |= TOUCHPAD_EVENT_MOTION;
+}
+
+/**
+ * End the touch sequence on ABS_MT_TRACKING_ID -1 or when the BTN_TOOL_* 0 is received.
+ */
+static inline void
+tp_end_sequence(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
+{
+	t->has_ended = true;
+	tp_end_touch(tp, t, time);
 }
 
 static double
@@ -260,9 +297,9 @@ tp_process_absolute(struct tp_dispatch *tp,
 		break;
 	case ABS_MT_TRACKING_ID:
 		if (e->value != -1)
-			tp_begin_touch(tp, t, time);
+			tp_new_touch(tp, t, time);
 		else
-			tp_end_touch(tp, t, time);
+			tp_end_sequence(tp, t, time);
 	}
 }
 
@@ -306,13 +343,10 @@ tp_process_fake_touch(struct tp_dispatch *tp,
 	for (i = start; i < tp->ntouches; i++) {
 		t = tp_get_touch(tp, i);
 		if (i < nfake_touches)
-			tp_begin_touch(tp, t, time);
+			tp_new_touch(tp, t, time);
 		else
-			tp_end_touch(tp, t, time);
+			tp_end_sequence(tp, t, time);
 	}
-
-	/* On mt the actual touch info may arrive after BTN_TOOL_FOO */
-	assert(tp->has_mt || tp->nfingers_down == nfake_touches);
 }
 
 static void
@@ -327,6 +361,7 @@ tp_process_key(struct tp_dispatch *tp,
 			tp_process_button(tp, e, time);
 			break;
 		case BTN_TOUCH:
+		case BTN_TOOL_FINGER:
 		case BTN_TOOL_DOUBLETAP:
 		case BTN_TOOL_TRIPLETAP:
 		case BTN_TOOL_QUADTAP:
@@ -580,11 +615,68 @@ tp_remove_scroll(struct tp_dispatch *tp)
 }
 
 static void
+tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
+{
+	struct tp_touch *t;
+	unsigned int nfake_touches;
+	int i;
+
+	if (!tp->fake_touches && !tp->nfingers_down)
+		return;
+
+	nfake_touches = tp_fake_finger_count(tp);
+	if (tp->nfingers_down == nfake_touches &&
+	    ((tp->nfingers_down == 0 && !tp_fake_finger_is_touching(tp)) ||
+	     (tp->nfingers_down > 0 && tp_fake_finger_is_touching(tp))))
+		return;
+
+	/* if BTN_TOUCH is set and we have less fingers down than fake
+	 * touches, switch each hovering touch to BEGIN
+	 * until nfingers_down matches nfake_touches
+	 */
+	if (tp_fake_finger_is_touching(tp) &&
+	    tp->nfingers_down < nfake_touches) {
+		for (i = 0; i < (int)tp->ntouches; i++) {
+			t = tp_get_touch(tp, i);
+
+			if (t->state == TOUCH_HOVERING) {
+				tp_begin_touch(tp, t, time);
+
+				if (tp->nfingers_down >= nfake_touches)
+					break;
+			}
+		}
+	}
+
+	/* if BTN_TOUCH is unset end all touches, we're hovering now. If we
+	 * have too many touches also end some of them. This is done in
+	 * reverse order.
+	 */
+	if (tp->nfingers_down > nfake_touches ||
+	    !tp_fake_finger_is_touching(tp)) {
+		for (i = tp->ntouches - 1; i >= 0; i--) {
+			t = tp_get_touch(tp, i);
+
+			if (t->state == TOUCH_HOVERING)
+				continue;
+
+			tp_end_touch(tp, t, time);
+
+			if (tp_fake_finger_is_touching(tp) &&
+			    tp->nfingers_down == nfake_touches)
+				break;
+		}
+	}
+}
+
+static void
 tp_process_state(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	struct tp_touch *first = tp_get_touch(tp, 0);
 	unsigned int i;
+
+	tp_unhover_touches(tp, time);
 
 	for (i = 0; i < tp->ntouches; i++) {
 		t = tp_get_touch(tp, i);
@@ -631,13 +723,18 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 
 	tp_for_each_touch(tp, t) {
+
 		if (!t->dirty)
 			continue;
 
-		if (t->state == TOUCH_END)
-			t->state = TOUCH_NONE;
-		else if (t->state == TOUCH_BEGIN)
+		if (t->state == TOUCH_END) {
+			if (t->has_ended)
+				t->state = TOUCH_NONE;
+			else
+				t->state = TOUCH_HOVERING;
+		} else if (t->state == TOUCH_BEGIN) {
 			t->state = TOUCH_UPDATE;
+		}
 
 		t->dirty = false;
 	}
@@ -818,7 +915,7 @@ tp_clear_state(struct tp_dispatch *tp)
 	tp_release_all_taps(tp, now);
 
 	tp_for_each_touch(tp, t) {
-		tp_end_touch(tp, t, now);
+		tp_end_sequence(tp, t, now);
 	}
 
 	tp_handle_state(tp, now);
@@ -979,6 +1076,7 @@ tp_init_touch(struct tp_dispatch *tp,
 	      struct tp_touch *t)
 {
 	t->tp = tp;
+	t->has_ended = true;
 }
 
 static int
