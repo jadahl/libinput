@@ -113,7 +113,7 @@ tp_edge_scroll_handle_none(struct tp_dispatch *tp,
 	case SCROLL_EVENT_TIMEOUT:
 	case SCROLL_EVENT_POSTED:
 		log_bug_libinput(libinput,
-				 "unexpect scroll event in none state\n");
+				 "unexpected scroll event in none state\n");
 		break;
 	}
 }
@@ -128,7 +128,7 @@ tp_edge_scroll_handle_edge_new(struct tp_dispatch *tp,
 	switch (event) {
 	case SCROLL_EVENT_TOUCH:
 		log_bug_libinput(libinput,
-				 "unexpect scroll event in edge new state\n");
+				 "unexpected scroll event in edge new state\n");
 		break;
 	case SCROLL_EVENT_MOTION:
 		t->scroll.edge &= tp_touch_get_edge(tp, t);
@@ -157,7 +157,7 @@ tp_edge_scroll_handle_edge(struct tp_dispatch *tp,
 	case SCROLL_EVENT_TOUCH:
 	case SCROLL_EVENT_TIMEOUT:
 		log_bug_libinput(libinput,
-				 "unexpect scroll event in edge state\n");
+				 "unexpected scroll event in edge state\n");
 		break;
 	case SCROLL_EVENT_MOTION:
 		/* If started at the bottom right, decide in which dir to scroll */
@@ -188,7 +188,7 @@ tp_edge_scroll_handle_area(struct tp_dispatch *tp,
 	case SCROLL_EVENT_TIMEOUT:
 	case SCROLL_EVENT_POSTED:
 		log_bug_libinput(libinput,
-				 "unexpect scroll event in area state\n");
+				 "unexpected scroll event in area state\n");
 		break;
 	case SCROLL_EVENT_MOTION:
 		break;
