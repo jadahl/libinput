@@ -1,6 +1,6 @@
 EXTRA_DIST = touchpad-tap-state-machine.svg touchpad-softbutton-state-machine.svg
 
-if HAVE_DOXYGEN
+if BUILD_DOCS
 
 noinst_DATA = html/index.html
 
