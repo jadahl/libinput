@@ -1,0 +1,67 @@
+/**
+@page clickpad_softbuttons Clickpad Software Button behavior
+
+Clickpad is the name given to touchpads without physical buttons below the
+touchpad. Instead, the whole touchpad acts as a button and left or right
+button clicks are distinguished by the location and/or number of fingers on
+the touchpad. <a href="http://www.synaptics.com/en/clickpad.php">"ClickPad" is
+a term coined by Synaptics Inc.</a> but for simplicity we refer to any
+touchpad with the above feature as Clickpad, regardless of the manufacturer.
+
+A clickpad is always marked with the INPUT_PROP_BUTTONPAD property. Note that
+there is a type of clickpads that have the top section marked as software
+buttons as well. See @ref t440_support "Lenovo *40 series touchpad support"
+for details on the top software button.
+
+To perform a right-click on a Clickpad, two methods are available in libinput:
+
+- on Apple touchpads, a right click is performed by two fingers on the
+  touchpad while clicking, a behavior termed "clickfinger"
+- on non-Apple touchpads, a right click is performed by a finger in a
+  software-defined right button area
+
+The button behavior depends on the hardware. Some Clickpads, notably some
+Cypress ones, perform right button detection in firmware and appear to
+userspace as if the touchpad had physical buttons. While physically clickpads,
+these are not handled by the software and treated like traditional touchpads.
+
+The clickfinger behavior is subject to some restrictions:
+
+- two fingers execute a right click, three fingers a middle click
+- The Xorg synaptics driver uses 30% of the touchpad dimensions as threshold,
+  libinput does not have this restrictions. If two fingers are on the pad
+  while clicking, that is a two-finger click.
+- clickfinger behavior is only enabled on Apple touchpads
+
+The button behavior is subject to some restrictions:
+
+The button area is usually defined like this:
+
+@dot
+digraph G {
+  clickpad [
+      shape = "record";
+    label = "{\nMain\nArea\n\n|{LEFT|RIGHT}}";
+  ]
+}
+@enddot
+
+The size of the buttons is hardware dependent.
+
+- if fingers are only down in the main area, a left click is generated
+- if a finger is in the right area when the physical click happens, a right
+  click is generated
+- if fingers are in both the left and right area, a middle click is generated
+- fingers in the main area are not considered for right or middle click
+  generation
+- if a finger starts in the main area, the software buttons do not apply to
+  that finger
+- a finger in the software button area does not move the pointer, but once it
+  moves out of the button area it will control the pointer (if it's the first
+  finger to do so)
+- once a finger has moved out of the button area, it cannot move back in and
+  trigger a right/middle button click
+- a release event releases the buttons logically down, regardless of the
+  current finger position
+
+*/

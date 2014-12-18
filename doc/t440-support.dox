@@ -1,0 +1,66 @@
+/**
+@page t440_support Lenovo *40 series touchpad support
+
+@section t440_support_overview Overview
+
+The Lenovo *40 series introduced a new type of touchpad. Previously, all
+laptops had a separate set of physical buttons for the
+<a href="http://en.wikipedia.org/wiki/Pointing_stick">trackstick</a>. This
+series removed these buttons, relying on a software emulation of the top
+section of the touchpad. This is visually marked on the trackpad itself,
+approximately like this:
+
+@dot
+digraph G {
+  subgraph cluster_0 {
+    margin="0";
+
+    clickpad [
+      shape = "record";
+      color = "none";
+    label = "{{LLLLLLLLLL|MMMMM|RRRRRRRRR}|\n\n\n\n\n\n\n\n|{LLLLLLLL|          |RRRRRRRR}}";
+    ]
+  }
+}
+@enddot
+
+The below is a list of what is needed for support of these devices. This page
+only covers the top software buttons, the bottom button behavior is covered in
+@ref clickpad_softbuttons "Clickpad software buttons".
+
+@section t440_support_btn_size Size of the buttons
+
+The approximate size of the top software buttons is 8% of the touchpad's
+announced range, starting from the top. Note that a
+<a href="https://lkml.org/lkml/2014/3/7/722">kernel patch</a> is required to
+get the right ranges.
+
+The size of the left and right buttons is approximately 42%, the middle button
+is centered and should be assigned approximately 16% of the touchpad width.
+
+@section t440_support_btn_behavior Button behavior
+
+Movement in the top button area must not generate pointer movement, these
+buttons are not replacement buttons for the bottom area but have their own
+behaviour. They do not work for click-and-drag.
+
+If the finger starts inside the top area and moves outside the button area
+without the physical button being down, movement may start.
+
+Movement into the top button area should not trigger button events, a click
+has to start inside this area to take effect.
+
+The top button areas must work, even if the touchpad is otherwise disabled
+(e.g. by a disable-while-typing feature).
+
+@section t440_support_identification Identification
+
+The touchpads can be identified by the PNPID, or by a DMI match
+
+- Helix: PnPID: <b>LEN0033</b>, DMI substring match <em>"Helix"</em>
+- T540: PnPID: <b>LEN0034</b>, DMI substring match <em>"T540?"</em>
+- x240: PnPID: <b>LEN0035</b>, DMI substring match <em>"X240"</em>
+- T440: PnPID: <b>LEN0036</b>, DMI substring match <em>"T440?"</em>
+- Yoga: PnPID: <b>LEN0042</b>, DMI subString match <em>"S1Yoga"</em>
+
+*/

@@ -6,10 +6,20 @@ noinst_DATA = html/index.html
 
 header_files = \
 	$(top_srcdir)/src/libinput.h \
-	$(top_srcdir)/README.txt
+	$(top_srcdir)/README.txt \
+	$(srcdir)/absolute-axes.dox \
+	$(srcdir)/clickpad-softbuttons.dox \
+	$(srcdir)/seats.dox \
+	$(srcdir)/t440-support.dox
 
-html/index.html: libinput.doxygen $(header_files)
-	$(AM_V_GEN)$(DOXYGEN) $<
+diagram_files = \
+	$(srcdir)/dot/seats-sketch.gv
+
+html/index.html: libinput.doxygen $(header_files) $(diagram_files)
+	$(AM_V_GEN)(cat $<; \
+          echo "INPUT = $(header_files)"; \
+          echo "DOTFILE_DIRS = $(srcdir)/dot"; \
+          ) | $(DOXYGEN) -
 
 clean-local:
 	$(AM_V_at)rm -rf html

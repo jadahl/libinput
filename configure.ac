@@ -76,6 +76,15 @@ else
 fi
 AM_CONDITIONAL([HAVE_DOXYGEN], [test "x$have_doxygen" = "xyes"])
 
+AC_PATH_PROG(DOT, dot)
+if test "x$DOT" = "x"; then
+	AC_MSG_WARN([Graphviz's dot not found - required for documentation])
+	have_dot="no"
+else
+	have_dot="yes"
+fi
+AM_CONDITIONAL([HAVE_DOT], [test "x$have_dot" = "xyes"])
+
 AC_ARG_ENABLE(event-gui,
 	      AS_HELP_STRING([--enable-event-gui], [Build the GUI event viewer (default=auto)]),
 	      [build_eventgui="$enableval"],
