@@ -1,10 +1,16 @@
 noinst_PROGRAMS = event-debug
+noinst_LTLIBRARIES = libshared.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
               -I$(top_srcdir)/src
 
+
+libshared_la_SOURCES = \
+		       shared.c \
+		       shared.h
+
 event_debug_SOURCES = event-debug.c
-event_debug_LDADD = ../src/libinput.la $(LIBUDEV_LIBS)
+event_debug_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS)
 event_debug_LDFLAGS = -no-install
 event_debug_CFLAGS = $(LIBUDEV_CFLAGS)
 

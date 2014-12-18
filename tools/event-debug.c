@@ -23,7 +23,6 @@
 #define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <poll.h>
 #include <stdio.h>
 #include <signal.h>
@@ -37,110 +36,14 @@
 
 #include <libinput.h>
 
-static enum {
-	MODE_UDEV,
-	MODE_DEVICE,
-} mode = MODE_UDEV;
+#include "shared.h"
+
 static const char *device;
-static const char *seat = "seat0";
 static struct udev *udev;
 uint32_t start_time;
 static const uint32_t screen_width = 100;
 static const uint32_t screen_height = 100;
-static int verbose = 0;
-static int tapping = -1;
-
-static void
-usage(void)
-{
-	printf("Usage: %s [options] [--udev [<seat>]|--device /dev/input/event0]\n"
-	       "--udev <seat>.... Use udev device discovery (default).\n"
-	       "		  Specifying a seat ID is optional.\n"
-	       "--device /path/to/device .... open the given device only\n"
-	       "\n"
-	       "Features:\n"
-	       "--enable-tap\n"
-	       "--disable-tap.... enable/disable tapping\n"
-	       "\n"
-	       "These options apply to all applicable devices, if a feature\n"
-	       "is not explicitly specified it is left at each device's default.\n"
-	       "\n"
-	       "Other options:\n"
-	       "--verbose ....... Print debugging output.\n"
-	       "--help .......... Print this help.\n",
-		program_invocation_short_name);
-}
-
-enum options {
-	OPT_DEVICE,
-	OPT_UDEV,
-	OPT_HELP,
-	OPT_VERBOSE,
-	OPT_TAP_ENABLE,
-	OPT_TAP_DISABLE,
-};
-
-static int
-parse_args(int argc, char **argv)
-{
-	while (1) {
-		int c;
-		int option_index = 0;
-		static struct option opts[] = {
-			{ "device", 1, 0, OPT_DEVICE },
-			{ "udev", 0, 0, OPT_UDEV },
-			{ "help", 0, 0, OPT_HELP },
-			{ "verbose", 0, 0, OPT_VERBOSE },
-			{ "enable-tap", 0, 0, OPT_TAP_ENABLE },
-			{ "disable-tap", 0, 0, OPT_TAP_DISABLE },
-			{ 0, 0, 0, 0}
-		};
-
-		c = getopt_long(argc, argv, "h", opts, &option_index);
-		if (c == -1)
-			break;
-
-		switch(c) {
-			case 'h': /* --help */
-			case OPT_HELP:
-				usage();
-				exit(0);
-			case OPT_DEVICE: /* --device */
-				mode = MODE_DEVICE;
-				if (!optarg) {
-					usage();
-					return 1;
-				}
-				device = optarg;
-				break;
-			case OPT_UDEV: /* --udev */
-				mode = MODE_UDEV;
-				if (optarg)
-					seat = optarg;
-				break;
-			case OPT_VERBOSE: /* --verbose */
-				verbose = 1;
-				break;
-			case OPT_TAP_ENABLE:
-				tapping = 1;
-				break;
-			case OPT_TAP_DISABLE:
-				tapping = 0;
-				break;
-			default:
-				usage();
-				return 1;
-		}
-
-	}
-
-	if (optind < argc) {
-		usage();
-		return 1;
-	}
-
-	return 0;
-}
+struct tools_options options;
 
 static int
 open_restricted(const char *path, int flags, void *user_data)
@@ -184,12 +87,12 @@ open_udev(struct libinput **li)
 		return 1;
 	}
 
-	if (verbose) {
+	if (options.verbose) {
 		libinput_log_set_handler(*li, log_handler);
 		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
 	}
 
-	if (libinput_udev_assign_seat(*li, seat)) {
+	if (libinput_udev_assign_seat(*li, options.seat)) {
 		fprintf(stderr, "Failed to set seat\n");
 		libinput_unref(*li);
 		return 1;
@@ -209,7 +112,7 @@ open_device(struct libinput **li, const char *path)
 		return 1;
 	}
 
-	if (verbose) {
+	if (options.verbose) {
 		libinput_log_set_handler(*li, log_handler);
 		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
 	}
@@ -427,8 +330,8 @@ print_touch_event_with_coords(struct libinput_event *ev)
 static void
 setup_device(struct libinput_device *device)
 {
-	if (tapping != -1)
-		libinput_device_config_tap_set_enabled(device, tapping);
+	if (options.tapping != -1)
+		libinput_device_config_tap_set_enabled(device, options.tapping);
 }
 
 static int
@@ -532,13 +435,15 @@ main(int argc, char **argv)
 	struct libinput *li;
 	struct timespec tp;
 
-	if (parse_args(argc, argv))
+	tools_init_options(&options);
+
+	if (tools_parse_args(argc, argv, &options))
 		return 1;
 
-	if (mode == MODE_UDEV) {
+	if (options.backend == BACKEND_UDEV) {
 		if (open_udev(&li))
 			return 1;
-	} else if (mode == MODE_DEVICE) {
+	} else if (options.backend == BACKEND_DEVICE) {
 		if (open_device(&li, device))
 			return 1;
 	} else
