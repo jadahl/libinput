@@ -69,7 +69,7 @@ tp_edge_scroll_set_state(struct tp_dispatch *tp,
 {
 	libinput_timer_cancel(&t->scroll.timer);
 
-	t->scroll.state = state;
+	t->scroll.edge_state = state;
 
 	switch (state) {
 	case EDGE_SCROLL_TOUCH_STATE_NONE:
@@ -207,7 +207,7 @@ tp_edge_scroll_handle_event(struct tp_dispatch *tp,
 			    struct tp_touch *t,
 			    enum scroll_event event)
 {
-	switch (t->scroll.state) {
+	switch (t->scroll.edge_state) {
 	case EDGE_SCROLL_TOUCH_STATE_NONE:
 		tp_edge_scroll_handle_none(tp, t, event);
 		break;
@@ -374,5 +374,5 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time)
 int
 tp_edge_scroll_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 {
-	return t->scroll.state == EDGE_SCROLL_TOUCH_STATE_AREA;
+	return t->scroll.edge_state == EDGE_SCROLL_TOUCH_STATE_AREA;
 }

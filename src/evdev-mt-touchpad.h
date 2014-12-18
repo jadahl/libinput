@@ -165,7 +165,7 @@ struct tp_touch {
 	} tap;
 
 	struct {
-		enum tp_edge_scroll_touch_state state;
+		enum tp_edge_scroll_touch_state edge_state;
 		uint32_t edge;
 		int direction;
 		double threshold;
