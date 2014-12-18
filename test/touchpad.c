@@ -121,7 +121,6 @@ START_TEST(touchpad_1fg_tap_n_drag)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
@@ -140,27 +139,15 @@ START_TEST(touchpad_1fg_tap_n_drag)
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 
 	libinput_dispatch(li);
-	while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION) {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	}
 
-	ck_assert_int_eq(libinput_next_event_type(li), LIBINPUT_EVENT_NONE);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	/* lift finger, set down again, should continue dragging */
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
 	litest_touch_up(dev, 0);
 
-	libinput_dispatch(li);
-	while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION) {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	}
-
-	ck_assert_int_eq(libinput_next_event_type(li), LIBINPUT_EVENT_NONE);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_timeout_tap();
 
@@ -204,7 +191,6 @@ START_TEST(touchpad_2fg_tap_n_drag)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
@@ -221,12 +207,7 @@ START_TEST(touchpad_2fg_tap_n_drag)
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 
-	while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION) {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	}
-	litest_assert_empty_queue(li);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
@@ -243,7 +224,6 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg_btntool)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
@@ -260,12 +240,7 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg_btntool)
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 
-	while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION) {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	}
-	litest_assert_empty_queue(li);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	/* Putting down a third finger should end the drag */
 	litest_event(dev, EV_KEY, BTN_TOOL_TRIPLETAP, 1);
@@ -591,7 +566,6 @@ START_TEST(touchpad_1fg_tap_n_drag_click)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
@@ -608,15 +582,7 @@ START_TEST(touchpad_1fg_tap_n_drag_click)
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 
-	libinput_dispatch(li);
-
-	ck_assert_int_eq(libinput_next_event_type(li),
-			 LIBINPUT_EVENT_POINTER_MOTION);
-	while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION) {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	}
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
@@ -873,7 +839,6 @@ START_TEST(clickpad_click_n_drag)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
 
 	litest_drain_events(li);
 
@@ -893,14 +858,7 @@ START_TEST(clickpad_click_n_drag)
 	litest_touch_move_to(dev, 1, 70, 70, 80, 50, 5, 0);
 	litest_touch_up(dev, 1);
 
-	libinput_dispatch(li);
-	ck_assert_int_eq(libinput_next_event_type(li),
-			 LIBINPUT_EVENT_POINTER_MOTION);
-	do {
-		event = libinput_get_event(li);
-		libinput_event_destroy(event);
-		libinput_dispatch(li);
-	} while (libinput_next_event_type(li) == LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
@@ -1697,8 +1655,6 @@ START_TEST(touchpad_palm_detect_palm_becomes_pointer)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *ev;
-	enum libinput_event_type type;
 
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
@@ -1711,15 +1667,7 @@ START_TEST(touchpad_palm_detect_palm_becomes_pointer)
 
 	libinput_dispatch(li);
 
-	ev = libinput_get_event(li);
-	ck_assert_notnull(ev);
-	do {
-		type = libinput_event_get_type(ev);
-		ck_assert_int_eq(type, LIBINPUT_EVENT_POINTER_MOTION);
-
-		libinput_event_destroy(ev);
-		ev = libinput_get_event(li);
-	} while (ev);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_assert_empty_queue(li);
 }
@@ -1729,8 +1677,6 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
-	struct libinput_event *ev;
-	enum libinput_event_type type;
 
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
@@ -1746,16 +1692,7 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 	litest_touch_move_to(dev, 0, 99, 50, 99, 90, 5, 0);
 	libinput_dispatch(li);
 
-	type = libinput_next_event_type(li);
-	do {
-
-		ck_assert_int_eq(type, LIBINPUT_EVENT_POINTER_MOTION);
-		ev = libinput_get_event(li);
-		libinput_event_destroy(ev);
-
-		type = libinput_next_event_type(li);
-		libinput_dispatch(li);
-	} while (type != LIBINPUT_EVENT_NONE);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
