@@ -222,3 +222,11 @@ tools_open_backend(struct tools_options *options,
 
 	return li;
 }
+
+void
+tools_device_apply_config(struct libinput_device *device,
+			  struct tools_options *options)
+{
+	if (options->tapping != -1)
+		libinput_device_config_tap_set_enabled(device, options->tapping);
+}

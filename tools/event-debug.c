@@ -261,13 +261,6 @@ print_touch_event_with_coords(struct libinput_event *ev)
 	       xmm, ymm);
 }
 
-static void
-setup_device(struct libinput_device *device)
-{
-	if (options.tapping != -1)
-		libinput_device_config_tap_set_enabled(device, options.tapping);
-}
-
 static int
 handle_and_print_events(struct libinput *li)
 {
@@ -284,7 +277,8 @@ handle_and_print_events(struct libinput *li)
 		case LIBINPUT_EVENT_DEVICE_ADDED:
 		case LIBINPUT_EVENT_DEVICE_REMOVED:
 			print_device_notify(ev);
-			setup_device(libinput_event_get_device(ev));
+			tools_device_apply_config(libinput_event_get_device(ev),
+						  &options);
 			break;
 		case LIBINPUT_EVENT_KEYBOARD_KEY:
 			print_key_event(ev);
