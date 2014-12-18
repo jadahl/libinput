@@ -61,6 +61,13 @@ usage(void)
 		program_invocation_short_name);
 }
 
+enum options {
+	OPT_DEVICE,
+	OPT_UDEV,
+	OPT_HELP,
+	OPT_VERBOSE,
+};
+
 static int
 parse_args(int argc, char **argv)
 {
@@ -68,10 +75,10 @@ parse_args(int argc, char **argv)
 		int c;
 		int option_index = 0;
 		static struct option opts[] = {
-			{ "device", 1, 0, 'd' },
-			{ "udev", 0, 0, 'u' },
-			{ "help", 0, 0, 'h' },
-			{ "verbose", 0, 0, 'v'},
+			{ "device", 1, 0, OPT_DEVICE },
+			{ "udev", 0, 0, OPT_UDEV },
+			{ "help", 0, 0, OPT_HELP },
+			{ "verbose", 0, 0, OPT_VERBOSE },
 			{ 0, 0, 0, 0}
 		};
 
@@ -81,9 +88,10 @@ parse_args(int argc, char **argv)
 
 		switch(c) {
 			case 'h': /* --help */
+			case OPT_HELP:
 				usage();
 				exit(0);
-			case 'd': /* --device */
+			case OPT_DEVICE: /* --device */
 				mode = MODE_DEVICE;
 				if (!optarg) {
 					usage();
@@ -91,12 +99,12 @@ parse_args(int argc, char **argv)
 				}
 				device = optarg;
 				break;
-			case 'u': /* --udev */
+			case OPT_UDEV: /* --udev */
 				mode = MODE_UDEV;
 				if (optarg)
 					seat = optarg;
 				break;
-			case 'v': /* --verbose */
+			case OPT_VERBOSE: /* --verbose */
 				verbose = 1;
 				break;
 			default:
