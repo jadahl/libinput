@@ -924,7 +924,7 @@ START_TEST(clickpad_softbutton_left)
 
 	litest_assert_button_event(li,
 				   BTN_LEFT,
-			    LIBINPUT_BUTTON_STATE_PRESSED);
+				   LIBINPUT_BUTTON_STATE_PRESSED);
 
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
@@ -932,7 +932,7 @@ START_TEST(clickpad_softbutton_left)
 
 	litest_assert_button_event(li,
 				   BTN_LEFT,
-			    LIBINPUT_BUTTON_STATE_RELEASED);
+				   LIBINPUT_BUTTON_STATE_RELEASED);
 
 	libinput_dispatch(li);
 
