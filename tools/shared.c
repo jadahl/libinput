@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libudev.h>
 
 #include "shared.h"
 
@@ -39,6 +40,15 @@ enum options {
 	OPT_TAP_ENABLE,
 	OPT_TAP_DISABLE,
 };
+
+static void
+log_handler(struct libinput *li,
+	    enum libinput_log_priority priority,
+	    const char *format,
+	    va_list args)
+{
+	vprintf(format, args);
+}
 
 void
 tools_usage()
@@ -130,4 +140,85 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 	}
 
 	return 0;
+}
+
+static struct libinput *
+open_udev(const struct libinput_interface *interface,
+	  const char *seat,
+	  int verbose)
+{
+	struct libinput *li;
+	struct udev *udev = udev_new();
+
+	if (!udev) {
+		fprintf(stderr, "Failed to initialize udev\n");
+		return NULL;
+	}
+
+	li = libinput_udev_create_context(interface, NULL, udev);
+	if (!li) {
+		fprintf(stderr, "Failed to initialize context from udev\n");
+		goto out;
+	}
+
+	if (verbose) {
+		libinput_log_set_handler(li, log_handler);
+		libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_DEBUG);
+	}
+
+	if (libinput_udev_assign_seat(li, seat)) {
+		fprintf(stderr, "Failed to set seat\n");
+		libinput_unref(li);
+		li = NULL;
+		goto out;
+	}
+
+out:
+	udev_unref(udev);
+	return li;
+}
+
+static struct libinput *
+open_device(const struct libinput_interface *interface,
+	    const char *path,
+	    int verbose)
+{
+	struct libinput_device *device;
+	struct libinput *li;
+
+	li = libinput_path_create_context(interface, NULL);
+	if (!li) {
+		fprintf(stderr, "Failed to initialize context from %s\n", path);
+		return NULL;
+	}
+
+	if (verbose) {
+		libinput_log_set_handler(li, log_handler);
+		libinput_log_set_priority(li, LIBINPUT_LOG_PRIORITY_DEBUG);
+	}
+
+	device = libinput_path_add_device(li, path);
+	if (!device) {
+		fprintf(stderr, "Failed to initialized device %s\n", path);
+		libinput_unref(li);
+		li = NULL;
+	}
+
+	return li;
+}
+
+struct libinput *
+tools_open_backend(struct tools_options *options,
+		   const struct libinput_interface *interface)
+{
+	struct libinput *li = NULL;
+
+	if (options->backend == BACKEND_UDEV) {
+		li = open_udev(interface, options->seat, options->verbose);
+	} else if (options->backend == BACKEND_DEVICE) {
+		li = open_device(interface, options->device, options->verbose);
+	} else
+		abort();
+
+	return li;
 }

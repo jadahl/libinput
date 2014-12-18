@@ -38,8 +38,6 @@
 
 #include "shared.h"
 
-static const char *device;
-static struct udev *udev;
 uint32_t start_time;
 static const uint32_t screen_width = 100;
 static const uint32_t screen_height = 100;
@@ -62,70 +60,6 @@ static const struct libinput_interface interface = {
 	.open_restricted = open_restricted,
 	.close_restricted = close_restricted,
 };
-
-static void
-log_handler(struct libinput *li,
-	    enum libinput_log_priority priority,
-	    const char *format,
-	    va_list args)
-{
-	vprintf(format, args);
-}
-
-static int
-open_udev(struct libinput **li)
-{
-	udev = udev_new();
-	if (!udev) {
-		fprintf(stderr, "Failed to initialize udev\n");
-		return 1;
-	}
-
-	*li = libinput_udev_create_context(&interface, NULL, udev);
-	if (!*li) {
-		fprintf(stderr, "Failed to initialize context from udev\n");
-		return 1;
-	}
-
-	if (options.verbose) {
-		libinput_log_set_handler(*li, log_handler);
-		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
-	}
-
-	if (libinput_udev_assign_seat(*li, options.seat)) {
-		fprintf(stderr, "Failed to set seat\n");
-		libinput_unref(*li);
-		return 1;
-	}
-
-	return 0;
-}
-
-static int
-open_device(struct libinput **li, const char *path)
-{
-	struct libinput_device *device;
-
-	*li = libinput_path_create_context(&interface, NULL);
-	if (!*li) {
-		fprintf(stderr, "Failed to initialize context from %s\n", path);
-		return 1;
-	}
-
-	if (options.verbose) {
-		libinput_log_set_handler(*li, log_handler);
-		libinput_log_set_priority(*li, LIBINPUT_LOG_PRIORITY_DEBUG);
-	}
-
-	device = libinput_path_add_device(*li, path);
-	if (!device) {
-		fprintf(stderr, "Failed to initialized device %s\n", path);
-		libinput_unref(*li);
-		return 1;
-	}
-
-	return 0;
-}
 
 static void
 print_event_header(struct libinput_event *ev)
@@ -440,14 +374,9 @@ main(int argc, char **argv)
 	if (tools_parse_args(argc, argv, &options))
 		return 1;
 
-	if (options.backend == BACKEND_UDEV) {
-		if (open_udev(&li))
-			return 1;
-	} else if (options.backend == BACKEND_DEVICE) {
-		if (open_device(&li, device))
-			return 1;
-	} else
-		abort();
+	li = tools_open_backend(&options, &interface);
+	if (!li)
+		return 1;
 
 	clock_gettime(CLOCK_MONOTONIC, &tp);
 	start_time = tp.tv_sec * 1000 + tp.tv_nsec / 1000000;
@@ -455,8 +384,6 @@ main(int argc, char **argv)
 	mainloop(li);
 
 	libinput_unref(li);
-	if (udev)
-		udev_unref(udev);
 
 	return 0;
 }

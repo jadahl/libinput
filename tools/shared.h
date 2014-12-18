@@ -23,6 +23,8 @@
 #ifndef _SHARED_H_
 #define _SHARED_H_
 
+#include <libinput.h>
+
 enum tools_backend {
 	BACKEND_DEVICE,
 	BACKEND_UDEV
@@ -39,6 +41,8 @@ struct tools_options {
 
 void tools_init_options(struct tools_options *options);
 int tools_parse_args(int argc, char **argv, struct tools_options *options);
+struct libinput* tools_open_backend(struct tools_options *options,
+				    const struct libinput_interface *interface);
 
 void tools_usage();
 
