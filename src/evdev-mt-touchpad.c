@@ -436,6 +436,33 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
 	evdev_post_scroll(tp->device, time, dx, dy);
+	tp->scroll.twofinger_state = TWOFINGER_SCROLL_STATE_ACTIVE;
+}
+
+static void
+tp_twofinger_stop_scroll(struct tp_dispatch *tp, uint64_t time)
+{
+	struct tp_touch *t, *ptr = NULL;
+	int nfingers_down = 0;
+
+	evdev_stop_scroll(tp->device, time);
+
+	/* If we were scrolling and now there's exactly 1 active finger,
+	   switch back to pointer movement */
+	if (tp->scroll.twofinger_state == TWOFINGER_SCROLL_STATE_ACTIVE) {
+		tp_for_each_touch(tp, t) {
+			if (tp_touch_active(tp, t)) {
+				nfingers_down++;
+				if (ptr == NULL)
+					ptr = t;
+			}
+		}
+
+		if (nfingers_down == 1)
+			tp_set_pointer(tp, ptr);
+	}
+
+	tp->scroll.twofinger_state = TWOFINGER_SCROLL_STATE_NONE;
 }
 
 static int
@@ -458,13 +485,14 @@ tp_twofinger_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 			nfingers_down++;
 	}
 
-	if (nfingers_down != 2) {
-		evdev_stop_scroll(tp->device, time);
-		return 0;
+	if (nfingers_down == 2) {
+		tp_post_twofinger_scroll(tp, time);
+		return 1;
 	}
 
-	tp_post_twofinger_scroll(tp, time);
-	return 1;
+	tp_twofinger_stop_scroll(tp, time);
+
+	return 0;
 }
 
 static void
@@ -504,7 +532,7 @@ tp_stop_scroll_events(struct tp_dispatch *tp, uint64_t time)
 	case LIBINPUT_CONFIG_SCROLL_NO_SCROLL:
 		break;
 	case LIBINPUT_CONFIG_SCROLL_2FG:
-		evdev_stop_scroll(tp->device, time);
+		tp_twofinger_stop_scroll(tp, time);
 		break;
 	case LIBINPUT_CONFIG_SCROLL_EDGE:
 		tp_edge_scroll_stop_events(tp, time);

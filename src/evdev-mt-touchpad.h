@@ -117,6 +117,11 @@ enum tp_edge_scroll_touch_state {
 	EDGE_SCROLL_TOUCH_STATE_AREA,
 };
 
+enum tp_twofinger_scroll_state {
+	TWOFINGER_SCROLL_STATE_NONE,
+	TWOFINGER_SCROLL_STATE_ACTIVE,
+};
+
 struct tp_motion {
 	int32_t x;
 	int32_t y;
@@ -238,6 +243,7 @@ struct tp_dispatch {
 		enum libinput_config_scroll_method method;
 		int32_t right_edge;
 		int32_t bottom_edge;
+		enum tp_twofinger_scroll_state twofinger_state;
 	} scroll;
 
 	enum touchpad_event queued;

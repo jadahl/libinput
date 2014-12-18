@@ -1461,6 +1461,44 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 }
 END_TEST
 
+START_TEST(touchpad_2fg_scroll_return_to_motion)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	/* start with motion */
+	litest_touch_down(dev, 0, 70, 70);
+	litest_touch_move_to(dev, 0, 70, 70, 47, 50, 10, 0);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	/* 2fg scroll */
+	litest_touch_down(dev, 1, 53, 50);
+	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
+	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
+	litest_touch_up(dev, 1);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
+
+	litest_touch_move_to(dev, 0, 47, 70, 47, 50, 10, 0);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	/* back to 2fg scroll, lifting the other finger */
+	litest_touch_down(dev, 1, 50, 50);
+	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
+	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
+	litest_touch_up(dev, 0);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
+
+	/* move with second finger */
+	litest_touch_move_to(dev, 1, 53, 70, 53, 50, 10, 0);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	litest_touch_up(dev, 1);
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
 START_TEST(touchpad_scroll_natural_defaults)
 {
 	struct litest_device *dev = litest_current_device();
@@ -2059,6 +2097,7 @@ int main(int argc, char **argv) {
 
 	litest_add("touchpad:scroll", touchpad_2fg_scroll, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_2fg_scroll_slow_distance, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:scroll", touchpad_2fg_scroll_return_to_motion, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_defaults, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural_enable_config, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_scroll_natural, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
