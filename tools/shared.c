@@ -41,6 +41,8 @@ enum options {
 	OPT_TAP_DISABLE,
 	OPT_NATURAL_SCROLL_ENABLE,
 	OPT_NATURAL_SCROLL_DISABLE,
+	OPT_LEFT_HANDED_ENABLE,
+	OPT_LEFT_HANDED_DISABLE,
 };
 
 static void
@@ -65,6 +67,8 @@ tools_usage()
 	       "--disable-tap.... enable/disable tapping\n"
 	       "--enable-natural-scrolling\n"
 	       "--disable-natural-scrolling.... enable/disable natural scrolling\n"
+	       "--enable-left-handed\n"
+	       "--disable-left-handed.... enable/disable left-handed button configuration\n"
 	       "\n"
 	       "These options apply to all applicable devices, if a feature\n"
 	       "is not explicitly specified it is left at each device's default.\n"
@@ -81,6 +85,7 @@ tools_init_options(struct tools_options *options)
 	memset(options, 0, sizeof(*options));
 	options->tapping = -1;
 	options->natural_scroll = -1;
+	options->left_handed = -1;
 	options->backend = BACKEND_UDEV;
 	options->seat = "seat0";
 }
@@ -100,6 +105,8 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			{ "disable-tap", 0, 0, OPT_TAP_DISABLE },
 			{ "enable-natural-scrolling", 0, 0, OPT_NATURAL_SCROLL_ENABLE },
 			{ "disable-natural-scrolling", 0, 0, OPT_NATURAL_SCROLL_DISABLE },
+			{ "enable-left-handed", 0, 0, OPT_LEFT_HANDED_ENABLE },
+			{ "disable-left-handed", 0, 0, OPT_LEFT_HANDED_DISABLE },
 			{ 0, 0, 0, 0}
 		};
 
@@ -139,6 +146,12 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				break;
 			case OPT_NATURAL_SCROLL_DISABLE:
 				options->natural_scroll = 0;
+				break;
+			case OPT_LEFT_HANDED_ENABLE:
+				options->left_handed = 1;
+				break;
+			case OPT_LEFT_HANDED_DISABLE:
+				options->left_handed = 0;
 				break;
 			default:
 				tools_usage();
@@ -245,4 +258,6 @@ tools_device_apply_config(struct libinput_device *device,
 	if (options->natural_scroll != -1)
 		libinput_device_config_scroll_set_natural_scroll_enabled(device,
 									 options->natural_scroll);
+	if (options->left_handed != -1)
+		libinput_device_config_buttons_set_left_handed(device, options->left_handed);
 }
