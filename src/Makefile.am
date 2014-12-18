@@ -36,6 +36,7 @@ libinput_la_CFLAGS = -I$(top_srcdir)/include \
 		     $(LIBUDEV_CFLAGS)	\
 		     $(LIBEVDEV_CFLAGS)	\
 		     $(GCC_CFLAGS)
+EXTRA_libinput_la_DEPENDENCIES = $(srcdir)/libinput.sym
 
 libinput_util_la_SOURCES = \
 	libinput-util.c		\
