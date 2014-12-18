@@ -39,6 +39,8 @@ enum options {
 	OPT_VERBOSE,
 	OPT_TAP_ENABLE,
 	OPT_TAP_DISABLE,
+	OPT_NATURAL_SCROLL_ENABLE,
+	OPT_NATURAL_SCROLL_DISABLE,
 };
 
 static void
@@ -61,6 +63,8 @@ tools_usage()
 	       "Features:\n"
 	       "--enable-tap\n"
 	       "--disable-tap.... enable/disable tapping\n"
+	       "--enable-natural-scrolling\n"
+	       "--disable-natural-scrolling.... enable/disable natural scrolling\n"
 	       "\n"
 	       "These options apply to all applicable devices, if a feature\n"
 	       "is not explicitly specified it is left at each device's default.\n"
@@ -76,6 +80,7 @@ tools_init_options(struct tools_options *options)
 {
 	memset(options, 0, sizeof(*options));
 	options->tapping = -1;
+	options->natural_scroll = -1;
 	options->backend = BACKEND_UDEV;
 	options->seat = "seat0";
 }
@@ -93,6 +98,8 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			{ "verbose", 0, 0, OPT_VERBOSE },
 			{ "enable-tap", 0, 0, OPT_TAP_ENABLE },
 			{ "disable-tap", 0, 0, OPT_TAP_DISABLE },
+			{ "enable-natural-scrolling", 0, 0, OPT_NATURAL_SCROLL_ENABLE },
+			{ "disable-natural-scrolling", 0, 0, OPT_NATURAL_SCROLL_DISABLE },
 			{ 0, 0, 0, 0}
 		};
 
@@ -126,6 +133,12 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				break;
 			case OPT_TAP_DISABLE:
 				options->tapping = 0;
+				break;
+			case OPT_NATURAL_SCROLL_ENABLE:
+				options->natural_scroll = 1;
+				break;
+			case OPT_NATURAL_SCROLL_DISABLE:
+				options->natural_scroll = 0;
 				break;
 			default:
 				tools_usage();
@@ -229,4 +242,7 @@ tools_device_apply_config(struct libinput_device *device,
 {
 	if (options->tapping != -1)
 		libinput_device_config_tap_set_enabled(device, options->tapping);
+	if (options->natural_scroll != -1)
+		libinput_device_config_scroll_set_natural_scroll_enabled(device,
+									 options->natural_scroll);
 }

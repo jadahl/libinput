@@ -37,6 +37,7 @@ struct tools_options {
 
 	int verbose;
 	int tapping;
+	int natural_scroll;
 };
 
 void tools_init_options(struct tools_options *options);
