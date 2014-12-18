@@ -48,16 +48,26 @@ uint32_t start_time;
 static const uint32_t screen_width = 100;
 static const uint32_t screen_height = 100;
 static int verbose = 0;
+static int tapping = -1;
 
 static void
 usage(void)
 {
-	printf("Usage: %s [--verbose] [--udev [<seat>]|--device /dev/input/event0]\n"
-	       "--verbose ....... Print debugging output.\n"
-	       "--help .......... Print this help.\n"
+	printf("Usage: %s [options] [--udev [<seat>]|--device /dev/input/event0]\n"
 	       "--udev <seat>.... Use udev device discovery (default).\n"
 	       "		  Specifying a seat ID is optional.\n"
-	       "--device /path/to/device .... open the given device only\n",
+	       "--device /path/to/device .... open the given device only\n"
+	       "\n"
+	       "Features:\n"
+	       "--enable-tap\n"
+	       "--disable-tap.... enable/disable tapping\n"
+	       "\n"
+	       "These options apply to all applicable devices, if a feature\n"
+	       "is not explicitly specified it is left at each device's default.\n"
+	       "\n"
+	       "Other options:\n"
+	       "--verbose ....... Print debugging output.\n"
+	       "--help .......... Print this help.\n",
 		program_invocation_short_name);
 }
 
@@ -66,6 +76,8 @@ enum options {
 	OPT_UDEV,
 	OPT_HELP,
 	OPT_VERBOSE,
+	OPT_TAP_ENABLE,
+	OPT_TAP_DISABLE,
 };
 
 static int
@@ -79,6 +91,8 @@ parse_args(int argc, char **argv)
 			{ "udev", 0, 0, OPT_UDEV },
 			{ "help", 0, 0, OPT_HELP },
 			{ "verbose", 0, 0, OPT_VERBOSE },
+			{ "enable-tap", 0, 0, OPT_TAP_ENABLE },
+			{ "disable-tap", 0, 0, OPT_TAP_DISABLE },
 			{ 0, 0, 0, 0}
 		};
 
@@ -106,6 +120,12 @@ parse_args(int argc, char **argv)
 				break;
 			case OPT_VERBOSE: /* --verbose */
 				verbose = 1;
+				break;
+			case OPT_TAP_ENABLE:
+				tapping = 1;
+				break;
+			case OPT_TAP_DISABLE:
+				tapping = 0;
 				break;
 			default:
 				usage();
@@ -404,6 +424,13 @@ print_touch_event_with_coords(struct libinput_event *ev)
 	       xmm, ymm);
 }
 
+static void
+setup_device(struct libinput_device *device)
+{
+	if (tapping != -1)
+		libinput_device_config_tap_set_enabled(device, tapping);
+}
+
 static int
 handle_and_print_events(struct libinput *li)
 {
@@ -420,6 +447,7 @@ handle_and_print_events(struct libinput *li)
 		case LIBINPUT_EVENT_DEVICE_ADDED:
 		case LIBINPUT_EVENT_DEVICE_REMOVED:
 			print_device_notify(ev);
+			setup_device(libinput_event_get_device(ev));
 			break;
 		case LIBINPUT_EVENT_KEYBOARD_KEY:
 			print_key_event(ev);
