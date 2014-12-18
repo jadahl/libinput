@@ -1224,6 +1224,27 @@ litest_assert_scroll(struct libinput *li,
 }
 
 void
+litest_assert_only_typed_events(struct libinput *li,
+				enum libinput_event_type type)
+{
+	struct libinput_event *event;
+
+	assert(type != LIBINPUT_EVENT_NONE);
+
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ck_assert_notnull(event);
+
+	while (event) {
+		ck_assert_int_eq(libinput_event_get_type(event),
+				 type);
+		libinput_event_destroy(event);
+		libinput_dispatch(li);
+		event = libinput_get_event(li);
+	}
+}
+
+void
 litest_timeout_tap(void)
 {
 	msleep(200);
