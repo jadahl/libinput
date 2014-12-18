@@ -27,7 +27,6 @@
 #include <cairo.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +39,11 @@
 #include <libinput.h>
 #include <libinput-util.h>
 
+#include "shared.h"
+
 #define clip(val_, min_, max_) min((max_), max((min_), (val_)))
+
+struct tools_options options;
 
 struct touch {
 	int active;
@@ -93,12 +96,6 @@ msg(const char *fmt, ...)
 	va_start(args, fmt);
 	vprintf(fmt, args);
 	va_end(args);
-}
-
-static void
-usage(void)
-{
-	printf("%s [path/to/device]\n", program_invocation_short_name);
 }
 
 static gboolean
@@ -491,35 +488,6 @@ sockets_init(struct libinput *li)
 }
 
 static int
-parse_opts(int argc, char *argv[])
-{
-	while (1) {
-		static struct option long_options[] = {
-			{ "help", no_argument, 0, 'h' },
-		};
-
-		int option_index = 0;
-		int c;
-
-		c = getopt_long(argc, argv, "h", long_options,
-				&option_index);
-		if (c == -1)
-			break;
-
-		switch(c) {
-		case 'h':
-			usage();
-			return 0;
-		default:
-			usage();
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-static int
 open_restricted(const char *path, int flags, void *user_data)
 {
 	int fd = open(path, flags);
@@ -546,16 +514,18 @@ main(int argc, char *argv[])
 
 	gtk_init(&argc, &argv);
 
-	if (parse_opts(argc, argv) != 0)
+	tools_init_options(&options);
+
+	if (tools_parse_args(argc, argv, &options) != 0)
 		return 1;
 
 	udev = udev_new();
 	if (!udev)
 		error("Failed to initialize udev\n");
 
-	li = libinput_udev_create_context(&interface, &w, udev);
-	if (!li || libinput_udev_assign_seat(li, "seat0") != 0)
-		error("Failed to initialize context from udev\n");
+	li = tools_open_backend(&options, &interface);
+	if (!li)
+		return 1;
 
 	window_init(&w);
 	sockets_init(li);

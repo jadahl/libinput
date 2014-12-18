@@ -18,7 +18,7 @@ if BUILD_EVENTGUI
 noinst_PROGRAMS += event-gui
 
 event_gui_SOURCES = event-gui.c
-event_gui_LDADD = ../src/libinput.la $(CAIRO_LIBS) $(GTK_LIBS) $(LIBUDEV_LIBS)
+event_gui_LDADD = ../src/libinput.la libshared.la $(CAIRO_LIBS) $(GTK_LIBS) $(LIBUDEV_LIBS)
 event_gui_CFLAGS = $(CAIRO_CFLAGS) $(GTK_CFLAGS) $(LIBUDEV_CFLAGS)
 event_gui_LDFLAGS = -no-install
 endif
