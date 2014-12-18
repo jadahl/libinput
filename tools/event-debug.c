@@ -54,6 +54,7 @@ usage(void)
 {
 	printf("Usage: %s [--verbose] [--udev [<seat>]|--device /dev/input/event0]\n"
 	       "--verbose ....... Print debugging output.\n"
+	       "--help .......... Print this help.\n"
 	       "--udev <seat>.... Use udev device discovery (default).\n"
 	       "		  Specifying a seat ID is optional.\n"
 	       "--device /path/to/device .... open the given device only\n",
