@@ -44,6 +44,74 @@ buggy and must be fixed in the kernel. Some touchpad devices that do not
 provide resolution, those devices are correctly handled within libinput
 (touchpads are not absolute devices, as mentioned above).
 
+@section calibration Calibration of absolute devices
+
+Absolute devices may require calibration to map precisely into the output
+range required. This is done by setting a transformation matrix, see
+libinput_device_config_calibration_set_matrix() which is applied to
+each input coordinate.
+
+@f[
+\begin{pmatrix}
+ cos\theta & -sin\theta & xoff \\
+ sin\theta &  cos\theta & yoff \\
+ 0   & 0    & 1
+\end{pmatrix} \begin{pmatrix}
+x \\ y \\ 1
+\end{pmatrix}
+@f]
+
+@f$\theta@f$ is the rotation angle. The offsets @f$xoff@f$ and @f$yoff@f$ are
+specified in device dimensions, i.e. a value of 1 equals one device width
+or height. Note that rotation applies to the device's origin, rotation
+usually requires an offset to move the coordinates back into the original
+range.
+
+The most comon matrices are:
+
+- 90 degree clockwise:
+@f$
+\begin{pmatrix}
+ 0 & -1 & 1 \\
+ 1 & 0 & 0 \\
+ 0 & 0 & 1
+\end{pmatrix}
+@f$
+
+- 180 degree clockwise:
+@f$
+\begin{pmatrix}
+ -1 & 0 & 1 \\
+ 0 & -1 & 1 \\
+ 0 & 0 & 1
+\end{pmatrix}
+@f$
+
+- 270 degree clockwise:
+@f$
+\begin{pmatrix}
+ 0 & 1 & 0 \\
+ -1 & 0 & 1 \\
+ 0 & 0 & 1
+\end{pmatrix}
+@f$
+
+- reflection along y axis:
+@f$
+\begin{pmatrix}
+ -1 & 0 & 1 \\
+ 1 & 0 & 0 \\
+ 0 & 0 & 1
+\end{pmatrix}
+@f$
+
+See Wikipedia's
+<a href="http://en.wikipedia.org/wiki/Transformation_matrix">Transformation
+Matrix article</a> for more information on the matrix maths.
+
+See libinput_device_config_calibration_get_default_matrix() for how these
+matrices must be supplied to libinput.
+
 @section absolute_axes_nonorm Why x/y coordinates are not normalized
 
 x/y are not given in @ref motion_normalization "normalized coordinates"
