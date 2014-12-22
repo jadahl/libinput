@@ -36,42 +36,6 @@ extern "C" {
 #define LIBINPUT_ATTRIBUTE_DEPRECATED __attribute__ ((deprecated))
 
 /**
- * @page udev_config Static device configuration via udev
- *
- * libinput supports some static configuration through udev properties.
- * These propertiesare read when the device is initially added
- * to libinput's device list, i.e. before the @ref
- * LIBINPUT_EVENT_DEVICE_ADDED event is generated.
- *
- * The following udev properties are supported:
- * <dl>
- * <dt>LIBINPUT_CALIBRATION_MATRIX</dt>
- * <dd>Sets the calibration matrix, see
- * libinput_device_config_calibration_get_default_matrix(). If unset,
- * defaults to the identity matrix.</dd>
- * <dt>ID_SEAT</dt>
- * <dd>Assigns the physical seat for this device. See
- * libinput_seat_get_physical_name(). Defaults to "seat0".</dd>
- * <dt>WL_SEAT</dt>
- * <dd>Assigns the logical seat for this device. See
- * libinput_seat_get_logical_name()
- * context. Defaults to "default".</dd>
- * <dt>MOUSE_DPI</dt>
- * <dd>HW resolution and sampling frequency of a relative pointer device.
- * See @ref motion_normalization for details.
- * </dd>
- * </dl>
- *
- * Below is an example udev rule to assign "seat1" to a device from vendor
- * 0x012a with the model ID of 0x034b.
- * @code
- * ACTION=="add|change", KERNEL=="event[0-9]*", ENV{ID_VENDOR_ID}=="012a", \
- * ENV{ID_MODEL_ID}=="034b", ENV{ID_SEAT}="seat1"
- * @endcode
- *
- */
-
-/**
  * Log priority for internal logging messages.
  */
 enum libinput_log_priority {
