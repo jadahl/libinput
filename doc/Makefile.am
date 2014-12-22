@@ -15,7 +15,8 @@ header_files = \
 	$(srcdir)/t440-support.dox
 
 diagram_files = \
-	$(srcdir)/dot/seats-sketch.gv
+	$(srcdir)/dot/seats-sketch.gv \
+	$(srcdir)/dot/seats-sketch-libinput.gv
 
 html/index.html: libinput.doxygen $(header_files) $(diagram_files)
 	$(AM_V_GEN)(cat $<; \

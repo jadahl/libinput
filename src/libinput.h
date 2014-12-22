@@ -1139,27 +1139,10 @@ libinput_log_set_handler(struct libinput *libinput,
 /**
  * @defgroup seat Initialization and manipulation of seats
  *
- * A seat has two identifiers, the physical name and the logical name. The
- * physical name is summarized as the list of devices a process on the same
- * physical seat has access to.
- *
- * The logical seat name is the seat name for a logical group of devices. A
- * compositor may use that to create additonal seats as independent device
- * sets. Alternatively, a compositor may limit itself to a single logical
- * seat, leaving a second compositor to manage devices on the other logical
- * seats.
- *
- * @code
- * +---+--------+------------+------------------------+------------+
- * |   | event0 |            |                        | log seat A |
- * | K +--------+            |                        +------------+
- * | e | event1 | phys seat0 |    libinput context 1  |            |
- * | r +--------+            |                        | log seat B |
- * | n | event2 |            |                        |            |
- * | e +--------+------------+------------------------+------------+
- * | l | event3 | phys seat1 |    libinput context 2  | log seat C |
- * +---+--------+------------+------------------------+------------+
- * @endcode
+ * A seat has two identifiers, the physical name and the logical name. A
+ * device is always assigned to exactly one seat. It may change to a
+ * different logical seat but it cannot change physical seats. See @ref
+ * seats for details.
  */
 
 /**

@@ -15,12 +15,17 @@ digraph seats
   pseat0 [label="phys seat0"; URL="\ref libinput_seat_get_physical_name"];
   pseat1 [label="phys seat1"; URL="\ref libinput_seat_get_physical_name"];
 
-  lseatA [label="log seat A"; URL="\ref libinput_seat_get_logical_name"];
-  lseatB [label="log seat B"; URL="\ref libinput_seat_get_logical_name"];
-  lseatC [label="log seat C"; URL="\ref libinput_seat_get_logical_name"];
+  lseatA [label="logical seat A"; URL="\ref libinput_seat_get_logical_name"];
+  lseatB [label="logical seat B"; URL="\ref libinput_seat_get_logical_name"];
+  lseatC [label="logical seat C"; URL="\ref libinput_seat_get_logical_name"];
 
   ctx1 [label="libinput context 1"; URL="\ref libinput"];
   ctx2 [label="libinput context 2"; URL="\ref libinput"];
+
+  dev1 [label="device 'Foo'"];
+  dev2 [label="device 'Bar'"];
+  dev3 [label="device 'Spam'"];
+  dev4 [label="device 'Egg'"];
 
   kernel -> event0
   kernel -> event1
@@ -38,4 +43,9 @@ digraph seats
   ctx1 -> lseatA
   ctx1 -> lseatB
   ctx2 -> lseatC
+
+  lseatA -> dev1
+  lseatA -> dev2
+  lseatB -> dev3
+  lseatC -> dev4
 }
