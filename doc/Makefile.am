@@ -13,7 +13,8 @@ header_files = \
 	$(srcdir)/normalization-of-relative-motion.dox \
 	$(srcdir)/scrolling.dox \
 	$(srcdir)/seats.dox \
-	$(srcdir)/t440-support.dox
+	$(srcdir)/t440-support.dox \
+	$(srcdir)/tapping.dox
 
 diagram_files = \
 	$(srcdir)/dot/seats-sketch.gv \
