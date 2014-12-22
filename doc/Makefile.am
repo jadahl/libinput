@@ -9,6 +9,7 @@ header_files = \
 	$(top_srcdir)/README.txt \
 	$(srcdir)/absolute-axes.dox \
 	$(srcdir)/clickpad-softbuttons.dox \
+	$(srcdir)/normalization-of-relative-motion.dox \
 	$(srcdir)/seats.dox \
 	$(srcdir)/t440-support.dox
 
