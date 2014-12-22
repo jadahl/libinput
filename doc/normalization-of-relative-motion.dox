@@ -18,7 +18,9 @@ same physical movement of those two devices (within sensor error
 margins).
 
 Devices usually do not advertise their resolution and libinput relies on
-the udev property MOUSE_DPI for this information.
+the udev property <b>MOUSE_DPI</b> for this information. This property is usually
+set via the <a
+href="http://cgit.freedesktop.org/systemd/systemd/tree/hwdb/70-mouse.hwdb">udev hwdb</a>.
 
 The format of the property for single-resolution mice is:
 @code
