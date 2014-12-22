@@ -1,0 +1,52 @@
+/**
+@page palm_detection Palm detection
+
+Palm detection tries to identify accidental touches while typing.
+
+On most laptops typing on the keyboard generates accidental touches on the
+touchpad with the palm (usually the area below the thumb). This can lead to
+cursor jumps or accidental clicks.
+
+Interference from a palm depends on the size of the touchpad and the position
+of the user's hand. Data from touchpads showed that almost all palm events on a
+Lenovo T440 happened in the left-most and right-most 5% of the touchpad. The
+T440 series has one of the largest touchpads, other touchpads are less
+affected by palm touches.
+
+@section palm_exclusion_zones Palm exclusion zones
+
+libinput enables palm detection on the edge of the touchpad. Two exclusion
+zones are defined  on the left and right edge of the touchpad.
+If a touch starts in the exclusion zone, it is considered a palm and the
+touch point is ignored. However, for fast cursor movements across the
+screen, it is common for a finger to start inside an exclusion zone and move
+rapidly across the touchpad. libinput detects such movements and avoids palm
+detection on such touch sequences.
+
+In the diagram below, the exclusion zones are painted red.
+Touch 'A' starts inside the exclusion zone and moves
+almost vertically. It is considered a palm and ignored for cursor movement,
+despite moving out of the exclusion zone.
+
+Touch 'B' starts inside the exclusion zone but moves horizontally out of the
+zone. It is considered a valid touch and controls the cursor.
+
+@image html palm-detection.svg
+
+@section trackpoint-disabling Palm detection during trackpoint use
+
+If a device provides a <a
+href="http://en.wikipedia.org/wiki/Pointing_stick">trackpoint</a>, it is
+usually located above the touchpad. This increases the likelyhood of
+accidental touches whenever the trackpoint is used.
+
+libinput disables the touchpad whenver it detects trackpoint activity for a
+certain timeout until after trackpoint activity stops. Touches generated
+during this timeout will not move the pointer, and touches started during
+this timeout will likewise not move the pointer (allowing for a user to rest
+the palm on the touchpad while using the trackstick).
+If the touchpad is disabled, the @ref t440_support "top software buttons"
+remain enabled.
+
+
+*/

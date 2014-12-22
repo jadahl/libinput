@@ -11,6 +11,7 @@ header_files = \
 	$(srcdir)/clickpad-softbuttons.dox \
 	$(srcdir)/device-configuration-via-udev.dox \
 	$(srcdir)/normalization-of-relative-motion.dox \
+	$(srcdir)/palm-detection.dox \
 	$(srcdir)/scrolling.dox \
 	$(srcdir)/seats.dox \
 	$(srcdir)/t440-support.dox \
@@ -21,6 +22,7 @@ diagram_files = \
 	$(srcdir)/dot/seats-sketch-libinput.gv \
 	$(srcdir)/svg/button-scrolling.svg \
 	$(srcdir)/svg/edge-scrolling.svg \
+	$(srcdir)/svg/palm-detection.svg \
 	$(srcdir)/svg/twofinger-scrolling.svg
 
 html/index.html: libinput.doxygen $(header_files) $(diagram_files)
