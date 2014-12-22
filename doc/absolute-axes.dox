@@ -1,5 +1,5 @@
 /**
-@page absolute_axes Absolute Axes in libinput
+@page absolute_axes Absolute axes
 
 Devices with absolute axes are those that send positioning data for an axis in
 a device-specific coordinate range, defined by a minimum and a maximum value.
@@ -12,13 +12,37 @@ libinput supports three types of devices with absolute axes:
  - single-touch screens
  - graphics tablets (currently WIP)
 
-Touchpads are technically absolute devices, but the axis values are converted
-to directional motion and posted as relative events. Touchpads do not count
+Touchpads are technically absolute devices but libinput converts the axis values
+to directional motion and posts events as relative events. Touchpads do not count
 as absolute devices in libinput.
 
 For all absolute devices in libinput, the default unit for x/y coordinates is
 in mm off the top left corner on the device, or more specifically off the
-device's sensor, see @ref index "the API doc"
+device's sensor.
+
+@section absolute_axes_handling Handling of absolute coordinates
+
+In most use-cases, absolute input devices are mapped to a single screen. For
+direct input devices such as touchscreens the aspect ratio of the screen and
+the device match. Mapping the input device position to the output position is
+thus a simple mapping between two coordinates. libinput provides the API for
+this with
+
+- libinput_event_pointer_get_absolute_x_transformed() for pointer events
+- libinput_event_touch_get_x_transformed() for touch events
+
+libinput's API only provides the call to map into a single coordinate range.
+If the coordinate range has an offset, the compositor is responsible for
+applying that offset after the mapping. For example, if the device is mapped
+to the right of two outputs, add the output offset to the transformed
+coordinate.
+
+@section absolute_axes_nores Devices without x/y resolution
+
+An absolute device that does not provide a valid resolution is considered
+buggy and must be fixed in the kernel. Some touchpad devices that do not
+provide resolution, those devices are correctly handled within libinput
+(touchpads are not absolute devices, as mentioned above).
 
 @section absolute_axes_nonorm Why x/y coordinates are not normalized
 
@@ -34,31 +58,5 @@ This could be alleviated by providing resolution and information about the
 aspect ratio to the caller. Which shifts processing and likely errors into the
 caller for little benefit. Providing the x/y axes in mm from the outset
 removes these errors.
-
-@section absolute_axes_handling Handling of absolute coordinates
-
-In most use-cases, absolute input devices are mapped to a single screen. For
-direct input devices such as touchscreens the aspect ratio of the screen and
-the device match. Mapping the input device position to the output position is
-thus a simple mapping between two coordinates. libinput provides the API for
-this with
-
-- libinput_event_pointer_get_absolute_x_transformed() for pointer events
-- libinput_event_touch_get_x_transformed() for touch events
-
-See @ref index "the API doc" for more details.
-
-libinput's API only provides the call to map into a single coordinate range.
-If the coordinate range has an offset, the compositor is responsible for
-applying that offset after the mapping. For example, if the device is mapped
-to the right of two outputs, add the output offset to the transformed
-coordinate.
-
-@section absolute_axes_nores Devices without x/y resolution
-
-An absolute device that does not provide a valid resolution is considered
-buggy and must be fixed in the kernel. Some touchpad devices that do not
-provide resolution, those devices are correctly handled within libinput
-(touchpads are not absolute devices, as mentioned above).
 
 */

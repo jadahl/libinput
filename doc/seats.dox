@@ -1,6 +1,8 @@
 /**
 @page seats Seats
 
+Each device in libinput is associated with one physical seat and one logical seat.
+
 @section seats_overview Overview
 
 @dotfile seats-sketch.gv
