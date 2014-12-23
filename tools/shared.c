@@ -170,6 +170,7 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 
 static struct libinput *
 open_udev(const struct libinput_interface *interface,
+	  void *userdata,
 	  const char *seat,
 	  int verbose)
 {
@@ -181,7 +182,7 @@ open_udev(const struct libinput_interface *interface,
 		return NULL;
 	}
 
-	li = libinput_udev_create_context(interface, NULL, udev);
+	li = libinput_udev_create_context(interface, userdata, udev);
 	if (!li) {
 		fprintf(stderr, "Failed to initialize context from udev\n");
 		goto out;
@@ -206,13 +207,14 @@ out:
 
 static struct libinput *
 open_device(const struct libinput_interface *interface,
+	    void *userdata,
 	    const char *path,
 	    int verbose)
 {
 	struct libinput_device *device;
 	struct libinput *li;
 
-	li = libinput_path_create_context(interface, NULL);
+	li = libinput_path_create_context(interface, userdata);
 	if (!li) {
 		fprintf(stderr, "Failed to initialize context from %s\n", path);
 		return NULL;
@@ -235,14 +237,15 @@ open_device(const struct libinput_interface *interface,
 
 struct libinput *
 tools_open_backend(struct tools_options *options,
+		   void *userdata,
 		   const struct libinput_interface *interface)
 {
 	struct libinput *li = NULL;
 
 	if (options->backend == BACKEND_UDEV) {
-		li = open_udev(interface, options->seat, options->verbose);
+		li = open_udev(interface, userdata, options->seat, options->verbose);
 	} else if (options->backend == BACKEND_DEVICE) {
-		li = open_device(interface, options->device, options->verbose);
+		li = open_device(interface, userdata, options->device, options->verbose);
 	} else
 		abort();
 

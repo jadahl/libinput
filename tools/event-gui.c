@@ -523,7 +523,7 @@ main(int argc, char *argv[])
 	if (!udev)
 		error("Failed to initialize udev\n");
 
-	li = tools_open_backend(&options, &interface);
+	li = tools_open_backend(&options, &w, &interface);
 	if (!li)
 		return 1;
 

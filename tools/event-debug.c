@@ -368,7 +368,7 @@ main(int argc, char **argv)
 	if (tools_parse_args(argc, argv, &options))
 		return 1;
 
-	li = tools_open_backend(&options, &interface);
+	li = tools_open_backend(&options, NULL, &interface);
 	if (!li)
 		return 1;
 

@@ -44,6 +44,7 @@ struct tools_options {
 void tools_init_options(struct tools_options *options);
 int tools_parse_args(int argc, char **argv, struct tools_options *options);
 struct libinput* tools_open_backend(struct tools_options *options,
+				    void *userdata,
 				    const struct libinput_interface *interface);
 void tools_device_apply_config(struct libinput_device *device,
 			       struct tools_options *options);
