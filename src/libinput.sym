@@ -108,6 +108,7 @@ global:
 	libinput_seat_ref;
 	libinput_seat_set_user_data;
 	libinput_seat_unref;
+	libinput_set_user_data;
 	libinput_suspend;
 	libinput_udev_assign_seat;
 	libinput_udev_create_context;

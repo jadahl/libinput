@@ -133,6 +133,21 @@ START_TEST(path_create_destroy)
 }
 END_TEST
 
+START_TEST(path_set_user_data)
+{
+	struct libinput *li;
+	int data1, data2;
+
+	li = libinput_path_create_context(&simple_interface, &data1);
+	ck_assert(li != NULL);
+	ck_assert(libinput_get_user_data(li) == &data1);
+	libinput_set_user_data(li, &data2);
+	ck_assert(libinput_get_user_data(li) == &data2);
+
+	libinput_unref(li);
+}
+END_TEST
+
 START_TEST(path_added_seat)
 {
 	struct litest_device *dev = litest_current_device();
@@ -867,6 +882,7 @@ main(int argc, char **argv)
 	litest_add_no_device("path:create", path_create_NULL);
 	litest_add_no_device("path:create", path_create_invalid);
 	litest_add_no_device("path:create", path_create_destroy);
+	litest_add_no_device("path:create", path_set_user_data);
 	litest_add_no_device("path:suspend", path_suspend);
 	litest_add_no_device("path:suspend", path_double_suspend);
 	litest_add_no_device("path:suspend", path_double_resume);

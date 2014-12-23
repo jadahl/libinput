@@ -1006,6 +1006,17 @@ libinput_next_event_type(struct libinput *libinput);
  * @ingroup base
  *
  * @param libinput A previously initialized libinput context
+ * @param user_data Caller-specific data passed to the various callback
+ * interfaces.
+ */
+void
+libinput_set_user_data(struct libinput *libinput,
+		       void *user_data);
+
+/**
+ * @ingroup base
+ *
+ * @param libinput A previously initialized libinput context
  * @return the caller-specific data previously assigned in
  * libinput_create_udev().
  */

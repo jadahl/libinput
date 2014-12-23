@@ -1173,6 +1173,13 @@ libinput_next_event_type(struct libinput *libinput)
 	return event->type;
 }
 
+LIBINPUT_EXPORT void
+libinput_set_user_data(struct libinput *libinput,
+		       void *user_data)
+{
+	libinput->user_data = user_data;
+}
+
 LIBINPUT_EXPORT void *
 libinput_get_user_data(struct libinput *libinput)
 {

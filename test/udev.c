@@ -129,6 +129,26 @@ START_TEST(udev_create_empty_seat)
 }
 END_TEST
 
+START_TEST(udev_set_user_data)
+{
+	struct libinput *li;
+	struct udev *udev;
+	int data1, data2;
+
+	udev = udev_new();
+	ck_assert(udev != NULL);
+
+	li = libinput_udev_create_context(&simple_interface, &data1, udev);
+	ck_assert(li != NULL);
+	ck_assert(libinput_get_user_data(li) == &data1);
+	libinput_set_user_data(li, &data2);
+	ck_assert(libinput_get_user_data(li) == &data2);
+
+	libinput_unref(li);
+	udev_unref(udev);
+}
+END_TEST
+
 /**
  * This test only works if there's at least one device in the system that is
  * assigned the default seat. Should cover the 99% case.
@@ -488,6 +508,7 @@ main(int argc, char **argv)
 	litest_add_no_device("udev:create", udev_create_NULL);
 	litest_add_no_device("udev:create", udev_create_seat0);
 	litest_add_no_device("udev:create", udev_create_empty_seat);
+	litest_add_no_device("udev:create", udev_set_user_data);
 
 	litest_add_no_device("udev:seat", udev_added_seat_default);
 	litest_add_no_device("udev:seat", udev_change_seat);
