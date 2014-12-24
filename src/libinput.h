@@ -669,7 +669,7 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  * @ingroup event_pointer
  *
  * Return the axis value of the given axis. The interpretation of the value
- * is dependent on the axis. For the two scrolling axes
+ * depends on the axis. For the two scrolling axes
  * @ref LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL and
  * @ref LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, the value of the event is in
  * relative scroll units, with the positive direction being down or right,
