@@ -358,20 +358,20 @@ static void
 handle_event_axis(struct libinput_event *ev, struct window *w)
 {
 	struct libinput_event_pointer *p = libinput_event_get_pointer_event(ev);
-	enum libinput_pointer_axis axis = libinput_event_pointer_get_axis(p);
-	double v = libinput_event_pointer_get_axis_value(p);
+	double v, h;
 
-	switch (axis) {
-	case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+	v = libinput_event_pointer_get_axis_value(p,
+		      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+	h = libinput_event_pointer_get_axis_value(p,
+		      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
+
+	if (v != 0.0) {
 		w->vy += (int)v;
 		w->vy = clip(w->vy, 0, w->height);
-		break;
-	case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+	}
+	if (h != 0.0) {
 		w->hx += (int)v;
 		w->hx = clip(w->hx, 0, w->width);
-		break;
-	default:
-		abort();
 	}
 }
 

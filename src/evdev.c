@@ -539,18 +539,20 @@ evdev_process_absolute_motion(struct evdev_device *device,
 static void
 evdev_notify_axis(struct evdev_device *device,
 		  uint64_t time,
-		  enum libinput_pointer_axis axis,
+		  uint32_t axes,
 		  enum libinput_pointer_axis_source source,
-		  double value)
+		  double x, double y)
 {
-	if (device->scroll.natural_scrolling_enabled)
-		value *= -1;
+	if (device->scroll.natural_scrolling_enabled) {
+		x *= -1;
+		y *= -1;
+	}
 
 	pointer_notify_axis(&device->base,
 			    time,
-			    axis,
+			    axes,
 			    source,
-			    value);
+			    x, y);
 }
 
 static inline void
@@ -575,8 +577,9 @@ evdev_process_relative(struct evdev_device *device,
 		evdev_notify_axis(
 			device,
 			time,
-			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+			AS_MASK(LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL),
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
+			0,
 			-1 * e->value * device->scroll.wheel_click_angle);
 		break;
 	case REL_HWHEEL:
@@ -584,9 +587,10 @@ evdev_process_relative(struct evdev_device *device,
 		evdev_notify_axis(
 			device,
 			time,
-			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+			AS_MASK(LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL),
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
-			e->value * device->scroll.wheel_click_angle);
+			e->value * device->scroll.wheel_click_angle,
+			0);
 		break;
 	}
 }
@@ -1796,7 +1800,7 @@ evdev_is_scrolling(const struct evdev_device *device,
 	assert(axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL ||
 	       axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
 
-	return (device->scroll.direction & (1 << axis)) != 0;
+	return (device->scroll.direction & AS_MASK(axis)) != 0;
 }
 
 static inline void
@@ -1806,7 +1810,7 @@ evdev_start_scrolling(struct evdev_device *device,
 	assert(axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL ||
 	       axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
 
-	device->scroll.direction |= (1 << axis);
+	device->scroll.direction |= AS_MASK(axis);
 }
 
 void
@@ -1857,25 +1861,20 @@ evdev_post_scroll(struct evdev_device *device,
 	/* We use the trigger to enable, but the delta from this event for
 	 * the actual scroll movement. Otherwise we get a jump once
 	 * scrolling engages */
-	if (dy != 0.0 &&
-	    evdev_is_scrolling(device,
-			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL)) {
-		evdev_notify_axis(device,
-				  time,
-				  LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
-				  source,
-				  dy);
-	}
+	if (!evdev_is_scrolling(device,
+			       LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
+		dy = 0.0;
+	if (!evdev_is_scrolling(device,
+			       LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
+		dx = 0.0;
 
-	if (dx != 0.0 &&
-	    evdev_is_scrolling(device,
-			       LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL)) {
+	if (dx != 0.0 || dy != 0.0)
 		evdev_notify_axis(device,
 				  time,
-				  LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
+				  device->scroll.direction,
 				  source,
-				  dx);
-	}
+				  dx,
+				  dy);
 }
 
 void
@@ -1884,18 +1883,12 @@ evdev_stop_scroll(struct evdev_device *device,
 		  enum libinput_pointer_axis_source source)
 {
 	/* terminate scrolling with a zero scroll event */
-	if (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
+	if (device->scroll.direction != 0)
 		pointer_notify_axis(&device->base,
 				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+				    device->scroll.direction,
 				    source,
-				    0);
-	if (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
-		pointer_notify_axis(&device->base,
-				    time,
-				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
-				    source,
-				    0);
+				    0.0, 0.0);
 
 	device->scroll.buildup_horizontal = 0;
 	device->scroll.buildup_vertical = 0;

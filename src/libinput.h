@@ -653,17 +653,17 @@ libinput_event_pointer_get_seat_button_count(
 /**
  * @ingroup event_pointer
  *
- * Return the axis that triggered this event.
- * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
- * this function returns 0.
+ * Check if the event has a valid value for the given axis.
  *
- * @note It is an application bug to call this function for events other than
- * @ref LIBINPUT_EVENT_POINTER_AXIS.
+ * If this function returns non-zero for an axis and
+ * libinput_event_pointer_get_axis_value() returns a value of 0, the event
+ * is a scroll stop event.
  *
- * @return the axis triggering this event
+ * @return non-zero if this event contains a value for this axis
  */
-enum libinput_pointer_axis
-libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
+int
+libinput_event_pointer_has_axis(struct libinput_event_pointer *event,
+				enum libinput_pointer_axis axis);
 
 /**
  * @ingroup event_pointer
@@ -676,6 +676,9 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  * respectively. For the interpretation of the value, see
  * libinput_event_pointer_get_axis_source().
  *
+ * If libinput_event_pointer_has_axis() returns 0 for an axis, this function
+ * returns 0 for that axis.
+ *
  * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
  * this function returns 0.
  *
@@ -685,7 +688,8 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  * @return the axis value of this event
  */
 double
-libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
+libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event,
+				      enum libinput_pointer_axis axis);
 
 /**
  * @ingroup event_pointer

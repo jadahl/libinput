@@ -1439,18 +1439,19 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 
 	/* last event is value 0, tested elsewhere */
 	while (libinput_next_event_type(li) != LIBINPUT_EVENT_NONE) {
+		double axisval;
 		ck_assert_int_eq(libinput_event_get_type(event),
 				 LIBINPUT_EVENT_POINTER_AXIS);
 		ptrev = libinput_event_get_pointer_event(event);
 
-		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev),
-				 LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
-		ck_assert(libinput_event_pointer_get_axis_value(ptrev) > 0.0);
+		axisval = libinput_event_pointer_get_axis_value(ptrev,
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		ck_assert(axisval > 0.0);
 
 		/* this is to verify we test the right thing, if the value
 		   is greater than scroll.threshold we triggered the wrong
 		   condition */
-		ck_assert(libinput_event_pointer_get_axis_value(ptrev) < 5.0);
+		ck_assert(axisval < 5.0);
 
 		libinput_event_destroy(event);
 		event = libinput_get_event(li);
@@ -1627,18 +1628,19 @@ START_TEST(touchpad_edge_scroll_slow_distance)
 	ck_assert_notnull(event);
 
 	while (libinput_next_event_type(li) != LIBINPUT_EVENT_NONE) {
+		double axisval;
 		ck_assert_int_eq(libinput_event_get_type(event),
 				 LIBINPUT_EVENT_POINTER_AXIS);
 		ptrev = libinput_event_get_pointer_event(event);
 
-		ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev),
+		axisval = libinput_event_pointer_get_axis_value(ptrev,
 				 LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
-		ck_assert(libinput_event_pointer_get_axis_value(ptrev) > 0.0);
+		ck_assert(axisval > 0.0);
 
 		/* this is to verify we test the right thing, if the value
 		   is greater than scroll.threshold we triggered the wrong
 		   condition */
-		ck_assert(libinput_event_pointer_get_axis_value(ptrev) < 5.0);
+		ck_assert(axisval < 5.0);
 
 		libinput_event_destroy(event);
 		event = libinput_get_event(li);
