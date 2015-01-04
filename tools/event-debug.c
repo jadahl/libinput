@@ -130,6 +130,17 @@ print_device_notify(struct libinput_event *ev)
 	       libinput_seat_get_physical_name(seat),
 	       libinput_seat_get_logical_name(seat));
 
+	printf(" cap:");
+	if (libinput_device_has_capability(dev,
+					   LIBINPUT_DEVICE_CAP_KEYBOARD))
+		printf("k");
+	if (libinput_device_has_capability(dev,
+					   LIBINPUT_DEVICE_CAP_POINTER))
+		printf("p");
+	if (libinput_device_has_capability(dev,
+					   LIBINPUT_DEVICE_CAP_TOUCH))
+		printf("t");
+
 	if (libinput_device_get_size(dev, &w, &h) == 0)
 		printf("\tsize %.2f/%.2fmm", w, h);
 
