@@ -664,8 +664,9 @@ tp_tap_config_set_enabled(struct libinput_device *device,
 			  enum libinput_config_tap_state enabled)
 {
 	struct evdev_dispatch *dispatch = ((struct evdev_device *) device)->dispatch;
-	struct tp_dispatch *tp = container_of(dispatch, tp, base);
+	struct tp_dispatch *tp = NULL;
 
+	tp = container_of(dispatch, tp, base);
 	tp_tap_enabled_update(tp, tp->tap.suspended,
 			      (enabled == LIBINPUT_CONFIG_TAP_ENABLED),
 			      libinput_now(device->seat->libinput));
