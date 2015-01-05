@@ -33,10 +33,6 @@ static void litest_trackpoint_setup(void)
 	litest_set_current_device(d);
 }
 
-static struct litest_device_interface interface = {
-	NULL
-};
-
 static struct input_id input_id = {
 	.bustype = 0x11,
 	.vendor = 0x2,
@@ -59,7 +55,7 @@ struct litest_test_device litest_trackpoint_device = {
 	.features = LITEST_RELATIVE | LITEST_BUTTON | LITEST_POINTINGSTICK,
 	.shortname = "trackpoint",
 	.setup = litest_trackpoint_setup,
-	.interface = &interface,
+	.interface = NULL,
 
 	.name = "TPPS/2 IBM TrackPoint",
 	.id = &input_id,

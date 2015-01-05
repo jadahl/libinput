@@ -33,10 +33,6 @@ static void litest_mouse_setup(void)
 	litest_set_current_device(d);
 }
 
-static struct litest_device_interface interface = {
-	NULL
-};
-
 static struct input_id input_id = {
 	.bustype = 0x3,
 	.vendor = 0x17ef,
@@ -58,7 +54,7 @@ struct litest_test_device litest_mouse_device = {
 	.features = LITEST_RELATIVE | LITEST_BUTTON | LITEST_WHEEL,
 	.shortname = "mouse",
 	.setup = litest_mouse_setup,
-	.interface = &interface,
+	.interface = NULL,
 
 	.name = "Lenovo Optical USB Mouse",
 	.id = &input_id,
