@@ -559,7 +559,7 @@ START_TEST(dpi_parser)
 		{ "", 0 },
 		{ "   ", 0 },
 		{ "* ", 0 },
-		{ NULL }
+		{ NULL, 0 }
 	};
 	int i, dpi;
 
