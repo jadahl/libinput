@@ -308,14 +308,6 @@ create_pointer_accelerator_filter(accel_profile_func_t profile)
 	return &filter->base;
 }
 
-static inline double
-calc_penumbral_gradient(double x)
-{
-	x *= 2.0;
-	x -= 1.0;
-	return 0.5 + (x * sqrt(1.0 - x * x) + asin(x)) / M_PI;
-}
-
 double
 pointer_accel_profile_linear(struct motion_filter *filter,
 			     void *data,
