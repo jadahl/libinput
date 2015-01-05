@@ -2141,8 +2141,8 @@ libinput_device_config_buttons_get_left_handed(struct libinput_device *device);
  * Get the default left-handed configuration of the device.
  *
  * @param device The device to configure
- * @return Zero if the device is in right-handed mode by default, or non-zero if the
- * device is in left-handed mode by default
+ * @return Zero if the device is in right-handed mode by default, or non-zero
+ * if the device is in left-handed mode by default
  *
  * @see libinput_device_config_buttons_has_left_handed
  * @see libinput_device_config_buttons_set_left_handed
