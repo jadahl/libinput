@@ -351,6 +351,7 @@ mainloop(struct libinput *li)
 	    sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
 		fprintf(stderr, "Failed to set up signal handling (%s)\n",
 				strerror(errno));
+		return;
 	}
 
 	/* Handle already-pending device added events */
