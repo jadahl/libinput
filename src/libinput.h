@@ -704,7 +704,7 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
  *
  * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_WHEEL, no terminating
  * event is guaranteed (though it may happen).
- * Scrolling is in discreet steps, a value of 10 representing one click
+ * Scrolling is in discrete steps, a value of 10 representing one click
  * of a typical mouse wheel. Some mice may have differently grained wheels,
  * libinput will adjust the value accordingly. It is up to the caller how to
  * interpret such different step sizes.
@@ -1954,7 +1954,7 @@ libinput_device_config_accel_is_available(struct libinput_device *device);
  * this device. The actual pointer acceleration mechanism is
  * implementation-dependent, as is the number of steps available within the
  * range. libinput picks the semantically closest acceleration step if the
- * requested value does not match a discreet setting.
+ * requested value does not match a discrete setting.
  *
  * @param device The device to configure
  * @param speed The normalized speed, in a range of [-1, 1]
