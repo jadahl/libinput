@@ -638,7 +638,7 @@ libinput_event_pointer_get_button_state(struct libinput_event_pointer *event);
  *
  * For the button of a @ref LIBINPUT_EVENT_POINTER_BUTTON event, return the
  * total number of buttons pressed on all devices on the associated seat
- * after the the event was triggered.
+ * after the event was triggered.
  *
  " @note It is an application bug to call this function for events other than
  * @ref LIBINPUT_EVENT_POINTER_BUTTON. For other events, this function
