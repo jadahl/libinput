@@ -1310,7 +1310,7 @@ tp_change_to_left_handed(struct evdev_device *device)
 {
 	struct tp_dispatch *tp = (struct tp_dispatch *)device->dispatch;
 
-	if (device->buttons.want_left_handed == device->buttons.left_handed)
+	if (device->left_handed.want_enabled == device->left_handed.enabled)
 		return;
 
 	if (tp->buttons.state & 0x3) /* BTN_LEFT|BTN_RIGHT */
@@ -1319,7 +1319,7 @@ tp_change_to_left_handed(struct evdev_device *device)
 	/* tapping and clickfinger aren't affected by left-handed config,
 	 * so checking physical buttons is enough */
 
-	device->buttons.left_handed = device->buttons.want_left_handed;
+	device->left_handed.enabled = device->left_handed.want_enabled;
 }
 
 struct model_lookup_t {

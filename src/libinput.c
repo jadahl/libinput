@@ -1599,7 +1599,7 @@ libinput_device_config_scroll_get_default_natural_scroll_enabled(struct libinput
 }
 
 LIBINPUT_EXPORT int
-libinput_device_config_buttons_has_left_handed(struct libinput_device *device)
+libinput_device_config_left_handed_is_available(struct libinput_device *device)
 {
 	if (!device->config.left_handed)
 		return 0;
@@ -1608,28 +1608,28 @@ libinput_device_config_buttons_has_left_handed(struct libinput_device *device)
 }
 
 LIBINPUT_EXPORT enum libinput_config_status
-libinput_device_config_buttons_set_left_handed(struct libinput_device *device,
-					       int left_handed)
+libinput_device_config_left_handed_set(struct libinput_device *device,
+				       int left_handed)
 {
-	if (!libinput_device_config_buttons_has_left_handed(device))
+	if (!libinput_device_config_left_handed_is_available(device))
 		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	return device->config.left_handed->set(device, left_handed);
 }
 
 LIBINPUT_EXPORT int
-libinput_device_config_buttons_get_left_handed(struct libinput_device *device)
+libinput_device_config_left_handed_get(struct libinput_device *device)
 {
-	if (!libinput_device_config_buttons_has_left_handed(device))
+	if (!libinput_device_config_left_handed_is_available(device))
 		return 0;
 
 	return device->config.left_handed->get(device);
 }
 
 LIBINPUT_EXPORT int
-libinput_device_config_buttons_get_default_left_handed(struct libinput_device *device)
+libinput_device_config_left_handed_get_default(struct libinput_device *device)
 {
-	if (!libinput_device_config_buttons_has_left_handed(device))
+	if (!libinput_device_config_left_handed_is_available(device))
 		return 0;
 
 	return device->config.left_handed->get_default(device);

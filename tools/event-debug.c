@@ -146,7 +146,7 @@ print_device_notify(struct libinput_event *ev)
 
 	if (libinput_device_config_tap_get_finger_count((dev)))
 	    printf(" tap");
-	if (libinput_device_config_buttons_has_left_handed((dev)))
+	if (libinput_device_config_left_handed_is_available((dev)))
 	    printf(" left");
 	if (libinput_device_config_scroll_has_natural_scroll((dev)))
 	    printf(" scroll-nat");

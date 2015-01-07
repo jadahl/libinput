@@ -408,16 +408,16 @@ START_TEST(touch_no_left_handed)
 	enum libinput_config_status status;
 	int rc;
 
-	rc = libinput_device_config_buttons_has_left_handed(d);
+	rc = libinput_device_config_left_handed_is_available(d);
 	ck_assert_int_eq(rc, 0);
 
-	rc = libinput_device_config_buttons_get_left_handed(d);
+	rc = libinput_device_config_left_handed_get(d);
 	ck_assert_int_eq(rc, 0);
 
-	rc = libinput_device_config_buttons_get_default_left_handed(d);
+	rc = libinput_device_config_left_handed_get_default(d);
 	ck_assert_int_eq(rc, 0);
 
-	status = libinput_device_config_buttons_set_left_handed(d, 0);
+	status = libinput_device_config_left_handed_set(d, 0);
 	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
 }
 END_TEST

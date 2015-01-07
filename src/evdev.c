@@ -119,8 +119,8 @@ evdev_pointer_notify_button(struct evdev_device *device,
 		pointer_notify_button(&device->base, time, button, state);
 
 		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
-		    device->buttons.change_to_left_handed)
-			device->buttons.change_to_left_handed(device);
+		    device->left_handed.change_to_enabled)
+			device->left_handed.change_to_enabled(device);
 
 		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
 		    device->scroll.change_scroll_method)
@@ -822,13 +822,13 @@ evdev_left_handed_has(struct libinput_device *device)
 static void
 evdev_change_to_left_handed(struct evdev_device *device)
 {
-	if (device->buttons.want_left_handed == device->buttons.left_handed)
+	if (device->left_handed.want_enabled == device->left_handed.enabled)
 		return;
 
 	if (evdev_any_button_down(device))
 		return;
 
-	device->buttons.left_handed = device->buttons.want_left_handed;
+	device->left_handed.enabled = device->left_handed.want_enabled;
 }
 
 static enum libinput_config_status
@@ -836,9 +836,9 @@ evdev_left_handed_set(struct libinput_device *device, int left_handed)
 {
 	struct evdev_device *evdev_device = (struct evdev_device *)device;
 
-	evdev_device->buttons.want_left_handed = left_handed ? true : false;
+	evdev_device->left_handed.want_enabled = left_handed ? true : false;
 
-	evdev_device->buttons.change_to_left_handed(evdev_device);
+	evdev_device->left_handed.change_to_enabled(evdev_device);
 
 	return LIBINPUT_CONFIG_STATUS_SUCCESS;
 }
@@ -850,7 +850,7 @@ evdev_left_handed_get(struct libinput_device *device)
 
 	/* return the wanted configuration, even if it hasn't taken
 	 * effect yet! */
-	return evdev_device->buttons.want_left_handed;
+	return evdev_device->left_handed.want_enabled;
 }
 
 static int
@@ -863,14 +863,14 @@ int
 evdev_init_left_handed(struct evdev_device *device,
 		       void (*change_to_left_handed)(struct evdev_device *))
 {
-	device->buttons.config_left_handed.has = evdev_left_handed_has;
-	device->buttons.config_left_handed.set = evdev_left_handed_set;
-	device->buttons.config_left_handed.get = evdev_left_handed_get;
-	device->buttons.config_left_handed.get_default = evdev_left_handed_get_default;
-	device->base.config.left_handed = &device->buttons.config_left_handed;
-	device->buttons.left_handed = false;
-	device->buttons.want_left_handed = false;
-	device->buttons.change_to_left_handed = change_to_left_handed;
+	device->left_handed.config.has = evdev_left_handed_has;
+	device->left_handed.config.set = evdev_left_handed_set;
+	device->left_handed.config.get = evdev_left_handed_get;
+	device->left_handed.config.get_default = evdev_left_handed_get_default;
+	device->base.config.left_handed = &device->left_handed.config;
+	device->left_handed.enabled = false;
+	device->left_handed.want_enabled = false;
+	device->left_handed.change_to_enabled = change_to_left_handed;
 
 	return 0;
 }
@@ -1064,7 +1064,7 @@ fallback_dispatch_create(struct libinput_device *device)
 
 	dispatch->interface = &fallback_interface;
 
-	if (evdev_device->buttons.want_left_handed &&
+	if (evdev_device->left_handed.want_enabled &&
 	    evdev_init_left_handed(evdev_device,
 				   evdev_change_to_left_handed) == -1) {
 		free(dispatch);
@@ -1477,7 +1477,7 @@ evdev_configure_device(struct evdev_device *device)
 			 has_button ? " button" : "");
 
 		/* want left-handed config option */
-		device->buttons.want_left_handed = true;
+		device->left_handed.want_enabled = true;
 		/* want natural-scroll config option */
 		device->scroll.natural_scrolling_enabled = true;
 	}

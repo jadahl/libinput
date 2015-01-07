@@ -262,5 +262,5 @@ tools_device_apply_config(struct libinput_device *device,
 		libinput_device_config_scroll_set_natural_scroll_enabled(device,
 									 options->natural_scroll);
 	if (options->left_handed != -1)
-		libinput_device_config_buttons_set_left_handed(device, options->left_handed);
+		libinput_device_config_left_handed_set(device, options->left_handed);
 }

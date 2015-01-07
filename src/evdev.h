@@ -144,15 +144,15 @@ struct evdev_device {
 	uint8_t key_count[KEY_CNT];
 
 	struct {
-		struct libinput_device_config_left_handed config_left_handed;
+		struct libinput_device_config_left_handed config;
 		/* left-handed currently enabled */
-		bool left_handed;
+		bool enabled;
 		/* set during device init if we want left_handed config,
 		 * used at runtime to delay the effect until buttons are up */
-		bool want_left_handed;
+		bool want_enabled;
 		/* Checks if buttons are down and commits the setting */
-		void (*change_to_left_handed)(struct evdev_device *device);
-	} buttons;
+		void (*change_to_enabled)(struct evdev_device *device);
+	} left_handed;
 
 	int dpi; /* HW resolution */
 	struct ratelimit syn_drop_limit; /* ratelimit for SYN_DROPPED logging */
@@ -332,7 +332,7 @@ static inline uint32_t
 evdev_to_left_handed(struct evdev_device *device,
 		     uint32_t button)
 {
-	if (device->buttons.left_handed) {
+	if (device->left_handed.enabled) {
 		if (button == BTN_LEFT)
 			return BTN_RIGHT;
 		else if (button == BTN_RIGHT)
