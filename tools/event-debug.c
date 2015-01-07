@@ -32,7 +32,6 @@
 #include <libudev.h>
 #include "linux/input.h"
 #include <sys/ioctl.h>
-#include <sys/signalfd.h>
 
 #include <libinput.h>
 
@@ -42,6 +41,7 @@ uint32_t start_time;
 static const uint32_t screen_width = 100;
 static const uint32_t screen_height = 100;
 struct tools_options options;
+static unsigned int stop = 0;
 
 static int
 open_restricted(const char *path, int flags, void *user_data)
@@ -331,24 +331,26 @@ handle_and_print_events(struct libinput *li)
 }
 
 static void
+sighandler(int signal, siginfo_t *siginfo, void *userdata)
+{
+	stop = 1;
+}
+
+static void
 mainloop(struct libinput *li)
 {
-	struct pollfd fds[2];
-	sigset_t mask;
+	struct pollfd fds;
+	struct sigaction act;
 
-	fds[0].fd = libinput_get_fd(li);
-	fds[0].events = POLLIN;
-	fds[0].revents = 0;
+	fds.fd = libinput_get_fd(li);
+	fds.events = POLLIN;
+	fds.revents = 0;
 
-	sigemptyset(&mask);
-	sigaddset(&mask, SIGINT);
+	memset(&act, 0, sizeof(act));
+	act.sa_sigaction = sighandler;
+	act.sa_flags = SA_SIGINFO;
 
-	fds[1].fd = signalfd(-1, &mask, SFD_NONBLOCK);
-	fds[1].events = POLLIN;
-	fds[1].revents = 0;
-
-	if (fds[1].fd == -1 ||
-	    sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
+	if (sigaction(SIGINT, &act, NULL) == -1) {
 		fprintf(stderr, "Failed to set up signal handling (%s)\n",
 				strerror(errno));
 		return;
@@ -359,14 +361,8 @@ mainloop(struct libinput *li)
 		fprintf(stderr, "Expected device added events on startup but got none. "
 				"Maybe you don't have the right permissions?\n");
 
-	while (poll(fds, 2, -1) > -1) {
-		if (fds[1].revents)
-			break;
-
+	while (!stop && poll(&fds, 1, -1) > -1)
 		handle_and_print_events(li);
-	}
-
-	close(fds[1].fd);
 }
 
 int
