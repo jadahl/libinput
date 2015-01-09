@@ -704,10 +704,10 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
  *
  * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_WHEEL, no terminating
  * event is guaranteed (though it may happen).
- * Scrolling is in discrete steps, a value of 10 representing one click
- * of a typical mouse wheel. Some mice may have differently grained wheels,
- * libinput will adjust the value accordingly. It is up to the caller how to
- * interpret such different step sizes.
+ * Scrolling is in discrete steps, the value is the angle the wheel moved
+ * in degrees. The default is 15 degrees per wheel click, but some mice may
+ * have differently grained wheels. It is up to the caller how to interpret
+ * such different step sizes.
  *
  * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS, no
  * terminating event is guaranteed (though it may happen).

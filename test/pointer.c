@@ -350,8 +350,8 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	struct libinput_event_pointer *ptrev;
 
 	/* the current evdev implementation scales the scroll wheel events
-	   up by a factor 10 */
-	const int scroll_step = 10;
+	   up by a factor 15 */
+	const int scroll_step = 15;
 	int expected = amount * scroll_step;
 
 	if (libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device))

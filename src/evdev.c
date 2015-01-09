@@ -40,7 +40,7 @@
 #include "filter.h"
 #include "libinput-private.h"
 
-#define DEFAULT_AXIS_STEP_DISTANCE 10
+#define DEFAULT_WHEEL_CLICK_ANGLE 15
 #define DEFAULT_MIDDLE_BUTTON_SCROLL_TIMEOUT 200
 
 enum evdev_key_type {
@@ -577,7 +577,7 @@ evdev_process_relative(struct evdev_device *device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
-			-1 * e->value * DEFAULT_AXIS_STEP_DISTANCE);
+			-1 * e->value * DEFAULT_WHEEL_CLICK_ANGLE);
 		break;
 	case REL_HWHEEL:
 		evdev_flush_pending_event(device, time);
@@ -586,7 +586,7 @@ evdev_process_relative(struct evdev_device *device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
-			e->value * DEFAULT_AXIS_STEP_DISTANCE);
+			e->value * DEFAULT_WHEEL_CLICK_ANGLE);
 		break;
 	}
 }
