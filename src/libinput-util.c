@@ -131,6 +131,9 @@ ratelimit_test(struct ratelimit *r)
  * use a reasonable default instead. If the property contains multiple DPI
  * settings but none flagged as default, we return the last because we're
  * lazy and that's a silly way to set the property anyway.
+ *
+ * @param prop The value of the udev property (without the MOUSE_DPI=)
+ * @return The default dpi value on success, 0 on error
  */
 int
 parse_mouse_dpi_property(const char *prop)
