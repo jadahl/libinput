@@ -23,6 +23,10 @@ context. Defaults to "default".</dd>
 <dd>HW resolution and sampling frequency of a relative pointer device.
 See @ref motion_normalization for details.
 </dd>
+<dt>MOUSE_WHEEL_CLICK_ANGLE</dt>
+<dd>The angle in degrees for each click on a mouse wheel. See
+libinput_pointer_get_axis_source() for details.
+</dd>
 </dl>
 
 Below is an example udev rule to assign "seat1" to a device from vendor

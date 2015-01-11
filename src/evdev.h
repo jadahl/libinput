@@ -119,6 +119,9 @@ struct evdev_device {
 		/* set during device init if we want natural scrolling,
 		 * used at runtime to enable/disable the feature */
 		bool natural_scrolling_enabled;
+
+		/* angle per REL_WHEEL click in degrees */
+		int wheel_click_angle;
 	} scroll;
 
 	enum evdev_event_type pending_event;

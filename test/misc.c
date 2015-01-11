@@ -531,7 +531,7 @@ END_TEST
 
 struct parser_test {
 	char *tag;
-	int expected_dpi;
+	int expected_value;
 };
 
 START_TEST(dpi_parser)
@@ -565,7 +565,36 @@ START_TEST(dpi_parser)
 
 	for (i = 0; tests[i].tag != NULL; i++) {
 		dpi = parse_mouse_dpi_property(tests[i].tag);
-		ck_assert_int_eq(dpi, tests[i].expected_dpi);
+		ck_assert_int_eq(dpi, tests[i].expected_value);
+	}
+}
+END_TEST
+
+START_TEST(wheel_click_parser)
+{
+	struct parser_test tests[] = {
+		{ "1", 1 },
+		{ "10", 10 },
+		{ "-12", -12 },
+		{ "360", 360 },
+		{ "66 ", 66 },
+		{ "   100 ", 100 },
+
+		{ "0", 0 },
+		{ "-0", 0 },
+		{ "a", 0 },
+		{ "10a", 0 },
+		{ "10-", 0 },
+		{ "sadfasfd", 0 },
+		{ "361", 0 },
+		{ NULL, 0 }
+	};
+
+	int i, angle;
+
+	for (i = 0; tests[i].tag != NULL; i++) {
+		angle = parse_mouse_wheel_click_angle_property(tests[i].tag);
+		ck_assert_int_eq(angle, tests[i].expected_value);
 	}
 }
 END_TEST
@@ -582,6 +611,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("misc:matrix", matrix_helpers);
 	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
 	litest_add_no_device("misc:dpi parser", dpi_parser);
+	litest_add_no_device("misc:wheel click parser", wheel_click_parser);
 
 	return litest_run(argc, argv);
 }
