@@ -683,6 +683,8 @@ libinput_event_pointer_get_axis(struct libinput_event_pointer *event);
  * @ref LIBINPUT_EVENT_POINTER_AXIS.
  *
  * @return the axis value of this event
+ *
+ * @see libinput_event_pointer_get_axis_value_discrete
  */
 double
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
@@ -724,6 +726,25 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event);
  */
 enum libinput_pointer_axis_source
 libinput_event_pointer_get_axis_source(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup pointer
+ *
+ * Return the axis value in discrete steps for a given axis event. How a
+ * value translates into a discrete step depends on the source.
+ *
+ * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_WHEEL, the discrete
+ * value correspond to the number of physical mouse clicks.
+ *
+ * If the source is @ref LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS or @ref
+ * LIBINPUT_POINTER_AXIS_SOURCE_FINGER, the discrete value is always 0.
+ *
+ * @return The discrete value for the given event.
+ *
+ * @see libinput_event_pointer_get_axis_value
+ */
+double
+libinput_event_pointer_get_axis_value_discrete(struct libinput_event_pointer *event);
 
 /**
  * @ingroup event_pointer

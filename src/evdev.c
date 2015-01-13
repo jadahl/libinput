@@ -541,16 +541,20 @@ evdev_notify_axis(struct evdev_device *device,
 		  uint64_t time,
 		  enum libinput_pointer_axis axis,
 		  enum libinput_pointer_axis_source source,
-		  double value)
+		  double value,
+		  double discrete)
 {
-	if (device->scroll.natural_scrolling_enabled)
+	if (device->scroll.natural_scrolling_enabled) {
 		value *= -1;
+		discrete *= -1;
+	}
 
 	pointer_notify_axis(&device->base,
 			    time,
 			    axis,
 			    source,
-			    value);
+			    value,
+			    discrete);
 }
 
 static inline void
@@ -577,7 +581,8 @@ evdev_process_relative(struct evdev_device *device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
-			-1 * e->value * device->scroll.wheel_click_angle);
+			-1 * e->value * device->scroll.wheel_click_angle,
+			-1 * e->value);
 		break;
 	case REL_HWHEEL:
 		evdev_flush_pending_event(device, time);
@@ -586,7 +591,8 @@ evdev_process_relative(struct evdev_device *device,
 			time,
 			LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 			LIBINPUT_POINTER_AXIS_SOURCE_WHEEL,
-			e->value * device->scroll.wheel_click_angle);
+			e->value * device->scroll.wheel_click_angle,
+			e->value);
 		break;
 	}
 }
@@ -1864,7 +1870,8 @@ evdev_post_scroll(struct evdev_device *device,
 				  time,
 				  LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 				  source,
-				  dy);
+				  dy,
+				  0);
 	}
 
 	if (dx != 0.0 &&
@@ -1874,7 +1881,8 @@ evdev_post_scroll(struct evdev_device *device,
 				  time,
 				  LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				  source,
-				  dx);
+				  dx,
+				  0);
 	}
 }
 
@@ -1889,13 +1897,13 @@ evdev_stop_scroll(struct evdev_device *device,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
 				    source,
-				    0);
+				    0, 0);
 	if (device->scroll.direction & (1 << LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
 		pointer_notify_axis(&device->base,
 				    time,
 				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL,
 				    source,
-				    0);
+				    0, 0);
 
 	device->scroll.buildup_horizontal = 0;
 	device->scroll.buildup_vertical = 0;

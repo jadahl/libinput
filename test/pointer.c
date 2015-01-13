@@ -353,9 +353,12 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	   up by a factor 15 */
 	const int scroll_step = 15;
 	int expected = amount * scroll_step;
+	int discrete = amount;
 
-	if (libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device))
+	if (libinput_device_config_scroll_get_natural_scroll_enabled(dev->libinput_device)) {
 		expected *= -1;
+		discrete *= -1;
+	}
 
 	/* mouse scroll wheels are 'upside down' */
 	if (which == REL_WHEEL)
@@ -379,6 +382,8 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev), expected);
 	ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
 			 LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
+	ck_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev),
+			 discrete);
 	libinput_event_destroy(event);
 }
 

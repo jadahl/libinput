@@ -327,7 +327,8 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 					pointer_notify_axis(device, time,
 						t->scroll.direction,
 						LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-						0.0);
+						0.0,
+						0);
 					t->scroll.direction = -1;
 				}
 				continue;
@@ -351,7 +352,8 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 
 		pointer_notify_axis(device, time, axis,
 				    LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-				    *delta);
+				    *delta,
+				    0);
 		t->scroll.direction = axis;
 
 		tp_edge_scroll_handle_event(tp, t, SCROLL_EVENT_POSTED);
@@ -371,7 +373,8 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time)
 			pointer_notify_axis(device, time,
 					    t->scroll.direction,
 					    LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-					    0.0);
+					    0.0,
+					    0);
 			t->scroll.direction = -1;
 		}
 	}

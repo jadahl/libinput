@@ -280,7 +280,8 @@ pointer_notify_axis(struct libinput_device *device,
 		    uint64_t time,
 		    enum libinput_pointer_axis axis,
 		    enum libinput_pointer_axis_source source,
-		    double value);
+		    double value,
+		    double discrete);
 
 void
 touch_notify_touch_down(struct libinput_device *device,

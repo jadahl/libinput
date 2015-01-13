@@ -67,6 +67,7 @@ struct libinput_event_pointer {
 	enum libinput_pointer_axis axis;
 	enum libinput_pointer_axis_source source;
 	double value;
+	double discrete;
 };
 
 struct libinput_event_touch {
@@ -389,6 +390,12 @@ LIBINPUT_EXPORT double
 libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event)
 {
 	return event->value;
+}
+
+LIBINPUT_EXPORT double
+libinput_event_pointer_get_axis_value_discrete(struct libinput_event_pointer *event)
+{
+	return event->discrete;
 }
 
 LIBINPUT_EXPORT enum libinput_pointer_axis_source
@@ -994,7 +1001,8 @@ pointer_notify_axis(struct libinput_device *device,
 		    uint64_t time,
 		    enum libinput_pointer_axis axis,
 		    enum libinput_pointer_axis_source source,
-		    double value)
+		    double value,
+		    double discrete)
 {
 	struct libinput_event_pointer *axis_event;
 
@@ -1007,6 +1015,7 @@ pointer_notify_axis(struct libinput_device *device,
 		.axis = axis,
 		.value = value,
 		.source = source,
+		.discrete = discrete,
 	};
 
 	post_device_event(device, time,

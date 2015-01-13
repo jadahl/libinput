@@ -73,6 +73,7 @@ global:
 	libinput_event_pointer_get_axis;
 	libinput_event_pointer_get_axis_source;
 	libinput_event_pointer_get_axis_value;
+	libinput_event_pointer_get_axis_value_discrete;
 	libinput_event_pointer_get_base_event;
 	libinput_event_pointer_get_button_state;
 	libinput_event_pointer_get_button;
