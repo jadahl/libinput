@@ -385,7 +385,12 @@ tp_unpin_finger(struct tp_dispatch *tp, struct tp_touch *t)
 			tp->buttons.motion_dist * tp->buttons.motion_dist) {
 		t->pinned.is_pinned = false;
 		tp_set_pointer(tp, t);
+		return;
 	}
+
+	/* The finger may slowly drift, adjust the center */
+	t->pinned.center_x = t->x + t->pinned.center_x / 2;
+	t->pinned.center_y = t->y + t->pinned.center_y / 2;
 }
 
 static void
