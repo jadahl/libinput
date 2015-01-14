@@ -79,6 +79,7 @@ int list_empty(const struct list *list);
 #define ARRAY_LENGTH(a) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_FOR_EACH(_arr, _elem) \
 	for (size_t _i = 0; _i < ARRAY_LENGTH(_arr) && (_elem = &_arr[_i]); _i++)
+#define AS_MASK(v) (1 << (v))
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))

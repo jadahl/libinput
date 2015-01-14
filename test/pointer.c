@@ -348,6 +348,7 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
+	enum libinput_pointer_axis axis;
 
 	/* the current evdev implementation scales the scroll wheel events
 	   up by a factor 15 */
@@ -375,14 +376,16 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 
 	ptrev = libinput_event_get_pointer_event(event);
 	ck_assert(ptrev != NULL);
-	ck_assert_int_eq(libinput_event_pointer_get_axis(ptrev),
-			 which == REL_WHEEL ?
+
+	axis = (which == REL_WHEEL) ?
 				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL :
-				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
-	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev), expected);
+				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
+
+	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev, axis),
+			 expected);
 	ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
 			 LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
-	ck_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev),
+	ck_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev, axis),
 			 discrete);
 	libinput_event_destroy(event);
 }

@@ -225,24 +225,18 @@ static void
 print_axis_event(struct libinput_event *ev)
 {
 	struct libinput_event_pointer *p = libinput_event_get_pointer_event(ev);
-	enum libinput_pointer_axis axis = libinput_event_pointer_get_axis(p);
-	const char *ax;
-	double val;
+	double v = 0, h = 0;
 
-	switch (axis) {
-	case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
-		ax = "vscroll";
-		break;
-	case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
-		ax = "hscroll";
-		break;
-	default:
-		abort();
-	}
-
+	if (libinput_event_pointer_has_axis(p,
+				    LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL))
+		v = libinput_event_pointer_get_axis_value(p,
+			      LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+	if (libinput_event_pointer_has_axis(p,
+				    LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
+		h = libinput_event_pointer_get_axis_value(p,
+			      LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
 	print_event_time(libinput_event_pointer_get_time(p));
-	val = libinput_event_pointer_get_axis_value(p);
-	printf("%s %.2f\n", ax, val);
+	printf("vert %.2f horiz %.2f\n", v, h);
 }
 
 static void

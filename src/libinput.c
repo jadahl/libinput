@@ -59,15 +59,15 @@ struct libinput_event_pointer {
 	uint32_t time;
 	double x;
 	double y;
+	double x_discrete;
+	double y_discrete;
 	double dx_unaccel;
 	double dy_unaccel;
 	uint32_t button;
 	uint32_t seat_button_count;
 	enum libinput_button_state state;
-	enum libinput_pointer_axis axis;
 	enum libinput_pointer_axis_source source;
-	double value;
-	double discrete;
+	uint32_t axes;
 };
 
 struct libinput_event_touch {
@@ -380,22 +380,63 @@ libinput_event_pointer_get_seat_button_count(
 	return event->seat_button_count;
 }
 
-LIBINPUT_EXPORT enum libinput_pointer_axis
-libinput_event_pointer_get_axis(struct libinput_event_pointer *event)
+LIBINPUT_EXPORT int
+libinput_event_pointer_has_axis(struct libinput_event_pointer *event,
+				enum libinput_pointer_axis axis)
 {
-	return event->axis;
+	if (event->base.type == LIBINPUT_EVENT_POINTER_AXIS) {
+		switch (axis) {
+		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+			return !!(event->axes & AS_MASK(axis));
+		}
+	}
+	return 0;
 }
 
 LIBINPUT_EXPORT double
-libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event)
+libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event,
+				      enum libinput_pointer_axis axis)
 {
-	return event->value;
+	struct libinput *libinput = event->base.device->seat->libinput;
+	double value = 0;
+
+	if (!libinput_event_pointer_has_axis(event, axis)) {
+		log_bug_client(libinput, "value requested for unset axis\n");
+	} else {
+		switch (axis) {
+		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+			value = event->x;
+			break;
+		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+			value = event->y;
+			break;
+		}
+	}
+
+	return value;
 }
 
 LIBINPUT_EXPORT double
-libinput_event_pointer_get_axis_value_discrete(struct libinput_event_pointer *event)
+libinput_event_pointer_get_axis_value_discrete(struct libinput_event_pointer *event,
+					       enum libinput_pointer_axis axis)
 {
-	return event->discrete;
+	struct libinput *libinput = event->base.device->seat->libinput;
+	double value = 0;
+
+	if (!libinput_event_pointer_has_axis(event, axis)) {
+		log_bug_client(libinput, "value requested for unset axis\n");
+	} else {
+		switch (axis) {
+		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
+			value = event->x_discrete;
+			break;
+		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
+			value = event->y_discrete;
+			break;
+		}
+	}
+	return value;
 }
 
 LIBINPUT_EXPORT enum libinput_pointer_axis_source
@@ -999,10 +1040,10 @@ pointer_notify_button(struct libinput_device *device,
 void
 pointer_notify_axis(struct libinput_device *device,
 		    uint64_t time,
-		    enum libinput_pointer_axis axis,
+		    uint32_t axes,
 		    enum libinput_pointer_axis_source source,
-		    double value,
-		    double discrete)
+		    double x, double y,
+		    double x_discrete, double y_discrete)
 {
 	struct libinput_event_pointer *axis_event;
 
@@ -1012,10 +1053,12 @@ pointer_notify_axis(struct libinput_device *device,
 
 	*axis_event = (struct libinput_event_pointer) {
 		.time = time,
-		.axis = axis,
-		.value = value,
+		.x = x,
+		.y = y,
 		.source = source,
-		.discrete = discrete,
+		.axes = axes,
+		.x_discrete = x_discrete,
+		.y_discrete = y_discrete,
 	};
 
 	post_device_event(device, time,
