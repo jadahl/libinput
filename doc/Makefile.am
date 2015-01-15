@@ -35,7 +35,7 @@ clean-local:
 	$(AM_V_at)rm -rf html
 
 doc_src= $(shell find html -type f -printf "html/%P\n" 2>/dev/null)
-EXTRA_DIST += $(builddir)/html/index.html $(doc_src)
+EXTRA_DIST += $(builddir)/html/index.html $(doc_src) $(diagram_files) $(header_files)
 
 endif
 
