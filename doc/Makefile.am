@@ -28,7 +28,6 @@ diagram_files = \
 html/index.html: libinput.doxygen $(header_files) $(diagram_files)
 	$(AM_V_GEN)(cat $<; \
           echo "INPUT = $(header_files)"; \
-          echo "DOTFILE_DIRS = $(srcdir)/dot"; \
           ) | $(DOXYGEN) -
 
 clean-local:
