@@ -39,6 +39,7 @@ struct tools_options {
 	int tapping;
 	int natural_scroll;
 	int left_handed;
+	enum libinput_config_click_method click_method;
 };
 
 void tools_init_options(struct tools_options *options);

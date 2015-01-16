@@ -43,6 +43,7 @@ enum options {
 	OPT_NATURAL_SCROLL_DISABLE,
 	OPT_LEFT_HANDED_ENABLE,
 	OPT_LEFT_HANDED_DISABLE,
+	OPT_CLICK_METHOD,
 };
 
 static void
@@ -69,6 +70,7 @@ tools_usage()
 	       "--disable-natural-scrolling.... enable/disable natural scrolling\n"
 	       "--enable-left-handed\n"
 	       "--disable-left-handed.... enable/disable left-handed button configuration\n"
+	       "--set-click-method=[none|clickfinger|buttonareas] .... set the desired click method\n"
 	       "\n"
 	       "These options apply to all applicable devices, if a feature\n"
 	       "is not explicitly specified it is left at each device's default.\n"
@@ -86,6 +88,7 @@ tools_init_options(struct tools_options *options)
 	options->tapping = -1;
 	options->natural_scroll = -1;
 	options->left_handed = -1;
+	options->click_method = -1;
 	options->backend = BACKEND_UDEV;
 	options->seat = "seat0";
 }
@@ -107,6 +110,7 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			{ "disable-natural-scrolling", 0, 0, OPT_NATURAL_SCROLL_DISABLE },
 			{ "enable-left-handed", 0, 0, OPT_LEFT_HANDED_ENABLE },
 			{ "disable-left-handed", 0, 0, OPT_LEFT_HANDED_DISABLE },
+			{ "set-click-method", 1, 0, OPT_CLICK_METHOD },
 			{ 0, 0, 0, 0}
 		};
 
@@ -152,6 +156,25 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				break;
 			case OPT_LEFT_HANDED_DISABLE:
 				options->left_handed = 0;
+				break;
+			case OPT_CLICK_METHOD:
+				if (!optarg) {
+					tools_usage();
+					return 1;
+				}
+				if (strcmp(optarg, "none") == 0) {
+					options->click_method =
+						LIBINPUT_CONFIG_CLICK_METHOD_NONE;
+				} else if (strcmp(optarg, "clickfinger") == 0) {
+					options->click_method =
+						LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
+				} else if (strcmp(optarg, "buttonareas") == 0) {
+					options->click_method =
+						LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
+				} else {
+					tools_usage();
+					return 1;
+				}
 				break;
 			default:
 				tools_usage();
@@ -263,4 +286,7 @@ tools_device_apply_config(struct libinput_device *device,
 									 options->natural_scroll);
 	if (options->left_handed != -1)
 		libinput_device_config_left_handed_set(device, options->left_handed);
+
+	if (options->click_method != -1)
+		libinput_device_config_click_set_method(device, options->click_method);
 }
