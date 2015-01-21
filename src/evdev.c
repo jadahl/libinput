@@ -1324,7 +1324,7 @@ evdev_configure_device(struct evdev_device *device)
 	struct libevdev *evdev = device->evdev;
 	const struct input_absinfo *absinfo;
 	int has_abs, has_rel, has_mt;
-	int has_button, has_keyboard, has_touch;
+	int has_button, has_keyboard, has_touch, has_joystick_button;
 	struct mt_slot *slots;
 	int num_slots;
 	int active_slot;
@@ -1336,17 +1336,24 @@ evdev_configure_device(struct evdev_device *device)
 	has_abs = 0;
 	has_mt = 0;
 	has_button = 0;
+	has_joystick_button = 0;
 	has_keyboard = 0;
 	has_touch = 0;
 
-        for (i = BTN_JOYSTICK; i < BTN_DIGI; i++) {
-                if (libevdev_has_event_code(evdev, EV_KEY, i)) {
-                        log_info(libinput,
-                                 "input device '%s', %s is a joystick, ignoring\n",
-                                 device->devname, devnode);
-                        return -1;
-                }
-        }
+	for (i = BTN_JOYSTICK; i <= BTN_PINKIE; i++)
+		if (libevdev_has_event_code(evdev, EV_KEY, i))
+			has_joystick_button = 1;
+
+	for (i = BTN_GAMEPAD; i <= BTN_TR2; i++)
+		if (libevdev_has_event_code(evdev, EV_KEY, i))
+			has_joystick_button = 1;
+
+	if (has_joystick_button) {
+		log_info(libinput,
+			 "input device '%s', %s is a joystick, ignoring\n",
+			 device->devname, devnode);
+		return -1;
+	}
 
 	if (libevdev_has_event_type(evdev, EV_ABS)) {
 
