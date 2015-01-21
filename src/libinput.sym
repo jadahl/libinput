@@ -70,7 +70,6 @@ global:
 	libinput_event_pointer_get_absolute_x_transformed;
 	libinput_event_pointer_get_absolute_y;
 	libinput_event_pointer_get_absolute_y_transformed;
-	libinput_event_pointer_get_axis;
 	libinput_event_pointer_get_axis_source;
 	libinput_event_pointer_get_axis_value;
 	libinput_event_pointer_get_axis_value_discrete;
