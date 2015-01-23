@@ -370,7 +370,7 @@ handle_event_axis(struct libinput_event *ev, struct window *w)
 		w->vy = clip(w->vy, 0, w->height);
 	}
 	if (h != 0.0) {
-		w->hx += (int)v;
+		w->hx += (int)h;
 		w->hx = clip(w->hx, 0, w->width);
 	}
 }
