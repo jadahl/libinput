@@ -1515,6 +1515,8 @@ libinput_device_set_seat_logical_name(struct libinput_device *device,
 				      const char *name);
 
 /**
+ * @ingroup device
+ *
  * Return a udev handle to the device that is this libinput device, if any.
  * The returned handle has a refcount of at least 1, the caller must call
  * udev_device_unref() once to release the associated resources.
