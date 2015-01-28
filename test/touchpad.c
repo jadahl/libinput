@@ -2959,6 +2959,290 @@ START_TEST(touchpad_hover_2fg_1fg_down)
 }
 END_TEST
 
+static void
+assert_btnevent_from_device(struct litest_device *device,
+			    unsigned int button,
+			    enum libinput_button_state state)
+{
+	struct libinput *li = device->libinput;
+	struct libinput_event *e;
+	struct libinput_event_pointer *pev;
+
+	libinput_dispatch(li);
+	e = libinput_get_event(li);
+	ck_assert_notnull(e);
+	ck_assert_int_eq(libinput_event_get_type(e),
+			 LIBINPUT_EVENT_POINTER_BUTTON);
+	pev = libinput_event_get_pointer_event(e);
+
+	ck_assert_ptr_eq(libinput_event_get_device(e), device->libinput_device);
+	ck_assert_int_eq(libinput_event_pointer_get_button(pev),
+			 button);
+	ck_assert_int_eq(libinput_event_pointer_get_button_state(pev),
+			 state);
+	libinput_event_destroy(e);
+}
+
+
+START_TEST(touchpad_trackpoint_buttons)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct litest_device *trackpoint;
+	struct libinput *li = touchpad->libinput;
+
+	const struct buttons {
+		unsigned int device_value;
+		unsigned int real_value;
+	} buttons[] = {
+		{ BTN_0, BTN_LEFT },
+		{ BTN_1, BTN_RIGHT },
+		{ BTN_2, BTN_MIDDLE },
+	};
+	const struct buttons *b;
+
+	trackpoint = litest_add_device(li,
+				       LITEST_TRACKPOINT);
+	libinput_device_config_scroll_set_method(trackpoint->libinput_device,
+					 LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
+
+	litest_drain_events(li);
+
+	ARRAY_FOR_EACH(buttons, b) {
+		litest_button_click(touchpad, b->device_value, true);
+		assert_btnevent_from_device(trackpoint,
+					    b->real_value,
+					    LIBINPUT_BUTTON_STATE_PRESSED);
+
+		litest_button_click(touchpad, b->device_value, false);
+
+		assert_btnevent_from_device(trackpoint,
+					    b->real_value,
+					    LIBINPUT_BUTTON_STATE_RELEASED);
+	}
+
+	litest_delete_device(trackpoint);
+}
+END_TEST
+
+START_TEST(touchpad_trackpoint_mb_scroll)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct litest_device *trackpoint;
+	struct libinput *li = touchpad->libinput;
+
+	trackpoint = litest_add_device(li,
+				       LITEST_TRACKPOINT);
+
+	litest_drain_events(li);
+	litest_button_click(touchpad, BTN_2, true); /* middle */
+	libinput_dispatch(li);
+	litest_timeout_buttonscroll();
+	libinput_dispatch(li);
+	litest_event(trackpoint, EV_REL, REL_Y, -2);
+	litest_event(trackpoint, EV_SYN, SYN_REPORT, 0);
+	litest_event(trackpoint, EV_REL, REL_Y, -2);
+	litest_event(trackpoint, EV_SYN, SYN_REPORT, 0);
+	litest_event(trackpoint, EV_REL, REL_Y, -2);
+	litest_event(trackpoint, EV_SYN, SYN_REPORT, 0);
+	litest_event(trackpoint, EV_REL, REL_Y, -2);
+	litest_event(trackpoint, EV_SYN, SYN_REPORT, 0);
+	litest_button_click(touchpad, BTN_2, false);
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_AXIS);
+
+	litest_delete_device(trackpoint);
+}
+END_TEST
+
+START_TEST(touchpad_trackpoint_mb_click)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct litest_device *trackpoint;
+	struct libinput *li = touchpad->libinput;
+	enum libinput_config_status status;
+
+	trackpoint = litest_add_device(li,
+				       LITEST_TRACKPOINT);
+	status = libinput_device_config_scroll_set_method(
+				  trackpoint->libinput_device,
+				  LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	litest_drain_events(li);
+	litest_button_click(touchpad, BTN_2, true); /* middle */
+	litest_button_click(touchpad, BTN_2, false);
+
+	assert_btnevent_from_device(trackpoint,
+				    BTN_MIDDLE,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_MIDDLE,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+	litest_delete_device(trackpoint);
+}
+END_TEST
+
+START_TEST(touchpad_trackpoint_buttons_softbuttons)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct litest_device *trackpoint;
+	struct libinput *li = touchpad->libinput;
+
+	trackpoint = litest_add_device(li,
+				       LITEST_TRACKPOINT);
+
+	litest_drain_events(li);
+
+	litest_touch_down(touchpad, 0, 95, 90);
+	litest_button_click(touchpad, BTN_LEFT, true);
+	litest_button_click(touchpad, BTN_1, true);
+	litest_button_click(touchpad, BTN_LEFT, false);
+	litest_touch_up(touchpad, 0);
+	litest_button_click(touchpad, BTN_1, false);
+
+	assert_btnevent_from_device(touchpad,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_btnevent_from_device(touchpad,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_touch_down(touchpad, 0, 95, 90);
+	litest_button_click(touchpad, BTN_LEFT, true);
+	litest_button_click(touchpad, BTN_1, true);
+	litest_button_click(touchpad, BTN_1, false);
+	litest_button_click(touchpad, BTN_LEFT, false);
+	litest_touch_up(touchpad, 0);
+
+	assert_btnevent_from_device(touchpad,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+	assert_btnevent_from_device(touchpad,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_delete_device(trackpoint);
+}
+END_TEST
+
+START_TEST(touchpad_trackpoint_buttons_2fg_scroll)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct litest_device *trackpoint;
+	struct libinput *li = touchpad->libinput;
+	struct libinput_event *e;
+	struct libinput_event_pointer *pev;
+	double val;
+
+	trackpoint = litest_add_device(li,
+				       LITEST_TRACKPOINT);
+
+	litest_drain_events(li);
+
+	litest_touch_down(touchpad, 0, 40, 70);
+	litest_touch_down(touchpad, 1, 60, 70);
+	litest_touch_move_to(touchpad, 0, 40, 70, 40, 30, 10, 0);
+	litest_touch_move_to(touchpad, 1, 60, 70, 60, 30, 10, 0);
+
+	libinput_dispatch(li);
+	litest_wait_for_event(li);
+
+	/* Make sure we get scroll events but _not_ the scroll release */
+	while ((e = libinput_get_event(li))) {
+		ck_assert_int_eq(libinput_event_get_type(e),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		pev = libinput_event_get_pointer_event(e);
+		val = libinput_event_pointer_get_axis_value(pev,
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		ck_assert(val != 0.0);
+		libinput_event_destroy(e);
+	}
+
+	litest_button_click(touchpad, BTN_1, true);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_PRESSED);
+
+	litest_touch_move_to(touchpad, 0, 40, 30, 40, 70, 10, 0);
+	litest_touch_move_to(touchpad, 1, 60, 30, 60, 70, 10, 0);
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_AXIS);
+
+	while ((e = libinput_get_event(li))) {
+		ck_assert_int_eq(libinput_event_get_type(e),
+				 LIBINPUT_EVENT_POINTER_AXIS);
+		pev = libinput_event_get_pointer_event(e);
+		val = libinput_event_pointer_get_axis_value(pev,
+				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL);
+		ck_assert(val != 0.0);
+		libinput_event_destroy(e);
+	}
+
+	litest_button_click(touchpad, BTN_1, false);
+	assert_btnevent_from_device(trackpoint,
+				    BTN_RIGHT,
+				    LIBINPUT_BUTTON_STATE_RELEASED);
+
+	/* the movement lags behind the touch movement, so the first couple
+	   events can be downwards even though we started scrolling up. do a
+	   short scroll up, drain those events, then we can use
+	   litest_assert_scroll() which tests for the trailing 0/0 scroll
+	   for us.
+	   */
+	litest_touch_move_to(touchpad, 0, 40, 70, 40, 60, 10, 0);
+	litest_touch_move_to(touchpad, 1, 60, 70, 60, 60, 10, 0);
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_touch_move_to(touchpad, 0, 40, 60, 40, 30, 10, 0);
+	litest_touch_move_to(touchpad, 1, 60, 60, 60, 30, 10, 0);
+
+	litest_touch_up(touchpad, 0);
+	litest_touch_up(touchpad, 1);
+
+	libinput_dispatch(li);
+
+	litest_assert_scroll(li,
+			     LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL,
+			     -1);
+
+	litest_delete_device(trackpoint);
+}
+END_TEST
+
+START_TEST(touchpad_trackpoint_no_trackpoint)
+{
+	struct litest_device *touchpad = litest_current_device();
+	struct libinput *li = touchpad->libinput;
+
+	litest_drain_events(li);
+	litest_button_click(touchpad, BTN_0, true); /* left */
+	litest_button_click(touchpad, BTN_0, false);
+	litest_assert_empty_queue(li);
+
+	litest_button_click(touchpad, BTN_1, true); /* right */
+	litest_button_click(touchpad, BTN_1, false);
+	litest_assert_empty_queue(li);
+
+	litest_button_click(touchpad, BTN_2, true); /* middle */
+	litest_button_click(touchpad, BTN_2, false);
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
 int main(int argc, char **argv) {
 
 	litest_add("touchpad:motion", touchpad_1fg_motion, LITEST_TOUCHPAD, LITEST_ANY);
@@ -3066,6 +3350,13 @@ int main(int argc, char **argv) {
 	litest_add_for_device("touchpad:hover", touchpad_hover_down_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
 	litest_add_for_device("touchpad:hover", touchpad_hover_2fg_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
 	litest_add_for_device("touchpad:hover", touchpad_hover_2fg_1fg_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_mb_scroll, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_mb_click, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons_softbuttons, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons_2fg_scroll, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
+	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_no_trackpoint, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 
 	return litest_run(argc, argv);
 }
