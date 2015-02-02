@@ -1229,6 +1229,9 @@ evdev_device_init_pointer_acceleration(struct evdev_device *device)
 	device->pointer.config.get_default_speed = evdev_accel_config_get_default_speed;
 	device->base.config.accel = &device->pointer.config;
 
+	evdev_accel_config_set_speed(&device->base,
+		     evdev_accel_config_get_default_speed(&device->base));
+
 	return 0;
 }
 
