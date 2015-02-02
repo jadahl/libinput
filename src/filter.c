@@ -286,7 +286,7 @@ create_pointer_accelerator_filter(accel_profile_func_t profile)
 {
 	struct pointer_accelerator *filter;
 
-	filter = malloc(sizeof *filter);
+	filter = zalloc(sizeof *filter);
 	if (filter == NULL)
 		return NULL;
 
