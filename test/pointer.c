@@ -770,6 +770,31 @@ START_TEST(pointer_accel_defaults)
 }
 END_TEST
 
+START_TEST(pointer_accel_defaults_absolute)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+	double speed;
+
+	ck_assert(!libinput_device_config_accel_is_available(device));
+	ck_assert(libinput_device_config_accel_get_default_speed(device) == 0.0);
+	ck_assert(libinput_device_config_accel_get_speed(device) == 0.0);
+
+	for (speed = -2.0; speed <= 2.0; speed += 0.2) {
+		status = libinput_device_config_accel_set_speed(device,
+								speed);
+		if (speed >= -1.0 && speed <= 1.0)
+			ck_assert_int_eq(status,
+					 LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+		else
+			ck_assert_int_eq(status,
+					 LIBINPUT_CONFIG_STATUS_INVALID);
+		ck_assert(libinput_device_config_accel_get_speed(device) == 0.0);
+	}
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
@@ -793,6 +818,7 @@ int main (int argc, char **argv) {
 	litest_add("pointer:left-handed", pointer_left_handed_during_click_multiple_buttons, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
 
 	litest_add("pointer:accel", pointer_accel_defaults, LITEST_RELATIVE, LITEST_ANY);
+	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }

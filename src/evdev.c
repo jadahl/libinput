@@ -1473,7 +1473,8 @@ evdev_configure_device(struct evdev_device *device)
 		has_keyboard = 1;
 
 	if ((has_abs || has_rel) && has_button) {
-		if (evdev_device_init_pointer_acceleration(device) == -1)
+		if (has_rel &&
+		    evdev_device_init_pointer_acceleration(device) == -1)
 			return -1;
 
 		device->seat_caps |= EVDEV_DEVICE_POINTER;
