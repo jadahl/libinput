@@ -26,6 +26,7 @@
 
 #include <assert.h>
 #include <check.h>
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -43,6 +44,9 @@
 #include "litest.h"
 #include "litest-int.h"
 #include "libinput-util.h"
+
+#define UDEV_RULES_D "/run/udev/rules.d"
+#define UDEV_RULE_PREFIX "99-litest-"
 
 static int in_debugger = -1;
 static int verbose = 0;
@@ -115,6 +119,55 @@ struct litest_test_device* devices[] = {
 static struct list all_tests;
 
 static void
+litest_reload_udev_rules(void)
+{
+	system("udevadm control --reload-rules");
+}
+
+static int
+litest_udev_rule_filter(const struct dirent *entry)
+{
+	return strncmp(entry->d_name,
+		       UDEV_RULE_PREFIX,
+		       strlen(UDEV_RULE_PREFIX)) == 0;
+}
+
+static void
+litest_drop_udev_rules(void)
+{
+	int n;
+	int rc;
+	struct dirent **entries;
+	char path[PATH_MAX];
+
+	n = scandir(UDEV_RULES_D,
+		    &entries,
+		    litest_udev_rule_filter,
+		    alphasort);
+	if (n < 0)
+		return;
+
+	while (n--) {
+		rc = snprintf(path, sizeof(path),
+			      "%s/%s",
+			      UDEV_RULES_D,
+			      entries[n]->d_name);
+		if (rc > 0 &&
+		    (size_t)rc == strlen(UDEV_RULES_D) +
+			    strlen(entries[n]->d_name) + 1)
+			unlink(path);
+		else
+			fprintf(stderr,
+				"Failed to delete %s. Remaining tests are unreliable\n",
+				entries[n]->d_name);
+		free(entries[n]);
+	}
+	free(entries);
+
+	litest_reload_udev_rules();
+}
+
+static void
 litest_add_tcase_for_device(struct suite *suite,
 			    void *func,
 			    const struct litest_test_device *dev)
@@ -134,6 +187,13 @@ litest_add_tcase_for_device(struct suite *suite,
 	t->name = strdup(test_name);
 	t->tc = tcase_create(test_name);
 	list_insert(&suite->tests, &t->node);
+	/* we can't guarantee that we clean up properly if a test fails, the
+	   udev rules used for a previous test may still be in place. Add an
+	   unchecked fixture to always clean up all rules before/after a
+	   test case completes */
+	tcase_add_unchecked_fixture(t->tc,
+				    litest_drop_udev_rules,
+				    litest_drop_udev_rules);
 	tcase_add_checked_fixture(t->tc, dev->setup,
 				  dev->teardown ? dev->teardown : litest_generic_device_teardown);
 	tcase_add_test(t->tc, func);
@@ -464,6 +524,40 @@ merge_events(const int *orig, const int *override)
 	return events;
 }
 
+static char *
+litest_init_udev_rules(struct litest_test_device *dev)
+{
+	int rc;
+	FILE *f;
+	char *path;
+
+	if (!dev->udev_rule)
+		return NULL;
+
+	rc = mkdir(UDEV_RULES_D, 0755);
+	if (rc == -1 && errno != EEXIST)
+		ck_abort_msg("Failed to create udev rules directory (%s)\n",
+			     strerror(errno));
+
+	rc = asprintf(&path,
+		      "%s/%s%s.rules",
+		      UDEV_RULES_D,
+		      UDEV_RULE_PREFIX,
+		      dev->shortname);
+	ck_assert_int_eq(rc,
+			 strlen(UDEV_RULES_D) +
+			 strlen(UDEV_RULE_PREFIX) +
+			 strlen(dev->shortname) + 7);
+	f = fopen(path, "w");
+	ck_assert_notnull(f);
+	ck_assert_int_ge(fputs(dev->udev_rule, f), 0);
+	fclose(f);
+
+	litest_reload_udev_rules();
+
+	return path;
+}
+
 static struct litest_device *
 litest_create(enum litest_device_type which,
 	      const char *name_override,
@@ -477,6 +571,7 @@ litest_create(enum litest_device_type which,
 	const struct input_id *id;
 	struct input_absinfo *abs;
 	int *events;
+	char *udev_file;
 
 	dev = devices;
 	while (*dev) {
@@ -491,12 +586,17 @@ litest_create(enum litest_device_type which,
 	d = zalloc(sizeof(*d));
 	ck_assert(d != NULL);
 
+	udev_file = litest_init_udev_rules(*dev);
+
 	/* device has custom create method */
 	if ((*dev)->create) {
 		(*dev)->create(d);
-		if (abs_override || events_override)
+		if (abs_override || events_override) {
+			if (udev_file)
+				unlink(udev_file);
 			ck_abort_msg("Custom create cannot"
 				     "be overridden");
+		}
 
 		return d;
 	}
@@ -511,6 +611,7 @@ litest_create(enum litest_device_type which,
 								 abs,
 								 events);
 	d->interface = (*dev)->interface;
+	d->udev_rule_file = udev_file;
 	free(abs);
 	free(events);
 
@@ -628,6 +729,12 @@ litest_delete_device(struct litest_device *d)
 {
 	if (!d)
 		return;
+
+	if (d->udev_rule_file) {
+		unlink(d->udev_rule_file);
+		free(d->udev_rule_file);
+		d->udev_rule_file = NULL;
+	}
 
 	libinput_device_unref(d->libinput_device);
 	libinput_path_remove_device(d->libinput_device);
