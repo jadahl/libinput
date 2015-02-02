@@ -1232,7 +1232,6 @@ evdev_device_init_pointer_acceleration(struct evdev_device *device)
 	return 0;
 }
 
-
 static inline int
 evdev_need_mtdev(struct evdev_device *device)
 {
