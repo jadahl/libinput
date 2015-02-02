@@ -510,7 +510,7 @@ libinput_add_fd(struct libinput *libinput,
 	struct libinput_source *source;
 	struct epoll_event ep;
 
-	source = malloc(sizeof *source);
+	source = zalloc(sizeof *source);
 	if (!source)
 		return NULL;
 
