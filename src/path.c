@@ -291,14 +291,34 @@ libinput_path_create_context(const struct libinput_interface *interface,
 }
 
 static inline struct udev_device *
-udev_device_from_devnode(struct udev *udev, const char *devnode)
+udev_device_from_devnode(struct libinput *libinput,
+			 struct udev *udev,
+			 const char *devnode)
 {
+	struct udev_device *dev;
 	struct stat st;
+	size_t count = 0;
 
 	if (stat(devnode, &st) < 0)
 		return NULL;
 
-	return udev_device_new_from_devnum(udev, 'c', st.st_rdev);
+	dev = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
+
+	while (dev && !udev_device_get_is_initialized(dev)) {
+		udev_device_unref(dev);
+		msleep(10);
+		dev = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
+
+		count++;
+		if (count > 10) {
+			log_bug_libinput(libinput,
+					"udev device never initialized (%s)\n",
+					devnode);
+			break;
+		}
+	}
+
+	return dev;
 }
 
 LIBINPUT_EXPORT struct libinput_device *
@@ -315,7 +335,7 @@ libinput_path_add_device(struct libinput *libinput,
 		return NULL;
 	}
 
-	udev_device = udev_device_from_devnode(udev, path);
+	udev_device = udev_device_from_devnode(libinput, udev, path);
 	if (!udev_device) {
 		log_bug_client(libinput, "Invalid path %s\n", path);
 		return NULL;
