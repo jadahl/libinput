@@ -823,6 +823,7 @@ tp_post_clickpadbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 				break;
 			case BUTTON_EVENT_IN_TOP_L:
 				is_top = 1;
+				/* fallthrough */
 			case BUTTON_EVENT_IN_BOTTOM_L:
 				button |= LEFT;
 				break;
@@ -832,6 +833,7 @@ tp_post_clickpadbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 				break;
 			case BUTTON_EVENT_IN_TOP_R:
 				is_top = 1;
+				/* fallthrough */
 			case BUTTON_EVENT_IN_BOTTOM_R:
 				button |= RIGHT;
 				break;
