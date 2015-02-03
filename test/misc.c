@@ -144,30 +144,20 @@ END_TEST
 
 START_TEST(event_conversion_pointer)
 {
-	struct libevdev_uinput *uinput;
-	struct libinput *li;
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	int motion = 0, button = 0;
 
-	uinput = create_simple_test_device("litest test device",
-					   EV_REL, REL_X,
-					   EV_REL, REL_Y,
-					   EV_KEY, BTN_LEFT,
-					   EV_KEY, BTN_MIDDLE,
-					   EV_KEY, BTN_LEFT,
-					   -1, -1);
-	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, libevdev_uinput_get_devnode(uinput));
-
 	/* Queue at least two relative motion events as the first one may
 	 * be absorbed by the pointer acceleration filter. */
-	libevdev_uinput_write_event(uinput, EV_REL, REL_X, -1);
-	libevdev_uinput_write_event(uinput, EV_REL, REL_Y, -1);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
-	libevdev_uinput_write_event(uinput, EV_REL, REL_X, -1);
-	libevdev_uinput_write_event(uinput, EV_REL, REL_Y, -1);
-	libevdev_uinput_write_event(uinput, EV_KEY, BTN_LEFT, 1);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_REL, REL_X, -1);
+	litest_event(dev, EV_REL, REL_Y, -1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_REL, REL_X, -1);
+	litest_event(dev, EV_REL, REL_Y, -1);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
 	libinput_dispatch(li);
 
@@ -195,9 +185,6 @@ START_TEST(event_conversion_pointer)
 		libinput_event_destroy(event);
 	}
 
-	libinput_unref(li);
-	libevdev_uinput_destroy(uinput);
-
 	ck_assert_int_gt(motion, 0);
 	ck_assert_int_gt(button, 0);
 }
@@ -205,29 +192,18 @@ END_TEST
 
 START_TEST(event_conversion_pointer_abs)
 {
-	struct libevdev_uinput *uinput;
-	struct libinput *li;
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	int motion = 0, button = 0;
 
-	uinput = create_simple_test_device("litest test device",
-					   EV_ABS, ABS_X,
-					   EV_ABS, ABS_Y,
-					   EV_KEY, BTN_LEFT,
-					   EV_KEY, BTN_MIDDLE,
-					   EV_KEY, BTN_LEFT,
-					   -1, -1);
-	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, libevdev_uinput_get_devnode(uinput));
-	libinput_dispatch(li);
-
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_X, 10);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_Y, 50);
-	libevdev_uinput_write_event(uinput, EV_KEY, BTN_LEFT, 1);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_X, 30);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_Y, 30);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_ABS, ABS_X, 10);
+	litest_event(dev, EV_ABS, ABS_Y, 50);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_ABS, ABS_X, 30);
+	litest_event(dev, EV_ABS, ABS_Y, 30);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
 	libinput_dispatch(li);
 
@@ -255,9 +231,6 @@ START_TEST(event_conversion_pointer_abs)
 		libinput_event_destroy(event);
 	}
 
-	libinput_unref(li);
-	libevdev_uinput_destroy(uinput);
-
 	ck_assert_int_gt(motion, 0);
 	ck_assert_int_gt(button, 0);
 }
@@ -265,23 +238,15 @@ END_TEST
 
 START_TEST(event_conversion_key)
 {
-	struct libevdev_uinput *uinput;
-	struct libinput *li;
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	int key = 0;
 
-	uinput = create_simple_test_device("litest test device",
-					   EV_KEY, KEY_A,
-					   EV_KEY, KEY_B,
-					   -1, -1);
-	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, libevdev_uinput_get_devnode(uinput));
-	libinput_dispatch(li);
-
-	libevdev_uinput_write_event(uinput, EV_KEY, KEY_A, 1);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
-	libevdev_uinput_write_event(uinput, EV_KEY, KEY_A, 0);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, KEY_A, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, KEY_A, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
 	libinput_dispatch(li);
 
@@ -305,42 +270,28 @@ START_TEST(event_conversion_key)
 		libinput_event_destroy(event);
 	}
 
-	libinput_unref(li);
-	libevdev_uinput_destroy(uinput);
-
 	ck_assert_int_gt(key, 0);
 }
 END_TEST
 
 START_TEST(event_conversion_touch)
 {
-	struct libevdev_uinput *uinput;
-	struct libinput *li;
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	int touch = 0;
 
-	uinput = create_simple_test_device("litest test device",
-					   EV_KEY, BTN_TOUCH,
-					   EV_ABS, ABS_X,
-					   EV_ABS, ABS_Y,
-					   EV_ABS, ABS_MT_SLOT,
-					   EV_ABS, ABS_MT_TRACKING_ID,
-					   EV_ABS, ABS_MT_POSITION_X,
-					   EV_ABS, ABS_MT_POSITION_Y,
-					   -1, -1);
-	li = libinput_path_create_context(&simple_interface, NULL);
-	libinput_path_add_device(li, libevdev_uinput_get_devnode(uinput));
 	libinput_dispatch(li);
 
-	libevdev_uinput_write_event(uinput, EV_KEY, BTN_TOOL_FINGER, 1);
-	libevdev_uinput_write_event(uinput, EV_KEY, BTN_TOUCH, 1);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_X, 10);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_Y, 10);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_MT_SLOT, 0);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_MT_TRACKING_ID, 1);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_MT_POSITION_X, 10);
-	libevdev_uinput_write_event(uinput, EV_ABS, ABS_MT_POSITION_Y, 10);
-	libevdev_uinput_write_event(uinput, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_TOOL_FINGER, 1);
+	litest_event(dev, EV_KEY, BTN_TOUCH, 1);
+	litest_event(dev, EV_ABS, ABS_X, 10);
+	litest_event(dev, EV_ABS, ABS_Y, 10);
+	litest_event(dev, EV_ABS, ABS_MT_SLOT, 0);
+	litest_event(dev, EV_ABS, ABS_MT_TRACKING_ID, 1);
+	litest_event(dev, EV_ABS, ABS_MT_POSITION_X, 10);
+	litest_event(dev, EV_ABS, ABS_MT_POSITION_Y, 10);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
 	libinput_dispatch(li);
 
@@ -364,9 +315,6 @@ START_TEST(event_conversion_touch)
 		}
 		libinput_event_destroy(event);
 	}
-
-	libinput_unref(li);
-	libevdev_uinput_destroy(uinput);
 
 	ck_assert_int_gt(touch, 0);
 }
@@ -601,10 +549,12 @@ END_TEST
 
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
-	litest_add_no_device("events:conversion", event_conversion_pointer);
-	litest_add_no_device("events:conversion", event_conversion_pointer_abs);
-	litest_add_no_device("events:conversion", event_conversion_key);
-	litest_add_no_device("events:conversion", event_conversion_touch);
+	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);
+	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);
+	litest_add_for_device("events:conversion", event_conversion_pointer_abs, LITEST_XEN_VIRTUAL_POINTER);
+	litest_add_for_device("events:conversion", event_conversion_key, LITEST_KEYBOARD);
+	litest_add_for_device("events:conversion", event_conversion_touch, LITEST_WACOM_TOUCH);
+
 	litest_add_no_device("context:refcount", context_ref_counting);
 	litest_add_no_device("config:status string", config_status_string);
 
