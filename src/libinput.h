@@ -1364,7 +1364,7 @@ libinput_device_ref(struct libinput_device *device);
  * the device correctly to avoid dangling pointers.
  *
  * @param device A previously obtained device
- * @return NULL if device was destroyed, otherwise the passed device
+ * @return NULL if the device was destroyed, otherwise the passed device
  */
 struct libinput_device *
 libinput_device_unref(struct libinput_device *device);
