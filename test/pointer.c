@@ -770,6 +770,23 @@ START_TEST(pointer_accel_defaults)
 }
 END_TEST
 
+START_TEST(pointer_accel_invalid)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+
+	ck_assert(libinput_device_config_accel_is_available(device));
+
+	status = libinput_device_config_accel_set_speed(device,
+							NAN);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+	status = libinput_device_config_accel_set_speed(device,
+							INFINITY);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+}
+END_TEST
+
 START_TEST(pointer_accel_defaults_absolute)
 {
 	struct litest_device *dev = litest_current_device();
@@ -818,6 +835,7 @@ int main (int argc, char **argv) {
 	litest_add("pointer:left-handed", pointer_left_handed_during_click_multiple_buttons, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
 
 	litest_add("pointer:accel", pointer_accel_defaults, LITEST_RELATIVE, LITEST_ANY);
+	litest_add("pointer:accel", pointer_accel_invalid, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 
 	return litest_run(argc, argv);
