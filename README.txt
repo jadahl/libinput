@@ -22,7 +22,7 @@ For more information, visit:
 http://www.freedesktop.org/wiki/Software/libinput/
 
 Bugs can be filed in the libinput component of Wayland:
-https://bugs.freedesktop.org/enter_bug.cgi?product=Wayland
+https://bugs.freedesktop.org/enter_bug.cgi?product=Wayland&component=libinput
 
 Online API documentation:
 http://wayland.freedesktop.org/libinput/doc/latest/modules.html
