@@ -126,3 +126,11 @@ global:
 	libinput_device_config_click_get_methods;
 	libinput_device_config_click_set_method;
 } LIBINPUT_0.8.0;
+
+LIBINPUT_0.11.0 {
+	libinput_device_get_device_group;
+	libinput_device_group_get_user_data;
+	libinput_device_group_ref;
+	libinput_device_group_set_user_data;
+	libinput_device_group_unref;
+} LIBINPUT_0.9.0;

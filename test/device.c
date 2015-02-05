@@ -661,6 +661,54 @@ START_TEST(device_context)
 }
 END_TEST
 
+START_TEST(device_group_get)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device_group *group;
+
+	int userdata = 10;
+
+	group = libinput_device_get_device_group(dev->libinput_device);
+	ck_assert_notnull(group);
+
+	libinput_device_group_ref(group);
+
+	libinput_device_group_set_user_data(group, &userdata);
+	ck_assert_ptr_eq(&userdata,
+			 libinput_device_group_get_user_data(group));
+
+	libinput_device_group_unref(group);
+}
+END_TEST
+
+START_TEST(device_group_ref)
+{
+	struct libinput *li = litest_create_context();
+	struct litest_device *dev = litest_add_device(li,
+						      LITEST_MOUSE);
+	struct libinput_device *device = dev->libinput_device;
+	struct libinput_device_group *group;
+
+	group = libinput_device_get_device_group(device);
+	ck_assert_notnull(group);
+	libinput_device_group_ref(group);
+
+	libinput_device_ref(device);
+	litest_drain_events(li);
+	litest_delete_device(dev);
+	litest_drain_events(li);
+
+	/* make sure the device is dead but the group is still around */
+	ck_assert(libinput_device_unref(device) == NULL);
+
+	libinput_device_group_ref(group);
+	ck_assert_notnull(libinput_device_group_unref(group));
+	ck_assert(libinput_device_group_unref(group) == NULL);
+
+	libinput_unref(li);
+}
+END_TEST
+
 int main (int argc, char **argv)
 {
 	litest_add("device:sendevents", device_sendevents_config, LITEST_ANY, LITEST_TOUCHPAD);
@@ -685,6 +733,9 @@ int main (int argc, char **argv)
 	litest_add_for_device("device:context", device_context, LITEST_SYNAPTICS_CLICKPAD);
 
 	litest_add("device:udev", device_get_udev_handle, LITEST_ANY, LITEST_ANY);
+
+	litest_add("device:group", device_group_get, LITEST_ANY, LITEST_ANY);
+	litest_add_no_device("device:group", device_group_ref);
 
 	return litest_run(argc, argv);
 }

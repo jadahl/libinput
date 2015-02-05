@@ -195,6 +195,16 @@ struct libinput;
 struct libinput_device;
 
 /**
+ * @ingroup device
+ * @struct libinput_device_group
+ *
+ * A base handle for accessing libinput device groups. This struct is
+ * refcounted, use libinput_device_group_ref() and
+ * libinput_device_group_unref().
+ */
+struct libinput_device_group;
+
+/**
  * @ingroup seat
  * @struct libinput_seat
  *
@@ -1409,6 +1419,39 @@ libinput_device_get_context(struct libinput_device *device);
 /**
  * @ingroup device
  *
+ * Get the device group this device is assigned to. Some physical
+ * devices like graphics tablets are represented by multiple kernel
+ * devices and thus by multiple struct libinput_device.
+ *
+ * libinput assigns these devices to the same libinput_device_group
+ * allowing the caller to identify such devices and adjust configuration
+ * settings accordingly. For example, setting a tablet to left-handed often
+ * means turning it upside down. A touch device on the same tablet would
+ * need to be turned upside down too to work correctly.
+ *
+ * All devices are part of a device group though for most devices the group
+ * will be a singleton. A device is assigned to a device group on @ref
+ * LIBINPUT_EVENT_DEVICE_ADDED and removed from that group on @ref
+ * LIBINPUT_EVENT_DEVICE_REMOVED. It is up to the caller to track how many
+ * devices are in each device group.
+ *
+ * Device groups do not get re-used once the last device in the group was
+ * removed, i.e. unplugging and re-plugging a physical device with grouped
+ * devices will return a different device group after every unplug.
+ *
+ * The returned device group is not refcounted and may become invalid after
+ * the next call to libinput. Use libinput_device_group_ref() and
+ * libinput_device_group_unref() to continue using the handle outside of the
+ * immediate scope.
+ *
+ * @return The device group this device belongs to
+ */
+struct libinput_device_group *
+libinput_device_get_device_group(struct libinput_device *device);
+
+/**
+ * @ingroup device
+ *
  * Get the system name of the device.
  *
  * To get the descriptive device name, use libinput_device_get_name().
@@ -1592,6 +1635,63 @@ libinput_device_get_size(struct libinput_device *device,
  */
 int
 libinput_device_has_button(struct libinput_device *device, uint32_t code);
+
+/**
+ * @ingroup device
+ *
+ * Increase the refcount of the device group. A device group will be freed
+ * whenever the refcount reaches 0. This may happen during dispatch if all
+ * devices of this group were removed from the system. A caller must ensure
+ * to reference the device group correctly to avoid dangling pointers.
+ *
+ * @param group A previously obtained device group
+ * @return The passed device group
+ */
+struct libinput_device_group *
+libinput_device_group_ref(struct libinput_device_group *group);
+
+/**
+ * @ingroup device
+ *
+ * Decrease the refcount of the device group. A device group will be freed
+ * whenever the refcount reaches 0. This may happen during dispatch if all
+ * devices of this group were removed from the system. A caller must ensure
+ * to reference the device group correctly to avoid dangling pointers.
+ *
+ * @param group A previously obtained device group
+ * @return NULL if the device group was destroyed, otherwise the passed
+ * device group
+ */
+struct libinput_device_group *
+libinput_device_group_unref(struct libinput_device_group *group);
+
+/**
+ * @ingroup device
+ *
+ * Set caller-specific data associated with this device group. libinput does
+ * not manage, look at, or modify this data. The caller must ensure the
+ * data is valid.
+ *
+ * @param group A previously obtained device group
+ * @param user_data Caller-specific data pointer
+ * @see libinput_device_group_get_user_data
+ */
+void
+libinput_device_group_set_user_data(struct libinput_device_group *group,
+				    void *user_data);
+
+/**
+ * @ingroup device
+ *
+ * Get the caller-specific data associated with this input device group, if
+ * any.
+ *
+ * @param group A previously obtained group
+ * @return Caller-specific data pointer or NULL if none was set
+ * @see libinput_device_group_set_user_data
+ */
+void *
+libinput_device_group_get_user_data(struct libinput_device_group *group);
 
 /**
  * @defgroup config Device configuration

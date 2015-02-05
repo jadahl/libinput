@@ -1277,6 +1277,12 @@ libinput_device_get_context(struct libinput_device *device)
 	return libinput_seat_get_context(device->seat);
 }
 
+LIBINPUT_EXPORT struct libinput_device_group *
+libinput_device_get_device_group(struct libinput_device *device)
+{
+	return device->group;
+}
+
 LIBINPUT_EXPORT const char *
 libinput_device_get_sysname(struct libinput_device *device)
 {
@@ -1385,6 +1391,64 @@ LIBINPUT_EXPORT struct libinput_event *
 libinput_event_touch_get_base_event(struct libinput_event_touch *event)
 {
 	return &event->base;
+}
+
+LIBINPUT_EXPORT struct libinput_device_group *
+libinput_device_group_ref(struct libinput_device_group *group)
+{
+	group->refcount++;
+	return group;
+}
+
+struct libinput_device_group *
+libinput_device_group_create(void)
+{
+	struct libinput_device_group *group;
+
+	group = zalloc(sizeof *group);
+	if (group)
+		group->refcount = 1;
+	return group;
+}
+
+void
+libinput_device_set_device_group(struct libinput_device *device,
+				 struct libinput_device_group *group)
+{
+	device->group = group;
+	libinput_device_group_ref(group);
+}
+
+static void
+libinput_device_group_destroy(struct libinput_device_group *group)
+{
+	free(group);
+}
+
+LIBINPUT_EXPORT struct libinput_device_group *
+libinput_device_group_unref(struct libinput_device_group *group)
+{
+	assert(group->refcount > 0);
+	group->refcount--;
+	if (group->refcount == 0) {
+		libinput_device_group_destroy(group);
+		return NULL;
+	} else {
+		return group;
+	}
+}
+
+LIBINPUT_EXPORT void
+libinput_device_group_set_user_data(struct libinput_device_group *group,
+				    void *user_data)
+{
+	group->user_data = user_data;
+}
+
+LIBINPUT_EXPORT void *
+libinput_device_group_get_user_data(struct libinput_device_group *group)
+{
+	return group->user_data;
 }
 
 LIBINPUT_EXPORT const char *

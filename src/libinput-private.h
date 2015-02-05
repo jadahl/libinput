@@ -165,8 +165,14 @@ struct libinput_device_config {
 	struct libinput_device_config_click_method *click_method;
 };
 
+struct libinput_device_group {
+	int refcount;
+	void *user_data;
+};
+
 struct libinput_device {
 	struct libinput_seat *seat;
+	struct libinput_device_group *group;
 	struct list link;
 	struct list event_listeners;
 	void *user_data;
@@ -239,6 +245,13 @@ libinput_seat_init(struct libinput_seat *seat,
 void
 libinput_device_init(struct libinput_device *device,
 		     struct libinput_seat *seat);
+
+struct libinput_device_group *
+libinput_device_group_create(void);
+
+void
+libinput_device_set_device_group(struct libinput_device *device,
+				 struct libinput_device_group *group);
 
 void
 libinput_device_add_event_listener(struct libinput_device *device,

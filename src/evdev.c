@@ -1572,6 +1572,7 @@ evdev_device_create(struct libinput_seat *seat,
 	int fd;
 	int unhandled_device = 0;
 	const char *devnode = udev_device_get_devnode(udev_device);
+	struct libinput_device_group *group;
 
 	/* Use non-blocking mode so that we can loop on read on
 	 * evdev_device_data() until all events on the fd are
@@ -1641,6 +1642,12 @@ evdev_device_create(struct libinput_seat *seat,
 		libinput_add_fd(libinput, fd, evdev_device_dispatch, device);
 	if (!device->source)
 		goto err;
+
+	group = libinput_device_group_create();
+	if (!group)
+		goto err;
+	libinput_device_set_device_group(&device->base, group);
+	libinput_device_group_unref(group);
 
 	list_insert(seat->devices_list.prev, &device->base.link);
 
@@ -2122,6 +2129,9 @@ evdev_device_destroy(struct evdev_device *device)
 	dispatch = device->dispatch;
 	if (dispatch)
 		dispatch->interface->destroy(dispatch);
+
+	if (device->base.group)
+		libinput_device_group_unref(device->base.group);
 
 	filter_destroy(device->pointer.filter);
 	libinput_seat_unref(device->base.seat);
