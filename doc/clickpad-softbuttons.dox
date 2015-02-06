@@ -54,6 +54,13 @@ The movement of a finger can alter the button area behavior:
 - once a finger has moved out of the button area, it cannot move back in and
   trigger a right or middle button event
 
+On some touchpads, notably the 2015 Lenovo X1 Carbon 3rd series, the very
+bottom end of the touchpad is outside of the sensor range but it is possible
+to trigger a physical click there. To libinput, the click merely shows up as
+a left button click without any positional finger data and it is
+impossible to determine whether it is a left or a right click. libinput
+ignores such button clicks, this behavior is intentional.
+
 @section clickfinger Clickfinger behavior
 
 This is the default behavior on Apple touchpads.
