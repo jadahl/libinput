@@ -1421,9 +1421,9 @@ libinput_device_get_context(struct libinput_device *device);
  *
  * Get the device group this device is assigned to. Some physical
  * devices like graphics tablets are represented by multiple kernel
- * devices and thus by multiple struct libinput_device.
+ * devices and thus by multiple struct @ref libinput_device.
  *
- * libinput assigns these devices to the same libinput_device_group
+ * libinput assigns these devices to the same @ref libinput_device_group
  * allowing the caller to identify such devices and adjust configuration
  * settings accordingly. For example, setting a tablet to left-handed often
  * means turning it upside down. A touch device on the same tablet would
@@ -1434,6 +1434,33 @@ libinput_device_get_context(struct libinput_device *device);
  * LIBINPUT_EVENT_DEVICE_ADDED and removed from that group on @ref
  * LIBINPUT_EVENT_DEVICE_REMOVED. It is up to the caller to track how many
  * devices are in each device group.
+ *
+ * @dot
+ * digraph groups_libinput {
+ *   rankdir="TB";
+ *   node [
+ *     shape="box";
+ *   ]
+ *
+ *   mouse [ label="mouse"; URL="\ref libinput_device"];
+ *   kbd [ label="keyboard"; URL="\ref libinput_device"];
+ *
+ *   pen [ label="tablet pen"; URL="\ref libinput_device"];
+ *   touch [ label="tablet touch"; URL="\ref libinput_device"];
+ *   pad [ label="tablet pad"; URL="\ref libinput_device"];
+ *
+ *   group1 [ label="group 1"; URL="\ref libinput_device_group"];
+ *   group2 [ label="group 2"; URL="\ref libinput_device_group"];
+ *   group3 [ label="group 3"; URL="\ref libinput_device_group"];
+ *
+ *   mouse -> group1
+ *   kbd -> group2
+ *
+ *   pen -> group3;
+ *   touch -> group3;
+ *   pad -> group3;
+ * }
+ * @enddot
  *
  * Device groups do not get re-used once the last device in the group was
  * removed, i.e. unplugging and re-plugging a physical device with grouped
