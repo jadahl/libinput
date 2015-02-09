@@ -12,6 +12,11 @@ The following udev properties are supported:
 <dd>Sets the calibration matrix, see
 libinput_device_config_calibration_get_default_matrix(). If unset,
 defaults to the identity matrix.</dd>
+<dt>LIBINPUT_DEVICE_GROUP</dt>
+<dd>A string identifying the @ref libinput_device_group for this device. Two
+devices with the same property value are grouped into the same device group,
+the value itself is irrelevant otherwise.
+</dd>
 <dt>ID_SEAT</dt>
 <dd>Assigns the physical seat for this device. See
 libinput_seat_get_physical_name(). Defaults to "seat0".</dd>

@@ -1471,6 +1471,9 @@ libinput_device_get_context(struct libinput_device *device);
  * libinput_device_group_unref() to continue using the handle outside of the
  * immediate scope.
  *
+ * Device groups are assigned based on the <b>LIBINPUT_DEVICE_GROUP</b> udev
+ * property, see @ref udev_config.
+ *
  * @return The device group this device belongs to
  */
 struct libinput_device_group *

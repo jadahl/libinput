@@ -1407,13 +1407,23 @@ libinput_device_group_ref(struct libinput_device_group *group)
 }
 
 struct libinput_device_group *
-libinput_device_group_create(void)
+libinput_device_group_create(const char *identifier)
 {
 	struct libinput_device_group *group;
 
 	group = zalloc(sizeof *group);
-	if (group)
-		group->refcount = 1;
+	if (!group)
+		return NULL;
+
+	group->refcount = 1;
+	if (identifier) {
+		group->identifier = strdup(identifier);
+		if (!group->identifier) {
+			free(group);
+			group = NULL;
+		}
+	}
+
 	return group;
 }
 
@@ -1428,6 +1438,7 @@ libinput_device_set_device_group(struct libinput_device *device,
 static void
 libinput_device_group_destroy(struct libinput_device_group *group)
 {
+	free(group->identifier);
 	free(group);
 }
 
