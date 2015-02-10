@@ -69,6 +69,19 @@ fi
 AC_SUBST(GCC_CFLAGS)
 AC_SUBST(GCC_CXXFLAGS)
 
+udev_dir_default="$libdir/udev"
+AC_ARG_WITH(udev-dir,
+            AS_HELP_STRING([--with-udev-dir=DIR],
+                           [udev base directory [[default=$udev_dir_default]]]),
+            [],
+            [with_udev_dir="yes"])
+AS_CASE($with_udev_dir,
+	[no|""], [AC_MSG_ERROR([You must define a udev base directory])],
+	[yes], [udevdir="$udev_dir_default"],
+	[udevdir="$with_udev_dir"])
+UDEV_DIR=${udevdir}
+AC_SUBST(UDEV_DIR)
+
 AC_ARG_ENABLE([documentation],
 	      [AC_HELP_STRING([--enable-documentation],
 		              [Enable building the documentation (default=auto)])],
@@ -163,14 +176,15 @@ AC_CONFIG_FILES([Makefile
 		 src/libinput.pc
 		 src/libinput-version.h
 		 test/Makefile
-		 tools/Makefile])
+		 tools/Makefile
+		 udev/Makefile])
 AC_CONFIG_FILES([test/symbols-leak-test],
 		[chmod +x test/symbols-leak-test])
-
 AC_OUTPUT
 
 AC_MSG_RESULT([
 	Prefix			${prefix}
+	udev base dir		${UDEV_DIR}
 
 	Build documentation	${build_documentation}
 	Build tests		${build_tests}
