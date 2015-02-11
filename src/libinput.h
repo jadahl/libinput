@@ -730,11 +730,11 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event,
  * The coordinate system is identical to the cursor movement, i.e. a
  * scroll value of 1 represents the equivalent relative motion of 1.
  *
- * For pointer events that are not of type LIBINPUT_EVENT_POINTER_AXIS,
+ * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
  * this function returns 0.
  *
  * @note It is an application bug to call this function for events other than
- * LIBINPUT_EVENT_POINTER_AXIS.
+ * @ref LIBINPUT_EVENT_POINTER_AXIS.
  *
  * @return the source for this axis event
  */
