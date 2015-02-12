@@ -164,6 +164,9 @@ AC_CONFIG_FILES([Makefile
 		 src/libinput-version.h
 		 test/Makefile
 		 tools/Makefile])
+AC_CONFIG_FILES([test/symbols-leak-test],
+		[chmod +x test/symbols-leak-test])
+
 AC_OUTPUT
 
 AC_MSG_RESULT([

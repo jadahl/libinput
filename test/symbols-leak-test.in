@@ -1,0 +1,17 @@
+#!/bin/bash
+
+### simple check for exported symbols
+
+# make bash exit if any command will exit with non-0 return value
+set -e
+
+# make sure the paths are alright
+cd `dirname $0`
+
+diff -a -u \
+	<(cat @top_srcdir@/src/libinput.sym | \
+		grep '^\s\+libinput_.*' | \
+		sed -e 's/^\s\+\(.*\);/\1/' |  sort) \
+	<(cat @top_srcdir@/src/*.c | \
+		grep LIBINPUT_EXPORT -A 1 | grep '^libinput_.*' | \
+		sed -e 's/(.*//' | sort)
