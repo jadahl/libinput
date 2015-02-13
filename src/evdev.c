@@ -1356,16 +1356,23 @@ evdev_device_get_udev_tags(struct evdev_device *device,
 {
 	const char *prop;
 	enum evdev_device_udev_tags tags = 0;
-	const struct evdev_udev_tag_match *match = evdev_udev_tag_matches;
+	const struct evdev_udev_tag_match *match;
+	int i;
 
-	while (match->name) {
-		prop = udev_device_get_property_value(device->udev_device,
+	for (i = 0; i < 2 && udev_device; i++) {
+		match = evdev_udev_tag_matches;
+		while (match->name) {
+			prop = udev_device_get_property_value(
+						      udev_device,
 						      match->name);
-		if (prop)
-			tags |= match->tag;
+			if (prop)
+				tags |= match->tag;
 
-		match++;
+			match++;
+		}
+		udev_device = udev_device_get_parent(udev_device);
 	}
+
 	return tags;
 }
 
