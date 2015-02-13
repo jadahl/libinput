@@ -1661,7 +1661,15 @@ libinput_device_get_size(struct libinput_device *device,
  * on error.
  */
 int
-libinput_device_has_button(struct libinput_device *device, uint32_t code);
+libinput_device_pointer_has_button(struct libinput_device *device, uint32_t code);
+
+/**
+ * @ingroup device
+ *
+ * @deprecated Use libinput_device_pointer_has_button() instead.
+ */
+int
+libinput_device_has_button(struct libinput_device *device, uint32_t code) LIBINPUT_ATTRIBUTE_DEPRECATED;
 
 /**
  * @ingroup device

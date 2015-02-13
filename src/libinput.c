@@ -1364,9 +1364,15 @@ libinput_device_get_size(struct libinput_device *device,
 }
 
 LIBINPUT_EXPORT int
-libinput_device_has_button(struct libinput_device *device, uint32_t code)
+libinput_device_pointer_has_button(struct libinput_device *device, uint32_t code)
 {
 	return evdev_device_has_button((struct evdev_device *)device, code);
+}
+
+LIBINPUT_EXPORT int
+libinput_device_has_button(struct libinput_device *device, uint32_t code)
+{
+	return libinput_device_pointer_has_button(device, code);
 }
 
 LIBINPUT_EXPORT struct libinput_event *
@@ -1805,7 +1811,7 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_scroll_set_button(struct libinput_device *device,
 					 uint32_t button)
 {
-	if (button && !libinput_device_has_button(device, button))
+	if (button && !libinput_device_pointer_has_button(device, button))
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 
 	if ((libinput_device_config_scroll_get_methods(device) &
