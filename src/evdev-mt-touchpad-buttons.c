@@ -156,7 +156,6 @@ tp_button_set_state(struct tp_dispatch *tp, struct tp_touch *t,
 		break;
 	case BUTTON_STATE_AREA:
 		t->button.curr = BUTTON_EVENT_IN_AREA;
-		tp_set_pointer(tp, t);
 		break;
 	case BUTTON_STATE_BOTTOM:
 		t->button.curr = event;

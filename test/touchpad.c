@@ -1871,6 +1871,9 @@ START_TEST(touchpad_2fg_scroll_return_to_motion)
 	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
 	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
 	litest_touch_up(dev, 1);
+	libinput_dispatch(li);
+	litest_timeout_finger_switch();
+	libinput_dispatch(li);
 	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	litest_touch_move_to(dev, 0, 47, 70, 47, 50, 10, 0);
@@ -1881,6 +1884,9 @@ START_TEST(touchpad_2fg_scroll_return_to_motion)
 	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
 	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
 	litest_touch_up(dev, 0);
+	libinput_dispatch(li);
+	litest_timeout_finger_switch();
+	libinput_dispatch(li);
 	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	/* move with second finger */

@@ -227,7 +227,6 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	}
 
 	t->dirty = true;
-	t->is_pointer = false;
 	t->palm.is_palm = false;
 	t->state = TOUCH_END;
 	t->pinned.is_pinned = false;
@@ -424,7 +423,6 @@ tp_unpin_finger(struct tp_dispatch *tp, struct tp_touch *t)
 	if (xdist * xdist + ydist * ydist >=
 			tp->buttons.motion_dist * tp->buttons.motion_dist) {
 		t->pinned.is_pinned = false;
-		tp_set_pointer(tp, t);
 		return;
 	}
 
@@ -439,14 +437,13 @@ tp_pin_fingers(struct tp_dispatch *tp)
 	struct tp_touch *t;
 
 	tp_for_each_touch(tp, t) {
-		t->is_pointer = false;
 		t->pinned.is_pinned = true;
 		t->pinned.center_x = t->x;
 		t->pinned.center_y = t->y;
 	}
 }
 
-static int
+int
 tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 {
 	return (t->state == TOUCH_BEGIN || t->state == TOUCH_UPDATE) &&
@@ -454,21 +451,6 @@ tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 		!t->pinned.is_pinned &&
 		tp_button_touch_active(tp, t) &&
 		tp_edge_scroll_touch_active(tp, t);
-}
-
-void
-tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t)
-{
-	struct tp_touch *tmp = NULL;
-
-	/* Only set the touch as pointer if we don't have one yet */
-	tp_for_each_touch(tp, tmp) {
-		if (tmp->is_pointer)
-			return;
-	}
-
-	if (tp_touch_active(tp, t))
-		t->is_pointer = true;
 }
 
 static void
@@ -487,7 +469,6 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 			int dirs = vector_get_direction(t->x - t->palm.x, t->y - t->palm.y);
 			if ((dirs & DIRECTIONS) && !(dirs & ~DIRECTIONS)) {
 				t->palm.is_palm = false;
-				tp_set_pointer(tp, t);
 			}
 		}
 		return;
@@ -530,8 +511,6 @@ tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 			*dx += tmpx;
 			*dy += tmpy;
 		}
-		/* Stop spurious MOTION events at the end of scrolling */
-		t->is_pointer = false;
 	}
 
 	if (nchanged == 0)
@@ -541,80 +520,30 @@ tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 	*dy /= nchanged;
 }
 
-static void
-tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+void
+tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 {
 	double dx = 0, dy =0;
 
 	tp_get_average_touches_delta(tp, &dx, &dy);
 	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
+	if (dx == 0.0 && dy == 0.0)
+		return;	
+
+	tp_gesture_start(tp, time);
 	evdev_post_scroll(tp->device,
 			  time,
 			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
 			  dx, dy);
-	tp->scroll.twofinger_state = TWOFINGER_SCROLL_STATE_ACTIVE;
 }
 
-static void
-tp_twofinger_stop_scroll(struct tp_dispatch *tp, uint64_t time)
+void
+tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 {
-	struct tp_touch *t, *ptr = NULL;
-	int nfingers_down = 0;
-
 	evdev_stop_scroll(tp->device,
 			  time,
 			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
-
-	/* If we were scrolling and now there's exactly 1 active finger,
-	   switch back to pointer movement */
-	if (tp->scroll.twofinger_state == TWOFINGER_SCROLL_STATE_ACTIVE) {
-		tp_for_each_touch(tp, t) {
-			if (tp_touch_active(tp, t)) {
-				nfingers_down++;
-				if (ptr == NULL)
-					ptr = t;
-			}
-		}
-
-		if (nfingers_down == 1)
-			tp_set_pointer(tp, ptr);
-	}
-
-	tp->scroll.twofinger_state = TWOFINGER_SCROLL_STATE_NONE;
-}
-
-static int
-tp_twofinger_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
-{
-	struct tp_touch *t;
-	int nfingers_down = 0;
-
-	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
-		return 0;
-
-	/* No 2fg scrolling during tap-n-drag */
-	if (tp_tap_dragging(tp))
-		return 0;
-
-	/* No 2fg scrolling while a clickpad is clicked */
-	if (tp->buttons.is_clickpad && tp->buttons.state)
-		return 0;
-
-	/* Only count active touches for 2 finger scrolling */
-	tp_for_each_touch(tp, t) {
-		if (tp_touch_active(tp, t))
-			nfingers_down++;
-	}
-
-	if (nfingers_down == 2) {
-		tp_post_twofinger_scroll(tp, time);
-		return 1;
-	}
-
-	tp_twofinger_stop_scroll(tp, time);
-
-	return 0;
 }
 
 static void
@@ -718,6 +647,8 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 	if ((tp->queued & TOUCHPAD_EVENT_BUTTON_PRESS) &&
 	    tp->buttons.is_clickpad)
 		tp_pin_fingers(tp);
+
+	tp_gesture_handle_state(tp, time);
 }
 
 static void
@@ -749,24 +680,6 @@ tp_post_process_state(struct tp_dispatch *tp, uint64_t time)
 }
 
 static void
-tp_get_pointer_delta(struct tp_dispatch *tp, double *dx, double *dy)
-{
-	struct tp_touch *t = tp_current_touch(tp);
-
-	if (!t->is_pointer) {
-		tp_for_each_touch(tp, t) {
-			if (t->is_pointer)
-				break;
-		}
-	}
-
-	if (!t->is_pointer || !t->dirty)
-		return;
-
-	tp_get_delta(t, dx, dy);
-}
-
-static void
 tp_get_combined_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
 	struct tp_touch *t;
@@ -785,8 +698,8 @@ tp_get_combined_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 	}
 }
 
-static void
-tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
+void
+tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 {
 	double dx = 0.0, dy = 0.0;
 	double dx_unaccel, dy_unaccel;
@@ -795,7 +708,7 @@ tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 	if (tp->buttons.is_clickpad && tp->buttons.state)
 		tp_get_combined_touches_delta(tp, &dx, &dy);
 	else
-		tp_get_pointer_delta(tp, &dx, &dy);
+		tp_get_average_touches_delta(tp, &dx, &dy);
 
 	tp_filter_motion(tp, &dx, &dy, &dx_unaccel, &dy_unaccel, time);
 
@@ -821,16 +734,14 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 
 	if (filter_motion || tp->sendevents.trackpoint_active) {
 		tp_edge_scroll_stop_events(tp, time);
-		tp_twofinger_stop_scroll(tp, time);
+		tp_gesture_stop(tp, time);
 		return;
 	}
 
 	if (tp_edge_scroll_post_events(tp, time) != 0)
 		return;
-	if (tp_twofinger_scroll_post_events(tp, time) != 0)
-		return;
 
-	tp_post_pointer_motion(tp, time);
+	tp_gesture_post_events(tp, time);
 }
 
 static void
@@ -887,6 +798,7 @@ tp_remove(struct evdev_dispatch *dispatch)
 	tp_remove_buttons(tp);
 	tp_remove_sendevents(tp);
 	tp_remove_edge_scroll(tp);
+	tp_remove_gesture(tp);
 }
 
 static void
@@ -979,7 +891,7 @@ tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
 
 	if (!tp->sendevents.trackpoint_active) {
 		tp_edge_scroll_stop_events(tp, time);
-		tp_twofinger_stop_scroll(tp, time);
+		tp_gesture_stop(tp, time);
 		tp_tap_suspend(tp, time);
 		tp->sendevents.trackpoint_active = true;
 	}
@@ -1220,7 +1132,7 @@ tp_scroll_config_scroll_method_set_method(struct libinput_device *device,
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
 
 	tp_edge_scroll_stop_events(tp, time);
-	tp_twofinger_stop_scroll(tp, time);
+	tp_gesture_stop_twofinger_scroll(tp, time);
 
 	tp->scroll.method = method;
 
@@ -1356,6 +1268,9 @@ tp_init(struct tp_dispatch *tp,
 		return -1;
 
 	if (tp_init_scroll(tp, device) != 0)
+		return -1;
+
+	if (tp_init_gesture(tp) != 0)
 		return -1;
 
 	device->seat_caps |= EVDEV_DEVICE_POINTER;

@@ -180,6 +180,7 @@ struct libevdev_uinput * litest_create_uinput_abs_device(const char *name,
 void litest_timeout_tap(void);
 void litest_timeout_softbuttons(void);
 void litest_timeout_buttonscroll(void);
+void litest_timeout_finger_switch(void);
 
 void litest_push_event_frame(struct litest_device *dev);
 void litest_pop_event_frame(struct litest_device *dev);

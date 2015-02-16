@@ -117,11 +117,6 @@ enum tp_edge_scroll_touch_state {
 	EDGE_SCROLL_TOUCH_STATE_AREA,
 };
 
-enum tp_twofinger_scroll_state {
-	TWOFINGER_SCROLL_STATE_NONE,
-	TWOFINGER_SCROLL_STATE_ACTIVE,
-};
-
 struct tp_motion {
 	int32_t x;
 	int32_t y;
@@ -132,7 +127,6 @@ struct tp_touch {
 	enum touch_state state;
 	bool has_ended;				/* TRACKING_ID == -1 */
 	bool dirty;
-	bool is_pointer;			/* the pointer-controlling touch */
 	int32_t x;
 	int32_t y;
 	uint64_t millis;
@@ -216,6 +210,13 @@ struct tp_dispatch {
 	} accel;
 
 	struct {
+		bool started;
+		unsigned int finger_count;
+		unsigned int finger_count_pending;
+		struct libinput_timer finger_count_switch_timer;
+	} gesture;
+
+	struct {
 		bool is_clickpad;		/* true for clickpads */
 		bool has_topbuttons;
 		bool use_clickfinger;		/* number of fingers decides button number */
@@ -252,7 +253,6 @@ struct tp_dispatch {
 		enum libinput_config_scroll_method method;
 		int32_t right_edge;
 		int32_t bottom_edge;
-		enum tp_twofinger_scroll_state twofinger_state;
 	} scroll;
 
 	enum touchpad_event queued;
@@ -287,13 +287,13 @@ void
 tp_get_delta(struct tp_touch *t, double *dx, double *dy);
 
 void
-tp_set_pointer(struct tp_dispatch *tp, struct tp_touch *t);
-
-void
 tp_filter_motion(struct tp_dispatch *tp,
 	         double *dx, double *dy,
 	         double *dx_unaccel, double *dy_unaccel,
 		 uint64_t time);
+
+int
+tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
 
 int
 tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time);
@@ -366,5 +366,32 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time);
 
 int
 tp_edge_scroll_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
+
+int
+tp_init_gesture(struct tp_dispatch *tp);
+
+void
+tp_remove_gesture(struct tp_dispatch *tp);
+
+void
+tp_gesture_start(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_stop(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_handle_state(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_post_events(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time);
+
+void
+tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time);
 
 #endif

@@ -86,7 +86,6 @@ tp_edge_scroll_set_state(struct tp_dispatch *tp,
 		break;
 	case EDGE_SCROLL_TOUCH_STATE_AREA:
 		t->scroll.edge = EDGE_NONE;
-		tp_set_pointer(tp, t);
 		break;
 	}
 }
