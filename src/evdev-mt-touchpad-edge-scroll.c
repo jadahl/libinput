@@ -317,6 +317,9 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 	enum libinput_pointer_axis axis;
 	double dx, dy, *delta;
 
+	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_EDGE)
+		return 0;
+
 	tp_for_each_touch(tp, t) {
 		if (!t->dirty)
 			continue;
