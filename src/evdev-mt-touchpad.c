@@ -513,20 +513,22 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 }
 
 static void
-tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
 	struct tp_touch *t;
 	int nchanged = 0;
-	double dx = 0, dy =0;
 	double tmpx, tmpy;
+
+	*dx = 0.0;
+	*dy = 0.0;
 
 	tp_for_each_touch(tp, t) {
 		if (tp_touch_active(tp, t) && t->dirty) {
 			nchanged++;
 			tp_get_delta(t, &tmpx, &tmpy);
 
-			dx += tmpx;
-			dy += tmpy;
+			*dx += tmpx;
+			*dy += tmpy;
 		}
 		/* Stop spurious MOTION events at the end of scrolling */
 		t->is_pointer = false;
@@ -535,9 +537,16 @@ tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	if (nchanged == 0)
 		return;
 
-	dx /= nchanged;
-	dy /= nchanged;
+	*dx /= nchanged;
+	*dy /= nchanged;
+}
 
+static void
+tp_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+{
+	double dx = 0, dy =0;
+
+	tp_get_average_touches_delta(tp, &dx, &dy);
 	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
 	evdev_post_scroll(tp->device,
@@ -758,7 +767,7 @@ tp_get_pointer_delta(struct tp_dispatch *tp, double *dx, double *dy)
 }
 
 static void
-tp_get_active_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+tp_get_combined_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
 	struct tp_touch *t;
 	double tdx, tdy;
@@ -784,7 +793,7 @@ tp_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 
 	/* When a clickpad is clicked, combine motion of all active touches */
 	if (tp->buttons.is_clickpad && tp->buttons.state)
-		tp_get_active_touches_delta(tp, &dx, &dy);
+		tp_get_combined_touches_delta(tp, &dx, &dy);
 	else
 		tp_get_pointer_delta(tp, &dx, &dy);
 
