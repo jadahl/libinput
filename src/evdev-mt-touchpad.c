@@ -969,9 +969,8 @@ tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
 		return;
 
 	if (!tp->sendevents.trackpoint_active) {
-		evdev_stop_scroll(tp->device,
-				  time,
-				  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
+		tp_edge_scroll_stop_events(tp, time);
+		tp_twofinger_stop_scroll(tp, time);
 		tp_tap_suspend(tp, time);
 		tp->sendevents.trackpoint_active = true;
 	}
