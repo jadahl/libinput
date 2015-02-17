@@ -374,9 +374,6 @@ void
 tp_remove_gesture(struct tp_dispatch *tp);
 
 void
-tp_gesture_start(struct tp_dispatch *tp, uint64_t time);
-
-void
 tp_gesture_stop(struct tp_dispatch *tp, uint64_t time);
 
 void
@@ -386,12 +383,6 @@ void
 tp_gesture_post_events(struct tp_dispatch *tp, uint64_t time);
 
 void
-tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time);
-
-void
 tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time);
-
-void
-tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time);
 
 #endif

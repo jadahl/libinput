@@ -31,7 +31,53 @@
 
 #define DEFAULT_GESTURE_SWITCH_TIMEOUT 100 /* ms */
 
-void
+static void
+tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+{
+	struct tp_touch *t;
+	int nchanged = 0;
+	double tmpx, tmpy;
+
+	*dx = 0.0;
+	*dy = 0.0;
+
+	tp_for_each_touch(tp, t) {
+		if (tp_touch_active(tp, t) && t->dirty) {
+			nchanged++;
+			tp_get_delta(t, &tmpx, &tmpy);
+
+			*dx += tmpx;
+			*dy += tmpy;
+		}
+	}
+
+	if (nchanged == 0)
+		return;
+
+	*dx /= nchanged;
+	*dy /= nchanged;
+}
+
+static void
+tp_get_combined_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+{
+	struct tp_touch *t;
+	double tdx, tdy;
+	unsigned int i;
+
+	for (i = 0; i < tp->real_touches; i++) {
+		t = &tp->touches[i];
+
+		if (!tp_touch_active(tp, t) || !t->dirty)
+			continue;
+
+		tp_get_delta(t, &tdx, &tdy);
+		*dx += tdx;
+		*dy += tdy;
+	}
+}
+
+static void
 tp_gesture_start(struct tp_dispatch *tp, uint64_t time)
 {
 	if (tp->gesture.started)
@@ -43,6 +89,44 @@ tp_gesture_start(struct tp_dispatch *tp, uint64_t time)
 		break;
 	}
 	tp->gesture.started = true;
+}
+
+static void
+tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
+{
+	double dx = 0.0, dy = 0.0;
+	double dx_unaccel, dy_unaccel;
+
+	/* When a clickpad is clicked, combine motion of all active touches */
+	if (tp->buttons.is_clickpad && tp->buttons.state)
+		tp_get_combined_touches_delta(tp, &dx, &dy);
+	else
+		tp_get_average_touches_delta(tp, &dx, &dy);
+
+	tp_filter_motion(tp, &dx, &dy, &dx_unaccel, &dy_unaccel, time);
+
+	if (dx != 0.0 || dy != 0.0 || dx_unaccel != 0.0 || dy_unaccel != 0.0) {
+		pointer_notify_motion(&tp->device->base, time,
+				      dx, dy, dx_unaccel, dy_unaccel);
+	}
+}
+
+static void
+tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+{
+	double dx = 0, dy =0;
+
+	tp_get_average_touches_delta(tp, &dx, &dy);
+	tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
+
+	if (dx == 0.0 && dy == 0.0)
+		return;
+
+	tp_gesture_start(tp, time);
+	evdev_post_scroll(tp->device,
+			  time,
+			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
+			  dx, dy);
 }
 
 void
@@ -70,6 +154,14 @@ tp_gesture_post_events(struct tp_dispatch *tp, uint64_t time)
 		tp_gesture_post_twofinger_scroll(tp, time);
 		break;
 	}
+}
+
+void
+tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
+{
+	evdev_stop_scroll(tp->device,
+			  time,
+			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);
 }
 
 void
