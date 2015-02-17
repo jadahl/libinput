@@ -35,13 +35,15 @@ static void
 tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
 	struct tp_touch *t;
-	int nchanged = 0;
+	unsigned int i, nchanged = 0;
 	double tmpx, tmpy;
 
 	*dx = 0.0;
 	*dy = 0.0;
 
-	tp_for_each_touch(tp, t) {
+	for (i = 0; i < tp->real_touches; i++) {
+		t = &tp->touches[i];
+
 		if (tp_touch_active(tp, t) && t->dirty) {
 			nchanged++;
 			tp_get_delta(t, &tmpx, &tmpy);
