@@ -32,7 +32,7 @@
 #define DEFAULT_GESTURE_SWITCH_TIMEOUT 100 /* ms */
 
 static void
-tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+tp_get_touches_delta(struct tp_dispatch *tp, double *dx, double *dy, bool average)
 {
 	struct tp_touch *t;
 	unsigned int i, nchanged = 0;
@@ -53,30 +53,23 @@ tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 		}
 	}
 
-	if (nchanged == 0)
+	if (!average || nchanged == 0)
 		return;
 
 	*dx /= nchanged;
 	*dy /= nchanged;
 }
 
-static void
+static inline void
 tp_get_combined_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
 {
-	struct tp_touch *t;
-	double tdx, tdy;
-	unsigned int i;
+	tp_get_touches_delta(tp, dx, dy, false);
+}
 
-	for (i = 0; i < tp->real_touches; i++) {
-		t = &tp->touches[i];
-
-		if (!tp_touch_active(tp, t) || !t->dirty)
-			continue;
-
-		tp_get_delta(t, &tdx, &tdy);
-		*dx += tdx;
-		*dy += tdy;
-	}
+static inline void
+tp_get_average_touches_delta(struct tp_dispatch *tp, double *dx, double *dy)
+{
+	tp_get_touches_delta(tp, dx, dy, true);
 }
 
 static void
