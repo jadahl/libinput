@@ -158,6 +158,8 @@ udev_input_add_devices(struct udev_input *input, struct udev *udev)
 	udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(e)) {
 		path = udev_list_entry_get_name(entry);
 		device = udev_device_new_from_syspath(udev, path);
+		if (!device)
+			continue;
 
 		sysname = udev_device_get_sysname(device);
 		if (strncmp("event", sysname, 5) != 0) {
