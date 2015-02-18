@@ -184,6 +184,7 @@ litest_add_tcase_for_device(struct suite *suite,
 	}
 
 	t = zalloc(sizeof(*t));
+	assert(t != NULL);
 	t->name = strdup(test_name);
 	t->tc = tcase_create(test_name);
 	list_insert(&suite->tests, &t->node);
@@ -215,6 +216,7 @@ litest_add_tcase_no_device(struct suite *suite, void *func)
 	}
 
 	t = zalloc(sizeof(*t));
+	assert(t != NULL);
 	t->name = strdup(test_name);
 	t->tc = tcase_create(test_name);
 	list_insert(&suite->tests, &t->node);
@@ -270,6 +272,7 @@ get_suite(const char *name)
 	}
 
 	s = zalloc(sizeof(*s));
+	assert(s != NULL);
 	s->name = strdup(name);
 	s->suite = suite_create(s->name);
 
@@ -808,7 +811,8 @@ litest_touch_down(struct litest_device *d, unsigned int slot,
 {
 	struct input_event *ev;
 
-	assert(++d->ntouches_down > 0);
+	assert(d->ntouches_down >= 0);
+	d->ntouches_down++;
 
 	send_btntool(d);
 
@@ -836,7 +840,8 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		{ .type = -1, .code = -1 }
 	};
 
-	assert(--d->ntouches_down >= 0);
+	assert(d->ntouches_down > 0);
+	d->ntouches_down--;
 
 	send_btntool(d);
 

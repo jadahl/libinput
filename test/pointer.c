@@ -470,7 +470,7 @@ START_TEST(pointer_seat_button_count)
 	struct libinput_event *ev;
 	struct libinput_event_pointer *tev;
 	int i;
-	int seat_button_count;
+	int seat_button_count = 0;
 	int expected_seat_button_count = 0;
 	char device_name[255];
 

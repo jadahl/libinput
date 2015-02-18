@@ -36,7 +36,7 @@ START_TEST(keyboard_seat_key_count)
 	struct libinput_event *ev;
 	struct libinput_event_keyboard *kev;
 	int i;
-	int seat_key_count;
+	int seat_key_count = 0;
 	int expected_key_button_count = 0;
 	char device_name[255];
 
