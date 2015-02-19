@@ -189,7 +189,6 @@ START_TEST(device_disable_touchpad)
 	litest_touch_move_to(dev, 0, 50, 50, 90, 90, 10, 0);
 	litest_touch_up(dev, 0);
 
-
 	litest_assert_empty_queue(li);
 
 	/* no event from resuming */
@@ -518,7 +517,6 @@ START_TEST(device_disable_release_tap_n_drag)
 	litest_assert_empty_queue(li);
 }
 END_TEST
-
 
 START_TEST(device_disable_release_softbutton)
 {

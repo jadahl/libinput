@@ -1603,7 +1603,6 @@ libinput_device_config_send_events_get_default_mode(struct libinput_device *devi
 	return LIBINPUT_CONFIG_SEND_EVENTS_ENABLED;
 }
 
-
 LIBINPUT_EXPORT int
 libinput_device_config_accel_is_available(struct libinput_device *device)
 {

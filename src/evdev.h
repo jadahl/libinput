@@ -306,7 +306,6 @@ evdev_post_scroll(struct evdev_device *device,
 		  double dx,
 		  double dy);
 
-
 void
 evdev_stop_scroll(struct evdev_device *device,
 		  uint64_t time,

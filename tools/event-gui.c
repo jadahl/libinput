@@ -254,7 +254,6 @@ change_ptraccel(struct window *w, double amount)
 	}
 }
 
-
 static void
 handle_event_device_notify(struct libinput_event *ev)
 {
