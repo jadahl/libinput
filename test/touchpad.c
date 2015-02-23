@@ -791,7 +791,6 @@ START_TEST(touchpad_click_defaults_none)
 }
 END_TEST
 
-
 START_TEST(touchpad_1fg_clickfinger)
 {
 	struct litest_device *dev = litest_current_device();
@@ -928,7 +927,6 @@ START_TEST(touchpad_clickfinger_to_area_method_while_down)
 
 	litest_assert_button_event(li, BTN_RIGHT,
 				   LIBINPUT_BUTTON_STATE_RELEASED);
-
 
 	litest_drain_events(li);
 
@@ -1742,7 +1740,6 @@ START_TEST(clickpad_topsoftbuttons_clickfinger_dev_disabled)
 }
 END_TEST
 
-
 static void
 test_2fg_scroll(struct litest_device *dev, double dx, double dy, int want_sleep)
 {
@@ -2490,7 +2487,6 @@ START_TEST(touchpad_left_handed_delayed)
 	struct libinput *li = dev->libinput;
 	enum libinput_config_status status;
 
-
 	litest_drain_events(li);
 	litest_button_click(dev, BTN_LEFT, 1);
 	libinput_dispatch(li);
@@ -2982,7 +2978,6 @@ assert_btnevent_from_device(struct litest_device *device,
 			 state);
 	libinput_event_destroy(e);
 }
-
 
 START_TEST(touchpad_trackpoint_buttons)
 {

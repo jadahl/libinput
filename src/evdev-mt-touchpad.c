@@ -934,7 +934,6 @@ tp_destroy(struct evdev_dispatch *dispatch)
 	struct tp_dispatch *tp =
 		(struct tp_dispatch*)dispatch;
 
-
 	free(tp->touches);
 	free(tp);
 }
