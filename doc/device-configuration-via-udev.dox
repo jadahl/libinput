@@ -20,6 +20,16 @@ the value itself is irrelevant otherwise.
 <dt>ID_SEAT</dt>
 <dd>Assigns the physical seat for this device. See
 libinput_seat_get_physical_name(). Defaults to "seat0".</dd>
+<dt>ID_INPUT</dt>
+<dd>If this property is set, the device is considered an input device. Any
+device with this property missing will be ignored, see @ref
+udev_device_type.</dt>
+</dd>
+<dt>ID_INPUT_KEYBOARD, ID_INPUT_KEY, ID_INPUT_MOUSE, ID_INPUT_TOUCHPAD,
+ID_INPUT_TOUCHSCREEN, ID_INPUT_TABLET, ID_INPUT_JOYSTICK,
+ID_INPUT_ACCELEROMETER</dt>
+<dd>If any of the above is set, libinput initializes the device as the given
+type, see @ref udev_device_type.</dd>
 <dt>WL_SEAT</dt>
 <dd>Assigns the logical seat for this device. See
 libinput_seat_get_logical_name()
@@ -39,6 +49,31 @@ Below is an example udev rule to assign "seat1" to a device from vendor
 @code
 ACTION=="add|change", KERNEL=="event[0-9]*", ENV{ID_VENDOR_ID}=="012a", \
 ENV{ID_MODEL_ID}=="034b", ENV{ID_SEAT}="seat1"
+@endcode
+
+
+@section udev_device_type Device type assignment via udev
+
+libinput requires the <b>ID_INPUT</b> property to be set on a device,
+otherwise the device will be ignored. In addition, one of <b>
+ID_INPUT_KEYBOARD, ID_INPUT_KEY, ID_INPUT_MOUSE, ID_INPUT_TOUCHPAD,
+ID_INPUT_TOUCHSCREEN, ID_INPUT_TABLET, ID_INPUT_JOYSTICK,
+ID_INPUT_ACCELEROMETER</b> must be set on the device to determine the
+device type. The usual error handling applies within libinput and a device
+type label does not guarantee that the device is initialized by libinput.
+If a device fails to meet the requirements for a device type (e.g. a keyboard
+labelled as touchpad) the device will not be available through libinput.
+
+Only one device type should be set per device at a type, though libinput can
+handle some combinations for historical reasons.
+
+Below is an example udev rule  to remove an <b>ID_INPUT_TOUCHPAD</b> setting
+and change it into an <b>ID_INPUT_TABLET</b> setting. This rule would apply
+for a device with the vendor/model ID of 012a/034b.
+
+@code
+ACTION=="add|change", KERNEL=="event[0-9]*", ENV{ID_VENDOR_ID}=="012a", \
+ENV{ID_MODEL_ID}=="034b", ENV{ID_INPUT_TOUCHPAD}="", ENV{ID_INPUT_TABLET}="1"
 @endcode
 
 */
