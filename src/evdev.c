@@ -524,6 +524,14 @@ evdev_process_touch(struct evdev_device *device,
 {
 	switch (e->code) {
 	case ABS_MT_SLOT:
+		if ((size_t)e->value >= device->mt.slots_len) {
+			log_bug_libinput(device->base.seat->libinput,
+					 "%s exceeds slots (%d of %d)\n",
+					 device->devname,
+					 e->value,
+					 device->mt.slots_len);
+			e->value = device->mt.slots_len - 1;
+		}
 		evdev_flush_pending_event(device, time);
 		device->mt.slot = e->value;
 		break;
@@ -1467,10 +1475,9 @@ evdev_configure_device(struct evdev_device *device)
 				if (!device->mtdev)
 					return -1;
 
-				num_slots = device->mtdev->caps.slot.maximum;
-				if (device->mtdev->caps.slot.minimum < 0 ||
-				    num_slots <= 0)
-					return -1;
+				/* pick 10 slots as default for type A
+				   devices. */
+				num_slots = 10;
 				active_slot = device->mtdev->caps.slot.value;
 			} else {
 				num_slots = libevdev_get_num_slots(device->evdev);
