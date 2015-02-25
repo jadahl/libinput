@@ -51,6 +51,7 @@ enum litest_device_type {
 	LITEST_VMWARE_VIRTMOUSE = -15,
 	LITEST_SYNAPTICS_HOVER_SEMI_MT = -16,
 	LITEST_SYNAPTICS_TRACKPOINT_BUTTONS = -17,
+	LITEST_PROTOCOL_A_SCREEN = -18,
 };
 
 enum litest_device_feature {
@@ -70,6 +71,7 @@ enum litest_device_feature {
 	LITEST_POINTINGSTICK = 1 << 11,
 	LITEST_FAKE_MT = 1 << 12,
 	LITEST_ABSOLUTE = 1 << 13,
+	LITEST_PROTOCOL_A = 1 << 14,
 };
 
 struct litest_device {

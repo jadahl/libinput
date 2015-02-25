@@ -7,3 +7,9 @@
    fun:litest_run
    fun:main
 }
+{
+   mtdev:conditional_jumps_uninitialized_value
+   Memcheck:Cond
+   ...
+   fun:mtdev_put_event
+}
