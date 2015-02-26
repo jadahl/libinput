@@ -11,7 +11,22 @@ The following udev properties are supported:
 <dt>LIBINPUT_CALIBRATION_MATRIX</dt>
 <dd>Sets the calibration matrix, see
 libinput_device_config_calibration_get_default_matrix(). If unset,
-defaults to the identity matrix.</dd>
+defaults to the identity matrix.
+
+The udev property is parsed as 6 floating point numbers separated by a
+single space each (scanf(3) format "%f %f %f %f %f %f").
+The 6 values represent the first two rows of the calibration matrix as
+described in libinput_device_config_calibration_set_matrix().
+
+Example values are:
+@code
+ ENV{LIBINPUT_CALIBRATION_MATRIX}="1 0 0 0 1 0" # default
+ ENV{LIBINPUT_CALIBRATION_MATRIX}="0 -1 1 1 0 0" # 90 degree clockwise
+ ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 0 -1 1" # 180 degree clockwise
+ ENV{LIBINPUT_CALIBRATION_MATRIX}="0 1 0 -1 0 1" # 270 degree clockwise
+ ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 1 0 0" # reflect along y axis
+@endcode
+</dd>
 <dt>LIBINPUT_DEVICE_GROUP</dt>
 <dd>A string identifying the @ref libinput_device_group for this device. Two
 devices with the same property value are grouped into the same device group,
