@@ -41,5 +41,4 @@ struct motion_filter {
 	struct motion_filter_interface *interface;
 };
 
-
 #endif

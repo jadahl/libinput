@@ -343,7 +343,6 @@ START_TEST(touch_calibration_rotation)
 		}
 #undef almost_equal
 
-
 		libinput_event_destroy(ev);
 		litest_drain_events(li);
 	}

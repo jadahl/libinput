@@ -31,7 +31,6 @@
 #include "litest.h"
 #include "litest-int.h"
 
-
 static void alps_create(struct litest_device *d);
 
 static void
