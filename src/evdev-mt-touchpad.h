@@ -167,6 +167,7 @@ struct tp_touch {
 
 	struct {
 		enum tp_tap_touch_state state;
+		int32_t initial_x, initial_y;
 	} tap;
 
 	struct {

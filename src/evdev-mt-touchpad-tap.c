@@ -37,7 +37,7 @@
 #define CASE_RETURN_STRING(a) case a: return #a;
 
 #define DEFAULT_TAP_TIMEOUT_PERIOD 180
-#define DEFAULT_TAP_MOVE_THRESHOLD 30
+#define DEFAULT_TAP_MOVE_THRESHOLD TP_MM_TO_DPI_NORMALIZED(3)
 
 enum tap_event {
 	TAP_EVENT_TOUCH = 12,
@@ -527,12 +527,15 @@ tp_tap_handle_event(struct tp_dispatch *tp,
 }
 
 static bool
-tp_tap_exceeds_motion_threshold(struct tp_dispatch *tp, struct tp_touch *t)
+tp_tap_exceeds_motion_threshold(struct tp_dispatch *tp,
+				struct tp_touch *t)
 {
 	int threshold = DEFAULT_TAP_MOVE_THRESHOLD;
 	double dx, dy;
 
-	tp_get_delta(t, &dx, &dy);
+	dx = abs(t->tap.initial_x - t->x);
+	dy = abs(t->tap.initial_y - t->y);
+	tp_normalize_delta(tp, &dx, &dy);
 
 	return dx * dx + dy * dy > threshold * threshold;
 }
@@ -568,6 +571,8 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 
 		if (t->state == TOUCH_BEGIN) {
 			t->tap.state = TAP_TOUCH_STATE_TOUCH;
+			t->tap.initial_x = t->x;
+			t->tap.initial_y = t->y;
 			tp_tap_handle_event(tp, t, TAP_EVENT_TOUCH, time);
 		} else if (t->state == TOUCH_END) {
 			tp_tap_handle_event(tp, t, TAP_EVENT_RELEASE, time);
