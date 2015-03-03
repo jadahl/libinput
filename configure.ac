@@ -1,7 +1,7 @@
 AC_PREREQ([2.64])
 
 m4_define([libinput_major_version], [0])
-m4_define([libinput_minor_version], [11])
+m4_define([libinput_minor_version], [12])
 m4_define([libinput_micro_version], [0])
 m4_define([libinput_version],
           [libinput_major_version.libinput_minor_version.libinput_micro_version])
@@ -25,11 +25,12 @@ AM_INIT_AUTOMAKE([1.11 foreign no-dist-gzip dist-xz])
 # Before making a release, the LIBINPUT_LT_VERSION string should be
 # modified.
 # The string is of the form C:R:A.
-# - If interfaces have been changed or added, but binary compatibility has
-#   been preserved, change to C+1:0:A+1
-# - If binary compatibility has been broken (eg removed or changed interfaces)
-#   change to C+1:0:0
-# - If the interface is the same as the previous version, change to C:R+1:A
+# a) If binary compatibility has been broken (eg removed or changed interfaces)
+#    change to C+1:0:0. DO NOT DO THIS! Use symbol versioning instead and
+#    do b) instead.
+# b) If interfaces have been changed or added, but binary compatibility has
+#    been preserved, change to C+1:0:A+1
+# c) If the interface is the same as the previous version, change to C:R+1:A
 LIBINPUT_LT_VERSION=10:0:0
 AC_SUBST(LIBINPUT_LT_VERSION)
 
