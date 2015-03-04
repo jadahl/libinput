@@ -38,6 +38,9 @@ START_TEST(touchpad_1fg_motion)
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
+
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 50, 50);
@@ -67,6 +70,9 @@ START_TEST(touchpad_2fg_no_motion)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
 
 	litest_drain_events(li);
 
