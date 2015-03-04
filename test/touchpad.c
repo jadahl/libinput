@@ -231,6 +231,10 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg_btntool)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
+	if (libevdev_get_abs_maximum(dev->evdev,
+				     ABS_MT_SLOT) > 2)
+		return;
+
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
 
@@ -261,6 +265,49 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg_btntool)
 	litest_event(dev, EV_KEY, BTN_TOOL_TRIPLETAP, 0);
 	litest_event(dev, EV_KEY, BTN_TOOL_DOUBLETAP, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_2fg_tap_n_drag_3fg)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	if (libevdev_get_abs_maximum(dev->evdev,
+				     ABS_MT_SLOT) <= 2)
+		return;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 30, 70);
+	litest_touch_up(dev, 0);
+	litest_touch_down(dev, 0, 30, 70);
+	litest_touch_down(dev, 1, 80, 90);
+	litest_touch_move_to(dev, 0, 30, 70, 30, 30, 5, 40);
+	libinput_dispatch(li);
+
+	litest_assert_button_event(li, BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	/* Putting down a third finger should end the drag */
+	litest_touch_down(dev, 2, 50, 50);
+
+	libinput_dispatch(li);
+
+	litest_assert_button_event(li, BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	/* Releasing the fingers should not cause any events */
+	litest_touch_up(dev, 2);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 
@@ -618,6 +665,10 @@ START_TEST(touchpad_3fg_tap)
 	struct libinput_event *event;
 	int i;
 
+	if (libevdev_get_abs_maximum(dev->evdev,
+				     ABS_MT_SLOT) <= 2)
+		return;
+
 	libinput_device_config_tap_set_enabled(dev->libinput_device,
 					       LIBINPUT_CONFIG_TAP_ENABLED);
 
@@ -653,6 +704,10 @@ START_TEST(touchpad_3fg_tap_btntool)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 
+	if (libevdev_get_abs_maximum(dev->evdev,
+				     ABS_MT_SLOT) > 2)
+		return;
+
 	libinput_device_config_tap_set_enabled(dev->libinput_device, 1);
 
 	litest_drain_events(li);
@@ -687,6 +742,10 @@ START_TEST(touchpad_3fg_tap_btntool_inverted)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
+
+	if (libevdev_get_abs_maximum(dev->evdev,
+				     ABS_MT_SLOT) > 2)
+		return;
 
 	libinput_device_config_tap_set_enabled(dev->libinput_device, 1);
 
@@ -3278,6 +3337,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_timeout, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
+	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD, LITEST_CLICKPAD);
@@ -3288,10 +3348,9 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_timeout, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_no_first_fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_no_first_fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	/* apple is the only one with real 3-finger support */
-	litest_add("touchpad:tap", touchpad_3fg_tap_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
-	litest_add("touchpad:tap", touchpad_3fg_tap_btntool_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
-	litest_add("touchpad:tap", touchpad_3fg_tap, LITEST_APPLE_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_3fg_tap_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:tap", touchpad_3fg_tap_btntool_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:tap", touchpad_3fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 
 	/* Real buttons don't interfere with tapping, so don't run those for
 	   pads with buttons */
