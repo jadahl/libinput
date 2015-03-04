@@ -3340,8 +3340,8 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD, LITEST_CLICKPAD);
-	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
+	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
+	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
 
 	litest_add("touchpad:tap", touchpad_2fg_tap_click_apple, LITEST_APPLE_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
@@ -3378,7 +3378,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:click", touchpad_click_defaults_btnarea, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 	litest_add("touchpad:click", touchpad_click_defaults_none, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 
-	litest_add("touchpad:click", touchpad_btn_left, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:click", touchpad_btn_left, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:click", clickpad_btn_left, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:click", clickpad_click_n_drag, LITEST_CLICKPAD, LITEST_SINGLE_TOUCH);
 
@@ -3418,12 +3418,12 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:palm", touchpad_palm_detect_palm_stays_palm, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_no_palm_moving_into_edges, LITEST_TOUCHPAD, LITEST_ANY);
 
-	litest_add("touchpad:left-handed", touchpad_left_handed, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:left-handed", touchpad_left_handed, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 	litest_add("touchpad:left-handed", touchpad_left_handed_clickfinger, LITEST_APPLE_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:left-handed", touchpad_left_handed_tapping, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:left-handed", touchpad_left_handed_tapping_2fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	litest_add("touchpad:left-handed", touchpad_left_handed_delayed, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:left-handed", touchpad_left_handed_delayed, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad_delayed, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 
 	/* Hover tests aren't generic, they only work on this device and
