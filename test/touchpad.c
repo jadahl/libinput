@@ -508,6 +508,8 @@ START_TEST(touchpad_no_2fg_tap_after_move)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
 	litest_drain_events(dev->libinput);
 
 	/* one finger down, move past threshold,
@@ -530,6 +532,8 @@ START_TEST(touchpad_no_2fg_tap_after_timeout)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
 	litest_drain_events(dev->libinput);
 
 	/* one finger down, wait past tap timeout,
@@ -554,6 +558,9 @@ START_TEST(touchpad_no_first_fg_tap_after_move)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_ENABLED);
 
 	litest_drain_events(dev->libinput);
 
@@ -3344,8 +3351,8 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
 
 	litest_add("touchpad:tap", touchpad_2fg_tap_click_apple, LITEST_APPLE_CLICKPAD, LITEST_ANY);
-	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_timeout, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_SEMI_MT);
+	litest_add("touchpad:tap", touchpad_no_2fg_tap_after_timeout, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_SEMI_MT);
 	litest_add("touchpad:tap", touchpad_no_first_fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_no_first_fg_tap_after_move, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_3fg_tap_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
