@@ -182,6 +182,9 @@ enum libinput_event_type {
 	LIBINPUT_EVENT_GESTURE_SWIPE_BEGIN = 800,
 	LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE,
 	LIBINPUT_EVENT_GESTURE_SWIPE_END,
+	LIBINPUT_EVENT_GESTURE_PINCH_BEGIN,
+	LIBINPUT_EVENT_GESTURE_PINCH_UPDATE,
+	LIBINPUT_EVENT_GESTURE_PINCH_END,
 };
 
 /**
@@ -988,8 +991,8 @@ libinput_event_gesture_get_finger_count(struct libinput_event_gesture *event);
  * @ingroup event_gesture
  *
  * Return the delta between the last event and the current event. For gesture
- * events that are not of type @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE, this
- * function returns 0.
+ * events that are not of type @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this function returns 0.
  *
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
@@ -998,7 +1001,8 @@ libinput_event_gesture_get_finger_count(struct libinput_event_gesture *event);
  * 1000dpi resolution. See @ref motion_normalization for more details.
  *
  * @note It is an application bug to call this function for events other than
- * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE.
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
  *
  * @return the relative x movement since the last event
  */
@@ -1009,8 +1013,8 @@ libinput_event_gesture_get_dx(struct libinput_event_gesture *event);
  * @ingroup event_gesture
  *
  * Return the delta between the last event and the current event. For gesture
- * events that are not of type @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE, this
- * function returns 0.
+ * events that are not of type @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this function returns 0.
  *
  * If a device employs pointer acceleration, the delta returned by this
  * function is the accelerated delta.
@@ -1019,7 +1023,8 @@ libinput_event_gesture_get_dx(struct libinput_event_gesture *event);
  * 1000dpi resolution. See @ref motion_normalization for more details.
  *
  * @note It is an application bug to call this function for events other than
- * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE.
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
  *
  * @return the relative y movement since the last event
  */
@@ -1030,8 +1035,9 @@ libinput_event_gesture_get_dy(struct libinput_event_gesture *event);
  * @ingroup event_gesture
  *
  * Return the relative delta of the unaccelerated motion vector of the
- * current event. For gesture events that are not of type @ref
- * LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE, this function returns 0.
+ * current event. For gesture events that are not of type
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this function returns 0.
  *
  * Relative unaccelerated motion deltas are normalized to represent those of a
  * device with 1000dpi resolution. See @ref motion_normalization for more
@@ -1039,7 +1045,8 @@ libinput_event_gesture_get_dy(struct libinput_event_gesture *event);
  * as read from the device.
  *
  * @note It is an application bug to call this function for events other than
- * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE.
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
  *
  * @return the unaccelerated relative x movement since the last event
  */
@@ -1051,8 +1058,9 @@ libinput_event_gesture_get_dx_unaccelerated(
  * @ingroup event_gesture
  *
  * Return the relative delta of the unaccelerated motion vector of the
- * current event. For gesture events that are not of type @ref
- * LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE, this function returns 0.
+ * current event. For gesture events that are not of type
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this function returns 0.
  *
  * Relative unaccelerated motion deltas are normalized to represent those of a
  * device with 1000dpi resolution. See @ref motion_normalization for more
@@ -1060,13 +1068,61 @@ libinput_event_gesture_get_dx_unaccelerated(
  * as read from the device.
  *
  * @note It is an application bug to call this function for events other than
- * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE.
+ * @ref LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE or
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
  *
  * @return the unaccelerated relative y movement since the last event
  */
 double
 libinput_event_gesture_get_dy_unaccelerated(
 	struct libinput_event_gesture *event);
+
+/**
+ * @ingroup event_gesture
+ *
+ * Return the absolute scale of a pinch gesture, the scale is the division
+ * of the current distance between the fingers and the distance at the start
+ * of the gesture. The scale begins at 1.0, and if e.g. the fingers moved
+ * together by 50% then the scale will become 0.5, if they move twice as far
+ * apart as initially the scale becomes 2.0, etc.
+ *
+ * For gesture events that are not of type @ref
+ * LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this function returns 0.
+ *
+ * @note It is an application bug to call this function for events other than
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
+ *
+ * @return the absolute scale of a pinch gesture
+ */
+double
+libinput_event_gesture_get_scale(struct libinput_event_gesture *event);
+
+/**
+ * @ingroup event_gesture
+ *
+ * Return the angle delta in degrees between the last and the current @ref
+ * LIBINPUT_EVENT_GESTURE_PINCH_UPDATE event. For gesture events that
+ * are not of type @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE, this
+ * function returns 0.
+ *
+ * The angle delta is defined as the change in angle of the line formed by
+ * the 2 fingers of a pinch gesture. Clockwise rotation is represented
+ * by a postive delta, counter-clockwise by a negative delta. If e.g. the
+ * fingers are on the 12 and 6 location of a clock face plate and they move
+ * to the 1 resp. 7 location in a single event then the angle delta is
+ * 30 degrees.
+ *
+ * If more than two fingers are present, the angle represents the rotation
+ * around the center of gravity. The calculation of the center of gravity is
+ * implementation-dependent.
+ *
+ * @note It is an application bug to call this function for events other than
+ * @ref LIBINPUT_EVENT_GESTURE_PINCH_UPDATE.
+ *
+ * @return the angle delta since the last event
+ */
+double
+libinput_event_gesture_get_angle_delta(struct libinput_event_gesture *event);
 
 /**
  * @defgroup base Initialization and manipulation of libinput contexts
