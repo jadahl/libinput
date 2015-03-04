@@ -1,6 +1,6 @@
 /* in alphabetical order! */
 
-LIBINPUT_0.8.0 {
+LIBINPUT_0.12.0 {
 global:
 	libinput_config_status_to_str;
 	libinput_device_config_accel_get_default_speed;
@@ -15,6 +15,10 @@ global:
 	libinput_device_config_calibration_get_matrix;
 	libinput_device_config_calibration_has_matrix;
 	libinput_device_config_calibration_set_matrix;
+	libinput_device_config_click_get_default_method;
+	libinput_device_config_click_get_method;
+	libinput_device_config_click_get_methods;
+	libinput_device_config_click_set_method;
 	libinput_device_config_scroll_get_button;
 	libinput_device_config_scroll_get_default_button;
 	libinput_device_config_scroll_get_default_method;
@@ -35,6 +39,7 @@ global:
 	libinput_device_config_tap_get_finger_count;
 	libinput_device_config_tap_set_enabled;
 	libinput_device_get_context;
+	libinput_device_get_device_group;
 	libinput_device_get_id_product;
 	libinput_device_get_id_vendor;
 	libinput_device_get_name;
@@ -44,9 +49,13 @@ global:
 	libinput_device_get_sysname;
 	libinput_device_get_udev_device;
 	libinput_device_get_user_data;
-	libinput_device_has_button;
+	libinput_device_group_get_user_data;
+	libinput_device_group_ref;
+	libinput_device_group_set_user_data;
+	libinput_device_group_unref;
 	libinput_device_has_capability;
 	libinput_device_led_update;
+	libinput_device_pointer_has_button;
 	libinput_device_ref;
 	libinput_device_set_seat_logical_name;
 	libinput_device_set_user_data;
@@ -118,21 +127,3 @@ global:
 local:
 	*;
 };
-
-LIBINPUT_0.9.0 {
-global:
-	libinput_device_config_click_get_default_method;
-	libinput_device_config_click_get_method;
-	libinput_device_config_click_get_methods;
-	libinput_device_config_click_set_method;
-} LIBINPUT_0.8.0;
-
-LIBINPUT_0.11.0 {
-	libinput_device_get_device_group;
-	libinput_device_group_get_user_data;
-	libinput_device_group_ref;
-	libinput_device_group_set_user_data;
-	libinput_device_group_unref;
-
-	libinput_device_pointer_has_button;
-} LIBINPUT_0.9.0;

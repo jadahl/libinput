@@ -1685,14 +1685,6 @@ libinput_device_pointer_has_button(struct libinput_device *device, uint32_t code
 /**
  * @ingroup device
  *
- * @deprecated Use libinput_device_pointer_has_button() instead.
- */
-int
-libinput_device_has_button(struct libinput_device *device, uint32_t code) LIBINPUT_ATTRIBUTE_DEPRECATED;
-
-/**
- * @ingroup device
- *
  * Increase the refcount of the device group. A device group will be freed
  * whenever the refcount reaches 0. This may happen during
  * libinput_dispatch() if all devices of this group were removed from the
