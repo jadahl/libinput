@@ -97,6 +97,7 @@ extern struct litest_test_device litest_vmware_virtmouse_device;
 extern struct litest_test_device litest_synaptics_hover_device;
 extern struct litest_test_device litest_synaptics_carbon3rd_device;
 extern struct litest_test_device litest_protocol_a_screen;
+extern struct litest_test_device litest_wacom_finger_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -115,6 +116,7 @@ struct litest_test_device* devices[] = {
 	&litest_synaptics_hover_device,
 	&litest_synaptics_carbon3rd_device,
 	&litest_protocol_a_screen,
+	&litest_wacom_finger_device,
 	NULL,
 };
 

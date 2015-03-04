@@ -28,6 +28,7 @@ liblitest_la_SOURCES = \
 	litest-synaptics-x1-carbon-3rd.c \
 	litest-trackpoint.c \
 	litest-wacom-touch.c \
+	litest-wacom-intuos-finger.c \
 	litest-xen-virtual-pointer.c \
 	litest-vmware-virtual-usb-mouse.c \
 	litest.c

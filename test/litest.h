@@ -52,6 +52,7 @@ enum litest_device_type {
 	LITEST_SYNAPTICS_HOVER_SEMI_MT = -16,
 	LITEST_SYNAPTICS_TRACKPOINT_BUTTONS = -17,
 	LITEST_PROTOCOL_A_SCREEN = -18,
+	LITEST_WACOM_FINGER = -19,
 };
 
 enum litest_device_feature {

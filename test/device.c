@@ -64,14 +64,19 @@ START_TEST(device_sendevents_config_touchpad)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput_device *device;
-	uint32_t modes;
+	uint32_t modes, expected;
+
+	expected = LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
+
+	/* The wacom devices in the test suite are external */
+	if (libevdev_get_id_vendor(dev->evdev) != 0x56a) /* wacom */
+		expected |=
+			LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE;
 
 	device = dev->libinput_device;
 
 	modes = libinput_device_config_send_events_get_modes(device);
-	ck_assert_int_eq(modes,
-			 LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE|
-			 LIBINPUT_CONFIG_SEND_EVENTS_DISABLED);
+	ck_assert_int_eq(modes, expected);
 }
 END_TEST
 
@@ -81,6 +86,10 @@ START_TEST(device_sendevents_config_touchpad_superset)
 	struct libinput_device *device;
 	enum libinput_config_status status;
 	uint32_t modes;
+
+	/* The wacom devices in the test suite are external */
+	if (libevdev_get_id_vendor(dev->evdev) == 0x56a) /* wacom */
+		return;
 
 	device = dev->libinput_device;
 

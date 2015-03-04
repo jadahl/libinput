@@ -1869,8 +1869,8 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 
 	litest_touch_down(dev, 0, 20, 30);
 	litest_touch_down(dev, 1, 40, 30);
-	litest_touch_move_to(dev, 0, 20, 30, 20, 50, 60, 10);
-	litest_touch_move_to(dev, 1, 40, 30, 40, 50, 60, 10);
+	litest_touch_move_to(dev, 0, 20, 30, 20, 40, 70, 10);
+	litest_touch_move_to(dev, 1, 40, 30, 40, 40, 70, 10);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
