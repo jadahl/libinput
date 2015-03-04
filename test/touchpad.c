@@ -2169,8 +2169,6 @@ START_TEST(touchpad_tap_is_available)
 	struct litest_device *dev = litest_current_device();
 
 	ck_assert_int_ge(libinput_device_config_tap_get_finger_count(dev->libinput_device), 1);
-	ck_assert_int_eq(libinput_device_config_tap_get_enabled(dev->libinput_device),
-			 LIBINPUT_CONFIG_TAP_DISABLED);
 }
 END_TEST
 
@@ -2187,12 +2185,25 @@ START_TEST(touchpad_tap_is_not_available)
 }
 END_TEST
 
-START_TEST(touchpad_tap_default)
+START_TEST(touchpad_tap_default_disabled)
 {
 	struct litest_device *dev = litest_current_device();
 
+	/* this test is only run on specific devices */
+
 	ck_assert_int_eq(libinput_device_config_tap_get_default_enabled(dev->libinput_device),
 			 LIBINPUT_CONFIG_TAP_DISABLED);
+}
+END_TEST
+
+START_TEST(touchpad_tap_default_enabled)
+{
+	struct litest_device *dev = litest_current_device();
+
+	/* this test is only run on specific devices */
+
+	ck_assert_int_eq(libinput_device_config_tap_get_default_enabled(dev->libinput_device),
+			 LIBINPUT_CONFIG_TAP_ENABLED);
 }
 END_TEST
 
@@ -3364,7 +3375,8 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_1fg_double_tap_click, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_click, LITEST_CLICKPAD, LITEST_ANY);
 
-	litest_add("touchpad:tap", touchpad_tap_default, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_tap_default_disabled, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_tap_default_enabled, LITEST_TOUCHPAD, LITEST_BUTTON);
 	litest_add("touchpad:tap", touchpad_tap_invalid, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_tap_is_available, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_tap_is_not_available, LITEST_ANY, LITEST_TOUCHPAD);

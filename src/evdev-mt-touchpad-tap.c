@@ -688,8 +688,15 @@ tp_tap_config_is_enabled(struct libinput_device *device)
 }
 
 static enum libinput_config_tap_state
-tp_tap_config_get_default(struct libinput_device *device)
+tp_tap_default(struct evdev_device *evdev)
 {
+	/**
+	 * If we don't have a left button we must have tapping enabled by
+	 * default.
+	 */
+	if (!libevdev_has_event_code(evdev->evdev, EV_KEY, BTN_LEFT))
+		return LIBINPUT_CONFIG_TAP_ENABLED;
+
 	/**
 	 * Tapping is disabled by default for two reasons:
 	 * * if you don't know that tapping is a thing (or enabled by
@@ -702,6 +709,14 @@ tp_tap_config_get_default(struct libinput_device *device)
 	return LIBINPUT_CONFIG_TAP_DISABLED;
 }
 
+static enum libinput_config_tap_state
+tp_tap_config_get_default(struct libinput_device *device)
+{
+	struct evdev_device *evdev = (struct evdev_device *)device;
+
+	return tp_tap_default(evdev);
+}
+
 int
 tp_init_tap(struct tp_dispatch *tp)
 {
@@ -712,6 +727,7 @@ tp_init_tap(struct tp_dispatch *tp)
 	tp->device->base.config.tap = &tp->tap.config;
 
 	tp->tap.state = TAP_STATE_IDLE;
+	tp->tap.enabled = tp_tap_default(tp->device);
 
 	libinput_timer_init(&tp->tap.timer,
 			    tp->device->base.seat->libinput,
