@@ -2157,6 +2157,9 @@ START_TEST(touchpad_palm_detect_at_edge)
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
+
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 50);
@@ -2178,6 +2181,9 @@ START_TEST(touchpad_palm_detect_at_bottom_corners)
 
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
 
 	/* Run for non-clickpads only: make sure the bottom corners trigger
 	   palm detection too */
@@ -2203,6 +2209,9 @@ START_TEST(touchpad_palm_detect_at_top_corners)
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
+
 	/* Run for non-clickpads only: make sure the bottom corners trigger
 	   palm detection too */
 	litest_drain_events(li);
@@ -2227,6 +2236,9 @@ START_TEST(touchpad_palm_detect_palm_stays_palm)
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
 
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
+
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 20);
@@ -2243,6 +2255,9 @@ START_TEST(touchpad_palm_detect_palm_becomes_pointer)
 
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
 
 	litest_drain_events(li);
 
@@ -2265,6 +2280,9 @@ START_TEST(touchpad_palm_detect_no_palm_moving_into_edges)
 
 	if (!touchpad_has_palm_detect_size(dev))
 		return;
+
+	libinput_device_config_tap_set_enabled(dev->libinput_device,
+					       LIBINPUT_CONFIG_TAP_DISABLED);
 
 	/* moving non-palm into the edge does not label it as palm */
 	litest_drain_events(li);
