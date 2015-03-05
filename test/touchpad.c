@@ -2570,8 +2570,8 @@ START_TEST(touchpad_left_handed_tapping_2fg)
 
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_down(dev, 1, 70, 50);
-	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
+	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
 	litest_timeout_tap();
@@ -3356,7 +3356,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
-	litest_add("touchpad:tap", touchpad_2fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:tap", touchpad_2fg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_SEMI_MT);
 	litest_add("touchpad:tap", touchpad_2fg_tap_inverted, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_1fg_tap_click, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:tap", touchpad_2fg_tap_click, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
