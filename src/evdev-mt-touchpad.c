@@ -64,8 +64,8 @@ tp_filter_motion(struct tp_dispatch *tp,
 {
 	struct motion_params motion;
 
-	motion.dx = *dx * tp->accel.x_scale_coeff;
-	motion.dy = *dy * tp->accel.y_scale_coeff;
+	motion.dx = *dx;
+	motion.dy = *dy;
 
 	if (dx_unaccel)
 		*dx_unaccel = motion.dx;
@@ -269,6 +269,7 @@ tp_get_delta(struct tp_touch *t, double *dx, double *dy)
 				tp_motion_history_offset(t, 1)->y,
 				tp_motion_history_offset(t, 2)->y,
 				tp_motion_history_offset(t, 3)->y);
+	tp_normalize_delta(t->tp, dx, dy);
 }
 
 static void
