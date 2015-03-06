@@ -132,8 +132,8 @@ struct tp_touch {
 	enum touch_state state;
 	bool has_ended;				/* TRACKING_ID == -1 */
 	bool dirty;
-	int32_t x;
-	int32_t y;
+	int32_t x;				/* in device coordinates */
+	int32_t y;				/* in device coordinates */
 	uint64_t millis;
 
 	struct {
@@ -143,8 +143,8 @@ struct tp_touch {
 	} history;
 
 	struct {
-		int32_t center_x;
-		int32_t center_y;
+		int32_t center_x;		/* in device coordinates */
+		int32_t center_y;		/* in device coordinates */
 	} hysteresis;
 
 	/* A pinned touchpoint is the one that pressed the physical button
@@ -153,8 +153,8 @@ struct tp_touch {
 	 */
 	struct {
 		bool is_pinned;
-		int32_t center_x;
-		int32_t center_y;
+		int32_t center_x;		/* in device coordinates */
+		int32_t center_y;		/* in device coordinates */
 	} pinned;
 
 	/* Software-button state and timeout if applicable */
@@ -167,7 +167,7 @@ struct tp_touch {
 
 	struct {
 		enum tp_tap_touch_state state;
-		int32_t initial_x, initial_y;
+		int32_t initial_x, initial_y;	/* in device coordinates */
 	} tap;
 
 	struct {
@@ -180,7 +180,8 @@ struct tp_touch {
 
 	struct {
 		bool is_palm;
-		int32_t x, y;  /* first coordinates if is_palm == true */
+		int32_t x, y;  /* first coordinates if is_palm == true,
+				  in device coordinates */
 		uint32_t time; /* first timestamp if is_palm == true */
 	} palm;
 };
@@ -206,8 +207,8 @@ struct tp_dispatch {
 	unsigned int fake_touches;
 
 	struct {
-		int32_t margin_x;
-		int32_t margin_y;
+		int32_t margin_x;		/* in device coordiantes */
+		int32_t margin_y;		/* in device coordiantes */
 	} hysteresis;
 
 	struct {
@@ -238,14 +239,14 @@ struct tp_dispatch {
 		 * The buttons are split according to the edge settings.
 		 */
 		struct {
-			int32_t top_edge;
-			int32_t rightbutton_left_edge;
+			int32_t top_edge;	/* in device coordinates */
+			int32_t rightbutton_left_edge; /* in device coordinates */
 		} bottom_area;
 
 		struct {
-			int32_t bottom_edge;
-			int32_t rightbutton_left_edge;
-			int32_t leftbutton_right_edge;
+			int32_t bottom_edge;	/* in device coordinates */
+			int32_t rightbutton_left_edge; /* in device coordinates */
+			int32_t leftbutton_right_edge; /* in device coordinates */
 		} top_area;
 
 		struct evdev_device *trackpoint;
@@ -257,8 +258,8 @@ struct tp_dispatch {
 	struct {
 		struct libinput_device_config_scroll_method config_method;
 		enum libinput_config_scroll_method method;
-		int32_t right_edge;
-		int32_t bottom_edge;
+		int32_t right_edge;		/* in device coordinates */
+		int32_t bottom_edge;		/* in device coordinates */
 	} scroll;
 
 	enum touchpad_event queued;
@@ -273,8 +274,8 @@ struct tp_dispatch {
 	} tap;
 
 	struct {
-		int32_t right_edge;
-		int32_t left_edge;
+		int32_t right_edge;		/* in device coordinates */
+		int32_t left_edge;		/* in device coordinates */
 	} palm;
 
 	struct {
