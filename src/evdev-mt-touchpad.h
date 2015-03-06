@@ -176,6 +176,8 @@ struct tp_touch {
 		int direction;
 		double threshold;
 		struct libinput_timer timer;
+		int32_t initial_x;		/* in device coordinates */
+		int32_t initial_y;		/* in device coordinates */
 	} scroll;
 
 	struct {

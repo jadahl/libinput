@@ -2057,7 +2057,7 @@ START_TEST(touchpad_edge_scroll)
 }
 END_TEST
 
-START_TEST(touchpad_edge_scroll_slow_distance)
+START_TEST(touchpad_edge_scroll_timeout)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -2067,12 +2067,18 @@ START_TEST(touchpad_edge_scroll_slow_distance)
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 99, 20);
+	libinput_dispatch(li);
+	litest_timeout_edgescroll();
+	libinput_dispatch(li);
+
 	litest_touch_move_to(dev, 0, 99, 20, 99, 80, 60, 10);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
 
 	event = libinput_get_event(li);
 	ck_assert_notnull(event);
+
+	litest_wait_for_event_of_type(li, LIBINPUT_EVENT_POINTER_AXIS, -1);
 
 	while (libinput_next_event_type(li) != LIBINPUT_EVENT_NONE) {
 		double axisval;
@@ -2105,10 +2111,10 @@ START_TEST(touchpad_edge_scroll_no_motion)
 
 	litest_drain_events(li);
 
-	litest_touch_down(dev, 0, 99, 20);
-	litest_touch_move_to(dev, 0, 99, 20, 99, 60, 10, 0);
+	litest_touch_down(dev, 0, 99, 10);
+	litest_touch_move_to(dev, 0, 99, 10, 99, 70, 10, 0);
 	/* moving outside -> no motion event */
-	litest_touch_move_to(dev, 0, 99, 60, 20, 80, 10, 0);
+	litest_touch_move_to(dev, 0, 99, 70, 20, 80, 10, 0);
 	/* moving down outside edge once scrolling had started -> scroll */
 	litest_touch_move_to(dev, 0, 20, 80, 40, 99, 10, 0);
 	litest_touch_up(dev, 0);
@@ -3427,7 +3433,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:scroll", touchpad_edge_scroll, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_no_motion, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_no_edge_after_motion, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
-	litest_add("touchpad:scroll", touchpad_edge_scroll_slow_distance, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
+	litest_add("touchpad:scroll", touchpad_edge_scroll_timeout, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_source, LITEST_TOUCHPAD|LITEST_SINGLE_TOUCH, LITEST_ANY);
 
 	litest_add("touchpad:palm", touchpad_palm_detect_at_edge, LITEST_TOUCHPAD, LITEST_ANY);

@@ -1391,6 +1391,12 @@ litest_timeout_finger_switch(void)
 }
 
 void
+litest_timeout_edgescroll(void)
+{
+	msleep(300);
+}
+
+void
 litest_push_event_frame(struct litest_device *dev)
 {
 	assert(!dev->skip_ev_syn);

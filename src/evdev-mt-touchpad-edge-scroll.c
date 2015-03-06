@@ -34,8 +34,7 @@
    avoid accidentally locking in scrolling mode when trying to use the entire
    touchpad to move the pointer. The user can wait for the timeout to trigger
    to do a small scroll. */
-/* In mm for touchpads with valid resolution, see tp_init_accel() */
-#define DEFAULT_SCROLL_THRESHOLD 10.0
+#define DEFAULT_SCROLL_THRESHOLD TP_MM_TO_DPI_NORMALIZED(5)
 
 enum scroll_event {
 	SCROLL_EVENT_TOUCH,
@@ -78,6 +77,8 @@ tp_edge_scroll_set_state(struct tp_dispatch *tp,
 		break;
 	case EDGE_SCROLL_TOUCH_STATE_EDGE_NEW:
 		t->scroll.edge = tp_touch_get_edge(tp, t);
+		t->scroll.initial_x = t->x;
+		t->scroll.initial_y = t->y;
 		libinput_timer_set(&t->scroll.timer,
 				   t->millis + DEFAULT_SCROLL_LOCK_TIMEOUT);
 		break;
@@ -315,6 +316,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	enum libinput_pointer_axis axis;
 	double dx, dy, *delta;
+	double initial_dx, initial_dy, *initial_delta;
 
 	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_EDGE)
 		return 0;
@@ -338,10 +340,12 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 			case EDGE_RIGHT:
 				axis = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL;
 				delta = &dy;
+				initial_delta = &initial_dy;
 				break;
 			case EDGE_BOTTOM:
 				axis = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
 				delta = &dx;
+				initial_delta = &initial_dx;
 				break;
 			default: /* EDGE_RIGHT | EDGE_BOTTOM */
 				continue; /* Don't know direction yet, skip */
@@ -350,7 +354,34 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 		tp_get_delta(t, &dx, &dy);
 		tp_filter_motion(tp, &dx, &dy, NULL, NULL, time);
 
-		if (fabs(*delta) < t->scroll.threshold)
+		switch (t->scroll.edge_state) {
+		case EDGE_SCROLL_TOUCH_STATE_NONE:
+		case EDGE_SCROLL_TOUCH_STATE_AREA:
+			log_bug_libinput(device->seat->libinput,
+					 "unexpected scroll state %d\n",
+					 t->scroll.edge_state);
+			break;
+		case EDGE_SCROLL_TOUCH_STATE_EDGE_NEW:
+			initial_dx = t->x - t->scroll.initial_x;
+			initial_dy = t->y - t->scroll.initial_y;
+			tp_normalize_delta(tp,
+					   &initial_dx,
+					   &initial_dy);
+			if (fabs(*initial_delta) < t->scroll.threshold) {
+				dx = 0.0;
+				dy = 0.0;
+			} else {
+				dx = initial_dx;
+				dy = initial_dy;
+			}
+			break;
+		case EDGE_SCROLL_TOUCH_STATE_EDGE:
+			if (fabs(*delta) < t->scroll.threshold)
+				*delta = 0.0;
+			break;
+		}
+
+		if (*delta == 0.0)
 			continue;
 
 		pointer_notify_axis(device, time,
