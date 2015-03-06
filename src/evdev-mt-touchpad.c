@@ -994,9 +994,8 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 		   fixed in the actual filter code.
 		 */
 		{
-			const double MAGIC = 0.4;
-			tp->accel.x_scale_coeff *= MAGIC;
-			tp->accel.y_scale_coeff *= MAGIC;
+			tp->accel.x_scale_coeff *= TP_MAGIC_SLOWDOWN;
+			tp->accel.y_scale_coeff *= TP_MAGIC_SLOWDOWN;
 		}
 	} else {
 	/*

@@ -34,6 +34,11 @@
 
 #define VENDOR_ID_APPLE 0x5ac
 
+/* Touchpad slowdown factor, see the FIXME in tp_init_accel() */
+#define TP_MAGIC_SLOWDOWN 0.4
+/* Convert mm to a distance normalized to DEFAULT_MOUSE_DPI */
+#define TP_MM_TO_DPI_NORMALIZED(mm) (DEFAULT_MOUSE_DPI/25.4 * TP_MAGIC_SLOWDOWN  * mm)
+
 enum touchpad_event {
 	TOUCHPAD_EVENT_NONE		= 0,
 	TOUCHPAD_EVENT_MOTION		= (1 << 0),

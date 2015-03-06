@@ -33,6 +33,9 @@
 #include "libinput-private.h"
 #include "timer.h"
 
+/* The HW DPI rate we normalize to before calculating pointer acceleration */
+#define DEFAULT_MOUSE_DPI 1000
+
 enum evdev_event_type {
 	EVDEV_NONE,
 	EVDEV_ABSOLUTE_TOUCH_DOWN,
