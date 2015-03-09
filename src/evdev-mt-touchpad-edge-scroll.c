@@ -73,7 +73,6 @@ tp_edge_scroll_set_state(struct tp_dispatch *tp,
 	switch (state) {
 	case EDGE_SCROLL_TOUCH_STATE_NONE:
 		t->scroll.edge = EDGE_NONE;
-		t->scroll.threshold = DEFAULT_SCROLL_THRESHOLD;
 		break;
 	case EDGE_SCROLL_TOUCH_STATE_EDGE_NEW:
 		t->scroll.edge = tp_touch_get_edge(tp, t);
@@ -83,7 +82,6 @@ tp_edge_scroll_set_state(struct tp_dispatch *tp,
 				   t->millis + DEFAULT_SCROLL_LOCK_TIMEOUT);
 		break;
 	case EDGE_SCROLL_TOUCH_STATE_EDGE:
-		t->scroll.threshold = 0.01; /* Do not allow 0.0 events */
 		break;
 	case EDGE_SCROLL_TOUCH_STATE_AREA:
 		t->scroll.edge = EDGE_NONE;
@@ -265,7 +263,6 @@ tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device)
 
 	tp_for_each_touch(tp, t) {
 		t->scroll.direction = -1;
-		t->scroll.threshold = DEFAULT_SCROLL_THRESHOLD;
 		libinput_timer_init(&t->scroll.timer,
 				    device->base.seat->libinput,
 				    tp_edge_scroll_handle_timeout, t);
@@ -367,7 +364,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 			tp_normalize_delta(tp,
 					   &initial_dx,
 					   &initial_dy);
-			if (fabs(*initial_delta) < t->scroll.threshold) {
+			if (fabs(*initial_delta) < DEFAULT_SCROLL_THRESHOLD) {
 				dx = 0.0;
 				dy = 0.0;
 			} else {
@@ -376,8 +373,6 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 			}
 			break;
 		case EDGE_SCROLL_TOUCH_STATE_EDGE:
-			if (fabs(*delta) < t->scroll.threshold)
-				*delta = 0.0;
 			break;
 		}
 

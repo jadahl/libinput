@@ -174,7 +174,6 @@ struct tp_touch {
 		enum tp_edge_scroll_touch_state edge_state;
 		uint32_t edge;
 		int direction;
-		double threshold;
 		struct libinput_timer timer;
 		int32_t initial_x;		/* in device coordinates */
 		int32_t initial_y;		/* in device coordinates */
