@@ -93,8 +93,8 @@ struct libinput_event_keyboard {
 struct libinput_event_pointer {
 	struct libinput_event base;
 	uint32_t time;
-	double x;
-	double y;
+	struct normalized_coords delta;
+	struct device_coords absolute;
 	double x_discrete;
 	double y_discrete;
 	double dx_unaccel;
@@ -316,7 +316,7 @@ libinput_event_pointer_get_dx(struct libinput_event_pointer *event)
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION);
 
-	return event->x;
+	return event->delta.x;
 }
 
 LIBINPUT_EXPORT double
@@ -327,7 +327,7 @@ libinput_event_pointer_get_dy(struct libinput_event_pointer *event)
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION);
 
-	return event->y;
+	return event->delta.y;
 }
 
 LIBINPUT_EXPORT double
@@ -365,7 +365,7 @@ libinput_event_pointer_get_absolute_x(struct libinput_event_pointer *event)
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 
-	return evdev_convert_to_mm(device->abs.absinfo_x, event->x);
+	return evdev_convert_to_mm(device->abs.absinfo_x, event->absolute.x);
 }
 
 LIBINPUT_EXPORT double
@@ -379,7 +379,7 @@ libinput_event_pointer_get_absolute_y(struct libinput_event_pointer *event)
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 
-	return evdev_convert_to_mm(device->abs.absinfo_y, event->y);
+	return evdev_convert_to_mm(device->abs.absinfo_y, event->absolute.y);
 }
 
 LIBINPUT_EXPORT double
@@ -395,7 +395,7 @@ libinput_event_pointer_get_absolute_x_transformed(
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 
-	return evdev_device_transform_x(device, event->x, width);
+	return evdev_device_transform_x(device, event->absolute.x, width);
 }
 
 LIBINPUT_EXPORT double
@@ -411,7 +411,7 @@ libinput_event_pointer_get_absolute_y_transformed(
 			   0,
 			   LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 
-	return evdev_device_transform_y(device, event->y, height);
+	return evdev_device_transform_y(device, event->absolute.y, height);
 }
 
 LIBINPUT_EXPORT uint32_t
@@ -483,10 +483,10 @@ libinput_event_pointer_get_axis_value(struct libinput_event_pointer *event,
 	} else {
 		switch (axis) {
 		case LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL:
-			value = event->x;
+			value = event->delta.x;
 			break;
 		case LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL:
-			value = event->y;
+			value = event->delta.y;
 			break;
 		}
 	}
@@ -1108,8 +1108,7 @@ pointer_notify_motion(struct libinput_device *device,
 
 	*motion_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = delta->x,
-		.y = delta->y,
+		.delta = *delta,
 		.dx_unaccel = unaccel->x,
 		.dy_unaccel = unaccel->y,
 	};
@@ -1132,8 +1131,7 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 
 	*motion_absolute_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = point->x,
-		.y = point->y,
+		.absolute = *point,
 	};
 
 	post_device_event(device, time,
@@ -1186,8 +1184,7 @@ pointer_notify_axis(struct libinput_device *device,
 
 	*axis_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = delta->x,
-		.y = delta->y,
+		.delta = *delta,
 		.source = source,
 		.axes = axes,
 		.x_discrete = x_discrete,
