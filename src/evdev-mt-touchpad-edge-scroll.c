@@ -314,6 +314,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 	double *delta;
 	double initial_dx, initial_dy, *initial_delta;
 	struct normalized_coords normalized;
+	const struct normalized_coords zero = { 0.0, 0.0 };
 
 	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_EDGE)
 		return 0;
@@ -329,7 +330,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 					pointer_notify_axis(device, time,
 						AS_MASK(t->scroll.direction),
 						LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-						0.0, 0.0,
+						&zero,
 						0, 0);
 					t->scroll.direction = -1;
 				}
@@ -381,7 +382,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 		pointer_notify_axis(device, time,
 				    AS_MASK(axis),
 				    LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-				    normalized.x, normalized.y,
+				    &normalized,
 				    0, 0);
 		t->scroll.direction = axis;
 
@@ -396,13 +397,14 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time)
 {
 	struct libinput_device *device = &tp->device->base;
 	struct tp_touch *t;
+	const struct normalized_coords zero = { 0.0, 0.0 };
 
 	tp_for_each_touch(tp, t) {
 		if (t->scroll.direction != -1) {
 			pointer_notify_axis(device, time,
 					    AS_MASK(t->scroll.direction),
 					    LIBINPUT_POINTER_AXIS_SOURCE_FINGER,
-					    0.0, 0.0,
+					    &zero,
 					    0.0, 0.0);
 			t->scroll.direction = -1;
 		}

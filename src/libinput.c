@@ -1179,7 +1179,7 @@ pointer_notify_axis(struct libinput_device *device,
 		    uint64_t time,
 		    uint32_t axes,
 		    enum libinput_pointer_axis_source source,
-		    double x, double y,
+		    const struct normalized_coords *delta,
 		    double x_discrete, double y_discrete)
 {
 	struct libinput_event_pointer *axis_event;
@@ -1190,8 +1190,8 @@ pointer_notify_axis(struct libinput_device *device,
 
 	*axis_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = x,
-		.y = y,
+		.x = delta->x,
+		.y = delta->y,
 		.source = source,
 		.axes = axes,
 		.x_discrete = x_discrete,
