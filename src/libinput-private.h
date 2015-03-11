@@ -290,16 +290,13 @@ keyboard_notify_key(struct libinput_device *device,
 void
 pointer_notify_motion(struct libinput_device *device,
 		      uint64_t time,
-		      double dx,
-		      double dy,
-		      double dx_unaccel,
-		      double dy_unaccel);
+		      const struct normalized_coords *delta,
+		      const struct normalized_coords *unaccel);
 
 void
 pointer_notify_motion_absolute(struct libinput_device *device,
 			       uint64_t time,
-			       double x,
-			       double y);
+			       const struct device_coords *point);
 
 void
 pointer_notify_button(struct libinput_device *device,

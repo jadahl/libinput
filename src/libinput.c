@@ -1098,10 +1098,8 @@ keyboard_notify_key(struct libinput_device *device,
 void
 pointer_notify_motion(struct libinput_device *device,
 		      uint64_t time,
-		      double dx,
-		      double dy,
-		      double dx_unaccel,
-		      double dy_unaccel)
+		      const struct normalized_coords *delta,
+		      const struct normalized_coords *unaccel)
 {
 	struct libinput_event_pointer *motion_event;
 
@@ -1111,10 +1109,10 @@ pointer_notify_motion(struct libinput_device *device,
 
 	*motion_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = dx,
-		.y = dy,
-		.dx_unaccel = dx_unaccel,
-		.dy_unaccel = dy_unaccel,
+		.x = delta->x,
+		.y = delta->y,
+		.dx_unaccel = unaccel->x,
+		.dy_unaccel = unaccel->y,
 	};
 
 	post_device_event(device, time,
@@ -1125,8 +1123,7 @@ pointer_notify_motion(struct libinput_device *device,
 void
 pointer_notify_motion_absolute(struct libinput_device *device,
 			       uint64_t time,
-			       double x,
-			       double y)
+			       const struct device_coords *point)
 {
 	struct libinput_event_pointer *motion_absolute_event;
 
@@ -1136,8 +1133,8 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 
 	*motion_absolute_event = (struct libinput_event_pointer) {
 		.time = time,
-		.x = x,
-		.y = y,
+		.x = point->x,
+		.y = point->y,
 	};
 
 	post_device_event(device, time,
