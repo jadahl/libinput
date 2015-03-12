@@ -668,6 +668,12 @@ libinput_event_pointer_get_seat_button_count(
  * libinput_event_pointer_get_axis_value() returns a value of 0, the event
  * is a scroll stop event.
  *
+ * For pointer events that are not of type @ref LIBINPUT_EVENT_POINTER_AXIS,
+ * this function returns 0.
+ *
+ * @note It is an application bug to call this function for events other than
+ * @ref LIBINPUT_EVENT_POINTER_AXIS.
+ *
  * @return Non-zero if this event contains a value for this axis
  */
 int
