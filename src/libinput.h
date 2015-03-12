@@ -797,8 +797,13 @@ libinput_event_touch_get_time(struct libinput_event_touch *event);
  * If the touch event has no assigned slot, for example if it is from a
  * single touch device, this function returns -1.
  *
- * @note this function should not be called for @ref
- * LIBINPUT_EVENT_TOUCH_CANCEL or @ref LIBINPUT_EVENT_TOUCH_FRAME.
+ * For events not of type @ref LIBINPUT_EVENT_TOUCH_DOWN, @ref
+ * LIBINPUT_EVENT_TOUCH_UP, @ref LIBINPUT_EVENT_TOUCH_MOTION or @ref
+ * LIBINPUT_EVENT_TOUCH_CANCEL, this function returns 0.
+ *
+ * @note It is an application bug to call this function for events of type
+ * other than @ref LIBINPUT_EVENT_TOUCH_DOWN, @ref LIBINPUT_EVENT_TOUCH_UP,
+ * @ref LIBINPUT_EVENT_TOUCH_MOTION or @ref LIBINPUT_EVENT_TOUCH_CANCEL.
  *
  * @return The slot of this touch event
  */
@@ -814,8 +819,13 @@ libinput_event_touch_get_slot(struct libinput_event_touch *event);
  * Events from single touch devices will be represented as one individual
  * touch point per device.
  *
- * @note this function should not be called for @ref
- * LIBINPUT_EVENT_TOUCH_CANCEL or @ref LIBINPUT_EVENT_TOUCH_FRAME.
+ * For events not of type @ref LIBINPUT_EVENT_TOUCH_DOWN, @ref
+ * LIBINPUT_EVENT_TOUCH_UP, @ref LIBINPUT_EVENT_TOUCH_MOTION or @ref
+ * LIBINPUT_EVENT_TOUCH_CANCEL, this function returns 0.
+ *
+ * @note It is an application bug to call this function for events of type
+ * other than @ref LIBINPUT_EVENT_TOUCH_DOWN, @ref LIBINPUT_EVENT_TOUCH_UP,
+ * @ref LIBINPUT_EVENT_TOUCH_MOTION or @ref LIBINPUT_EVENT_TOUCH_CANCEL.
  *
  * @return The seat slot of the touch event
  */
