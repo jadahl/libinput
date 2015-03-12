@@ -150,6 +150,11 @@ void litest_touch_move_to(struct litest_device *d,
 			  double x_from, double y_from,
 			  double x_to, double y_to,
 			  int steps, int sleep_ms);
+void litest_touch_move_two_touches(struct litest_device *d,
+				   double x0, double y0,
+				   double x1, double y1,
+				   double dx, double dy,
+				   int steps, int sleep_ms);
 void litest_button_click(struct litest_device *d,
 			 unsigned int button,
 			 bool is_press);

@@ -904,6 +904,28 @@ litest_touch_move_to(struct litest_device *d,
 }
 
 void
+litest_touch_move_two_touches(struct litest_device *d,
+			      double x0, double y0,
+			      double x1, double y1,
+			      double dx, double dy,
+			      int steps, int sleep_ms)
+{
+	for (int i = 0; i < steps - 1; i++) {
+		litest_touch_move(d, 0, x0 + dx / steps * i,
+					y0 + dy / steps * i);
+		litest_touch_move(d, 1, x1 + dx / steps * i,
+					y1 + dy / steps * i);
+		if (sleep_ms) {
+			libinput_dispatch(d->libinput);
+			msleep(sleep_ms);
+			libinput_dispatch(d->libinput);
+		}
+	}
+	litest_touch_move(d, 0, x0 + dx, y0 + dy);
+	litest_touch_move(d, 1, x1 + dx, y1 + dy);
+}
+
+void
 litest_button_click(struct litest_device *d, unsigned int button, bool is_press)
 {
 

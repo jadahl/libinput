@@ -1820,8 +1820,7 @@ test_2fg_scroll(struct litest_device *dev, double dx, double dy, int want_sleep)
 	litest_touch_down(dev, 0, 47, 50);
 	litest_touch_down(dev, 1, 53, 50);
 
-	litest_touch_move_to(dev, 0, 47, 50, 47 + dx, 50 + dy, 5, 0);
-	litest_touch_move_to(dev, 1, 53, 50, 53 + dx, 50 + dy, 5, 0);
+	litest_touch_move_two_touches(dev, 47, 50, 53, 50, dx, dy, 5, 0);
 
 	/* Avoid a small scroll being seen as a tap */
 	if (want_sleep) {
@@ -1880,8 +1879,7 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 
 	litest_touch_down(dev, 0, 20, 30);
 	litest_touch_down(dev, 1, 40, 30);
-	litest_touch_move_to(dev, 0, 20, 30, 20, 30 + y_move, 70, 10);
-	litest_touch_move_to(dev, 1, 40, 30, 40, 30 + y_move, 70, 10);
+	litest_touch_move_two_touches(dev, 20, 30, 40, 30, 0, y_move, 70, 10);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
@@ -1951,8 +1949,7 @@ START_TEST(touchpad_2fg_scroll_return_to_motion)
 
 	/* 2fg scroll */
 	litest_touch_down(dev, 1, 53, 50);
-	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
-	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
+	litest_touch_move_two_touches(dev, 47, 50, 53, 50, 0, 20, 5, 0);
 	litest_touch_up(dev, 1);
 	libinput_dispatch(li);
 	litest_timeout_finger_switch();
@@ -1963,9 +1960,8 @@ START_TEST(touchpad_2fg_scroll_return_to_motion)
 	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	/* back to 2fg scroll, lifting the other finger */
-	litest_touch_down(dev, 1, 50, 50);
-	litest_touch_move_to(dev, 0, 47, 50, 47, 70, 5, 0);
-	litest_touch_move_to(dev, 1, 53, 50, 53, 70, 5, 0);
+	litest_touch_down(dev, 1, 53, 50);
+	litest_touch_move_two_touches(dev, 47, 50, 53, 50, 0, 20, 5, 0);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
 	litest_timeout_finger_switch();
@@ -3273,8 +3269,7 @@ START_TEST(touchpad_trackpoint_buttons_2fg_scroll)
 
 	litest_touch_down(touchpad, 0, 40, 70);
 	litest_touch_down(touchpad, 1, 60, 70);
-	litest_touch_move_to(touchpad, 0, 40, 70, 40, 30, 10, 0);
-	litest_touch_move_to(touchpad, 1, 60, 70, 60, 30, 10, 0);
+	litest_touch_move_two_touches(touchpad, 40, 70, 60, 70, 0, -40, 10, 0);
 
 	libinput_dispatch(li);
 	litest_wait_for_event(li);
