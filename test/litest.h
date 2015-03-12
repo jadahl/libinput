@@ -92,6 +92,8 @@ struct litest_device {
 };
 
 struct libinput *litest_create_context(void);
+void litest_disable_log_handler(struct libinput *libinput);
+void litest_restore_log_handler(struct libinput *libinput);
 
 void litest_add(const char *name, void *func,
 		enum litest_device_feature required_feature,

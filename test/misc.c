@@ -126,9 +126,11 @@ START_TEST(event_conversion_device_notify)
 			else if (type == LIBINPUT_EVENT_DEVICE_REMOVED)
 				device_removed++;
 
+			litest_disable_log_handler(li);
 			ck_assert(libinput_event_get_pointer_event(event) == NULL);
 			ck_assert(libinput_event_get_keyboard_event(event) == NULL);
 			ck_assert(libinput_event_get_touch_event(event) == NULL);
+			litest_restore_log_handler(li);
 		}
 
 		libinput_event_destroy(event);
@@ -178,9 +180,11 @@ START_TEST(event_conversion_pointer)
 			else if (type == LIBINPUT_EVENT_POINTER_BUTTON)
 				button++;
 
+			litest_disable_log_handler(li);
 			ck_assert(libinput_event_get_device_notify_event(event) == NULL);
 			ck_assert(libinput_event_get_keyboard_event(event) == NULL);
 			ck_assert(libinput_event_get_touch_event(event) == NULL);
+			litest_restore_log_handler(li);
 		}
 		libinput_event_destroy(event);
 	}
@@ -224,9 +228,11 @@ START_TEST(event_conversion_pointer_abs)
 			else if (type == LIBINPUT_EVENT_POINTER_BUTTON)
 				button++;
 
+			litest_disable_log_handler(li);
 			ck_assert(libinput_event_get_device_notify_event(event) == NULL);
 			ck_assert(libinput_event_get_keyboard_event(event) == NULL);
 			ck_assert(libinput_event_get_touch_event(event) == NULL);
+			litest_restore_log_handler(li);
 		}
 		libinput_event_destroy(event);
 	}
@@ -263,9 +269,11 @@ START_TEST(event_conversion_key)
 
 			key++;
 
+			litest_disable_log_handler(li);
 			ck_assert(libinput_event_get_device_notify_event(event) == NULL);
 			ck_assert(libinput_event_get_pointer_event(event) == NULL);
 			ck_assert(libinput_event_get_touch_event(event) == NULL);
+			litest_restore_log_handler(li);
 		}
 		libinput_event_destroy(event);
 	}
@@ -309,9 +317,11 @@ START_TEST(event_conversion_touch)
 
 			touch++;
 
+			litest_disable_log_handler(li);
 			ck_assert(libinput_event_get_device_notify_event(event) == NULL);
 			ck_assert(libinput_event_get_pointer_event(event) == NULL);
 			ck_assert(libinput_event_get_keyboard_event(event) == NULL);
+			litest_restore_log_handler(li);
 		}
 		libinput_event_destroy(event);
 	}

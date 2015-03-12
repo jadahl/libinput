@@ -642,6 +642,18 @@ litest_create_context(void)
 	return libinput;
 }
 
+void
+litest_disable_log_handler(struct libinput *libinput)
+{
+	libinput_log_set_handler(libinput, NULL);
+}
+
+void
+litest_restore_log_handler(struct libinput *libinput)
+{
+	libinput_log_set_handler(libinput, litest_log_handler);
+}
+
 struct litest_device *
 litest_add_device_with_overrides(struct libinput *libinput,
 				 enum litest_device_type which,
