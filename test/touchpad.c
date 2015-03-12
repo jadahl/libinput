@@ -1864,13 +1864,24 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
+	const struct input_absinfo *y;
+	double y_move;
+
+	/* We want to move > 5 mm. */
+	y = libevdev_get_abs_info(dev->evdev, ABS_Y);
+	if (y->resolution) {
+		y_move = 7.0 * y->resolution /
+					(y->maximum - y->minimum) * 100;
+	} else {
+		y_move = 10.0;
+	}
 
 	litest_drain_events(li);
 
 	litest_touch_down(dev, 0, 20, 30);
 	litest_touch_down(dev, 1, 40, 30);
-	litest_touch_move_to(dev, 0, 20, 30, 20, 40, 70, 10);
-	litest_touch_move_to(dev, 1, 40, 30, 40, 40, 70, 10);
+	litest_touch_move_to(dev, 0, 20, 30, 20, 30 + y_move, 70, 10);
+	litest_touch_move_to(dev, 1, 40, 30, 40, 30 + y_move, 70, 10);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
