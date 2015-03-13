@@ -372,6 +372,8 @@ litest_log_handler(struct libinput *libinput,
 	case LIBINPUT_LOG_PRIORITY_INFO: priority = "info"; break;
 	case LIBINPUT_LOG_PRIORITY_ERROR: priority = "error"; break;
 	case LIBINPUT_LOG_PRIORITY_DEBUG: priority = "debug"; break;
+	default:
+		  abort();
 	}
 
 	fprintf(stderr, "litest %s: ", priority);
