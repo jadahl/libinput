@@ -57,6 +57,11 @@ See @ref motion_normalization for details.
 <dd>The angle in degrees for each click on a mouse wheel. See
 libinput_pointer_get_axis_source() for details.
 </dd>
+<dt>TOUCHPAD_RESOLUTION</dt>
+<dd>The x and y resolution in units/mm for a touchpad. This value is only
+used if the touchpad kernel driver does not supply a valid resolution. It
+is only used on touchpad devices. The format is two unsigned integer values
+separated by a literal 'x', e.g.  "42x129".</dd>
 </dl>
 
 Below is an example udev rule to assign "seat1" to a device from vendor

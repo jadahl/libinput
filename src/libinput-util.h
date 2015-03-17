@@ -299,5 +299,8 @@ enum ratelimit_state ratelimit_test(struct ratelimit *r);
 
 int parse_mouse_dpi_property(const char *prop);
 int parse_mouse_wheel_click_angle_property(const char *prop);
+int parse_touchpad_resolution_property(const char *prop,
+				       unsigned int *res_x,
+				       unsigned int *res_y);
 
 #endif /* LIBINPUT_UTIL_H */

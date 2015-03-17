@@ -557,6 +557,54 @@ START_TEST(wheel_click_parser)
 }
 END_TEST
 
+struct res_parser_test {
+	const char *value;
+	int retvalue;
+	int rx, ry;
+};
+
+START_TEST(touchpad_resolution_parser)
+{
+	struct res_parser_test tests[] = {
+		{ "43x85", 0, 43, 85},
+		{ "242x428", 0, 242, 428 },
+		{ "1x1", -1, 0, 0},
+		{ "abcd", -1, 0, 0},
+		{ "", -1, 0, 0 },
+		{ "x", -1, 0, 0 },
+		{ "23x", -1, 0, 0 },
+		{ "x58", -1, 0, 0 },
+		{ "1x1", -1, 0, 0 },
+		{ "9x9", -1, 0, 0 },
+		{ "-34x-19", -1, 0, 0 },
+		{ "-34x19", -1, 0, 0 },
+		{ "34x-19", -1, 0, 0 },
+		{ NULL, 0, 0, 0 }
+
+	};
+
+	struct res_parser_test *test = tests;
+	int rc;
+	unsigned int rx, ry;
+
+	while (test->value != NULL) {
+		rx = 0xab;
+		ry = 0xcd;
+		rc = parse_touchpad_resolution_property(test->value, &rx, &ry);
+		ck_assert_int_eq(rc, test->retvalue);
+		if (rc == 0) {
+			ck_assert_int_eq(rx, test->rx);
+			ck_assert_int_eq(ry, test->ry);
+		} else {
+			ck_assert_int_eq(rx, 0xab);
+			ck_assert_int_eq(ry, 0xcd);
+		}
+
+		test++;
+	}
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);
@@ -572,6 +620,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
 	litest_add_no_device("misc:dpi parser", dpi_parser);
 	litest_add_no_device("misc:wheel click parser", wheel_click_parser);
+	litest_add_no_device("misc:touchpad resolution parser", touchpad_resolution_parser);
 
 	return litest_run(argc, argv);
 }

@@ -1117,6 +1117,32 @@ tp_init_sendevents(struct tp_dispatch *tp,
 	return 0;
 }
 
+static void
+tp_fix_resolution(struct tp_dispatch *tp, struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	const char *prop;
+	unsigned int resx, resy;
+
+	prop = udev_device_get_property_value(device->udev_device,
+					      "TOUCHPAD_RESOLUTION");
+	if (!prop)
+		return;
+
+	if (parse_touchpad_resolution_property(prop, &resx, &resy) == -1) {
+		log_error(libinput,
+			  "Touchpad resolution property set for '%s', but invalid.\n",
+			  device->devname);
+		return;
+	}
+
+	if (evdev_fix_abs_resolution(device,
+				 tp->has_mt ? ABS_MT_POSITION_X : ABS_X,
+				 tp->has_mt ? ABS_MT_POSITION_Y : ABS_Y,
+				 resx, resy))
+		device->abs.fake_resolution = 0;
+}
+
 static int
 tp_init(struct tp_dispatch *tp,
 	struct evdev_device *device)
@@ -1129,6 +1155,8 @@ tp_init(struct tp_dispatch *tp,
 
 	if (tp_init_slots(tp, device) != 0)
 		return -1;
+
+	tp_fix_resolution(tp, device);
 
 	width = abs(device->abs.absinfo_x->maximum -
 		    device->abs.absinfo_x->minimum);
