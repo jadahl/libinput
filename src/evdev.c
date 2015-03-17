@@ -1474,14 +1474,67 @@ evdev_reject_device(struct evdev_device *device)
 }
 
 static int
-evdev_configure_device(struct evdev_device *device)
+evdev_configure_mt_device(struct evdev_device *device)
 {
-	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
 	struct mt_slot *slots;
 	int num_slots;
 	int active_slot;
 	int slot;
+
+	if (!libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ||
+	    !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
+		 return 0;
+
+	if (evdev_fix_abs_resolution(device,
+				     ABS_MT_POSITION_X,
+				     ABS_MT_POSITION_Y,
+				     EVDEV_FAKE_RESOLUTION,
+				     EVDEV_FAKE_RESOLUTION))
+		device->abs.fake_resolution = 1;
+
+	device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
+	device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
+	device->is_mt = 1;
+
+	/* We only handle the slotted Protocol B in libinput.
+	   Devices with ABS_MT_POSITION_* but not ABS_MT_SLOT
+	   require mtdev for conversion. */
+	if (evdev_need_mtdev(device)) {
+		device->mtdev = mtdev_new_open(device->fd);
+		if (!device->mtdev)
+			return -1;
+
+		/* pick 10 slots as default for type A
+		   devices. */
+		num_slots = 10;
+		active_slot = device->mtdev->caps.slot.value;
+	} else {
+		num_slots = libevdev_get_num_slots(device->evdev);
+		active_slot = libevdev_get_current_slot(evdev);
+	}
+
+	slots = calloc(num_slots, sizeof(struct mt_slot));
+	if (!slots)
+		return -1;
+
+	for (slot = 0; slot < num_slots; ++slot) {
+		slots[slot].seat_slot = -1;
+		slots[slot].point.x = 0;
+		slots[slot].point.y = 0;
+	}
+	device->mt.slots = slots;
+	device->mt.slots_len = num_slots;
+	device->mt.slot = active_slot;
+
+	return 0;
+}
+
+static int
+evdev_configure_device(struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	struct libevdev *evdev = device->evdev;
 	const char *devnode = udev_device_get_devnode(device->udev_device);
 	enum evdev_device_udev_tags udev_tags;
 
@@ -1550,47 +1603,8 @@ evdev_configure_device(struct evdev_device *device)
 		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT) &&
 		    libevdev_get_num_slots(evdev) == -1) {
 			udev_tags &= ~EVDEV_UDEV_TAG_TOUCHSCREEN;
-		} else if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
-			   libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
-			if (evdev_fix_abs_resolution(device,
-						     ABS_MT_POSITION_X,
-						     ABS_MT_POSITION_Y,
-						     EVDEV_FAKE_RESOLUTION,
-						     EVDEV_FAKE_RESOLUTION))
-				device->abs.fake_resolution = 1;
-			device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
-			device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
-			device->is_mt = 1;
-
-			/* We only handle the slotted Protocol B in libinput.
-			   Devices with ABS_MT_POSITION_* but not ABS_MT_SLOT
-			   require mtdev for conversion. */
-			if (evdev_need_mtdev(device)) {
-				device->mtdev = mtdev_new_open(device->fd);
-				if (!device->mtdev)
-					return -1;
-
-				/* pick 10 slots as default for type A
-				   devices. */
-				num_slots = 10;
-				active_slot = device->mtdev->caps.slot.value;
-			} else {
-				num_slots = libevdev_get_num_slots(device->evdev);
-				active_slot = libevdev_get_current_slot(evdev);
-			}
-
-			slots = calloc(num_slots, sizeof(struct mt_slot));
-			if (!slots)
-				return -1;
-
-			for (slot = 0; slot < num_slots; ++slot) {
-				slots[slot].seat_slot = -1;
-				slots[slot].point.x = 0;
-				slots[slot].point.y = 0;
-			}
-			device->mt.slots = slots;
-			device->mt.slots_len = num_slots;
-			device->mt.slot = active_slot;
+		} else if (evdev_configure_mt_device(device) == -1) {
+			return -1;
 		}
 	}
 
