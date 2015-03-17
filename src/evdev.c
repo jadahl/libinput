@@ -1416,6 +1416,22 @@ evdev_fix_android_mt(struct evdev_device *device)
 }
 
 static int
+evdev_reject_device(struct evdev_device *device)
+{
+	struct libevdev *evdev = device->evdev;
+
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X) ^
+	    libevdev_has_event_code(evdev, EV_ABS, ABS_Y))
+		return -1;
+
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ^
+	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
+		return -1;
+
+	return 0;
+}
+
+static int
 evdev_configure_device(struct evdev_device *device)
 {
 	struct libinput *libinput = device->base.seat->libinput;
@@ -1463,6 +1479,13 @@ evdev_configure_device(struct evdev_device *device)
 	if (udev_tags & EVDEV_UDEV_TAG_BUTTONSET) {
 		log_info(libinput,
 			 "input device '%s', %s is a buttonset, ignoring\n",
+			 device->devname, devnode);
+		return -1;
+	}
+
+	if (evdev_reject_device(device) == -1) {
+		log_info(libinput,
+			 "input device '%s', %s was rejected.\n",
 			 device->devname, devnode);
 		return -1;
 	}
