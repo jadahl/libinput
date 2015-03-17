@@ -1490,7 +1490,8 @@ evdev_configure_device(struct evdev_device *device)
 		return -1;
 	}
 
-	if (libevdev_has_event_type(evdev, EV_ABS)) {
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X) ||
+	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X)) {
 		evdev_fix_android_mt(device);
 
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
