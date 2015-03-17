@@ -172,6 +172,8 @@ static void
 map_event_cb(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
 	struct window *w = data;
+	GdkDisplay *display;
+	GdkWindow *window;
 
 	gtk_window_get_size(GTK_WINDOW(widget), &w->width, &w->height);
 
@@ -185,8 +187,12 @@ map_event_cb(GtkWidget *widget, GdkEvent *event, gpointer data)
 
 	g_signal_connect(G_OBJECT(w->area), "draw", G_CALLBACK(draw), w);
 
+	window = gdk_event_get_window(event);
+	display = gdk_window_get_display(window);
+
 	gdk_window_set_cursor(gtk_widget_get_window(w->win),
-			      gdk_cursor_new(GDK_BLANK_CURSOR));
+			      gdk_cursor_new_for_display(display,
+							 GDK_BLANK_CURSOR));
 }
 
 static void
