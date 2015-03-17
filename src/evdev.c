@@ -1396,6 +1396,25 @@ evdev_device_get_udev_tags(struct evdev_device *device,
 	return tags;
 }
 
+static inline void
+evdev_fix_android_mt(struct evdev_device *device)
+{
+	struct libevdev *evdev = device->evdev;
+
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X) ||
+	    libevdev_has_event_code(evdev, EV_ABS, ABS_Y))
+		return;
+
+	if (!libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ||
+	    !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
+		return;
+
+	libevdev_set_abs_info(evdev, ABS_X,
+		      libevdev_get_abs_info(evdev, ABS_MT_POSITION_X));
+	libevdev_set_abs_info(evdev, ABS_Y,
+		      libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y));
+}
+
 static int
 evdev_configure_device(struct evdev_device *device)
 {
@@ -1449,6 +1468,7 @@ evdev_configure_device(struct evdev_device *device)
 	}
 
 	if (libevdev_has_event_type(evdev, EV_ABS)) {
+		evdev_fix_android_mt(device);
 
 		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
 			if (evdev_fix_abs_resolution(evdev,
