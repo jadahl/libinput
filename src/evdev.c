@@ -1350,23 +1350,66 @@ evdev_read_dpi_prop(struct evdev_device *device)
 	return dpi;
 }
 
-static inline int
-evdev_fix_abs_resolution(struct libevdev *evdev,
-			 unsigned int code,
-			 const struct input_absinfo *absinfo)
+/* Return 1 if the given resolutions have been set, or 0 otherwise */
+inline int
+evdev_fix_abs_resolution(struct evdev_device *device,
+			 unsigned int xcode,
+			 unsigned int ycode,
+			 int xresolution,
+			 int yresolution)
 {
+	struct libinput *libinput = device->base.seat->libinput;
+	struct libevdev *evdev = device->evdev;
+	const struct input_absinfo *absx, *absy;
 	struct input_absinfo fixed;
+	int rc = 0;
 
-	if (absinfo->resolution == 0) {
-		fixed = *absinfo;
-		fixed.resolution = 1;
-		/* libevdev_set_abs_info() changes the absinfo we already
-		   have a pointer to, no need to fetch it again */
-		libevdev_set_abs_info(evdev, code, &fixed);
-		return 1;
-	} else {
+	if (!(xcode == ABS_X && ycode == ABS_Y)  &&
+	    !(xcode == ABS_MT_POSITION_X && ycode == ABS_MT_POSITION_Y)) {
+		log_bug_libinput(libinput,
+				 "Invalid x/y code combination %d/%d\n",
+				 xcode, ycode);
 		return 0;
 	}
+
+	if (xresolution == 0 || yresolution == 0 ||
+	    (xresolution == EVDEV_FAKE_RESOLUTION && xresolution != yresolution) ||
+	    (yresolution == EVDEV_FAKE_RESOLUTION && xresolution != yresolution)) {
+		log_bug_libinput(libinput,
+				 "Invalid x/y resolutions %d/%d\n",
+				 xresolution, yresolution);
+		return 0;
+	}
+
+	absx = libevdev_get_abs_info(evdev, xcode);
+	absy = libevdev_get_abs_info(evdev, ycode);
+
+	if ((absx->resolution == 0 && absy->resolution != 0) ||
+	    (absx->resolution != 0 && absy->resolution == 0)) {
+		log_bug_kernel(libinput,
+			       "Kernel has only x or y resolution, not both.\n");
+		return 0;
+	}
+
+	if (absx->resolution == 0 || absx->resolution == EVDEV_FAKE_RESOLUTION) {
+		fixed = *absx;
+		fixed.resolution = xresolution;
+		/* libevdev_set_abs_info() changes the absinfo we already
+		   have a pointer to, no need to fetch it again */
+		libevdev_set_abs_info(evdev, xcode, &fixed);
+		rc = 1;
+	}
+
+	if (absy->resolution == 0 || absy->resolution == EVDEV_FAKE_RESOLUTION) {
+		fixed = *absy;
+		fixed.resolution = yresolution;
+		/* libevdev_set_abs_info() changes the absinfo we already
+		   have a pointer to, no need to fetch it again */
+		libevdev_set_abs_info(evdev, ycode, &fixed);
+		rc = 1;
+	}
+
+	return rc;
 }
 
 static enum evdev_device_udev_tags
@@ -1435,7 +1478,6 @@ evdev_configure_device(struct evdev_device *device)
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
-	const struct input_absinfo *absinfo;
 	struct mt_slot *slots;
 	int num_slots;
 	int active_slot;
@@ -1493,20 +1535,14 @@ evdev_configure_device(struct evdev_device *device)
 	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X)) {
 		evdev_fix_android_mt(device);
 
-		if ((absinfo = libevdev_get_abs_info(evdev, ABS_X))) {
-			if (evdev_fix_abs_resolution(evdev,
-						     ABS_X,
-						     absinfo))
-				device->abs.fake_resolution = 1;
-			device->abs.absinfo_x = absinfo;
-		}
-		if ((absinfo = libevdev_get_abs_info(evdev, ABS_Y))) {
-			if (evdev_fix_abs_resolution(evdev,
-						     ABS_Y,
-						     absinfo))
-				device->abs.fake_resolution = 1;
-			device->abs.absinfo_y = absinfo;
-		}
+		if (evdev_fix_abs_resolution(device,
+					     ABS_X,
+					     ABS_Y,
+					     EVDEV_FAKE_RESOLUTION,
+					     EVDEV_FAKE_RESOLUTION))
+			device->abs.fake_resolution = 1;
+		device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_X);
+		device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_Y);
 
 		/* Fake MT devices have the ABS_MT_SLOT bit set because of
 		   the limited ABS_* range - they aren't MT devices, they
@@ -1516,19 +1552,14 @@ evdev_configure_device(struct evdev_device *device)
 			udev_tags &= ~EVDEV_UDEV_TAG_TOUCHSCREEN;
 		} else if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) &&
 			   libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y)) {
-			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
-			if (evdev_fix_abs_resolution(evdev,
+			if (evdev_fix_abs_resolution(device,
 						     ABS_MT_POSITION_X,
-						     absinfo))
-				device->abs.fake_resolution = 1;
-			device->abs.absinfo_x = absinfo;
-
-			absinfo = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
-			if (evdev_fix_abs_resolution(evdev,
 						     ABS_MT_POSITION_Y,
-						     absinfo))
+						     EVDEV_FAKE_RESOLUTION,
+						     EVDEV_FAKE_RESOLUTION))
 				device->abs.fake_resolution = 1;
-			device->abs.absinfo_y = absinfo;
+			device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
+			device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
 			device->is_mt = 1;
 
 			/* We only handle the slotted Protocol B in libinput.

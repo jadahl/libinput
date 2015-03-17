@@ -36,6 +36,8 @@
 
 /* The HW DPI rate we normalize to before calculating pointer acceleration */
 #define DEFAULT_MOUSE_DPI 1000
+/* The fake resolution value for abs devices without resolution */
+#define EVDEV_FAKE_RESOLUTION 1
 
 enum evdev_event_type {
 	EVDEV_NONE,
@@ -211,6 +213,13 @@ struct evdev_dispatch {
 struct evdev_device *
 evdev_device_create(struct libinput_seat *seat,
 		    struct udev_device *device);
+
+int
+evdev_fix_abs_resolution(struct evdev_device *device,
+			 unsigned int xcode,
+			 unsigned int ycode,
+			 int yresolution,
+			 int xresolution);
 
 int
 evdev_device_init_pointer_acceleration(struct evdev_device *device,
