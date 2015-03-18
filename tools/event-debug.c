@@ -124,7 +124,7 @@ print_device_notify(struct libinput_event *ev)
 	struct libinput_seat *seat = libinput_device_get_seat(dev);
 	struct libinput_device_group *group;
 	double w, h;
-	uint32_t scroll_methods;
+	uint32_t scroll_methods, click_methods;
 	static int next_group_id = 0;
 	intptr_t group_id;
 
@@ -173,6 +173,15 @@ print_device_notify(struct libinput_event *ev)
 			printf("-edge");
 		if (scroll_methods & LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN)
 			printf("-button");
+	}
+
+	click_methods = libinput_device_config_click_get_methods(dev);
+	if (click_methods != LIBINPUT_CONFIG_CLICK_METHOD_NONE) {
+		printf(" click");
+		if (click_methods & LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS)
+			printf("-buttonareas");
+		if (click_methods & LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER)
+			printf("-clickfinger");
 	}
 
 	printf("\n");
