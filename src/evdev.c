@@ -238,7 +238,6 @@ static void
 evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 {
 	struct libinput *libinput = device->base.seat->libinput;
-	struct motion_params motion;
 	int slot;
 	int seat_slot;
 	struct libinput_device *base = &device->base;
@@ -267,11 +266,7 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		}
 
 		/* Apply pointer acceleration. */
-		motion.dx = unaccel.x;
-		motion.dy = unaccel.y;
-		filter_dispatch(device->pointer.filter, &motion, device, time);
-		accel.x = motion.dx;
-		accel.y = motion.dy;
+		accel = filter_dispatch(device->pointer.filter, &unaccel, device, time);
 
 		if (accel.x == 0.0 && accel.y == 0.0 &&
 		    unaccel.x == 0.0 && unaccel.y == 0.0) {

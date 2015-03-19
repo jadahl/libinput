@@ -33,12 +33,12 @@
 #include "libinput-util.h"
 #include "filter-private.h"
 
-void
+struct normalized_coords
 filter_dispatch(struct motion_filter *filter,
-		struct motion_params *motion,
+		const struct normalized_coords *unaccelerated,
 		void *data, uint64_t time)
 {
-	filter->interface->filter(filter, motion, data, time);
+	return filter->interface->filter(filter, unaccelerated, data, time);
 }
 
 void
@@ -80,8 +80,7 @@ filter_get_speed(struct motion_filter *filter)
 #define NUM_POINTER_TRACKERS	16
 
 struct pointer_tracker {
-	double dx;	/* delta to most recent event, in device units */
-	double dy;	/* delta to most recent event, in device units */
+	struct normalized_coords delta; /* delta to most recent event */
 	uint64_t time;  /* ms */
 	int dir;
 };
@@ -94,8 +93,7 @@ struct pointer_accelerator {
 
 	double velocity;	/* units/ms */
 	double last_velocity;	/* units/ms */
-	int last_dx;		/* device units */
-	int last_dy;		/* device units */
+	struct normalized_coords last;
 
 	struct pointer_tracker *trackers;
 	int cur_tracker;
@@ -107,24 +105,24 @@ struct pointer_accelerator {
 
 static void
 feed_trackers(struct pointer_accelerator *accel,
-	      double dx, double dy,
+	      const struct normalized_coords *delta,
 	      uint64_t time)
 {
 	int i, current;
 	struct pointer_tracker *trackers = accel->trackers;
 
 	for (i = 0; i < NUM_POINTER_TRACKERS; i++) {
-		trackers[i].dx += dx;
-		trackers[i].dy += dy;
+		trackers[i].delta.x += delta->x;
+		trackers[i].delta.y += delta->y;
 	}
 
 	current = (accel->cur_tracker + 1) % NUM_POINTER_TRACKERS;
 	accel->cur_tracker = current;
 
-	trackers[current].dx = 0.0;
-	trackers[current].dy = 0.0;
+	trackers[current].delta.x = 0.0;
+	trackers[current].delta.y = 0.0;
 	trackers[current].time = time;
-	trackers[current].dir = vector_get_direction(dx, dy);
+	trackers[current].dir = vector_get_direction(delta->x, delta->y);
 }
 
 static struct pointer_tracker *
@@ -139,13 +137,9 @@ tracker_by_offset(struct pointer_accelerator *accel, unsigned int offset)
 static double
 calculate_tracker_velocity(struct pointer_tracker *tracker, uint64_t time)
 {
-	double dx;
-	double dy;
 	double distance;
 
-	dx = tracker->dx;
-	dy = tracker->dy;
-	distance = sqrt(dx*dx + dy*dy);
+	distance = hypot(tracker->delta.x, tracker->delta.y);
 	return distance / (double)(time - tracker->time); /* units/ms */
 }
 
@@ -220,27 +214,29 @@ calculate_acceleration(struct pointer_accelerator *accel,
 	return factor; /* unitless factor */
 }
 
-static void
+static struct normalized_coords
 accelerator_filter(struct motion_filter *filter,
-		   struct motion_params *motion,
+		   const struct normalized_coords *unaccelerated,
 		   void *data, uint64_t time)
 {
 	struct pointer_accelerator *accel =
 		(struct pointer_accelerator *) filter;
 	double velocity; /* units/ms */
 	double accel_value; /* unitless factor */
+	struct normalized_coords accelerated;
 
-	feed_trackers(accel, motion->dx, motion->dy, time);
+	feed_trackers(accel, unaccelerated, time);
 	velocity = calculate_velocity(accel, time);
 	accel_value = calculate_acceleration(accel, data, velocity, time);
 
-	motion->dx = accel_value * motion->dx;
-	motion->dy = accel_value * motion->dy;
+	accelerated.x = accel_value * unaccelerated->x;
+	accelerated.y = accel_value * unaccelerated->y;
 
-	accel->last_dx = motion->dx;
-	accel->last_dy = motion->dy;
+	accel->last = *unaccelerated;
 
 	accel->last_velocity = velocity;
+
+	return accelerated;
 }
 
 static void
@@ -294,8 +290,8 @@ create_pointer_accelerator_filter(accel_profile_func_t profile)
 
 	filter->profile = profile;
 	filter->last_velocity = 0.0;
-	filter->last_dx = 0;
-	filter->last_dy = 0;
+	filter->last.x = 0;
+	filter->last.y = 0;
 
 	filter->trackers =
 		calloc(NUM_POINTER_TRACKERS, sizeof *filter->trackers);

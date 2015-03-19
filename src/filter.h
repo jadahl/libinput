@@ -28,15 +28,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-struct motion_params {
-	double dx, dy; /* in units/ms @ DEFAULT_MOUSE_DPI resolution */
-};
+#include "libinput-private.h"
 
 struct motion_filter;
 
-void
+struct normalized_coords
 filter_dispatch(struct motion_filter *filter,
-		struct motion_params *motion,
+		const struct normalized_coords *unaccelerated,
 		void *data, uint64_t time);
 void
 filter_destroy(struct motion_filter *filter);

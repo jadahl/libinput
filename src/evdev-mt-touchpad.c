@@ -64,21 +64,27 @@ tp_filter_motion(struct tp_dispatch *tp,
 	         double *dx_unaccel, double *dy_unaccel,
 		 uint64_t time)
 {
-	struct motion_params motion;
+	struct normalized_coords unaccelerated;
+	struct normalized_coords accelerated;
 
-	motion.dx = *dx;
-	motion.dy = *dy;
+	unaccelerated.x = *dx;
+	unaccelerated.y = *dy;
+
+	if (unaccelerated.x != 0.0 || unaccelerated.y != 0.0)
+		accelerated = filter_dispatch(tp->device->pointer.filter,
+					      &unaccelerated,
+					      tp,
+					      time);
+	else
+		accelerated = unaccelerated;
 
 	if (dx_unaccel)
-		*dx_unaccel = motion.dx;
+		*dx_unaccel = unaccelerated.x;
 	if (dy_unaccel)
-		*dy_unaccel = motion.dy;
+		*dy_unaccel = unaccelerated.y;
 
-	if (motion.dx != 0.0 || motion.dy != 0.0)
-		filter_dispatch(tp->device->pointer.filter, &motion, tp, time);
-
-	*dx = motion.dx;
-	*dy = motion.dy;
+	*dx = accelerated.x;
+	*dy = accelerated.y;
 }
 
 static inline void
