@@ -812,6 +812,48 @@ START_TEST(pointer_accel_defaults_absolute)
 }
 END_TEST
 
+START_TEST(pointer_accel_direction_change)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *pev;
+	int i;
+	double delta;
+	double max_accel;
+
+	litest_drain_events(li);
+
+	for (i = 0; i < 10; i++) {
+		litest_event(dev, EV_REL, REL_X, -1);
+		litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	}
+	litest_event(dev, EV_REL, REL_X, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	libinput_dispatch(li);
+
+	litest_wait_for_event_of_type(li,
+				      LIBINPUT_EVENT_POINTER_MOTION,
+				      -1);
+	event = libinput_get_event(li);
+	do {
+		pev = libinput_event_get_pointer_event(event);
+
+		delta = libinput_event_pointer_get_dx(pev);
+		ck_assert(delta <= 0.0);
+		max_accel = delta;
+		libinput_event_destroy(event);
+		event = libinput_get_event(li);
+	} while (libinput_next_event_type(li) != LIBINPUT_EVENT_NONE);
+
+	pev = libinput_event_get_pointer_event(event);
+	delta = libinput_event_pointer_get_dx(pev);
+	ck_assert(delta > 0.0);
+	ck_assert(delta < -max_accel);
+	libinput_event_destroy(event);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
@@ -837,6 +879,7 @@ int main (int argc, char **argv) {
 	litest_add("pointer:accel", pointer_accel_defaults, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_invalid, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_ANY);
+	litest_add("pointer:accel", pointer_accel_direction_change, LITEST_RELATIVE, LITEST_ANY);
 
 	return litest_run(argc, argv);
 }
