@@ -111,28 +111,28 @@ enum directions {
 };
 
 static inline int
-vector_get_direction(int dx, int dy)
+vector_get_direction(double dx, double dy)
 {
 	int dir = UNDEFINED_DIRECTION;
 	int d1, d2;
 	double r;
 
-	if (abs(dx) < 2 && abs(dy) < 2) {
-		if (dx > 0 && dy > 0)
+	if (fabs(dx) < 2.0 && fabs(dy) < 2.0) {
+		if (dx > 0.0 && dy > 0.0)
 			dir = S | SE | E;
-		else if (dx > 0 && dy < 0)
+		else if (dx > 0.0 && dy < 0.0)
 			dir = N | NE | E;
-		else if (dx < 0 && dy > 0)
+		else if (dx < 0.0 && dy > 0.0)
 			dir = S | SW | W;
-		else if (dx < 0 && dy < 0)
+		else if (dx < 0.0 && dy < 0.0)
 			dir = N | NW | W;
-		else if (dx > 0)
+		else if (dx > 0.0)
 			dir = NE | E | SE;
-		else if (dx < 0)
+		else if (dx < 0.0)
 			dir = NW | W | SW;
-		else if (dy > 0)
+		else if (dy > 0.0)
 			dir = SE | S | SW;
-		else if (dy < 0)
+		else if (dy < 0.0)
 			dir = NE | N | NW;
 	} else {
 		/* Calculate r within the interval  [0 to 8)
