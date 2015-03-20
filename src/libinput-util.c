@@ -201,33 +201,3 @@ parse_mouse_wheel_click_angle_property(const char *prop)
 
         return angle;
 }
-
-/**
- * Helper function to parse the TOUCHPAD_RESOLUTION property from udev.
- * Property is of the form
- * TOUCHPAD_RESOLUTION=<integer>x<integer>
- * With both integer values in device units per mm.
- * @param prop The value of the udev property (without the
- * TOUCHPAD_RESOLUTION=)
- * @return
- */
-int
-parse_touchpad_resolution_property(const char *prop,
-				   unsigned int *res_x,
-				   unsigned int *res_y)
-{
-	int nconverted = 0;
-	unsigned int rx, ry;
-	nconverted = sscanf(prop, "%ux%u", &rx, &ry);
-	if (nconverted != 2 || rx == 0 || ry == 0)
-		return -1;
-
-	if (rx > 1000 || ry > 1000 ||	/* yeah, right... */
-	    rx < 10 || ry < 10)		/* what is this? the 90s? */
-		return -1;
-
-	*res_x = rx;
-	*res_y = ry;
-
-	return 0;
-}
