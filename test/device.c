@@ -814,6 +814,86 @@ START_TEST(abs_mt_device_no_absx)
 }
 END_TEST
 
+START_TEST(abs_device_no_range)
+{
+	struct libevdev_uinput *uinput;
+	struct libinput *li;
+	struct libinput_device *device;
+	int code;
+	/* set x/y so libinput doesn't just reject for missing axes */
+	struct input_absinfo absinfo[] = {
+		{ ABS_X, 0, 10, 0, 0, 0 },
+		{ ABS_Y, 0, 10, 0, 0, 0 },
+		{ -1, 0, 0, 0, 0, 0 },
+		{ -1, -1, -1, -1, -1, -1 }
+	};
+
+	li = litest_create_context();
+	litest_disable_log_handler(li);
+
+	for (code = 0; code < ABS_MT_SLOT; code++) {
+		if (code == ABS_MISC)
+			continue;
+		absinfo[2].value = code;
+		uinput = litest_create_uinput_abs_device("test device", NULL,
+							 absinfo,
+							 EV_KEY, BTN_LEFT,
+							 EV_KEY, BTN_RIGHT,
+							 -1);
+		device = libinput_path_add_device(li,
+						  libevdev_uinput_get_devnode(uinput));
+		ck_assert(device == NULL);
+		libevdev_uinput_destroy(uinput);
+	}
+
+	litest_restore_log_handler(li);
+	libinput_unref(li);
+}
+END_TEST
+
+START_TEST(abs_mt_device_no_range)
+{
+	struct libevdev_uinput *uinput;
+	struct libinput *li;
+	struct libinput_device *device;
+	int code;
+	/* set x/y so libinput doesn't just reject for missing axes */
+	struct input_absinfo absinfo[] = {
+		{ ABS_X, 0, 10, 0, 0, 0 },
+		{ ABS_Y, 0, 10, 0, 0, 0 },
+		{ ABS_MT_SLOT, 0, 10, 0, 0, 0 },
+		{ ABS_MT_TRACKING_ID, 0, 255, 0, 0, 0 },
+		{ ABS_MT_POSITION_X, 0, 10, 0, 0, 0 },
+		{ ABS_MT_POSITION_Y, 0, 10, 0, 0, 0 },
+		{ -1, 0, 0, 0, 0, 0 },
+		{ -1, -1, -1, -1, -1, -1 }
+	};
+
+	li = litest_create_context();
+	litest_disable_log_handler(li);
+
+	for (code = ABS_MT_SLOT + 1; code < ABS_CNT; code++) {
+		if (code == ABS_MT_TOOL_TYPE ||
+		    code == ABS_MT_TRACKING_ID) /* kernel overrides it */
+			continue;
+
+		absinfo[6].value = code;
+		uinput = litest_create_uinput_abs_device("test device", NULL,
+							 absinfo,
+							 EV_KEY, BTN_LEFT,
+							 EV_KEY, BTN_RIGHT,
+							 -1);
+		device = libinput_path_add_device(li,
+						  libevdev_uinput_get_devnode(uinput));
+		ck_assert(device == NULL);
+		libevdev_uinput_destroy(uinput);
+	}
+
+	litest_restore_log_handler(li);
+	libinput_unref(li);
+}
+END_TEST
+
 int main (int argc, char **argv)
 {
 	litest_add("device:sendevents", device_sendevents_config, LITEST_ANY, LITEST_TOUCHPAD);
@@ -846,6 +926,8 @@ int main (int argc, char **argv)
 	litest_add_no_device("device:invalid devices", abs_device_no_absy);
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_absx);
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_absy);
+	litest_add_no_device("device:invalid devices", abs_device_no_range);
+	litest_add_no_device("device:invalid devices", abs_mt_device_no_range);
 
 	return litest_run(argc, argv);
 }
