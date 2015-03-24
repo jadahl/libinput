@@ -531,12 +531,11 @@ tp_tap_exceeds_motion_threshold(struct tp_dispatch *tp,
 				struct tp_touch *t)
 {
 	int threshold = DEFAULT_TAP_MOVE_THRESHOLD;
-	double dx, dy;
 	struct normalized_coords normalized;
 
-	dx = abs(t->tap.initial.x - t->point.x);
-	dy = abs(t->tap.initial.y - t->point.y);
-	tp_normalize_delta(tp, dx, dy, &normalized);
+	normalized = tp_normalize_delta(tp,
+					device_delta(t->point,
+						     t->tap.initial));
 
 	return normalized.x * normalized.x + normalized.y * normalized.y
 			> threshold * threshold;
