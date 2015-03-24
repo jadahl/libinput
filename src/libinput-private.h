@@ -380,4 +380,10 @@ normalized_length(struct normalized_coords norm)
 	return hypot(norm.x, norm.y);
 }
 
+static inline int
+normalized_is_zero(struct normalized_coords norm)
+{
+	return norm.x == 0.0 && norm.y == 0.0;
+}
+
 #endif /* LIBINPUT_PRIVATE_H */

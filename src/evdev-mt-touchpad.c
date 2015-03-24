@@ -70,7 +70,7 @@ tp_filter_motion(struct tp_dispatch *tp,
 	unaccelerated.x = *dx;
 	unaccelerated.y = *dy;
 
-	if (unaccelerated.x != 0.0 || unaccelerated.y != 0.0)
+	if (!normalized_is_zero(unaccelerated))
 		accelerated = filter_dispatch(tp->device->pointer.filter,
 					      &unaccelerated,
 					      tp,

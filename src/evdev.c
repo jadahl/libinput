@@ -268,10 +268,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		/* Apply pointer acceleration. */
 		accel = filter_dispatch(device->pointer.filter, &unaccel, device, time);
 
-		if (accel.x == 0.0 && accel.y == 0.0 &&
-		    unaccel.x == 0.0 && unaccel.y == 0.0) {
+		if (normalized_is_zero(accel) && normalized_is_zero(unaccel))
 			break;
-		}
 
 		pointer_notify_motion(base, time, &accel, &unaccel);
 		break;
@@ -2098,7 +2096,7 @@ evdev_post_scroll(struct evdev_device *device,
 			       LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL))
 		event.x = 0.0;
 
-	if (event.x != 0.0 || event.y != 0.0) {
+	if (!normalized_is_zero(event)) {
 		const struct discrete_coords zero_discrete = { 0.0, 0.0 };
 		evdev_notify_axis(device,
 				  time,

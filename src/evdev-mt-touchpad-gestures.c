@@ -99,8 +99,7 @@ tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 
 	tp_filter_motion(tp, &delta.x, &delta.y, &unaccel.x, &unaccel.y, time);
 
-	if (delta.x != 0.0 || delta.y != 0.0 ||
-	    unaccel.x != 0.0 || unaccel.y != 0.0) {
+	if (!normalized_is_zero(delta) || !normalized_is_zero(unaccel)) {
 		pointer_notify_motion(&tp->device->base, time,
 				      &delta, &unaccel);
 	}
@@ -114,7 +113,7 @@ tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	delta = tp_get_average_touches_delta(tp);
 	tp_filter_motion(tp, &delta.x, &delta.y, NULL, NULL, time);
 
-	if (delta.x == 0.0 && delta.y == 0.0)
+	if (normalized_is_zero(delta))
 		return;
 
 	tp_gesture_start(tp, time);
