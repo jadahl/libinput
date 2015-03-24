@@ -349,8 +349,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 		}
 
 		normalized = tp_get_delta(t);
-		tp_filter_motion(tp, &normalized.x, &normalized.y,
-				 NULL, NULL, time);
+		normalized = tp_filter_motion(tp, &normalized, time);
 
 		switch (t->scroll.edge_state) {
 		case EDGE_SCROLL_TOUCH_STATE_NONE:

@@ -58,33 +58,16 @@ tp_motion_history_offset(struct tp_touch *t, int offset)
 	return &t->history.samples[offset_index];
 }
 
-void
+struct normalized_coords
 tp_filter_motion(struct tp_dispatch *tp,
-	         double *dx, double *dy,
-	         double *dx_unaccel, double *dy_unaccel,
+		 const struct normalized_coords *unaccelerated,
 		 uint64_t time)
 {
-	struct normalized_coords unaccelerated;
-	struct normalized_coords accelerated;
+	if (normalized_is_zero(*unaccelerated))
+		return *unaccelerated;
 
-	unaccelerated.x = *dx;
-	unaccelerated.y = *dy;
-
-	if (!normalized_is_zero(unaccelerated))
-		accelerated = filter_dispatch(tp->device->pointer.filter,
-					      &unaccelerated,
-					      tp,
-					      time);
-	else
-		accelerated = unaccelerated;
-
-	if (dx_unaccel)
-		*dx_unaccel = unaccelerated.x;
-	if (dy_unaccel)
-		*dy_unaccel = unaccelerated.y;
-
-	*dx = accelerated.x;
-	*dy = accelerated.y;
+	return filter_dispatch(tp->device->pointer.filter,
+			       unaccelerated, tp, time);
 }
 
 static inline void

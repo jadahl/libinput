@@ -288,10 +288,9 @@ tp_normalize_delta(struct tp_dispatch *tp, struct delta_coords delta)
 struct normalized_coords
 tp_get_delta(struct tp_touch *t);
 
-void
+struct normalized_coords
 tp_filter_motion(struct tp_dispatch *tp,
-	         double *dx, double *dy,
-	         double *dx_unaccel, double *dy_unaccel,
+		 const struct normalized_coords *unaccelerated,
 		 uint64_t time);
 
 int

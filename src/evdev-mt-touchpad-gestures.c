@@ -93,11 +93,11 @@ tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 
 	/* When a clickpad is clicked, combine motion of all active touches */
 	if (tp->buttons.is_clickpad && tp->buttons.state)
-		delta = tp_get_combined_touches_delta(tp);
+		unaccel = tp_get_combined_touches_delta(tp);
 	else
-		delta = tp_get_average_touches_delta(tp);
+		unaccel = tp_get_average_touches_delta(tp);
 
-	tp_filter_motion(tp, &delta.x, &delta.y, &unaccel.x, &unaccel.y, time);
+	delta = tp_filter_motion(tp, &unaccel, time);
 
 	if (!normalized_is_zero(delta) || !normalized_is_zero(unaccel)) {
 		pointer_notify_motion(&tp->device->base, time,
@@ -111,7 +111,7 @@ tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	struct normalized_coords delta;
 
 	delta = tp_get_average_touches_delta(tp);
-	tp_filter_motion(tp, &delta.x, &delta.y, NULL, NULL, time);
+	delta = tp_filter_motion(tp, &delta, time);
 
 	if (normalized_is_zero(delta))
 		return;
