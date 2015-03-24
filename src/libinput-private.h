@@ -24,6 +24,7 @@
 #define LIBINPUT_PRIVATE_H
 
 #include <errno.h>
+#include <math.h>
 
 #include "linux/input.h"
 
@@ -371,6 +372,12 @@ device_delta(struct device_coords a, struct device_coords b)
 	delta.dy = a.y - b.y;
 
 	return delta;
+}
+
+static inline double
+normalized_length(struct normalized_coords norm)
+{
+	return hypot(norm.x, norm.y);
 }
 
 #endif /* LIBINPUT_PRIVATE_H */

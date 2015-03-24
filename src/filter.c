@@ -137,11 +137,9 @@ tracker_by_offset(struct pointer_accelerator *accel, unsigned int offset)
 static double
 calculate_tracker_velocity(struct pointer_tracker *tracker, uint64_t time)
 {
-	double distance;
 	double tdelta = time - tracker->time + 1;
 
-	distance = hypot(tracker->delta.x, tracker->delta.y);
-	return distance / tdelta; /* units/ms */
+	return normalized_length(tracker->delta) / tdelta; /* units/ms */
 }
 
 static double
