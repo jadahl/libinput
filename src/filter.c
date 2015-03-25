@@ -122,7 +122,7 @@ feed_trackers(struct pointer_accelerator *accel,
 	trackers[current].delta.x = 0.0;
 	trackers[current].delta.y = 0.0;
 	trackers[current].time = time;
-	trackers[current].dir = vector_get_direction(delta->x, delta->y);
+	trackers[current].dir = normalized_get_direction(*delta);
 }
 
 static struct pointer_tracker *

@@ -386,4 +386,61 @@ normalized_is_zero(struct normalized_coords norm)
 	return norm.x == 0.0 && norm.y == 0.0;
 }
 
+enum directions {
+	N  = 1 << 0,
+	NE = 1 << 1,
+	E  = 1 << 2,
+	SE = 1 << 3,
+	S  = 1 << 4,
+	SW = 1 << 5,
+	W  = 1 << 6,
+	NW = 1 << 7,
+	UNDEFINED_DIRECTION = 0xff
+};
+
+static inline int
+normalized_get_direction(struct normalized_coords norm)
+{
+	int dir = UNDEFINED_DIRECTION;
+	int d1, d2;
+	double r;
+
+	if (fabs(norm.x) < 2.0 && fabs(norm.y) < 2.0) {
+		if (norm.x > 0.0 && norm.y > 0.0)
+			dir = S | SE | E;
+		else if (norm.x > 0.0 && norm.y < 0.0)
+			dir = N | NE | E;
+		else if (norm.x < 0.0 && norm.y > 0.0)
+			dir = S | SW | W;
+		else if (norm.x < 0.0 && norm.y < 0.0)
+			dir = N | NW | W;
+		else if (norm.x > 0.0)
+			dir = NE | E | SE;
+		else if (norm.x < 0.0)
+			dir = NW | W | SW;
+		else if (norm.y > 0.0)
+			dir = SE | S | SW;
+		else if (norm.y < 0.0)
+			dir = NE | N | NW;
+	} else {
+		/* Calculate r within the interval  [0 to 8)
+		 *
+		 * r = [0 .. 2π] where 0 is North
+		 * d_f = r / 2π  ([0 .. 1))
+		 * d_8 = 8 * d_f
+		 */
+		r = atan2(norm.y, norm.x);
+		r = fmod(r + 2.5*M_PI, 2*M_PI);
+		r *= 4*M_1_PI;
+
+		/* Mark one or two close enough octants */
+		d1 = (int)(r + 0.9) % 8;
+		d2 = (int)(r + 0.1) % 8;
+
+		dir = (1 << d1) | (1 << d2);
+	}
+
+	return dir;
+}
+
 #endif /* LIBINPUT_PRIVATE_H */
