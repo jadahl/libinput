@@ -244,20 +244,20 @@ tp_estimate_delta(int x0, int x1, int x2, int x3)
 struct normalized_coords
 tp_get_delta(struct tp_touch *t)
 {
-	struct delta_coords delta;
+	struct device_float_coords delta;
 	const struct normalized_coords zero = { 0.0, 0.0 };
 
 	if (t->history.count < TOUCHPAD_MIN_SAMPLES)
 		return zero;
 
-	delta.dx = tp_estimate_delta(tp_motion_history_offset(t, 0)->x,
-				     tp_motion_history_offset(t, 1)->x,
-				     tp_motion_history_offset(t, 2)->x,
-				     tp_motion_history_offset(t, 3)->x);
-	delta.dy = tp_estimate_delta(tp_motion_history_offset(t, 0)->y,
-				     tp_motion_history_offset(t, 1)->y,
-				     tp_motion_history_offset(t, 2)->y,
-				     tp_motion_history_offset(t, 3)->y);
+	delta.x = tp_estimate_delta(tp_motion_history_offset(t, 0)->x,
+				    tp_motion_history_offset(t, 1)->x,
+				    tp_motion_history_offset(t, 2)->x,
+				    tp_motion_history_offset(t, 3)->x);
+	delta.y = tp_estimate_delta(tp_motion_history_offset(t, 0)->y,
+				    tp_motion_history_offset(t, 1)->y,
+				    tp_motion_history_offset(t, 2)->y,
+				    tp_motion_history_offset(t, 3)->y);
 
 	return tp_normalize_delta(t->tp, delta);
 }

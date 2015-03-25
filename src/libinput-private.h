@@ -39,11 +39,11 @@ struct device_coords {
 };
 
 /*
- * A delta between 2 device coordinates,
- * may be non-discrete because of averaging.
+ * A coordinate pair in device coordinates, capable of holding non discrete
+ * values, this is necessary e.g. when device coordinates get averaged.
  */
-struct delta_coords {
-	double dx, dy;
+struct device_float_coords {
+	double x, y;
 };
 
 /* A dpi-normalized coordinate pair */
@@ -363,13 +363,13 @@ libinput_now(struct libinput *libinput)
 	return ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
 }
 
-static inline struct delta_coords
+static inline struct device_float_coords
 device_delta(struct device_coords a, struct device_coords b)
 {
-	struct delta_coords delta;
+	struct device_float_coords delta;
 
-	delta.dx = a.x - b.x;
-	delta.dy = a.y - b.y;
+	delta.x = a.x - b.x;
+	delta.y = a.y - b.y;
 
 	return delta;
 }

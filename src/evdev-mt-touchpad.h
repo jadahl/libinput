@@ -275,12 +275,12 @@ struct tp_dispatch {
 	for (unsigned int _i = 0; _i < (_tp)->ntouches && (_t = &(_tp)->touches[_i]); _i++)
 
 static inline struct normalized_coords
-tp_normalize_delta(struct tp_dispatch *tp, struct delta_coords delta)
+tp_normalize_delta(struct tp_dispatch *tp, struct device_float_coords delta)
 {
 	struct normalized_coords normalized;
 
-	normalized.x = delta.dx * tp->accel.x_scale_coeff;
-	normalized.y = delta.dy * tp->accel.y_scale_coeff;
+	normalized.x = delta.x * tp->accel.x_scale_coeff;
+	normalized.y = delta.y * tp->accel.y_scale_coeff;
 
 	return normalized;
 }
