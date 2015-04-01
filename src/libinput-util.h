@@ -242,5 +242,6 @@ enum ratelimit_state ratelimit_test(struct ratelimit *r);
 
 int parse_mouse_dpi_property(const char *prop);
 int parse_mouse_wheel_click_angle_property(const char *prop);
+double parse_trackpoint_accel_property(const char *prop);
 
 #endif /* LIBINPUT_UTIL_H */

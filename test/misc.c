@@ -557,6 +557,32 @@ START_TEST(wheel_click_parser)
 }
 END_TEST
 
+struct parser_test_float {
+	char *tag;
+	double expected_value;
+};
+
+START_TEST(trackpoint_accel_parser)
+{
+	struct parser_test_float tests[] = {
+		{ "0.5", 0.5 },
+		{ "1.0", 1.0 },
+		{ "2.0", 2.0 },
+		{ "fail1.0", 0.0 },
+		{ "1.0fail", 0.0 },
+		{ "0,5", 0.0 },
+		{ NULL, 0.0 }
+	};
+	int i;
+	double accel;
+
+	for (i = 0; tests[i].tag != NULL; i++) {
+		accel = parse_trackpoint_accel_property(tests[i].tag);
+		ck_assert(accel == tests[i].expected_value);
+	}
+}
+END_TEST
+
 int main (int argc, char **argv) {
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);
@@ -572,6 +598,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
 	litest_add_no_device("misc:dpi parser", dpi_parser);
 	litest_add_no_device("misc:wheel click parser", wheel_click_parser);
+	litest_add_no_device("misc:trackpoint accel parser", trackpoint_accel_parser);
 
 	return litest_run(argc, argv);
 }

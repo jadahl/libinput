@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <locale.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -200,4 +201,34 @@ parse_mouse_wheel_click_angle_property(const char *prop)
 		return 0;
 
         return angle;
+}
+
+/**
+ * Helper function to parse the TRACKPOINT_CONST_ACCEL property from udev.
+ * Property is of the form:
+ * TRACKPOINT_CONST_ACCEL=<float>
+ *
+ * @param prop The value of the udev property (without the TRACKPOINT_CONST_ACCEL=)
+ * @return The acceleration, or 0.0 on error.
+ */
+double
+parse_trackpoint_accel_property(const char *prop)
+{
+	locale_t c_locale;
+	double accel;
+	char *endp;
+
+	/* Create a "C" locale to force strtod to use '.' as separator */
+	c_locale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+	if (c_locale == (locale_t)0)
+		return 0.0;
+
+	accel = strtod_l(prop, &endp, c_locale);
+
+	freelocale(c_locale);
+
+	if (*endp != '\0')
+		return 0.0;
+
+	return accel;
 }

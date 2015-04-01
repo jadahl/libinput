@@ -1365,12 +1365,45 @@ evdev_read_wheel_click_prop(struct evdev_device *device)
 
 	return angle;
 }
+
+static inline int
+evdev_get_trackpoint_dpi(struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	const char *trackpoint_accel;
+	double accel = DEFAULT_TRACKPOINT_ACCEL;
+
+	trackpoint_accel = udev_device_get_property_value(
+				device->udev_device, "POINTINGSTICK_CONST_ACCEL");
+	if (trackpoint_accel) {
+		accel = parse_trackpoint_accel_property(trackpoint_accel);
+		if (accel == 0.0) {
+			log_error(libinput, "Trackpoint accel property for "
+					    "'%s' is present but invalid, "
+					    "using %.2f instead\n",
+					    device->devname,
+					    DEFAULT_TRACKPOINT_ACCEL);
+			accel = DEFAULT_TRACKPOINT_ACCEL;
+		}
+	}
+
+	return DEFAULT_MOUSE_DPI / accel;
+}
+
 static inline int
 evdev_read_dpi_prop(struct evdev_device *device)
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	const char *mouse_dpi;
 	int dpi = DEFAULT_MOUSE_DPI;
+
+	/*
+	 * Trackpoints do not have dpi, instead hwdb may contain a
+	 * POINTINGSTICK_CONST_ACCEL value to compensate for sensitivity
+	 * differences between models, we translate this to a fake dpi.
+	 */
+	if (libevdev_has_property(device->evdev, INPUT_PROP_POINTING_STICK))
+		return evdev_get_trackpoint_dpi(device);
 
 	mouse_dpi = udev_device_get_property_value(device->udev_device,
 						   "MOUSE_DPI");

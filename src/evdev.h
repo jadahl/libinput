@@ -36,6 +36,13 @@
 
 /* The HW DPI rate we normalize to before calculating pointer acceleration */
 #define DEFAULT_MOUSE_DPI 1000
+
+/*
+ * The constant (linear) acceleration factor we use to normalize trackpoint
+ * deltas before calculating pointer acceleration.
+ */
+#define DEFAULT_TRACKPOINT_ACCEL 1.0
+
 /* The fake resolution value for abs devices without resolution */
 #define EVDEV_FAKE_RESOLUTION 1
 
