@@ -1431,6 +1431,18 @@ evdev_device_get_udev_tags(struct evdev_device *device,
 	return tags;
 }
 
+/* Fake MT devices have the ABS_MT_SLOT bit set because of
+   the limited ABS_* range - they aren't MT devices, they
+   just have too many ABS_ axes */
+static inline bool
+evdev_is_fake_mt_device(struct evdev_device *device)
+{
+	struct libevdev *evdev = device->evdev;
+
+	return libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT) &&
+		libevdev_get_num_slots(evdev) == -1;
+}
+
 static inline void
 evdev_fix_android_mt(struct evdev_device *device)
 {
@@ -1441,7 +1453,8 @@ evdev_fix_android_mt(struct evdev_device *device)
 		return;
 
 	if (!libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ||
-	    !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
+	    !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y) ||
+	    evdev_is_fake_mt_device(device))
 		return;
 
 	libevdev_enable_event_code(evdev, EV_ABS, ABS_X,
@@ -1611,10 +1624,10 @@ evdev_configure_device(struct evdev_device *device)
 		return -1;
 	}
 
-	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X) ||
-	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X)) {
+	if (!evdev_is_fake_mt_device(device))
 		evdev_fix_android_mt(device);
 
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X)) {
 		if (evdev_fix_abs_resolution(device,
 					     ABS_X,
 					     ABS_Y,
@@ -1624,11 +1637,7 @@ evdev_configure_device(struct evdev_device *device)
 		device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_X);
 		device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_Y);
 
-		/* Fake MT devices have the ABS_MT_SLOT bit set because of
-		   the limited ABS_* range - they aren't MT devices, they
-		   just have too many ABS_ axes */
-		if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT) &&
-		    libevdev_get_num_slots(evdev) == -1) {
+		if (evdev_is_fake_mt_device(device)) {
 			udev_tags &= ~EVDEV_UDEV_TAG_TOUCHSCREEN;
 		} else if (evdev_configure_mt_device(device) == -1) {
 			return -1;
