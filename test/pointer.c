@@ -396,11 +396,17 @@ START_TEST(pointer_scroll_wheel)
 
 	litest_drain_events(dev->libinput);
 
-	test_wheel_event(dev, REL_WHEEL, -1);
-	test_wheel_event(dev, REL_WHEEL, 1);
+	/* make sure we hit at least one of the below two conditions */
+	ck_assert(libevdev_has_event_code(dev->evdev, EV_REL, REL_WHEEL) ||
+		  libevdev_has_event_code(dev->evdev, EV_REL, REL_HWHEEL));
 
-	test_wheel_event(dev, REL_WHEEL, -5);
-	test_wheel_event(dev, REL_WHEEL, 6);
+	if (libevdev_has_event_code(dev->evdev, EV_REL, REL_WHEEL)) {
+		test_wheel_event(dev, REL_WHEEL, -1);
+		test_wheel_event(dev, REL_WHEEL, 1);
+
+		test_wheel_event(dev, REL_WHEEL, -5);
+		test_wheel_event(dev, REL_WHEEL, 6);
+	}
 
 	if (libevdev_has_event_code(dev->evdev, EV_REL, REL_HWHEEL)) {
 		test_wheel_event(dev, REL_HWHEEL, -1);
@@ -446,11 +452,17 @@ START_TEST(pointer_scroll_natural_wheel)
 
 	libinput_device_config_scroll_set_natural_scroll_enabled(device, 1);
 
-	test_wheel_event(dev, REL_WHEEL, -1);
-	test_wheel_event(dev, REL_WHEEL, 1);
+	/* make sure we hit at least one of the below two conditions */
+	ck_assert(libevdev_has_event_code(dev->evdev, EV_REL, REL_WHEEL) ||
+		  libevdev_has_event_code(dev->evdev, EV_REL, REL_HWHEEL));
 
-	test_wheel_event(dev, REL_WHEEL, -5);
-	test_wheel_event(dev, REL_WHEEL, 6);
+	if (libevdev_has_event_code(dev->evdev, EV_REL, REL_WHEEL)) {
+		test_wheel_event(dev, REL_WHEEL, -1);
+		test_wheel_event(dev, REL_WHEEL, 1);
+
+		test_wheel_event(dev, REL_WHEEL, -5);
+		test_wheel_event(dev, REL_WHEEL, 6);
+	}
 
 	if (libevdev_has_event_code(dev->evdev, EV_REL, REL_HWHEEL)) {
 		test_wheel_event(dev, REL_HWHEEL, -1);
