@@ -17,6 +17,7 @@ liblitest_la_SOURCES = \
 	litest-bcm5974.c \
 	litest-generic-singletouch.c \
 	litest-keyboard.c \
+	litest-keyboard-razer-blackwidow.c \
 	litest-mouse.c \
 	litest-ms-surface-cover.c \
 	litest-protocol-a-touch-screen.c \
