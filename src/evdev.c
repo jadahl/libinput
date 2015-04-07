@@ -1679,6 +1679,11 @@ evdev_configure_device(struct evdev_device *device)
 		log_info(libinput,
 			 "input device '%s', %s is a keyboard\n",
 			 device->devname, devnode);
+
+		/* want natural-scroll config option */
+		if (libevdev_has_event_code(evdev, EV_REL, REL_WHEEL) ||
+		    libevdev_has_event_code(evdev, EV_REL, REL_HWHEEL))
+			device->scroll.natural_scrolling_enabled = true;
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_TOUCHSCREEN) {
