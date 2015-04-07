@@ -1444,9 +1444,9 @@ evdev_fix_android_mt(struct evdev_device *device)
 	    !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
 		return;
 
-	libevdev_set_abs_info(evdev, ABS_X,
+	libevdev_enable_event_code(evdev, EV_ABS, ABS_X,
 		      libevdev_get_abs_info(evdev, ABS_MT_POSITION_X));
-	libevdev_set_abs_info(evdev, ABS_Y,
+	libevdev_enable_event_code(evdev, EV_ABS, ABS_Y,
 		      libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y));
 }
 
