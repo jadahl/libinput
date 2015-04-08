@@ -34,7 +34,7 @@
 
 #include "evdev-mt-touchpad.h"
 
-#define CASE_RETURN_STRING(a) case a: return #a;
+#define CASE_RETURN_STRING(a) case a: return #a
 
 #define DEFAULT_TAP_TIMEOUT_PERIOD 180
 #define DEFAULT_TAP_MOVE_THRESHOLD TP_MM_TO_DPI_NORMALIZED(3)
