@@ -230,8 +230,8 @@ normalize_delta(struct evdev_device *device,
 		const struct device_coords *delta,
 		struct normalized_coords *normalized)
 {
-	normalized->x = delta->x * (double)device->dpi / DEFAULT_MOUSE_DPI;
-	normalized->y = delta->y * (double)device->dpi / DEFAULT_MOUSE_DPI;
+	normalized->x = delta->x * DEFAULT_MOUSE_DPI / (double)device->dpi;
+	normalized->y = delta->y * DEFAULT_MOUSE_DPI / (double)device->dpi;
 }
 
 static void
