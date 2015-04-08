@@ -1377,13 +1377,6 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 	absx = libevdev_get_abs_info(evdev, xcode);
 	absy = libevdev_get_abs_info(evdev, ycode);
 
-	if ((absx->resolution == 0 && absy->resolution != 0) ||
-	    (absx->resolution != 0 && absy->resolution == 0)) {
-		log_bug_kernel(libinput,
-			       "Kernel has only x or y resolution, not both.\n");
-		return 0;
-	}
-
 	if (absx->resolution == 0 || absx->resolution == EVDEV_FAKE_RESOLUTION) {
 		fixed = *absx;
 		fixed.resolution = xresolution;
@@ -1487,8 +1480,10 @@ evdev_check_min_max(struct evdev_device *device, unsigned int code)
 static int
 evdev_reject_device(struct evdev_device *device)
 {
+	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
 	unsigned int code;
+	const struct input_absinfo *absx, *absy;
 
 	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X) ^
 	    libevdev_has_event_code(evdev, EV_ABS, ABS_Y))
@@ -1497,6 +1492,29 @@ evdev_reject_device(struct evdev_device *device)
 	if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ^
 	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
 		return -1;
+
+	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X)) {
+		absx = libevdev_get_abs_info(evdev, ABS_X);
+		absy = libevdev_get_abs_info(evdev, ABS_Y);
+		if ((absx->resolution == 0 && absy->resolution != 0) ||
+		    (absx->resolution != 0 && absy->resolution == 0)) {
+			log_bug_kernel(libinput,
+				       "Kernel has only x or y resolution, not both.\n");
+			return -1;
+		}
+	}
+
+	if (!evdev_is_fake_mt_device(device) &&
+	    libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X)) {
+		absx = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
+		absy = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
+		if ((absx->resolution == 0 && absy->resolution != 0) ||
+		    (absx->resolution != 0 && absy->resolution == 0)) {
+			log_bug_kernel(libinput,
+				       "Kernel has only x or y MT resolution, not both.\n");
+			return -1;
+		}
+	}
 
 	for (code = 0; code < ABS_CNT; code++) {
 		switch (code) {
