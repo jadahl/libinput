@@ -255,6 +255,7 @@ struct tp_dispatch {
 		struct libinput_timer timer;
 		enum tp_tap_state state;
 		uint32_t buttons_pressed;
+		unsigned int tap_finger_count;
 	} tap;
 
 	struct {
