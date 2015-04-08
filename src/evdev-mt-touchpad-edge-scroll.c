@@ -29,6 +29,8 @@
 
 #include "evdev-mt-touchpad.h"
 
+#define CASE_RETURN_STRING(a) case a: return #a
+
 #define DEFAULT_SCROLL_LOCK_TIMEOUT 300 /* ms */
 /* Use a reasonably large threshold until locked into scrolling mode, to
    avoid accidentally locking in scrolling mode when trying to use the entire
@@ -43,6 +45,32 @@ enum scroll_event {
 	SCROLL_EVENT_TIMEOUT,
 	SCROLL_EVENT_POSTED,
 };
+
+static inline const char*
+edge_state_to_str(enum tp_edge_scroll_touch_state state)
+{
+
+	switch (state) {
+	CASE_RETURN_STRING(EDGE_SCROLL_TOUCH_STATE_NONE);
+	CASE_RETURN_STRING(EDGE_SCROLL_TOUCH_STATE_EDGE_NEW);
+	CASE_RETURN_STRING(EDGE_SCROLL_TOUCH_STATE_EDGE);
+	CASE_RETURN_STRING(EDGE_SCROLL_TOUCH_STATE_AREA);
+	}
+	return NULL;
+}
+
+static inline const char*
+edge_event_to_str(enum scroll_event event)
+{
+	switch (event) {
+	CASE_RETURN_STRING(SCROLL_EVENT_TOUCH);
+	CASE_RETURN_STRING(SCROLL_EVENT_MOTION);
+	CASE_RETURN_STRING(SCROLL_EVENT_RELEASE);
+	CASE_RETURN_STRING(SCROLL_EVENT_TIMEOUT);
+	CASE_RETURN_STRING(SCROLL_EVENT_POSTED);
+	}
+	return NULL;
+}
 
 static uint32_t
 tp_touch_get_edge(struct tp_dispatch *tp, struct tp_touch *t)
@@ -204,7 +232,10 @@ tp_edge_scroll_handle_event(struct tp_dispatch *tp,
 			    struct tp_touch *t,
 			    enum scroll_event event)
 {
-	switch (t->scroll.edge_state) {
+	struct libinput *libinput = tp->device->base.seat->libinput;
+	enum tp_edge_scroll_touch_state current = t->scroll.edge_state;
+
+	switch (current) {
 	case EDGE_SCROLL_TOUCH_STATE_NONE:
 		tp_edge_scroll_handle_none(tp, t, event);
 		break;
@@ -218,6 +249,12 @@ tp_edge_scroll_handle_event(struct tp_dispatch *tp,
 		tp_edge_scroll_handle_area(tp, t, event);
 		break;
 	}
+
+	log_debug(libinput,
+		  "edge state: %s → %s → %s\n",
+		  edge_state_to_str(current),
+		  edge_event_to_str(event),
+		  edge_state_to_str(t->scroll.edge_state));
 }
 
 static void
