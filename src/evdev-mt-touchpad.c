@@ -317,15 +317,12 @@ tp_process_absolute_st(struct tp_dispatch *tp,
 }
 
 static void
-tp_process_fake_touch(struct tp_dispatch *tp,
-		      const struct input_event *e,
-		      uint64_t time)
+tp_process_fake_touches(struct tp_dispatch *tp,
+			uint64_t time)
 {
 	struct tp_touch *t;
 	unsigned int nfake_touches;
 	unsigned int i, start;
-
-	tp_fake_finger_set(tp, e->code, e->value != 0);
 
 	nfake_touches = tp_fake_finger_count(tp);
 
@@ -390,7 +387,7 @@ tp_process_key(struct tp_dispatch *tp,
 		case BTN_TOOL_DOUBLETAP:
 		case BTN_TOOL_TRIPLETAP:
 		case BTN_TOOL_QUADTAP:
-			tp_process_fake_touch(tp, e, time);
+			tp_fake_finger_set(tp, e->code, !!e->value);
 			break;
 		case BTN_0:
 		case BTN_1:
@@ -548,6 +545,7 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *first = tp_get_touch(tp, 0);
 	unsigned int i;
 
+	tp_process_fake_touches(tp, time);
 	tp_unhover_touches(tp, time);
 
 	for (i = 0; i < tp->ntouches; i++) {
