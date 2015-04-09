@@ -39,7 +39,7 @@ tp_get_touches_delta(struct tp_dispatch *tp, bool average)
 	struct normalized_coords normalized;
 	struct normalized_coords delta = {0.0, 0.0};
 
-	for (i = 0; i < tp->real_touches; i++) {
+	for (i = 0; i < tp->num_slots; i++) {
 		t = &tp->touches[i];
 
 		if (tp_touch_active(tp, t) && t->dirty) {

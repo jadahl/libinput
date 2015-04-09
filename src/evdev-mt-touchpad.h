@@ -183,7 +183,7 @@ struct tp_dispatch {
 	bool semi_mt;
 	enum touchpad_model model;
 
-	unsigned int real_touches;		/* number of slots */
+	unsigned int num_slots;			/* number of slots */
 	unsigned int ntouches;			/* no slots inc. fakes */
 	struct tp_touch *touches;		/* len == ntouches */
 	/* bit 0: BTN_TOUCH

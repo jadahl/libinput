@@ -343,7 +343,7 @@ tp_process_fake_touches(struct tp_dispatch *tp,
 	if (nfake_touches == FAKE_FINGER_OVERFLOW)
 		return;
 
-	start = tp->has_mt ? tp->real_touches : 0;
+	start = tp->has_mt ? tp->num_slots : 0;
 	for (i = start; i < tp->ntouches; i++) {
 		t = tp_get_touch(tp, i);
 		if (i < nfake_touches)
@@ -577,7 +577,7 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 		if (tp->semi_mt && tp->nfingers_down != tp->old_nfingers_down)
 			tp_motion_history_reset(t);
 
-		if (i >= tp->real_touches && t->state != TOUCH_NONE) {
+		if (i >= tp->num_slots && t->state != TOUCH_NONE) {
 			t->point = first->point;
 			if (!t->dirty)
 				t->dirty = first->dirty;
@@ -938,11 +938,11 @@ tp_init_slots(struct tp_dispatch *tp,
 
 	absinfo = libevdev_get_abs_info(device->evdev, ABS_MT_SLOT);
 	if (absinfo) {
-		tp->real_touches = absinfo->maximum + 1;
+		tp->num_slots = absinfo->maximum + 1;
 		tp->slot = absinfo->value;
 		tp->has_mt = true;
 	} else {
-		tp->real_touches = 1;
+		tp->num_slots = 1;
 		tp->slot = 0;
 		tp->has_mt = false;
 	}
@@ -958,7 +958,7 @@ tp_init_slots(struct tp_dispatch *tp,
 		}
 	}
 
-	tp->ntouches = max(tp->real_touches, n_btn_tool_touches);
+	tp->ntouches = max(tp->num_slots, n_btn_tool_touches);
 	tp->touches = calloc(tp->ntouches, sizeof(struct tp_touch));
 	if (!tp->touches)
 		return -1;
