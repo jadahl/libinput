@@ -258,13 +258,15 @@ accelerator_set_speed(struct motion_filter *filter,
 	assert(speed >= -1.0 && speed <= 1.0);
 
 	/* delay when accel kicks in */
-	accel_filter->threshold = DEFAULT_THRESHOLD - speed/6.0;
+	accel_filter->threshold = DEFAULT_THRESHOLD - speed / 4.0;
+	if (accel_filter->threshold < 0.2)
+		accel_filter->threshold = 0.2;
 
 	/* adjust max accel factor */
-	accel_filter->accel = DEFAULT_ACCELERATION + speed;
+	accel_filter->accel = DEFAULT_ACCELERATION + speed * 1.5;
 
 	/* higher speed -> faster to reach max */
-	accel_filter->incline = DEFAULT_INCLINE + speed/2.0;
+	accel_filter->incline = DEFAULT_INCLINE + speed * 0.75;
 
 	filter->speed = speed;
 	return true;
