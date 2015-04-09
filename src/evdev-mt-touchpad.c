@@ -547,7 +547,8 @@ tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
 		for (i = tp->ntouches - 1; i >= 0; i--) {
 			t = tp_get_touch(tp, i);
 
-			if (t->state == TOUCH_HOVERING)
+			if (t->state == TOUCH_HOVERING ||
+			    t->state == TOUCH_NONE)
 				continue;
 
 			tp_end_touch(tp, t, time);
