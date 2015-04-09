@@ -10,8 +10,9 @@ int main(int argc, char **argv)
 	struct udev_device *device = NULL;
 	const char *syspath,
 	           *phys = NULL;
-	char *group,
-	     *str;
+	const char *product;
+	char group[1024];
+	char *str;
 
 	if (argc != 2)
 		return 1;
@@ -45,9 +46,12 @@ int main(int argc, char **argv)
 	if (!phys)
 		goto out;
 
-	group = strdup(phys);
-	if (!group)
-		goto out;
+	/* udev sets PRODUCT on the same device we find PHYS on, let's rely
+	   on that*/
+	product = udev_device_get_property_value(device, "PRODUCT");
+	if (!product)
+		product = "";
+	snprintf(group, sizeof(group), "%s:%s", product, phys);
 
 	str = strstr(group, "/input");
 	if (str)
@@ -64,7 +68,6 @@ int main(int argc, char **argv)
 		*str = '\0';
 
 	printf("%s\n", group);
-	free(group);
 
 	rc = 0;
 out:
