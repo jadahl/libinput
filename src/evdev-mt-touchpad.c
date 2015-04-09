@@ -34,6 +34,7 @@
 #define DEFAULT_ACCEL_NUMERATOR 3000.0
 #define DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR 700.0
 #define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 500 /* ms */
+#define FAKE_FINGER_OVERFLOW (1 << 7)
 
 static inline int
 tp_hysteresis(int in, int center, int margin)
@@ -127,8 +128,10 @@ tp_get_touch(struct tp_dispatch *tp, unsigned int slot)
 static inline unsigned int
 tp_fake_finger_count(struct tp_dispatch *tp)
 {
-	/* don't count BTN_TOUCH */
-	return ffs(tp->fake_touches >> 1);
+	if (tp->fake_touches & FAKE_FINGER_OVERFLOW)
+		return FAKE_FINGER_OVERFLOW;
+	else /* don't count BTN_TOUCH */
+		return ffs(tp->fake_touches >> 1);
 }
 
 static inline bool
@@ -146,6 +149,8 @@ tp_fake_finger_set(struct tp_dispatch *tp,
 
 	switch (code) {
 	case BTN_TOUCH:
+		if (!is_press)
+			tp->fake_touches &= ~FAKE_FINGER_OVERFLOW;
 		shift = 0;
 		break;
 	case BTN_TOOL_FINGER:
@@ -156,14 +161,24 @@ tp_fake_finger_set(struct tp_dispatch *tp,
 	case BTN_TOOL_QUADTAP:
 		shift = code - BTN_TOOL_DOUBLETAP + 2;
 		break;
+	/* when QUINTTAP is released we're either switching to 6 fingers
+	   (flag stays in place until BTN_TOUCH is released) or
+	   one of DOUBLE/TRIPLE/QUADTAP (will clear the flag on press) */
+	case BTN_TOOL_QUINTTAP:
+		if (is_press)
+			tp->fake_touches |= FAKE_FINGER_OVERFLOW;
+		return;
 	default:
 		return;
 	}
 
-	if (is_press)
+	if (is_press) {
+		tp->fake_touches &= ~FAKE_FINGER_OVERFLOW;
 		tp->fake_touches |= 1 << shift;
-	else
+
+	} else {
 		tp->fake_touches &= ~(0x1 << shift);
+	}
 }
 
 static inline void
@@ -325,6 +340,8 @@ tp_process_fake_touches(struct tp_dispatch *tp,
 	unsigned int i, start;
 
 	nfake_touches = tp_fake_finger_count(tp);
+	if (nfake_touches == FAKE_FINGER_OVERFLOW)
+		return;
 
 	start = tp->has_mt ? tp->real_touches : 0;
 	for (i = start; i < tp->ntouches; i++) {
@@ -387,6 +404,7 @@ tp_process_key(struct tp_dispatch *tp,
 		case BTN_TOOL_DOUBLETAP:
 		case BTN_TOOL_TRIPLETAP:
 		case BTN_TOOL_QUADTAP:
+		case BTN_TOOL_QUINTTAP:
 			tp_fake_finger_set(tp, e->code, !!e->value);
 			break;
 		case BTN_0:
@@ -494,6 +512,9 @@ tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
 		return;
 
 	nfake_touches = tp_fake_finger_count(tp);
+	if (nfake_touches == FAKE_FINGER_OVERFLOW)
+		return;
+
 	if (tp->nfingers_down == nfake_touches &&
 	    ((tp->nfingers_down == 0 && !tp_fake_finger_is_touching(tp)) ||
 	     (tp->nfingers_down > 0 && tp_fake_finger_is_touching(tp))))
