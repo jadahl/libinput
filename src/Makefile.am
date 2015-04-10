@@ -1,5 +1,6 @@
 lib_LTLIBRARIES = libinput.la
-noinst_LTLIBRARIES = libinput-util.la
+noinst_LTLIBRARIES = libinput-util.la \
+		     libfilter.la
 
 include_HEADERS =			\
 	libinput.h
@@ -47,6 +48,13 @@ libinput_util_la_LIBADD =
 libinput_util_la_CFLAGS = -I$(top_srcdir)/include \
 			  $(LIBUDEV_CFLAGS) \
 			  $(GCC_CFLAGS)
+
+libfilter_la_SOURCES = \
+	filter.c \
+	filter.h \
+	filter-private.h
+libfilter_la_LIBADD =
+libfilter_la_CFLAGS =
 
 libinput_la_LDFLAGS = -version-info $(LIBINPUT_LT_VERSION) -shared \
 		      -Wl,--version-script=$(srcdir)/libinput.sym

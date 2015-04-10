@@ -1,4 +1,4 @@
-noinst_PROGRAMS = event-debug
+noinst_PROGRAMS = event-debug ptraccel-debug
 noinst_LTLIBRARIES = libshared.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
@@ -13,6 +13,10 @@ event_debug_SOURCES = event-debug.c
 event_debug_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS)
 event_debug_LDFLAGS = -no-install
 event_debug_CFLAGS = $(LIBUDEV_CFLAGS)
+
+ptraccel_debug_SOURCES = ptraccel-debug.c
+ptraccel_debug_LDADD = ../src/libfilter.la
+ptraccel_debug_LDFLAGS = -no-install
 
 if BUILD_EVENTGUI
 noinst_PROGRAMS += event-gui
