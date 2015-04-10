@@ -44,6 +44,7 @@ enum options {
 	OPT_LEFT_HANDED_ENABLE,
 	OPT_LEFT_HANDED_DISABLE,
 	OPT_CLICK_METHOD,
+	OPT_SPEED,
 };
 
 static void
@@ -71,6 +72,7 @@ tools_usage()
 	       "--enable-left-handed\n"
 	       "--disable-left-handed.... enable/disable left-handed button configuration\n"
 	       "--set-click-method=[none|clickfinger|buttonareas] .... set the desired click method\n"
+	       "--set-speed=<value>.... set pointer acceleration speed\n"
 	       "\n"
 	       "These options apply to all applicable devices, if a feature\n"
 	       "is not explicitly specified it is left at each device's default.\n"
@@ -91,6 +93,7 @@ tools_init_options(struct tools_options *options)
 	options->click_method = -1;
 	options->backend = BACKEND_UDEV;
 	options->seat = "seat0";
+	options->speed = 0.0;
 }
 
 int
@@ -111,6 +114,7 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			{ "enable-left-handed", 0, 0, OPT_LEFT_HANDED_ENABLE },
 			{ "disable-left-handed", 0, 0, OPT_LEFT_HANDED_DISABLE },
 			{ "set-click-method", 1, 0, OPT_CLICK_METHOD },
+			{ "speed", 1, 0, OPT_SPEED },
 			{ 0, 0, 0, 0}
 		};
 
@@ -175,6 +179,13 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 					tools_usage();
 					return 1;
 				}
+				break;
+			case OPT_SPEED:
+				if (!optarg) {
+					tools_usage();
+					return 1;
+				}
+				options->speed = atof(optarg);
 				break;
 			default:
 				tools_usage();
@@ -289,4 +300,8 @@ tools_device_apply_config(struct libinput_device *device,
 
 	if (options->click_method != -1)
 		libinput_device_config_click_set_method(device, options->click_method);
+
+	if (libinput_device_config_accel_is_available(device))
+		libinput_device_config_accel_set_speed(device,
+						       options->speed);
 }

@@ -40,6 +40,7 @@ struct tools_options {
 	int natural_scroll;
 	int left_handed;
 	enum libinput_config_click_method click_method;
+	double speed;
 };
 
 void tools_init_options(struct tools_options *options);
