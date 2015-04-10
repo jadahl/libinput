@@ -279,14 +279,8 @@ handle_event_device_notify(struct libinput_event *ev)
 	    libinput_device_get_name(dev),
 	    type);
 
-	if (libinput_device_config_tap_get_finger_count(dev) > 0) {
-		enum libinput_config_status status;
-		status = libinput_device_config_tap_set_enabled(dev,
-								LIBINPUT_CONFIG_TAP_ENABLED);
-		if (status != LIBINPUT_CONFIG_STATUS_SUCCESS)
-			error("%s: Failed to enable tapping\n",
-			      libinput_device_get_sysname(dev));
-	}
+	tools_device_apply_config(libinput_event_get_device(ev),
+				  &options);
 
 	li = libinput_event_get_context(ev);
 	w = libinput_get_user_data(li);
