@@ -734,10 +734,10 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 				state = LIBINPUT_BUTTON_STATE_RELEASED;
 
 			b = evdev_to_left_handed(tp->device, button);
-			evdev_pointer_notify_button(tp->device,
-						    time,
-						    b,
-						    state);
+			evdev_pointer_notify_physical_button(tp->device,
+							     time,
+							     b,
+							     state);
 		}
 
 		button++;

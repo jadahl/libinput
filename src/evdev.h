@@ -306,6 +306,11 @@ evdev_pointer_notify_button(struct evdev_device *device,
 			    uint32_t time,
 			    int button,
 			    enum libinput_button_state state);
+void
+evdev_pointer_notify_physical_button(struct evdev_device *device,
+				     uint32_t time,
+				     int button,
+				     enum libinput_button_state state);
 
 void
 evdev_init_natural_scroll(struct evdev_device *device);

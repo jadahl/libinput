@@ -138,6 +138,15 @@ evdev_keyboard_notify_key(struct evdev_device *device,
 }
 
 void
+evdev_pointer_notify_physical_button(struct evdev_device *device,
+				     uint32_t time,
+				     int button,
+				     enum libinput_button_state state)
+{
+	evdev_pointer_notify_button(device, time, button, state);
+}
+
+void
 evdev_pointer_notify_button(struct evdev_device *device,
 			    uint32_t time,
 			    int button,
@@ -430,10 +439,10 @@ evdev_button_scroll_button(struct evdev_device *device,
 		} else {
 			/* If the button is released quickly enough emit the
 			 * button press/release events. */
-			evdev_pointer_notify_button(device, time,
+			evdev_pointer_notify_physical_button(device, time,
 					device->scroll.button,
 					LIBINPUT_BUTTON_STATE_PRESSED);
-			evdev_pointer_notify_button(device, time,
+			evdev_pointer_notify_physical_button(device, time,
 					device->scroll.button,
 					LIBINPUT_BUTTON_STATE_RELEASED);
 		}
@@ -505,7 +514,7 @@ evdev_process_key(struct evdev_device *device,
 			evdev_button_scroll_button(device, time, e->value);
 			break;
 		}
-		evdev_pointer_notify_button(
+		evdev_pointer_notify_physical_button(
 			device,
 			time,
 			evdev_to_left_handed(device, e->code),
@@ -2208,7 +2217,7 @@ release_pressed_keys(struct evdev_device *device)
 					LIBINPUT_KEY_STATE_RELEASED);
 				break;
 			case EVDEV_KEY_TYPE_BUTTON:
-				evdev_pointer_notify_button(
+				evdev_pointer_notify_physical_button(
 					device,
 					time,
 					evdev_to_left_handed(device, code),
