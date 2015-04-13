@@ -1,4 +1,7 @@
-EXTRA_DIST = touchpad-tap-state-machine.svg touchpad-softbutton-state-machine.svg
+EXTRA_DIST = \
+	     middle-button-emulation.svg \
+	     touchpad-tap-state-machine.svg \
+	     touchpad-softbutton-state-machine.svg
 
 if BUILD_DOCS
 

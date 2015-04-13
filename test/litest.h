@@ -194,6 +194,7 @@ void litest_timeout_softbuttons(void);
 void litest_timeout_buttonscroll(void);
 void litest_timeout_edgescroll(void);
 void litest_timeout_finger_switch(void);
+void litest_timeout_middlebutton(void);
 
 void litest_push_event_frame(struct litest_device *dev);
 void litest_pop_event_frame(struct litest_device *dev);

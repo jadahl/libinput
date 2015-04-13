@@ -143,6 +143,12 @@ evdev_pointer_notify_physical_button(struct evdev_device *device,
 				     int button,
 				     enum libinput_button_state state)
 {
+	if (evdev_middlebutton_filter_button(device,
+					     time,
+					     button,
+					     state))
+			return;
+
 	evdev_pointer_notify_button(device, time, button, state);
 }
 

@@ -63,6 +63,29 @@ enum evdev_device_tags {
 	EVDEV_TAG_TOUCHPAD_TRACKPOINT = (1 << 3),
 };
 
+enum evdev_middlebutton_state {
+	MIDDLEBUTTON_IDLE,
+	MIDDLEBUTTON_LEFT_DOWN,
+	MIDDLEBUTTON_RIGHT_DOWN,
+	MIDDLEBUTTON_MIDDLE,
+	MIDDLEBUTTON_LEFT_UP_PENDING,
+	MIDDLEBUTTON_RIGHT_UP_PENDING,
+	MIDDLEBUTTON_IGNORE_LR,
+	MIDDLEBUTTON_IGNORE_L,
+	MIDDLEBUTTON_IGNORE_R,
+	MIDDLEBUTTON_PASSTHROUGH,
+};
+
+enum evdev_middlebutton_event {
+	MIDDLEBUTTON_EVENT_L_DOWN,
+	MIDDLEBUTTON_EVENT_R_DOWN,
+	MIDDLEBUTTON_EVENT_OTHER,
+	MIDDLEBUTTON_EVENT_L_UP,
+	MIDDLEBUTTON_EVENT_R_UP,
+	MIDDLEBUTTON_EVENT_TIMEOUT,
+	MIDDLEBUTTON_EVENT_ALL_UP,
+};
+
 struct mt_slot {
 	int32_t seat_slot;
 	struct device_coords point;
@@ -157,6 +180,18 @@ struct evdev_device {
 		/* Checks if buttons are down and commits the setting */
 		void (*change_to_enabled)(struct evdev_device *device);
 	} left_handed;
+
+	struct {
+		struct libinput_device_config_middle_emulation config;
+		/* middle-button emulation enabled */
+		bool enabled;
+		bool enabled_default;
+		bool want_enabled;
+		enum evdev_middlebutton_state state;
+		struct libinput_timer timer;
+		uint32_t button_mask;
+		uint64_t first_event_time;
+	} middlebutton;
 
 	int dpi; /* HW resolution */
 	struct ratelimit syn_drop_limit; /* ratelimit for SYN_DROPPED logging */
@@ -331,6 +366,17 @@ evdev_device_remove(struct evdev_device *device);
 
 void
 evdev_device_destroy(struct evdev_device *device);
+
+bool
+evdev_middlebutton_filter_button(struct evdev_device *device,
+				 uint64_t time,
+				 int button,
+				 enum libinput_button_state state);
+
+void
+evdev_init_middlebutton(struct evdev_device *device,
+			bool enabled,
+			bool want_config);
 
 static inline double
 evdev_convert_to_mm(const struct input_absinfo *absinfo, double v)

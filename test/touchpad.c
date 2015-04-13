@@ -2895,6 +2895,9 @@ START_TEST(touchpad_left_handed_delayed)
 
 	/* left-handed takes effect now */
 	litest_button_click(dev, BTN_RIGHT, 1);
+	libinput_dispatch(li);
+	litest_timeout_middlebutton();
+	libinput_dispatch(li);
 	litest_button_click(dev, BTN_LEFT, 1);
 	libinput_dispatch(li);
 

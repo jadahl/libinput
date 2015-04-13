@@ -1437,6 +1437,12 @@ litest_timeout_edgescroll(void)
 }
 
 void
+litest_timeout_middlebutton(void)
+{
+	msleep(70);
+}
+
+void
 litest_push_event_frame(struct litest_device *dev)
 {
 	assert(!dev->skip_ev_syn);
