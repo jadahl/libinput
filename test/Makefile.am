@@ -30,6 +30,7 @@ liblitest_la_SOURCES = \
 	litest-trackpoint.c \
 	litest-wacom-touch.c \
 	litest-wacom-intuos-finger.c \
+	litest-wheel-only.c \
 	litest-xen-virtual-pointer.c \
 	litest-vmware-virtual-usb-mouse.c \
 	litest.c
