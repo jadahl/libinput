@@ -1700,8 +1700,10 @@ evdev_configure_device(struct evdev_device *device)
 
 		/* want natural-scroll config option */
 		if (libevdev_has_event_code(evdev, EV_REL, REL_WHEEL) ||
-		    libevdev_has_event_code(evdev, EV_REL, REL_HWHEEL))
+		    libevdev_has_event_code(evdev, EV_REL, REL_HWHEEL)) {
 			device->scroll.natural_scrolling_enabled = true;
+			device->seat_caps |= EVDEV_DEVICE_POINTER;
+		}
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_TOUCHSCREEN) {

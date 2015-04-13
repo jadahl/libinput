@@ -979,6 +979,17 @@ START_TEST(abs_mt_device_missing_res)
 
 }
 END_TEST
+
+START_TEST(device_wheel_only)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+
+	ck_assert(libinput_device_has_capability(device,
+						 LIBINPUT_DEVICE_CAP_POINTER));
+}
+END_TEST
+
 int main (int argc, char **argv)
 {
 	litest_add("device:sendevents", device_sendevents_config, LITEST_ANY, LITEST_TOUCHPAD);
@@ -1015,6 +1026,8 @@ int main (int argc, char **argv)
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_range);
 	litest_add_no_device("device:invalid devices", abs_device_missing_res);
 	litest_add_no_device("device:invalid devices", abs_mt_device_missing_res);
+
+	litest_add("device:wheel", device_wheel_only, LITEST_WHEEL, LITEST_RELATIVE|LITEST_ABSOLUTE);
 
 	return litest_run(argc, argv);
 }
