@@ -1065,6 +1065,35 @@ notify_removed_device(struct libinput_device *device)
 			&removed_device_event->base);
 }
 
+static inline bool
+device_has_cap(struct libinput_device *device,
+	       enum libinput_device_capability cap)
+{
+	const char *capability;
+
+	if (libinput_device_has_capability(device, cap))
+		return true;
+
+	switch (cap) {
+	case LIBINPUT_DEVICE_CAP_POINTER:
+		capability = "CAP_POINTER";
+		break;
+	case LIBINPUT_DEVICE_CAP_KEYBOARD:
+		capability = "CAP_KEYBOARD";
+		break;
+	case LIBINPUT_DEVICE_CAP_TOUCH:
+		capability = "CAP_TOUCH";
+		break;
+	}
+
+	log_bug_libinput(device->seat->libinput,
+			 "Event for missing capability %s on device \"%s\"\n",
+			 capability,
+			 libinput_device_get_name(device));
+
+	return false;
+}
+
 void
 keyboard_notify_key(struct libinput_device *device,
 		    uint64_t time,
@@ -1073,6 +1102,9 @@ keyboard_notify_key(struct libinput_device *device,
 {
 	struct libinput_event_keyboard *key_event;
 	uint32_t seat_key_count;
+
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_KEYBOARD))
+		return;
 
 	key_event = zalloc(sizeof *key_event);
 	if (!key_event)
@@ -1100,6 +1132,9 @@ pointer_notify_motion(struct libinput_device *device,
 {
 	struct libinput_event_pointer *motion_event;
 
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_POINTER))
+		return;
+
 	motion_event = zalloc(sizeof *motion_event);
 	if (!motion_event)
 		return;
@@ -1121,6 +1156,9 @@ pointer_notify_motion_absolute(struct libinput_device *device,
 			       const struct device_coords *point)
 {
 	struct libinput_event_pointer *motion_absolute_event;
+
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_POINTER))
+		return;
 
 	motion_absolute_event = zalloc(sizeof *motion_absolute_event);
 	if (!motion_absolute_event)
@@ -1144,6 +1182,9 @@ pointer_notify_button(struct libinput_device *device,
 {
 	struct libinput_event_pointer *button_event;
 	int32_t seat_button_count;
+
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_POINTER))
+		return;
 
 	button_event = zalloc(sizeof *button_event);
 	if (!button_event)
@@ -1175,6 +1216,9 @@ pointer_notify_axis(struct libinput_device *device,
 {
 	struct libinput_event_pointer *axis_event;
 
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_POINTER))
+		return;
+
 	axis_event = zalloc(sizeof *axis_event);
 	if (!axis_event)
 		return;
@@ -1201,6 +1245,9 @@ touch_notify_touch_down(struct libinput_device *device,
 {
 	struct libinput_event_touch *touch_event;
 
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_TOUCH))
+		return;
+
 	touch_event = zalloc(sizeof *touch_event);
 	if (!touch_event)
 		return;
@@ -1226,6 +1273,9 @@ touch_notify_touch_motion(struct libinput_device *device,
 {
 	struct libinput_event_touch *touch_event;
 
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_TOUCH))
+		return;
+
 	touch_event = zalloc(sizeof *touch_event);
 	if (!touch_event)
 		return;
@@ -1250,6 +1300,9 @@ touch_notify_touch_up(struct libinput_device *device,
 {
 	struct libinput_event_touch *touch_event;
 
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_TOUCH))
+		return;
+
 	touch_event = zalloc(sizeof *touch_event);
 	if (!touch_event)
 		return;
@@ -1270,6 +1323,9 @@ touch_notify_frame(struct libinput_device *device,
 		   uint64_t time)
 {
 	struct libinput_event_touch *touch_event;
+
+	if (!device_has_cap(device, LIBINPUT_DEVICE_CAP_TOUCH))
+		return;
 
 	touch_event = zalloc(sizeof *touch_event);
 	if (!touch_event)
