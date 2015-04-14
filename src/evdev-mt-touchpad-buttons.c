@@ -694,6 +694,10 @@ tp_init_buttons(struct tp_dispatch *tp,
 
 	tp_init_top_softbuttons(tp, device, 1.0);
 
+	if (!tp->buttons.is_clickpad &&
+	    !libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE))
+		evdev_init_middlebutton(tp->device, true, false);
+
 	tp_for_each_touch(tp, t) {
 		t->button.state = BUTTON_STATE_NONE;
 		libinput_timer_init(&t->button.timer,
