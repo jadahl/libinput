@@ -151,13 +151,13 @@ evdev_pointer_notify_button(struct evdev_device *device,
 	    (state == LIBINPUT_BUTTON_STATE_RELEASED && down_count == 0)) {
 		pointer_notify_button(&device->base, time, button, state);
 
-		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
-		    device->left_handed.change_to_enabled)
-			device->left_handed.change_to_enabled(device);
+		if (state == LIBINPUT_BUTTON_STATE_RELEASED) {
+			if (device->left_handed.change_to_enabled)
+				device->left_handed.change_to_enabled(device);
 
-		if (state == LIBINPUT_BUTTON_STATE_RELEASED &&
-		    device->scroll.change_scroll_method)
-			device->scroll.change_scroll_method(device);
+			if (device->scroll.change_scroll_method)
+				device->scroll.change_scroll_method(device);
+		}
 	}
 
 }
