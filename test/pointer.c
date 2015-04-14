@@ -866,6 +866,337 @@ START_TEST(pointer_accel_direction_change)
 }
 END_TEST
 
+START_TEST(middlebutton)
+{
+	struct litest_device *device = litest_current_device();
+	struct libinput *li = device->libinput;
+	enum libinput_config_status status;
+	unsigned int i;
+	const int btn[][4] = {
+		{ BTN_LEFT, BTN_RIGHT, BTN_LEFT, BTN_RIGHT },
+		{ BTN_LEFT, BTN_RIGHT, BTN_RIGHT, BTN_LEFT },
+		{ BTN_RIGHT, BTN_LEFT, BTN_LEFT, BTN_RIGHT },
+		{ BTN_RIGHT, BTN_LEFT, BTN_RIGHT, BTN_LEFT },
+	};
+
+	status = libinput_device_config_middle_emulation_set_enabled(
+					    device->libinput_device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	if (status == LIBINPUT_CONFIG_STATUS_UNSUPPORTED)
+		return;
+
+	litest_drain_events(li);
+
+	for (i = 0; i < ARRAY_LENGTH(btn); i++) {
+		litest_button_click(device, btn[i][0], true);
+		litest_button_click(device, btn[i][1], true);
+
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_empty_queue(li);
+
+		litest_button_click(device, btn[i][2], false);
+		litest_button_click(device, btn[i][3], false);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+	}
+}
+END_TEST
+
+START_TEST(middlebutton_timeout)
+{
+	struct litest_device *device = litest_current_device();
+	struct libinput *li = device->libinput;
+	enum libinput_config_status status;
+	unsigned int button;
+
+	status = libinput_device_config_middle_emulation_set_enabled(
+					    device->libinput_device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	if (status == LIBINPUT_CONFIG_STATUS_UNSUPPORTED)
+		return;
+
+	for (button = BTN_LEFT; button <= BTN_RIGHT; button++) {
+		litest_drain_events(li);
+		litest_button_click(device, button, true);
+		litest_assert_empty_queue(li);
+		litest_timeout_middlebutton();
+
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+
+		litest_button_click(device, button, false);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+	}
+}
+END_TEST
+
+START_TEST(middlebutton_doubleclick)
+{
+	struct litest_device *device = litest_current_device();
+	struct libinput *li = device->libinput;
+	enum libinput_config_status status;
+	unsigned int i;
+	const int btn[][4] = {
+		{ BTN_LEFT, BTN_RIGHT, BTN_LEFT, BTN_RIGHT },
+		{ BTN_LEFT, BTN_RIGHT, BTN_RIGHT, BTN_LEFT },
+		{ BTN_RIGHT, BTN_LEFT, BTN_LEFT, BTN_RIGHT },
+		{ BTN_RIGHT, BTN_LEFT, BTN_RIGHT, BTN_LEFT },
+	};
+
+	status = libinput_device_config_middle_emulation_set_enabled(
+				    device->libinput_device,
+				    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	if (status == LIBINPUT_CONFIG_STATUS_UNSUPPORTED)
+		return;
+
+	litest_drain_events(li);
+
+	for (i = 0; i < ARRAY_LENGTH(btn); i++) {
+		litest_button_click(device, btn[i][0], true);
+		litest_button_click(device, btn[i][1], true);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_empty_queue(li);
+
+		litest_button_click(device, btn[i][2], false);
+		litest_button_click(device, btn[i][2], true);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_button_click(device, btn[i][3], false);
+
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+	}
+}
+END_TEST
+
+START_TEST(middlebutton_middleclick)
+{
+	struct litest_device *device = litest_current_device();
+	struct libinput *li = device->libinput;
+	enum libinput_config_status status;
+	unsigned int button;
+
+	if (!libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE))
+		return;
+
+	status = libinput_device_config_middle_emulation_set_enabled(
+					    device->libinput_device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	if (status == LIBINPUT_CONFIG_STATUS_UNSUPPORTED)
+		return;
+
+	/* one button down, then middle -> release buttons */
+	for (button = BTN_LEFT; button <= BTN_RIGHT; button++) {
+		/* release button before middle */
+		litest_drain_events(li);
+		litest_button_click(device, button, true);
+		litest_button_click(device, BTN_MIDDLE, true);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_empty_queue(li);
+		litest_button_click(device, button, false);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_button_click(device, BTN_MIDDLE, false);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+
+		/* release middle before button */
+		litest_button_click(device, button, true);
+		litest_button_click(device, BTN_MIDDLE, true);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_empty_queue(li);
+		litest_button_click(device, BTN_MIDDLE, false);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_button_click(device, button, false);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+	}
+}
+END_TEST
+
+START_TEST(middlebutton_middleclick_during)
+{
+	struct litest_device *device = litest_current_device();
+	struct libinput *li = device->libinput;
+	enum libinput_config_status status;
+	unsigned int button;
+
+	if (!libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE))
+		return;
+
+	status = libinput_device_config_middle_emulation_set_enabled(
+					    device->libinput_device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	if (status == LIBINPUT_CONFIG_STATUS_UNSUPPORTED)
+		return;
+
+	litest_drain_events(li);
+
+	/* trigger emulation, then real middle */
+	for (button = BTN_LEFT; button <= BTN_RIGHT; button++) {
+		litest_button_click(device, BTN_LEFT, true);
+		litest_button_click(device, BTN_RIGHT, true);
+
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+
+		litest_button_click(device, BTN_MIDDLE, true);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+
+		litest_assert_empty_queue(li);
+
+		/* middle still down, release left/right */
+		litest_button_click(device, button, false);
+		litest_assert_empty_queue(li);
+		litest_button_click(device, button, true);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_PRESSED);
+		litest_assert_empty_queue(li);
+
+		/* release both */
+		litest_button_click(device, BTN_LEFT, false);
+		litest_button_click(device, BTN_RIGHT, false);
+		litest_assert_button_event(li,
+					   button,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+
+		litest_button_click(device, BTN_MIDDLE, false);
+		litest_assert_button_event(li,
+					   BTN_MIDDLE,
+					   LIBINPUT_BUTTON_STATE_RELEASED);
+		litest_assert_empty_queue(li);
+	}
+}
+END_TEST
+
+START_TEST(middlebutton_default_enabled)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+	int available;
+	enum libinput_config_middle_emulation_state deflt;
+
+	available = libinput_device_config_middle_emulation_is_available(device);
+	ck_assert(available);
+
+	if (libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE))
+		deflt = LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
+	else
+		deflt = LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED;
+
+	status = libinput_device_config_middle_emulation_get_enabled(device);
+	ck_assert_int_eq(status, deflt);
+
+	status = libinput_device_config_middle_emulation_get_default_enabled(
+					    device);
+	ck_assert_int_eq(status, deflt);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device, 3);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+}
+END_TEST
+
+START_TEST(middlebutton_default_clickpad)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+	int available;
+
+	available = libinput_device_config_middle_emulation_is_available(device);
+	ck_assert(!available);
+
+	status = libinput_device_config_middle_emulation_get_enabled(device);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	status = libinput_device_config_middle_emulation_get_default_enabled(
+					    device);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device,
+					    LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+
+	status = libinput_device_config_middle_emulation_set_enabled(device, 3);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+}
+END_TEST
+
+START_TEST(middlebutton_default_touchpad)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+	int available;
+
+	available = libinput_device_config_middle_emulation_is_available(device);
+	ck_assert(!available);
+
+	if (libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE))
+		return;
+
+	status = libinput_device_config_middle_emulation_get_enabled(
+					    device);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	status = libinput_device_config_middle_emulation_get_default_enabled(
+					    device);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+}
+END_TEST
+
 int main (int argc, char **argv) {
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
@@ -893,5 +1224,13 @@ int main (int argc, char **argv) {
 	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_direction_change, LITEST_RELATIVE, LITEST_ANY);
 
+	litest_add("pointer:middlebutton", middlebutton, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_timeout, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_doubleclick, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_middleclick, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_middleclick_during, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_default_enabled, LITEST_BUTTON, LITEST_TOUCHPAD|LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton_default_clickpad, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add("pointer:middlebutton", middlebutton_default_touchpad, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	return litest_run(argc, argv);
 }
