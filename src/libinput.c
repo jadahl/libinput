@@ -1966,6 +1966,55 @@ libinput_device_config_click_get_default_method(struct libinput_device *device)
 		return LIBINPUT_CONFIG_CLICK_METHOD_NONE;
 }
 
+LIBINPUT_EXPORT int
+libinput_device_config_middle_emulation_is_available(
+		struct libinput_device *device)
+{
+	if (device->config.middle_emulation)
+		return device->config.middle_emulation->available(device);
+	else
+		return LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
+}
+
+LIBINPUT_EXPORT enum libinput_config_status
+libinput_device_config_middle_emulation_set_enabled(
+		struct libinput_device *device,
+		enum libinput_config_middle_emulation_state enable)
+{
+	switch (enable) {
+	case LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED:
+	case LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED:
+		break;
+	default:
+		return LIBINPUT_CONFIG_STATUS_INVALID;
+	}
+
+	if (!libinput_device_config_middle_emulation_is_available(device))
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+
+	return device->config.middle_emulation->set(device, enable);
+}
+
+LIBINPUT_EXPORT enum libinput_config_middle_emulation_state
+libinput_device_config_middle_emulation_get_enabled(
+		struct libinput_device *device)
+{
+	if (!libinput_device_config_middle_emulation_is_available(device))
+		return LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
+
+	return device->config.middle_emulation->get(device);
+}
+
+LIBINPUT_EXPORT enum libinput_config_middle_emulation_state
+libinput_device_config_middle_emulation_get_default_enabled(
+		struct libinput_device *device)
+{
+	if (!libinput_device_config_middle_emulation_is_available(device))
+		return LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED;
+
+	return device->config.middle_emulation->get_default(device);
+}
+
 LIBINPUT_EXPORT uint32_t
 libinput_device_config_scroll_get_methods(struct libinput_device *device)
 {

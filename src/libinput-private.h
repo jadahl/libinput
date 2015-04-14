@@ -178,6 +178,17 @@ struct libinput_device_config_click_method {
 	enum libinput_config_click_method (*get_default_method)(struct libinput_device *device);
 };
 
+struct libinput_device_config_middle_emulation {
+	int (*available)(struct libinput_device *device);
+	enum libinput_config_status (*set)(
+			 struct libinput_device *device,
+			 enum libinput_config_middle_emulation_state);
+	enum libinput_config_middle_emulation_state (*get)(
+			 struct libinput_device *device);
+	enum libinput_config_middle_emulation_state (*get_default)(
+			 struct libinput_device *device);
+};
+
 struct libinput_device_config {
 	struct libinput_device_config_tap *tap;
 	struct libinput_device_config_calibration *calibration;
@@ -187,6 +198,7 @@ struct libinput_device_config {
 	struct libinput_device_config_left_handed *left_handed;
 	struct libinput_device_config_scroll_method *scroll_method;
 	struct libinput_device_config_click_method *click_method;
+	struct libinput_device_config_middle_emulation *middle_emulation;
 };
 
 struct libinput_device_group {
