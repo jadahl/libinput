@@ -1929,9 +1929,6 @@ LIBINPUT_EXPORT enum libinput_config_status
 libinput_device_config_click_set_method(struct libinput_device *device,
 					enum libinput_config_click_method method)
 {
-	if ((libinput_device_config_click_get_methods(device) & method) != method)
-		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
-
 	/* Check method is a single valid method */
 	switch (method) {
 	case LIBINPUT_CONFIG_CLICK_METHOD_NONE:
@@ -1941,6 +1938,9 @@ libinput_device_config_click_set_method(struct libinput_device *device,
 	default:
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 	}
+
+	if ((libinput_device_config_click_get_methods(device) & method) != method)
+		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
 
 	if (device->config.click_method)
 		return device->config.click_method->set_method(device, method);
