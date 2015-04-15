@@ -458,6 +458,24 @@ tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 		tp_edge_scroll_touch_active(tp, t);
 }
 
+bool
+tp_palm_tap_is_palm(struct tp_dispatch *tp, struct tp_touch *t)
+{
+	if (t->state != TOUCH_BEGIN)
+		return false;
+
+	if (t->point.x > tp->palm.left_edge &&
+	    t->point.x < tp->palm.right_edge)
+		return false;
+
+	/* We're inside the left/right palm edge and in the northern half of
+	 * the touchpad - this tap is a palm */
+	if (t->point.y < tp->palm.vert_center)
+		return true;
+
+	return false;
+}
+
 static void
 tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
@@ -1098,13 +1116,16 @@ static int
 tp_init_palmdetect(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
-	int width;
+	int width, height;
 
 	tp->palm.right_edge = INT_MAX;
 	tp->palm.left_edge = INT_MIN;
+	tp->palm.vert_center = INT_MIN;
 
 	width = abs(device->abs.absinfo_x->maximum -
 		    device->abs.absinfo_x->minimum);
+	height = abs(device->abs.absinfo_y->maximum -
+		    device->abs.absinfo_y->minimum);
 
 	/* Apple touchpads are always big enough to warrant palm detection */
 	if (evdev_device_get_id_vendor(device) != VENDOR_ID_APPLE) {
@@ -1121,6 +1142,7 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 	/* palm edges are 5% of the width on each side */
 	tp->palm.right_edge = device->abs.absinfo_x->maximum - width * 0.05;
 	tp->palm.left_edge = device->abs.absinfo_x->minimum + width * 0.05;
+	tp->palm.vert_center = device->abs.absinfo_y->minimum + height/2;
 
 	return 0;
 }

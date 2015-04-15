@@ -261,6 +261,7 @@ struct tp_dispatch {
 	struct {
 		int32_t right_edge;		/* in device coordinates */
 		int32_t left_edge;		/* in device coordinates */
+		int32_t vert_center;		/* in device coordinates */
 	} palm;
 
 	struct {
@@ -386,5 +387,8 @@ tp_gesture_post_events(struct tp_dispatch *tp, uint64_t time);
 
 void
 tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time);
+
+bool
+tp_palm_tap_is_palm(struct tp_dispatch *tp, struct tp_touch *t);
 
 #endif
