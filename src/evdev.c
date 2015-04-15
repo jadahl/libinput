@@ -1137,6 +1137,19 @@ evdev_process_event(struct evdev_device *device, struct input_event *e)
 	struct evdev_dispatch *dispatch = device->dispatch;
 	uint64_t time = e->time.tv_sec * 1000ULL + e->time.tv_usec / 1000;
 
+#if 0
+	if (libevdev_event_is_code(e, EV_SYN, SYN_REPORT))
+		log_debug(device->base.seat->libinput,
+			  "-------------- EV_SYN ------------\n");
+	else
+		log_debug(device->base.seat->libinput,
+			  "%-7s %-16s %-20s %4d\n",
+			  evdev_device_get_sysname(device),
+			  libevdev_event_type_get_name(e->type),
+			  libevdev_event_code_get_name(e->type, e->code),
+			  e->value);
+#endif
+
 	dispatch->interface->process(dispatch, device, e, time);
 }
 
