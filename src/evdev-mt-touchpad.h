@@ -97,6 +97,8 @@ enum tp_tap_state {
 	TAP_STATE_DRAGGING,
 	TAP_STATE_DRAGGING_WAIT,
 	TAP_STATE_DRAGGING_2,
+	TAP_STATE_MULTITAP,
+	TAP_STATE_MULTITAP_DOWN,
 	TAP_STATE_DEAD, /**< finger count exceeded */
 };
 
@@ -256,6 +258,7 @@ struct tp_dispatch {
 		enum tp_tap_state state;
 		uint32_t buttons_pressed;
 		unsigned int tap_finger_count;
+		uint64_t multitap_last_time;
 	} tap;
 
 	struct {
