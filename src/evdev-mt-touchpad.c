@@ -1135,7 +1135,7 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 
 		/* Enable palm detection on touchpads >= 80 mm. Anything smaller
 		   probably won't need it, until we find out it does */
-		if (width/device->abs.absinfo_x->resolution < 80)
+		if (width/device->abs.absinfo_x->resolution < 70)
 			return 0;
 	}
 

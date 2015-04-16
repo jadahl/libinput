@@ -2469,7 +2469,7 @@ touchpad_has_palm_detect_size(struct litest_device *dev)
 
 	rc = libinput_device_get_size(dev->libinput_device, &width, &height);
 
-	return rc == 0 && width >= 80;
+	return rc == 0 && width >= 70;
 }
 
 START_TEST(touchpad_palm_detect_at_edge)
