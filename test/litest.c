@@ -1321,15 +1321,12 @@ litest_create_uinput_device(const char *name, struct input_id *id, ...)
 	return uinput;
 }
 
-void
-litest_assert_button_event(struct libinput *li, unsigned int button,
-			   enum libinput_button_state state)
+struct libinput_event_pointer*
+litest_is_button_event(struct libinput_event *event,
+		       int button,
+		       enum libinput_button_state state)
 {
-	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
-
-	litest_wait_for_event(li);
-	event = libinput_get_event(li);
 
 	ck_assert(event != NULL);
 	ck_assert_int_eq(libinput_event_get_type(event),
@@ -1339,6 +1336,21 @@ litest_assert_button_event(struct libinput *li, unsigned int button,
 			 button);
 	ck_assert_int_eq(libinput_event_pointer_get_button_state(ptrev),
 			 state);
+
+	return ptrev;
+}
+
+void
+litest_assert_button_event(struct libinput *li, unsigned int button,
+			   enum libinput_button_state state)
+{
+	struct libinput_event *event;
+
+	litest_wait_for_event(li);
+	event = libinput_get_event(li);
+
+	litest_is_button_event(event, button, state);
+
 	libinput_event_destroy(event);
 }
 
