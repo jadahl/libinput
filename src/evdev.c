@@ -1513,11 +1513,27 @@ evdev_check_min_max(struct evdev_device *device, unsigned int code)
 
 	absinfo = libevdev_get_abs_info(evdev, code);
 	if (absinfo->minimum == absinfo->maximum) {
-		log_bug_kernel(device->base.seat->libinput,
-			       "Device '%s' has min == max on %s\n",
-			       device->devname,
-			       libevdev_event_code_get_name(EV_ABS, code));
-		return -1;
+		/* Some devices have a sort-of legitimate min/max of 0 for
+		 * ABS_MISC and above (e.g. Roccat Kone XTD). Don't ignore
+		 * them, simply disable the axes so we won't get events,
+		 * we don't know what to do with them anyway.
+		 */
+		if (absinfo->minimum == 0 &&
+		    code >= ABS_MISC && code < ABS_MT_SLOT) {
+			log_info(device->base.seat->libinput,
+				 "Disabling EV_ABS %#x on device '%s' (min == max == 0)\n",
+				 code,
+				 device->devname);
+			libevdev_disable_event_code(device->evdev,
+						    EV_ABS,
+						    code);
+		} else {
+			log_bug_kernel(device->base.seat->libinput,
+				       "Device '%s' has min == max on %s\n",
+				       device->devname,
+				       libevdev_event_code_get_name(EV_ABS, code));
+			return -1;
+		}
 	}
 
 	return 0;

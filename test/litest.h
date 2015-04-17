@@ -55,6 +55,7 @@ enum litest_device_type {
 	LITEST_WACOM_FINGER = -19,
 	LITEST_KEYBOARD_BLACKWIDOW = -20,
 	LITEST_WHEEL_ONLY = -21,
+	LITEST_MOUSE_ROCCAT = -22,
 };
 
 enum litest_device_feature {

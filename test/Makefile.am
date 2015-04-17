@@ -19,6 +19,7 @@ liblitest_la_SOURCES = \
 	litest-keyboard.c \
 	litest-keyboard-razer-blackwidow.c \
 	litest-mouse.c \
+	litest-mouse-roccat.c \
 	litest-ms-surface-cover.c \
 	litest-protocol-a-touch-screen.c \
 	litest-qemu-usb-tablet.c \

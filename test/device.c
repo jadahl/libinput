@@ -831,9 +831,7 @@ START_TEST(abs_device_no_range)
 	li = litest_create_context();
 	litest_disable_log_handler(li);
 
-	for (code = 0; code < ABS_MT_SLOT; code++) {
-		if (code == ABS_MISC)
-			continue;
+	for (code = 0; code < ABS_MISC; code++) {
 		absinfo[2].value = code;
 		uinput = litest_create_uinput_abs_device("test device", NULL,
 							 absinfo,
