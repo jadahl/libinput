@@ -231,7 +231,7 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	}
 
 	t->dirty = true;
-	t->palm.is_palm = false;
+	t->palm.state = PALM_NONE;
 	t->state = TOUCH_END;
 	t->pinned.is_pinned = false;
 	t->millis = time;
@@ -455,7 +455,7 @@ int
 tp_touch_active(struct tp_dispatch *tp, struct tp_touch *t)
 {
 	return (t->state == TOUCH_BEGIN || t->state == TOUCH_UPDATE) &&
-		!t->palm.is_palm &&
+		t->palm.state == PALM_NONE &&
 		!t->pinned.is_pinned &&
 		tp_button_touch_active(tp, t) &&
 		tp_edge_scroll_touch_active(tp, t);
@@ -491,14 +491,14 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	   we move out of the palm edge zone within the timeout, provided
 	   the direction is within 45 degrees of the horizontal.
 	 */
-	if (t->palm.is_palm) {
+	if (t->palm.state == PALM_EDGE) {
 		if (time < t->palm.time + PALM_TIMEOUT &&
 		    (t->point.x > tp->palm.left_edge && t->point.x < tp->palm.right_edge)) {
 			delta = device_delta(t->point, t->palm.first);
 			dirs = normalized_get_direction(
 						tp_normalize_delta(tp, delta));
 			if ((dirs & DIRECTIONS) && !(dirs & ~DIRECTIONS)) {
-				t->palm.is_palm = false;
+				t->palm.state = PALM_NONE;
 			}
 		}
 		return;
@@ -517,7 +517,7 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	    tp_button_is_inside_softbutton_area(tp, t))
 		return;
 
-	t->palm.is_palm = true;
+	t->palm.state = PALM_EDGE;
 	t->palm.time = time;
 	t->palm.first = t->point;
 }

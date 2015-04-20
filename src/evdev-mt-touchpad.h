@@ -61,6 +61,11 @@ enum touch_state {
 	TOUCH_END
 };
 
+enum touch_palm_state {
+	PALM_NONE = 0,
+	PALM_EDGE,
+};
+
 enum button_event {
 	BUTTON_EVENT_IN_BOTTOM_R = 30,
 	BUTTON_EVENT_IN_BOTTOM_L,
@@ -171,7 +176,7 @@ struct tp_touch {
 	} scroll;
 
 	struct {
-		bool is_palm;
+		enum touch_palm_state state;
 		struct device_coords first; /* first coordinates if is_palm == true */
 		uint32_t time; /* first timestamp if is_palm == true */
 	} palm;
