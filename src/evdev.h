@@ -93,6 +93,10 @@ enum evdev_middlebutton_event {
 	MIDDLEBUTTON_EVENT_ALL_UP,
 };
 
+enum evdev_device_model {
+	EVDEV_MODEL_DEFAULT,
+};
+
 struct mt_slot {
 	int32_t seat_slot;
 	struct device_coords point;
@@ -202,6 +206,8 @@ struct evdev_device {
 
 	int dpi; /* HW resolution */
 	struct ratelimit syn_drop_limit; /* ratelimit for SYN_DROPPED logging */
+
+	enum evdev_device_model model;
 };
 
 #define EVDEV_UNHANDLED_DEVICE ((struct evdev_device *) 1)

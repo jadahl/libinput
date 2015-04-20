@@ -1422,6 +1422,27 @@ evdev_read_dpi_prop(struct evdev_device *device)
 	return dpi;
 }
 
+static inline enum evdev_device_model
+evdev_read_model(struct evdev_device *device)
+{
+	const struct model_map {
+		const char *property;
+		enum evdev_device_model model;
+	} model_map[] = {
+		{ NULL, EVDEV_MODEL_DEFAULT },
+	};
+	const struct model_map *m = model_map;
+
+	while (m->property) {
+		if (!!udev_device_get_property_value(device->udev_device,
+						     m->property))
+			break;
+		m++;
+	}
+
+	return m->model;
+}
+
 /* Return 1 if the given resolutions have been set, or 0 otherwise */
 inline int
 evdev_fix_abs_resolution(struct evdev_device *device,
@@ -1950,6 +1971,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->scroll.wheel_click_angle =
 		evdev_read_wheel_click_prop(device);
 	device->dpi = evdev_read_dpi_prop(device);
+	device->model = evdev_read_model(device);
 	/* at most 5 SYN_DROPPED log-messages per 30s */
 	ratelimit_init(&device->syn_drop_limit, 30ULL * 1000, 5);
 

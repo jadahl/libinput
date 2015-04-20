@@ -63,6 +63,9 @@ libinput_pointer_get_axis_source() for details.
 <dt>POINTINGSTICK_CONST_ACCEL</dt>
 <dd>A constant (linear) acceleration factor to apply to pointingstick deltas
 to normalize them.
+<dt>LIBINPUT_MODEL_*</dt>
+<dd><b>This prefix is reserved as private API, do not use.</b>. See @ref
+model_specific_configuration for details.
 </dd>
 </dl>
 
@@ -97,5 +100,17 @@ for a device with the vendor/model ID of 012a/034b.
 ACTION=="add|change", KERNEL=="event[0-9]*", ENV{ID_VENDOR_ID}=="012a", \
 ENV{ID_MODEL_ID}=="034b", ENV{ID_INPUT_TOUCHPAD}="", ENV{ID_INPUT_TABLET}="1"
 @endcode
+
+@section model_specific_configuration Model-specific configuration
+
+libinput reserves the property prefix <b>LIBINPUT_MODEL_</b> for
+model-specific configuration. <b>This prefix is reserved as private API, do
+not use.</b>
+
+The effect of this property may be to enable or disable certain
+features on a specific device or set of devices, to change configuration
+defaults or any other reason. The effects of setting this property, the
+format of the property and the value of the property are subject to change
+at any time.
 
 */
