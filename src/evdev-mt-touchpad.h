@@ -64,6 +64,7 @@ enum touch_state {
 enum touch_palm_state {
 	PALM_NONE = 0,
 	PALM_EDGE,
+	PALM_TYPING,
 };
 
 enum button_event {
@@ -277,9 +278,15 @@ struct tp_dispatch {
 	struct {
 		struct libinput_device_config_send_events config;
 		enum libinput_config_send_events_mode current_mode;
+
 		bool trackpoint_active;
 		struct libinput_event_listener trackpoint_listener;
 		struct libinput_timer trackpoint_timer;
+
+		bool keyboard_active;
+		struct libinput_event_listener keyboard_listener;
+		struct libinput_timer keyboard_timer;
+		struct evdev_device *keyboard;
 	} sendevents;
 };
 
