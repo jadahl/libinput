@@ -34,7 +34,8 @@
 #define DEFAULT_ACCEL_NUMERATOR 3000.0
 #define DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR 700.0
 #define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 500 /* ms */
-#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT 500 /* ms */
+#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1 200 /* ms */
+#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2 500 /* ms */
 #define FAKE_FINGER_OVERFLOW (1 << 7)
 
 static inline int
@@ -910,11 +911,18 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 {
 	struct tp_dispatch *tp = data;
 	struct libinput_event_keyboard *kbdev;
+	unsigned int timeout;
 
 	if (event->type != LIBINPUT_EVENT_KEYBOARD_KEY)
 		return;
 
 	kbdev = libinput_event_get_keyboard_event(event);
+
+	/* Only trigger the timer on key down. */
+	if (libinput_event_keyboard_get_key_state(kbdev) !=
+	    LIBINPUT_KEY_STATE_PRESSED)
+		return;
+
 	/* modifier keys don't trigger disable-while-typing so things like
 	 * ctrl+zoom or ctrl+click are possible */
 	switch (libinput_event_keyboard_get_key(kbdev)) {
@@ -935,10 +943,13 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 		tp_gesture_stop(tp, time);
 		tp_tap_suspend(tp, time);
 		tp->sendevents.keyboard_active = true;
+		timeout = DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1;
+	} else {
+		timeout = DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2;
 	}
 
 	libinput_timer_set(&tp->sendevents.keyboard_timer,
-			   time + DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT);
+			   time + timeout);
 }
 
 static void
