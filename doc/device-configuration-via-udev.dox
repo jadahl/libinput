@@ -44,7 +44,10 @@ udev_device_type.</dt>
 ID_INPUT_TOUCHSCREEN, ID_INPUT_TABLET, ID_INPUT_JOYSTICK,
 ID_INPUT_ACCELEROMETER</dt>
 <dd>If any of the above is set, libinput initializes the device as the given
-type, see @ref udev_device_type.</dd>
+type, see @ref udev_device_type. Note that for historical reasons more than
+one of these may be set at any time, libinput will select only one of these
+to determine the device type. To ensure libinput selects the correct device
+type, only set one of them.</dd>
 <dt>WL_SEAT</dt>
 <dd>Assigns the logical seat for this device. See
 libinput_seat_get_logical_name()
