@@ -110,6 +110,9 @@ tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 {
 	struct normalized_coords delta;
 
+	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
+		return;
+
 	delta = tp_get_average_touches_delta(tp);
 	delta = tp_filter_motion(tp, &delta, time);
 
@@ -153,6 +156,9 @@ tp_gesture_post_events(struct tp_dispatch *tp, uint64_t time)
 void
 tp_gesture_stop_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 {
+	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
+		return;
+
 	evdev_stop_scroll(tp->device,
 			  time,
 			  LIBINPUT_POINTER_AXIS_SOURCE_FINGER);

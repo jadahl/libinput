@@ -2821,6 +2821,26 @@ START_TEST(touchpad_edge_scroll_source)
 }
 END_TEST
 
+START_TEST(touchpad_edge_scroll_no_2fg)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+	enable_edge_scroll(dev);
+
+	litest_touch_down(dev, 0, 20, 20);
+	litest_touch_down(dev, 1, 40, 20);
+	litest_touch_move_two_touches(dev, 20, 20, 40, 20, 20, 30, 10, 3);
+	libinput_dispatch(li);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+	libinput_dispatch(li);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
 START_TEST(touchpad_tap_is_available)
 {
 	struct litest_device *dev = litest_current_device();
@@ -4143,6 +4163,7 @@ int main(int argc, char **argv) {
 	litest_add("touchpad:scroll", touchpad_edge_scroll_no_edge_after_motion, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_timeout, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	litest_add("touchpad:scroll", touchpad_edge_scroll_source, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+	litest_add("touchpad:scroll", touchpad_edge_scroll_no_2fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_CLICKPAD);
 
 	litest_add("touchpad:palm", touchpad_palm_detect_at_edge, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_at_bottom_corners, LITEST_TOUCHPAD, LITEST_CLICKPAD);
