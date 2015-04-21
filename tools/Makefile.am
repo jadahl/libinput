@@ -9,6 +9,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 libshared_la_SOURCES = \
 		       shared.c \
 		       shared.h
+libshared_la_CFLAGS = $(LIBEVDEV_CFLAGS)
+libshared_la_LIBADD = $(LIBEVDEV_LIBS)
 
 event_debug_SOURCES = event-debug.c
 event_debug_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS)

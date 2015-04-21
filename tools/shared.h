@@ -42,6 +42,7 @@ struct tools_options {
 	int middlebutton;
 	enum libinput_config_click_method click_method;
 	enum libinput_config_scroll_method scroll_method;
+	int scroll_button;
 	double speed;
 };
 
