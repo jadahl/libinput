@@ -2698,6 +2698,18 @@ START_TEST(touchpad_edge_scroll_timeout)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
+	double width = 0, height = 0;
+	int y_movement = 30; /* in percent of height */
+
+	/* account for different touchpad heights, let's move 100% on a 15mm
+	   high touchpad, less on anything else. This number is picked at
+	   random, we just want deltas less than 5.
+	   */
+	if (libinput_device_get_size(dev->libinput_device,
+				     &width,
+				     &height) != -1) {
+		y_movement = 100 * 15/height;
+	}
 
 	litest_drain_events(li);
 	enable_edge_scroll(dev);
@@ -2707,7 +2719,7 @@ START_TEST(touchpad_edge_scroll_timeout)
 	litest_timeout_edgescroll();
 	libinput_dispatch(li);
 
-	litest_touch_move_to(dev, 0, 99, 20, 99, 80, 60, 10);
+	litest_touch_move_to(dev, 0, 99, 20, 99, 20 + y_movement, 60, 10);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
 
