@@ -46,6 +46,7 @@ enum options {
 	OPT_MIDDLEBUTTON_ENABLE,
 	OPT_MIDDLEBUTTON_DISABLE,
 	OPT_CLICK_METHOD,
+	OPT_SCROLL_METHOD,
 	OPT_SPEED,
 };
 
@@ -76,6 +77,7 @@ tools_usage()
 	       "--enable-middlebutton\n"
 	       "--disable-middlebutton.... enable/disable middle button emulation\n"
 	       "--set-click-method=[none|clickfinger|buttonareas] .... set the desired click method\n"
+	       "--set-scroll-method=[none|twofinger|edge|button] ... set the desired scroll method\n"
 	       "--set-speed=<value>.... set pointer acceleration speed\n"
 	       "\n"
 	       "These options apply to all applicable devices, if a feature\n"
@@ -96,6 +98,7 @@ tools_init_options(struct tools_options *options)
 	options->left_handed = -1;
 	options->middlebutton = -1;
 	options->click_method = -1;
+	options->scroll_method = -1;
 	options->backend = BACKEND_UDEV;
 	options->seat = "seat0";
 	options->speed = 0.0;
@@ -121,6 +124,7 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			{ "enable-middlebutton", 0, 0, OPT_MIDDLEBUTTON_ENABLE },
 			{ "disable-middlebutton", 0, 0, OPT_MIDDLEBUTTON_DISABLE },
 			{ "set-click-method", 1, 0, OPT_CLICK_METHOD },
+			{ "set-scroll-method", 1, 0, OPT_SCROLL_METHOD },
 			{ "speed", 1, 0, OPT_SPEED },
 			{ 0, 0, 0, 0}
 		};
@@ -188,6 +192,28 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				} else if (strcmp(optarg, "buttonareas") == 0) {
 					options->click_method =
 						LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
+				} else {
+					tools_usage();
+					return 1;
+				}
+				break;
+			case OPT_SCROLL_METHOD:
+				if (!optarg) {
+					tools_usage();
+					return 1;
+				}
+				if (strcmp(optarg, "none") == 0) {
+					options->scroll_method =
+						LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
+				} else if (strcmp(optarg, "twofinger") == 0) {
+					options->scroll_method =
+						LIBINPUT_CONFIG_SCROLL_2FG;
+				} else if (strcmp(optarg, "edge") == 0) {
+					options->scroll_method =
+						LIBINPUT_CONFIG_SCROLL_EDGE;
+				} else if (strcmp(optarg, "button") == 0) {
+					options->scroll_method =
+						LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
 				} else {
 					tools_usage();
 					return 1;
@@ -316,6 +342,10 @@ tools_device_apply_config(struct libinput_device *device,
 
 	if (options->click_method != -1)
 		libinput_device_config_click_set_method(device, options->click_method);
+
+	if (options->scroll_method != -1)
+		libinput_device_config_scroll_set_method(device,
+							 options->scroll_method);
 
 	if (libinput_device_config_accel_is_available(device))
 		libinput_device_config_accel_set_speed(device,
