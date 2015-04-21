@@ -130,8 +130,8 @@ local:
 
 LIBINPUT_0.14.0 {
 global:
+	libinput_device_config_middle_emulation_get_default_enabled;
+	libinput_device_config_middle_emulation_get_enabled;
 	libinput_device_config_middle_emulation_is_available;
 	libinput_device_config_middle_emulation_set_enabled;
-	libinput_device_config_middle_emulation_get_enabled;
-	libinput_device_config_middle_emulation_get_default_enabled;
 } LIBINPUT_0.12.0;
