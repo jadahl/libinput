@@ -1116,7 +1116,7 @@ START_TEST(middlebutton_default_enabled)
 	struct libinput_device *device = dev->libinput_device;
 	enum libinput_config_status status;
 	int available;
-	enum libinput_config_middle_emulation_state deflt;
+	enum libinput_config_middle_emulation_state deflt, state;
 
 	available = libinput_device_config_middle_emulation_is_available(device);
 	ck_assert(available);
@@ -1126,12 +1126,12 @@ START_TEST(middlebutton_default_enabled)
 	else
 		deflt = LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED;
 
-	status = libinput_device_config_middle_emulation_get_enabled(device);
-	ck_assert_int_eq(status, deflt);
+	state = libinput_device_config_middle_emulation_get_enabled(device);
+	ck_assert_int_eq(state, deflt);
 
-	status = libinput_device_config_middle_emulation_get_default_enabled(
+	state = libinput_device_config_middle_emulation_get_default_enabled(
 					    device);
-	ck_assert_int_eq(status, deflt);
+	ck_assert_int_eq(state, deflt);
 
 	status = libinput_device_config_middle_emulation_set_enabled(device,
 					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
@@ -1151,16 +1151,17 @@ START_TEST(middlebutton_default_clickpad)
 	struct litest_device *dev = litest_current_device();
 	struct libinput_device *device = dev->libinput_device;
 	enum libinput_config_status status;
+	enum libinput_config_middle_emulation_state state;
 	int available;
 
 	available = libinput_device_config_middle_emulation_is_available(device);
 	ck_assert(!available);
 
-	status = libinput_device_config_middle_emulation_get_enabled(device);
-	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
-	status = libinput_device_config_middle_emulation_get_default_enabled(
+	state = libinput_device_config_middle_emulation_get_enabled(device);
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	state = libinput_device_config_middle_emulation_get_default_enabled(
 					    device);
-	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
 
 	status = libinput_device_config_middle_emulation_set_enabled(device,
 					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
@@ -1179,7 +1180,7 @@ START_TEST(middlebutton_default_touchpad)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput_device *device = dev->libinput_device;
-	enum libinput_config_status status;
+	enum libinput_config_middle_emulation_state state;
 	int available;
 
 	available = libinput_device_config_middle_emulation_is_available(device);
@@ -1188,12 +1189,12 @@ START_TEST(middlebutton_default_touchpad)
 	if (libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE))
 		return;
 
-	status = libinput_device_config_middle_emulation_get_enabled(
+	state = libinput_device_config_middle_emulation_get_enabled(
 					    device);
-	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
-	status = libinput_device_config_middle_emulation_get_default_enabled(
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	state = libinput_device_config_middle_emulation_get_default_enabled(
 					    device);
-	ck_assert_int_eq(status, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
 }
 END_TEST
 
