@@ -2638,12 +2638,25 @@ START_TEST(touchpad_scroll_natural)
 }
 END_TEST
 
+static void
+enable_edge_scroll(struct litest_device *dev)
+{
+	enum libinput_config_status status;
+	struct libinput_device *device = dev->libinput_device;
+
+	status = libinput_device_config_scroll_set_method(device,
+					  LIBINPUT_CONFIG_SCROLL_EDGE);
+	ck_assert_int_eq(status,
+			 LIBINPUT_CONFIG_STATUS_SUCCESS);
+}
+
 START_TEST(touchpad_edge_scroll)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
 	litest_drain_events(li);
+	enable_edge_scroll(dev);
 
 	litest_touch_down(dev, 0, 99, 20);
 	litest_touch_move_to(dev, 0, 99, 20, 99, 80, 10, 0);
@@ -2687,6 +2700,7 @@ START_TEST(touchpad_edge_scroll_timeout)
 	struct libinput_event_pointer *ptrev;
 
 	litest_drain_events(li);
+	enable_edge_scroll(dev);
 
 	litest_touch_down(dev, 0, 99, 20);
 	libinput_dispatch(li);
@@ -2732,6 +2746,7 @@ START_TEST(touchpad_edge_scroll_no_motion)
 	struct libinput *li = dev->libinput;
 
 	litest_drain_events(li);
+	enable_edge_scroll(dev);
 
 	litest_touch_down(dev, 0, 99, 10);
 	litest_touch_move_to(dev, 0, 99, 10, 99, 70, 10, 0);
@@ -2753,6 +2768,7 @@ START_TEST(touchpad_edge_scroll_no_edge_after_motion)
 	struct libinput *li = dev->libinput;
 
 	litest_drain_events(li);
+	enable_edge_scroll(dev);
 
 	/* moving into the edge zone must not trigger scroll events */
 	litest_touch_down(dev, 0, 20, 20);
@@ -2774,6 +2790,7 @@ START_TEST(touchpad_edge_scroll_source)
 	struct libinput_event_pointer *ptrev;
 
 	litest_drain_events(li);
+	enable_edge_scroll(dev);
 
 	litest_touch_down(dev, 0, 99, 20);
 	litest_touch_move_to(dev, 0, 99, 20, 99, 80, 10, 0);
