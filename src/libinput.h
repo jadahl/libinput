@@ -1711,6 +1711,22 @@ libinput_device_pointer_has_button(struct libinput_device *device, uint32_t code
 /**
  * @ingroup device
  *
+ * Check if a @ref LIBINPUT_DEVICE_CAP_KEYBOARD device has a key with the
+ * given code (see linux/input.h).
+ *
+ * @param device A current input device
+ * @param code Key code to check for, e.g. <i>KEY_ESC</i>
+ *
+ * @return 1 if the device supports this key code, 0 if it does not, -1
+ * on error.
+ */
+int
+libinput_device_keyboard_has_key(struct libinput_device *device,
+				 uint32_t code);
+
+/**
+ * @ingroup device
+ *
  * Increase the refcount of the device group. A device group will be freed
  * whenever the refcount reaches 0. This may happen during
  * libinput_dispatch() if all devices of this group were removed from the

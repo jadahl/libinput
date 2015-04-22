@@ -1547,6 +1547,12 @@ libinput_device_pointer_has_button(struct libinput_device *device, uint32_t code
 	return evdev_device_has_button((struct evdev_device *)device, code);
 }
 
+LIBINPUT_EXPORT int
+libinput_device_keyboard_has_key(struct libinput_device *device, uint32_t code)
+{
+	return evdev_device_has_key((struct evdev_device *)device, code);
+}
+
 LIBINPUT_EXPORT struct libinput_event *
 libinput_event_device_notify_get_base_event(struct libinput_event_device_notify *event)
 {
