@@ -2959,7 +2959,7 @@ START_TEST(touchpad_edge_scroll)
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
-	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 4);
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 99, 80);
@@ -2967,7 +2967,7 @@ START_TEST(touchpad_edge_scroll)
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
-	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, -4);
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 20, 99);
@@ -2975,7 +2975,7 @@ START_TEST(touchpad_edge_scroll)
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
-	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, 4);
 	litest_assert_empty_queue(li);
 
 	litest_touch_down(dev, 0, 70, 99);
@@ -2983,7 +2983,7 @@ START_TEST(touchpad_edge_scroll)
 	litest_touch_up(dev, 0);
 
 	libinput_dispatch(li);
-	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -10);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL, -4);
 	litest_assert_empty_queue(li);
 }
 END_TEST
@@ -3065,7 +3065,7 @@ START_TEST(touchpad_edge_scroll_no_motion)
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
 
-	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 5);
+	litest_assert_scroll(li, LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL, 4);
 	litest_assert_empty_queue(li);
 }
 END_TEST

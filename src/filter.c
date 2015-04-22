@@ -144,6 +144,24 @@ calculate_tracker_velocity(struct pointer_tracker *tracker, uint64_t time)
 	return normalized_length(tracker->delta) / tdelta; /* units/ms */
 }
 
+static inline double
+calculate_velocity_after_timeout(struct pointer_tracker *tracker)
+{
+	/* First movement after timeout needs special handling.
+	 *
+	 * When we trigger the timeout, the last event is too far in the
+	 * past to use it for velocity calculation across multiple tracker
+	 * values.
+	 *
+	 * Use the motion timeout itself to calculate the speed rather than
+	 * the last tracker time. This errs on the side of being too fast
+	 * for really slow movements but provides much more useful initial
+	 * movement in normal use-cases (pause, move, pause, move)
+	 */
+	return calculate_tracker_velocity(tracker,
+					  tracker->time + MOTION_TIMEOUT);
+}
+
 static double
 calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 {
@@ -163,15 +181,23 @@ calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 
 		/* Stop if too far away in time */
 		if (time - tracker->time > MOTION_TIMEOUT ||
-		    tracker->time > time)
+		    tracker->time > time) {
+			if (offset == 1)
+				result = calculate_velocity_after_timeout(tracker);
 			break;
+		}
+
+		velocity = calculate_tracker_velocity(tracker, time);
 
 		/* Stop if direction changed */
 		dir &= tracker->dir;
-		if (dir == 0)
+		if (dir == 0) {
+			/* First movement after dirchange - velocity is that
+			 * of the last movement */
+			if (offset == 1)
+				result = velocity;
 			break;
-
-		velocity = calculate_tracker_velocity(tracker, time);
+		}
 
 		if (initial_velocity == 0.0) {
 			result = initial_velocity = velocity;
