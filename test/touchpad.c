@@ -2829,9 +2829,9 @@ START_TEST(touchpad_edge_scroll_no_2fg)
 	litest_drain_events(li);
 	enable_edge_scroll(dev);
 
-	litest_touch_down(dev, 0, 20, 20);
-	litest_touch_down(dev, 1, 40, 20);
-	litest_touch_move_two_touches(dev, 20, 20, 40, 20, 20, 30, 10, 3);
+	litest_touch_down(dev, 0, 49, 50);
+	litest_touch_down(dev, 1, 51, 50);
+	litest_touch_move_two_touches(dev, 49, 50, 51, 50, 20, 30, 5, 0);
 	libinput_dispatch(li);
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
