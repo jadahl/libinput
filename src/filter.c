@@ -78,7 +78,7 @@ filter_get_speed(struct motion_filter *filter)
  */
 
 #define MAX_VELOCITY_DIFF	1.0 /* units/ms */
-#define MOTION_TIMEOUT		300 /* (ms) */
+#define MOTION_TIMEOUT		1000 /* (ms) */
 #define NUM_POINTER_TRACKERS	16
 
 struct pointer_tracker {
