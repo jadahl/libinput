@@ -100,6 +100,18 @@ nat_scroll_default(struct libinput_device *device)
 		return "disabled";
 }
 
+static const char *
+middle_emulation_default(struct libinput_device *device)
+{
+	if (!libinput_device_config_middle_emulation_is_available(device))
+		return "n/a";
+
+	if (libinput_device_config_middle_emulation_get_default_enabled(device))
+		return "enabled";
+	else
+		return "disabled";
+}
+
 static char *
 calibration_default(struct libinput_device *device)
 {
@@ -199,10 +211,10 @@ print_device_notify(struct libinput_event *ev)
 	devnode = udev_device_get_devnode(
 				  libinput_device_get_udev_device(dev));
 
-	printf("Device:         %s\n"
-	       "Kernel:         %s\n"
-	       "Group:          %d\n"
-	       "Seat:           %s, %s\n",
+	printf("Device:           %s\n"
+	       "Kernel:           %s\n"
+	       "Group:            %d\n"
+	       "Seat:             %s, %s\n",
 	       libinput_device_get_name(dev),
 	       devnode,
 	       (int)group_id,
@@ -210,8 +222,8 @@ print_device_notify(struct libinput_event *ev)
 	       libinput_seat_get_logical_name(seat));
 
 	if (libinput_device_get_size(dev, &w, &h) == 0)
-		printf("Size:           %.2fx%.2fmm\n", w, h);
-	printf("Capabilities:   ");
+		printf("Size:             %.2fx%.2fmm\n", w, h);
+	printf("Capabilities:     ");
 	if (libinput_device_has_capability(dev,
 					   LIBINPUT_DEVICE_CAP_KEYBOARD))
 		printf("keyboard ");
@@ -223,19 +235,20 @@ print_device_notify(struct libinput_event *ev)
 		printf("touch");
 	printf("\n");
 
-	printf("Tap-to-click:   %s\n", tap_default(dev));
-	printf("Left-handed:    %s\n", left_handed_default(dev));
-	printf("Nat.scrolling:  %s\n", nat_scroll_default(dev));
+	printf("Tap-to-click:     %s\n", tap_default(dev));
+	printf("Left-handed:      %s\n", left_handed_default(dev));
+	printf("Nat.scrolling:    %s\n", nat_scroll_default(dev));
+	printf("Middle emulation: %s\n", middle_emulation_default(dev));
 	str = calibration_default(dev);
-	printf("Calibration:    %s\n", str);
+	printf("Calibration:      %s\n", str);
 	free(str);
 
 	str = scroll_defaults(dev);
-	printf("Scroll methods: %s\n", str);
+	printf("Scroll methods:   %s\n", str);
 	free(str);
 
 	str = click_defaults(dev);
-	printf("Click methods:  %s\n", str);
+	printf("Click methods:    %s\n", str);
 	free(str);
 
 	printf("\n");
