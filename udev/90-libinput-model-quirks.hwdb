@@ -14,3 +14,11 @@
 
 #
 # Sort by brand, model
+
+##########################################
+# LENOVO
+##########################################
+
+# X230 (Tablet)
+libinput:name:SynPS/2 Synaptics TouchPad:dmi:*svnLENOVO:*:pvrThinkPadX230*
+ LIBINPUT_MODEL_LENOVO_X230=1

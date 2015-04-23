@@ -998,6 +998,7 @@ static int
 tp_init_accel(struct tp_dispatch *tp, double diagonal)
 {
 	int res_x, res_y;
+	accel_profile_func_t profile;
 
 	res_x = tp->device->abs.absinfo_x->resolution;
 	res_y = tp->device->abs.absinfo_y->resolution;
@@ -1021,9 +1022,16 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 		tp->accel.y_scale_coeff = DEFAULT_ACCEL_NUMERATOR / diagonal;
 	}
 
-	if (evdev_device_init_pointer_acceleration(
-                                       tp->device,
-                                       touchpad_accel_profile_linear) == -1)
+	switch (tp->device->model) {
+	case EVDEV_MODEL_LENOVO_X230:
+		profile = touchpad_lenovo_x230_accel_profile;
+		break;
+	default:
+		profile = touchpad_accel_profile_linear;
+		break;
+	}
+
+	if (evdev_device_init_pointer_acceleration(tp->device, profile) == -1)
 		return -1;
 
 	return 0;

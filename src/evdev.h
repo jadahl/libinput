@@ -95,6 +95,7 @@ enum evdev_middlebutton_event {
 
 enum evdev_device_model {
 	EVDEV_MODEL_DEFAULT,
+	EVDEV_MODEL_LENOVO_X230,
 };
 
 struct mt_slot {
