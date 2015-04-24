@@ -825,6 +825,17 @@ START_TEST(pointer_accel_defaults_absolute)
 }
 END_TEST
 
+START_TEST(pointer_accel_defaults_absolute_relative)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+
+	ck_assert(libinput_device_config_accel_is_available(device));
+	ck_assert(libinput_device_config_accel_get_default_speed(device) == 0.0);
+	ck_assert(libinput_device_config_accel_get_speed(device) == 0.0);
+}
+END_TEST
+
 START_TEST(pointer_accel_direction_change)
 {
 	struct litest_device *dev = litest_current_device();
@@ -1223,7 +1234,8 @@ int main (int argc, char **argv) {
 
 	litest_add("pointer:accel", pointer_accel_defaults, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_invalid, LITEST_RELATIVE, LITEST_ANY);
-	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_ANY);
+	litest_add("pointer:accel", pointer_accel_defaults_absolute, LITEST_ABSOLUTE, LITEST_RELATIVE);
+	litest_add("pointer:accel", pointer_accel_defaults_absolute_relative, LITEST_ABSOLUTE|LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_direction_change, LITEST_RELATIVE, LITEST_ANY);
 
 	litest_add("pointer:middlebutton", middlebutton, LITEST_BUTTON, LITEST_POINTINGSTICK);

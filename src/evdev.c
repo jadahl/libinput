@@ -1792,8 +1792,8 @@ evdev_configure_device(struct evdev_device *device)
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_MOUSE) {
-		if (!libevdev_has_event_code(evdev, EV_ABS, ABS_X) &&
-		    !libevdev_has_event_code(evdev, EV_ABS, ABS_Y) &&
+		if (libevdev_has_event_code(evdev, EV_REL, REL_X) &&
+		    libevdev_has_event_code(evdev, EV_REL, REL_Y) &&
 		    evdev_device_init_pointer_acceleration(
 					device,
 					pointer_accel_profile_linear) == -1)
