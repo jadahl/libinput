@@ -193,7 +193,7 @@ static struct input_absinfo absinfo[] = {
 
 struct litest_test_device litest_mouse_roccat_device = {
 	.type = LITEST_MOUSE_ROCCAT,
-	.features = LITEST_RELATIVE | LITEST_BUTTON | LITEST_WHEEL,
+	.features = LITEST_RELATIVE | LITEST_BUTTON | LITEST_WHEEL | LITEST_KEYS,
 	.shortname = "mouse_roccat",
 	.setup = litest_mouse_roccat_setup,
 	.interface = NULL,
