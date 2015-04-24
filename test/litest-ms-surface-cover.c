@@ -368,7 +368,6 @@ static int events[] = {
 	EV_LED, LED_NUML,
 	EV_LED, LED_CAPSL,
 	EV_LED, LED_SCROLLL,
-	EV_REP, REP_DELAY,
 	-1, -1,
 };
 
