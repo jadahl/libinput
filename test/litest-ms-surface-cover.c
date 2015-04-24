@@ -35,6 +35,8 @@ litest_ms_surface_cover_setup(void)
 }
 
 static struct input_event down[] = {
+	{ .type = EV_ABS, .code = ABS_X, .value = LITEST_AUTO_ASSIGN },
+	{ .type = EV_ABS, .code = ABS_Y, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_MT_SLOT, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_MT_TRACKING_ID, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_MT_POSITION_X, .value = LITEST_AUTO_ASSIGN },
@@ -59,6 +61,8 @@ static struct litest_device_interface interface = {
 };
 
 static struct input_absinfo absinfo[] = {
+	{ ABS_X, 0, 1022, 0, 0, 12 },
+	{ ABS_Y, 0, 487, 0, 0, 12 },
 	{ ABS_VOLUME, 0, 1023, 0, 0, 0 },
 	{ ABS_MISC, 0, 255, 0, 0, 0 },
 	{ 41, 0, 255, 0, 0, 0 },
@@ -90,7 +94,7 @@ static struct input_absinfo absinfo[] = {
 static struct input_id input_id = {
 	.bustype = 0x3,
 	.vendor = 0x45e,
-	.product = 0x7a9,
+	.product = 0x7dc,
 };
 
 static int events[] = {
@@ -373,12 +377,12 @@ static int events[] = {
 
 struct litest_test_device litest_ms_surface_cover_device = {
 	.type = LITEST_MS_SURFACE_COVER,
-	.features = LITEST_KEYS | LITEST_RELATIVE | LITEST_FAKE_MT | LITEST_BUTTON | LITEST_WHEEL,
+	.features = LITEST_KEYS | LITEST_ABSOLUTE | LITEST_RELATIVE | LITEST_FAKE_MT | LITEST_BUTTON | LITEST_WHEEL,
 	.shortname = "MS surface cover",
 	.setup = litest_ms_surface_cover_setup,
 	.interface = &interface,
 
-	.name = "MICROSOFT SAM",
+	.name = "Microsoft Surface Type Cover",
 	.id = &input_id,
 	.events = events,
 	.absinfo = absinfo,

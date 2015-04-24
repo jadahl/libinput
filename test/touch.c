@@ -462,7 +462,8 @@ START_TEST(fake_mt_no_touch_events)
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
 
-	litest_assert_empty_queue(li);
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 }
 END_TEST
 
