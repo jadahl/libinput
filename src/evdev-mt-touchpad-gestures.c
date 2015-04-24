@@ -113,7 +113,17 @@ tp_gesture_post_twofinger_scroll(struct tp_dispatch *tp, uint64_t time)
 	if (tp->scroll.method != LIBINPUT_CONFIG_SCROLL_2FG)
 		return;
 
-	delta = tp_get_average_touches_delta(tp);
+	/* On some semi-mt models slot 0 is more accurate, so for semi-mt
+	 * we only use slot 0. */
+	if (tp->semi_mt) {
+		if (!tp->touches[0].dirty)
+			return;
+
+		delta = tp_get_delta(&tp->touches[0]);
+	} else {
+		delta = tp_get_average_touches_delta(tp);
+	}
+
 	delta = tp_filter_motion(tp, &delta, time);
 
 	if (normalized_is_zero(delta))

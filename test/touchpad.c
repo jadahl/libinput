@@ -2464,7 +2464,7 @@ test_2fg_scroll(struct litest_device *dev, double dx, double dy, int want_sleep)
 	litest_touch_down(dev, 0, 49, 50);
 	litest_touch_down(dev, 1, 51, 50);
 
-	litest_touch_move_two_touches(dev, 49, 50, 51, 50, dx, dy, 5, 0);
+	litest_touch_move_two_touches(dev, 49, 50, 51, 50, dx, dy, 10, 0);
 
 	/* Avoid a small scroll being seen as a tap */
 	if (want_sleep) {
