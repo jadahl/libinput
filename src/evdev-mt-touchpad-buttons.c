@@ -439,18 +439,22 @@ tp_button_handle_state(struct tp_dispatch *tp, uint64_t time)
 		if (t->state == TOUCH_END) {
 			tp_button_handle_event(tp, t, BUTTON_EVENT_UP, time);
 		} else if (t->dirty) {
+			enum button_event event;
+
 			if (is_inside_bottom_right_area(tp, t))
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_R, time);
+				event = BUTTON_EVENT_IN_BOTTOM_R;
 			else if (is_inside_bottom_left_area(tp, t))
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_BOTTOM_L, time);
+				event = BUTTON_EVENT_IN_BOTTOM_L;
 			else if (is_inside_top_right_area(tp, t))
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_R, time);
+				event = BUTTON_EVENT_IN_TOP_R;
 			else if (is_inside_top_middle_area(tp, t))
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_M, time);
+				event = BUTTON_EVENT_IN_TOP_M;
 			else if (is_inside_top_left_area(tp, t))
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_TOP_L, time);
+				event = BUTTON_EVENT_IN_TOP_L;
 			else
-				tp_button_handle_event(tp, t, BUTTON_EVENT_IN_AREA, time);
+				event = BUTTON_EVENT_IN_AREA;
+
+			tp_button_handle_event(tp, t, event, time);
 		}
 		if (tp->queued & TOUCHPAD_EVENT_BUTTON_RELEASE)
 			tp_button_handle_event(tp, t, BUTTON_EVENT_RELEASE, time);
