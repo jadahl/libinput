@@ -804,6 +804,7 @@ tp_notify_clickpadbutton(struct tp_dispatch *tp,
 	if (tp->buttons.click_method == LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER &&
 	    state == LIBINPUT_BUTTON_STATE_PRESSED) {
 		switch (tp->nfingers_down) {
+		case 0:
 		case 1: button = BTN_LEFT; break;
 		case 2: button = BTN_RIGHT; break;
 		case 3: button = BTN_MIDDLE; break;
@@ -865,7 +866,8 @@ tp_post_clickpadbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 			}
 		}
 
-		if (area == 0) {
+		if (area == 0 &&
+		    tp->buttons.click_method != LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER) {
 			/* No touches, wait for a touch before processing */
 			tp->buttons.click_pending = true;
 			return 0;
@@ -877,7 +879,7 @@ tp_post_clickpadbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 			button = evdev_to_left_handed(tp->device, BTN_RIGHT);
 		else if (area & LEFT)
 			button = evdev_to_left_handed(tp->device, BTN_LEFT);
-		else /* main area is always BTN_LEFT */
+		else /* main or no area (for clickfinger) is always BTN_LEFT */
 			button = BTN_LEFT;
 
 		tp->buttons.active = button;
