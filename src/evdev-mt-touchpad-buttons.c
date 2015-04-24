@@ -833,44 +833,45 @@ tp_post_clickpadbutton_buttons(struct tp_dispatch *tp, uint64_t time)
 
 	if (current) {
 		struct tp_touch *t;
+		uint32_t area = 0;
 
 		tp_for_each_touch(tp, t) {
 			switch (t->button.curr) {
 			case BUTTON_EVENT_IN_AREA:
-				button |= AREA;
+				area |= AREA;
 				break;
 			case BUTTON_EVENT_IN_TOP_L:
 				is_top = 1;
 				/* fallthrough */
 			case BUTTON_EVENT_IN_BOTTOM_L:
-				button |= LEFT;
+				area |= LEFT;
 				break;
 			case BUTTON_EVENT_IN_TOP_M:
 				is_top = 1;
-				button |= MIDDLE;
+				area |= MIDDLE;
 				break;
 			case BUTTON_EVENT_IN_TOP_R:
 				is_top = 1;
 				/* fallthrough */
 			case BUTTON_EVENT_IN_BOTTOM_R:
-				button |= RIGHT;
+				area |= RIGHT;
 				break;
 			default:
 				break;
 			}
 		}
 
-		if (button == 0) {
+		if (area == 0) {
 			/* No touches, wait for a touch before processing */
 			tp->buttons.click_pending = true;
 			return 0;
 		}
 
-		if ((button & MIDDLE) || ((button & LEFT) && (button & RIGHT)))
+		if ((area & MIDDLE) || ((area & LEFT) && (area & RIGHT)))
 			button = evdev_to_left_handed(tp->device, BTN_MIDDLE);
-		else if (button & RIGHT)
+		else if (area & RIGHT)
 			button = evdev_to_left_handed(tp->device, BTN_RIGHT);
-		else if (button & LEFT)
+		else if (area & LEFT)
 			button = evdev_to_left_handed(tp->device, BTN_LEFT);
 		else /* main area is always BTN_LEFT */
 			button = BTN_LEFT;
