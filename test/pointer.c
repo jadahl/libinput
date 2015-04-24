@@ -136,6 +136,7 @@ test_absolute_event(struct litest_device *dev, double x, double y)
 	libinput_dispatch(li);
 
 	event = libinput_get_event(li);
+	ck_assert_notnull(event);
 	ck_assert_int_eq(libinput_event_get_type(event),
 			 LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
 
