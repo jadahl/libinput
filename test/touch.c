@@ -439,6 +439,8 @@ START_TEST(fake_mt_exists)
 	 * have different capabilities */
 	ck_assert(libinput_device_has_capability(device,
 						 LIBINPUT_DEVICE_CAP_POINTER));
+
+	libinput_event_destroy(event);
 }
 END_TEST
 
