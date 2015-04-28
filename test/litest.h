@@ -56,6 +56,7 @@ enum litest_device_type {
 	LITEST_KEYBOARD_BLACKWIDOW = -20,
 	LITEST_WHEEL_ONLY = -21,
 	LITEST_MOUSE_ROCCAT = -22,
+	LITEST_LOGITECH_TRACKBALL = -23,
 };
 
 enum litest_device_feature {

@@ -983,8 +983,15 @@ evdev_scroll_get_default_method(struct libinput_device *device)
 
 	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
 		return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
-	else
-		return LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
+
+	/* Mice without a scroll wheel but with middle button have on-button
+	 * scrolling by default */
+	if (!libevdev_has_event_code(evdev->evdev, EV_REL, REL_WHEEL) &&
+	    !libevdev_has_event_code(evdev->evdev, EV_REL, REL_HWHEEL) &&
+	    libevdev_has_event_code(evdev->evdev, EV_KEY, BTN_MIDDLE))
+		return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
+
+	return LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
 }
 
 static enum libinput_config_status
@@ -1016,8 +1023,15 @@ evdev_scroll_get_default_button(struct libinput_device *device)
 
 	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
 		return BTN_MIDDLE;
-	else
-		return 0;
+
+	/* A device that defaults to button scrolling defaults
+	   to BTN_MIDDLE */
+	if (evdev_scroll_get_default_method(device) ==
+		LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
+	    libevdev_has_event_code(evdev->evdev, EV_KEY, BTN_MIDDLE))
+		return BTN_MIDDLE;
+
+	return 0;
 }
 
 static int

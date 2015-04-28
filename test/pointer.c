@@ -758,6 +758,26 @@ START_TEST(pointer_scroll_button)
 }
 END_TEST
 
+START_TEST(pointer_scroll_nowheel_defaults)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_scroll_method method;
+	uint32_t button;
+
+	method = libinput_device_config_scroll_get_method(device);
+	ck_assert_int_eq(method, LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN);
+
+	method = libinput_device_config_scroll_get_default_method(device);
+	ck_assert_int_eq(method, LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN);
+
+	button = libinput_device_config_scroll_get_button(device);
+	ck_assert_int_eq(button, BTN_MIDDLE);
+	button = libinput_device_config_scroll_get_default_button(device);
+	ck_assert_int_eq(button, BTN_MIDDLE);
+}
+END_TEST
+
 START_TEST(pointer_accel_defaults)
 {
 	struct litest_device *dev = litest_current_device();
@@ -1243,6 +1263,7 @@ int main (int argc, char **argv) {
 	litest_add_no_device("pointer:button", pointer_seat_button_count);
 	litest_add("pointer:scroll", pointer_scroll_wheel, LITEST_WHEEL, LITEST_ANY);
 	litest_add("pointer:scroll", pointer_scroll_button, LITEST_RELATIVE|LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:scroll", pointer_scroll_nowheel_defaults, LITEST_RELATIVE|LITEST_BUTTON, LITEST_WHEEL);
 	litest_add("pointer:scroll", pointer_scroll_natural_defaults, LITEST_WHEEL, LITEST_ANY);
 	litest_add("pointer:scroll", pointer_scroll_natural_enable_config, LITEST_WHEEL, LITEST_ANY);
 	litest_add("pointer:scroll", pointer_scroll_natural_wheel, LITEST_WHEEL, LITEST_ANY);

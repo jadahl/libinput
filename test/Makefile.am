@@ -18,6 +18,7 @@ liblitest_la_SOURCES = \
 	litest-generic-singletouch.c \
 	litest-keyboard.c \
 	litest-keyboard-razer-blackwidow.c \
+	litest-logitech-trackball.c \
 	litest-mouse.c \
 	litest-mouse-roccat.c \
 	litest-ms-surface-cover.c \
