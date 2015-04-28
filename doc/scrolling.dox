@@ -1,7 +1,20 @@
 /**
 @page scrolling Scrolling
 
-libinput supports three different types of scrolling behavior.
+libinput supports three different types of scrolling methods: @ref
+twofinger_scrolling, @ref edge_scrolling and @ref button_scrolling. Some devices
+support multiple methods, though only one can be enabled at a time. See
+libinput_device_config_scroll_set_method() for documentation on how to
+switch methods and libinput_device_config_scroll_get_methods() for
+documentation on how to query a device for available scroll methods.
+
+Scroll movements provide vertical and horizontal directions, each
+scroll event contains both directions where applicable, see
+libinput_event_pointer_get_axis_value(). libinput does not provide separate
+toggles to enable or disable horizontal scrolling. Instead, horizontal
+scrolling is always enabled. This is intentional, libinput does not have
+enough context to know when horizontal scrolling is appropriate for a given
+widget. The task of filtering horizontal movements is up to the caller.
 
 @section twofinger_scrolling Two-finger scrolling
 
@@ -16,7 +29,6 @@ For scrolling to trigger, a built-in distance threshold has to be met but once
 engaged any movement will scroll. In other words, to start scrolling a
 sufficiently large movement is required, once scrolling tiny amounts of
 movements will translate into tiny scroll movements.
-
 Scrolling in both directions at once is possible by meeting the required
 distance thresholds to enable each direction separately.
 
@@ -28,23 +40,27 @@ scroll).
 
 @image html edge-scrolling.svg "Vertical and horizontal edge scrolling"
 
-Due to the layout of the edges, diagonal scrolling is not possible.
+Due to the layout of the edges, diagonal scrolling is not possible. The
+behavior of edge scrolling using both edges at the same time is undefined.
 
 Edge scrolling conflicts with @ref clickpad_softbuttons and is
-not usually available on clickpads.
+not usually available on clickpads. See
+http://who-t.blogspot.com.au/2015/03/why-libinput-doesnt-support-edge.html
+for details.
 
 @section button_scrolling On-Button scrolling
 
-Scrolling when a button is held down is available on selected devices. The
-motion of a device is converted into scrolling motion.
-
-For example, Lenovo devices provide a
+On-button scrolling converts the motion of a device into scroll events while
+a designated button is held down. For example, Lenovo devices provide a
 <a href="http://en.wikipedia.org/wiki/Pointing_stick">pointing stick</a> that emulates
 scroll events when the trackstick's middle mouse button is held down.
 
 @image html button-scrolling.svg "Button scrolling"
 
-Note that libinput's @ref t440_support enables the use of the middle
+The button may be changed with
+libinput_device_config_scroll_set_button() but must be on the same device as
+the motion events. Cross-device scrolling is not supported but
+for one exception: libinput's @ref t440_support enables the use of the middle
 button for button scrolling (even when the touchpad is disabled).
 
 */
