@@ -106,6 +106,18 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	litest_drain_events(dev->libinput);
 }
 
+static void
+disable_button_scrolling(struct litest_device *device)
+{
+	struct libinput_device *dev = device->libinput_device;
+	enum libinput_config_status status;
+
+	status = libinput_device_config_scroll_set_method(dev,
+					LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
+
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+}
+
 START_TEST(pointer_motion_relative)
 {
 	struct litest_device *dev = litest_current_device();
@@ -231,6 +243,8 @@ START_TEST(pointer_button)
 {
 	struct litest_device *dev = litest_current_device();
 
+	disable_button_scrolling(dev);
+
 	litest_drain_events(dev->libinput);
 
 	test_button_event(dev, BTN_LEFT, 1);
@@ -246,8 +260,7 @@ START_TEST(pointer_button)
 	}
 
 	/* Skip middle button test on trackpoints (used for scrolling) */
-	if (!libevdev_has_property(dev->evdev, INPUT_PROP_POINTING_STICK) &&
-	    libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE)) {
+	if (libevdev_has_event_code(dev->evdev, EV_KEY, BTN_MIDDLE)) {
 		test_button_event(dev, BTN_MIDDLE, 1);
 		test_button_event(dev, BTN_MIDDLE, 0);
 	}
@@ -891,6 +904,8 @@ START_TEST(middlebutton)
 		{ BTN_RIGHT, BTN_LEFT, BTN_RIGHT, BTN_LEFT },
 	};
 
+	disable_button_scrolling(device);
+
 	status = libinput_device_config_middle_emulation_set_enabled(
 					    device->libinput_device,
 					    LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
@@ -924,6 +939,8 @@ START_TEST(middlebutton_timeout)
 	struct libinput *li = device->libinput;
 	enum libinput_config_status status;
 	unsigned int button;
+
+	disable_button_scrolling(device);
 
 	status = libinput_device_config_middle_emulation_set_enabled(
 					    device->libinput_device,
@@ -962,6 +979,8 @@ START_TEST(middlebutton_doubleclick)
 		{ BTN_RIGHT, BTN_LEFT, BTN_LEFT, BTN_RIGHT },
 		{ BTN_RIGHT, BTN_LEFT, BTN_RIGHT, BTN_LEFT },
 	};
+
+	disable_button_scrolling(device);
 
 	status = libinput_device_config_middle_emulation_set_enabled(
 				    device->libinput_device,
@@ -1003,6 +1022,8 @@ START_TEST(middlebutton_middleclick)
 	struct libinput *li = device->libinput;
 	enum libinput_config_status status;
 	unsigned int button;
+
+	disable_button_scrolling(device);
 
 	if (!libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE))
 		return;
@@ -1065,6 +1086,8 @@ START_TEST(middlebutton_middleclick_during)
 	struct libinput *li = device->libinput;
 	enum libinput_config_status status;
 	unsigned int button;
+
+	disable_button_scrolling(device);
 
 	if (!libevdev_has_event_code(device->evdev, EV_KEY, BTN_MIDDLE))
 		return;
@@ -1238,11 +1261,11 @@ int main (int argc, char **argv) {
 	litest_add("pointer:accel", pointer_accel_defaults_absolute_relative, LITEST_ABSOLUTE|LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:accel", pointer_accel_direction_change, LITEST_RELATIVE, LITEST_ANY);
 
-	litest_add("pointer:middlebutton", middlebutton, LITEST_BUTTON, LITEST_POINTINGSTICK);
-	litest_add("pointer:middlebutton", middlebutton_timeout, LITEST_BUTTON, LITEST_POINTINGSTICK);
-	litest_add("pointer:middlebutton", middlebutton_doubleclick, LITEST_BUTTON, LITEST_POINTINGSTICK);
-	litest_add("pointer:middlebutton", middlebutton_middleclick, LITEST_BUTTON, LITEST_POINTINGSTICK);
-	litest_add("pointer:middlebutton", middlebutton_middleclick_during, LITEST_BUTTON, LITEST_POINTINGSTICK);
+	litest_add("pointer:middlebutton", middlebutton, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:middlebutton", middlebutton_timeout, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:middlebutton", middlebutton_doubleclick, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:middlebutton", middlebutton_middleclick, LITEST_BUTTON, LITEST_ANY);
+	litest_add("pointer:middlebutton", middlebutton_middleclick_during, LITEST_BUTTON, LITEST_ANY);
 	litest_add("pointer:middlebutton", middlebutton_default_enabled, LITEST_BUTTON, LITEST_TOUCHPAD|LITEST_POINTINGSTICK);
 	litest_add("pointer:middlebutton", middlebutton_default_clickpad, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("pointer:middlebutton", middlebutton_default_touchpad, LITEST_TOUCHPAD, LITEST_CLICKPAD);
