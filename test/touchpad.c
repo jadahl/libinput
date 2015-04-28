@@ -430,7 +430,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_click)
 		litest_assert_button_event(li,
 					   BTN_LEFT,
 					   LIBINPUT_BUTTON_STATE_RELEASED);
-		litest_touch_up(dev, 1);
+		litest_touch_up(dev, 0);
 		litest_timeout_tap();
 
 		litest_assert_empty_queue(li);
