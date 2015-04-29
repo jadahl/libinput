@@ -74,6 +74,7 @@ tap_state_to_str(enum tp_tap_state state)
 	CASE_RETURN_STRING(TAP_STATE_DRAGGING);
 	CASE_RETURN_STRING(TAP_STATE_DRAGGING_WAIT);
 	CASE_RETURN_STRING(TAP_STATE_DRAGGING_OR_DOUBLETAP);
+	CASE_RETURN_STRING(TAP_STATE_DRAGGING_OR_TAP);
 	CASE_RETURN_STRING(TAP_STATE_DRAGGING_2);
 	CASE_RETURN_STRING(TAP_STATE_MULTITAP);
 	CASE_RETURN_STRING(TAP_STATE_MULTITAP_DOWN);
@@ -409,8 +410,8 @@ tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp,
 
 	switch (event) {
 	case TAP_EVENT_TOUCH:
-		tp->tap.state = TAP_STATE_DRAGGING;
-		tp_tap_clear_timer(tp);
+		tp->tap.state = TAP_STATE_DRAGGING_OR_TAP;
+		tp_tap_set_timer(tp, time);
 		break;
 	case TAP_EVENT_RELEASE:
 	case TAP_EVENT_MOTION:
@@ -418,6 +419,32 @@ tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_TIMEOUT:
 		tp->tap.state = TAP_STATE_IDLE;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_BUTTON:
+		tp->tap.state = TAP_STATE_DEAD;
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	}
+}
+
+static void
+tp_tap_dragging_tap_handle_event(struct tp_dispatch *tp,
+				  struct tp_touch *t,
+				  enum tap_event event, uint64_t time)
+{
+
+	switch (event) {
+	case TAP_EVENT_TOUCH:
+		tp->tap.state = TAP_STATE_DRAGGING_2;
+		tp_tap_clear_timer(tp);
+		break;
+	case TAP_EVENT_RELEASE:
+		tp->tap.state = TAP_STATE_IDLE;
+		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_MOTION:
+	case TAP_EVENT_TIMEOUT:
+		tp->tap.state = TAP_STATE_DRAGGING;
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
@@ -588,6 +615,9 @@ tp_tap_handle_event(struct tp_dispatch *tp,
 	case TAP_STATE_DRAGGING_WAIT:
 		tp_tap_dragging_wait_handle_event(tp, t, event, time);
 		break;
+	case TAP_STATE_DRAGGING_OR_TAP:
+		tp_tap_dragging_tap_handle_event(tp, t, event, time);
+		break;
 	case TAP_STATE_DRAGGING_2:
 		tp_tap_dragging2_handle_event(tp, t, event, time);
 		break;
@@ -692,6 +722,7 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 	case TAP_STATE_TOUCH:
 	case TAP_STATE_TAPPED:
 	case TAP_STATE_DRAGGING_OR_DOUBLETAP:
+	case TAP_STATE_DRAGGING_OR_TAP:
 	case TAP_STATE_TOUCH_2:
 	case TAP_STATE_TOUCH_3:
 	case TAP_STATE_MULTITAP_DOWN:
@@ -870,6 +901,7 @@ tp_tap_dragging(struct tp_dispatch *tp)
 	case TAP_STATE_DRAGGING:
 	case TAP_STATE_DRAGGING_2:
 	case TAP_STATE_DRAGGING_WAIT:
+	case TAP_STATE_DRAGGING_OR_TAP:
 		return true;
 	default:
 		return false;
