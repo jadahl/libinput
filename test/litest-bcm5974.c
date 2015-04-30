@@ -33,7 +33,7 @@ static void litest_bcm5974_setup(void)
 	litest_set_current_device(d);
 }
 
-struct input_event down[] = {
+static struct input_event down[] = {
 	{ .type = EV_ABS, .code = ABS_X, .value = LITEST_AUTO_ASSIGN  },
 	{ .type = EV_ABS, .code = ABS_Y, .value = LITEST_AUTO_ASSIGN },
 	{ .type = EV_ABS, .code = ABS_PRESSURE, .value = 30  },
