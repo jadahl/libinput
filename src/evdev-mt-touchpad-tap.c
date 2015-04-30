@@ -37,6 +37,7 @@
 #define CASE_RETURN_STRING(a) case a: return #a
 
 #define DEFAULT_TAP_TIMEOUT_PERIOD 180
+#define DEFAULT_DRAG_TIMEOUT_PERIOD 500
 #define DEFAULT_TAP_MOVE_THRESHOLD TP_MM_TO_DPI_NORMALIZED(3)
 
 enum tap_event {
@@ -126,6 +127,12 @@ static void
 tp_tap_set_timer(struct tp_dispatch *tp, uint64_t time)
 {
 	libinput_timer_set(&tp->tap.timer, time + DEFAULT_TAP_TIMEOUT_PERIOD);
+}
+
+static void
+tp_tap_set_drag_timer(struct tp_dispatch *tp, uint64_t time)
+{
+	libinput_timer_set(&tp->tap.timer, time + DEFAULT_DRAG_TIMEOUT_PERIOD);
 }
 
 static void
@@ -380,7 +387,7 @@ tp_tap_dragging_handle_event(struct tp_dispatch *tp,
 		break;
 	case TAP_EVENT_RELEASE:
 		tp->tap.state = TAP_STATE_DRAGGING_WAIT;
-		tp_tap_set_timer(tp, time);
+		tp_tap_set_drag_timer(tp, time);
 		break;
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_TIMEOUT:
