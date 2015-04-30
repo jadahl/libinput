@@ -1,4 +1,4 @@
-.TH LIBINPUT-LIST_DEVICES "1"
+.TH LIBINPUT-LIST-DEVICES "1"
 .SH NAME
 libinput-list-devices \- list local devices as recognized by libinput
 .SH SYNOPSIS
