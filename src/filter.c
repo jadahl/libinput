@@ -197,17 +197,20 @@ acceleration_profile(struct pointer_accelerator *accel,
 
 static double
 calculate_acceleration(struct pointer_accelerator *accel,
-		       void *data, double velocity, uint64_t time)
+		       void *data,
+		       double velocity,
+		       double last_velocity,
+		       uint64_t time)
 {
 	double factor;
 
 	/* Use Simpson's rule to calculate the avarage acceleration between
 	 * the previous motion and the most recent. */
 	factor = acceleration_profile(accel, data, velocity, time);
-	factor += acceleration_profile(accel, data, accel->last_velocity, time);
+	factor += acceleration_profile(accel, data, last_velocity, time);
 	factor += 4.0 *
 		acceleration_profile(accel, data,
-				     (accel->last_velocity + velocity) / 2,
+				     (last_velocity + velocity) / 2,
 				     time);
 
 	factor = factor / 6.0;
@@ -228,7 +231,11 @@ accelerator_filter(struct motion_filter *filter,
 
 	feed_trackers(accel, unaccelerated, time);
 	velocity = calculate_velocity(accel, time);
-	accel_value = calculate_acceleration(accel, data, velocity, time);
+	accel_value = calculate_acceleration(accel,
+					     data,
+					     velocity,
+					     accel->last_velocity,
+					     time);
 
 	accelerated.x = accel_value * unaccelerated->x;
 	accelerated.y = accel_value * unaccelerated->y;
