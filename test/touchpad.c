@@ -3481,7 +3481,7 @@ hover_start(struct litest_device *dev, unsigned int slot,
 	/* WARNING: no SYN_REPORT! */
 }
 
-START_TEST(touchpad_hover_noevent)
+START_TEST(touchpad_semi_mt_hover_noevent)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -3512,7 +3512,7 @@ START_TEST(touchpad_hover_noevent)
 }
 END_TEST
 
-START_TEST(touchpad_hover_down)
+START_TEST(touchpad_semi_mt_hover_down)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -3587,7 +3587,7 @@ START_TEST(touchpad_hover_down)
 }
 END_TEST
 
-START_TEST(touchpad_hover_down_hover_down)
+START_TEST(touchpad_semi_mt_hover_down_hover_down)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -3674,7 +3674,7 @@ START_TEST(touchpad_hover_down_hover_down)
 }
 END_TEST
 
-START_TEST(touchpad_hover_down_up)
+START_TEST(touchpad_semi_mt_hover_down_up)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -3741,7 +3741,7 @@ START_TEST(touchpad_hover_down_up)
 }
 END_TEST
 
-START_TEST(touchpad_hover_2fg_noevent)
+START_TEST(touchpad_semi_mt_hover_2fg_noevent)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -3786,7 +3786,7 @@ START_TEST(touchpad_hover_2fg_noevent)
 }
 END_TEST
 
-START_TEST(touchpad_hover_2fg_1fg_down)
+START_TEST(touchpad_semi_mt_hover_2fg_1fg_down)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -4233,14 +4233,14 @@ int main(int argc, char **argv)
 	litest_add("touchpad:left-handed", touchpad_left_handed_delayed, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad_delayed, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 
-	/* Hover tests aren't generic, they only work on this device and
+	/* Semi-MT hover tests aren't generic, they only work on this device and
 	 * ignore the semi-mt capability (it doesn't matter for the tests */
-	litest_add_for_device("touchpad:hover", touchpad_hover_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
-	litest_add_for_device("touchpad:hover", touchpad_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
-	litest_add_for_device("touchpad:hover", touchpad_hover_down_up, LITEST_SYNAPTICS_HOVER_SEMI_MT);
-	litest_add_for_device("touchpad:hover", touchpad_hover_down_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
-	litest_add_for_device("touchpad:hover", touchpad_hover_2fg_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
-	litest_add_for_device("touchpad:hover", touchpad_hover_2fg_1fg_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_down_up, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_down_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_2fg_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_2fg_1fg_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
 
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_mb_scroll, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
