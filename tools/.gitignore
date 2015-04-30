@@ -2,3 +2,4 @@ event-debug
 event-gui
 ptraccel-debug
 libinput-list-devices
+libinput-debug-events

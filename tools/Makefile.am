@@ -1,5 +1,5 @@
 noinst_PROGRAMS = event-debug ptraccel-debug
-bin_PROGRAMS = libinput-list-devices
+bin_PROGRAMS = libinput-list-devices libinput-debug-events
 noinst_LTLIBRARIES = libshared.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include \
@@ -25,6 +25,11 @@ libinput_list_devices_SOURCES = libinput-list-devices.c
 libinput_list_devices_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS)
 libinput_list_devices_CFLAGS = $(LIBUDEV_CFLAGS)
 dist_man1_MANS = libinput-list-devices.man
+
+libinput_debug_events_SOURCES = $(event_debug_SOURCES)
+libinput_debug_events_LDADD = $(event_debug_LDADD)
+libinput_debug_events_CFLAGS = $(event_debug_CFLAGS)
+dist_man1_MANS = libinput-debug-events.man
 
 if BUILD_EVENTGUI
 noinst_PROGRAMS += event-gui
