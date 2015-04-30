@@ -122,7 +122,8 @@ libinput_timer_handler(void *data)
 int
 libinput_timer_subsys_init(struct libinput *libinput)
 {
-	libinput->timer.fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
+	libinput->timer.fd = timerfd_create(CLOCK_MONOTONIC,
+					    TFD_CLOEXEC | TFD_NONBLOCK);
 	if (libinput->timer.fd < 0)
 		return -1;
 
