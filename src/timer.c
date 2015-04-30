@@ -101,6 +101,9 @@ libinput_timer_handler(void *data)
 	struct libinput *libinput = data;
 	struct libinput_timer *timer, *tmp;
 	uint64_t now;
+	uint64_t discard;
+
+	read(libinput->timer.fd, &discard, sizeof(discard));
 
 	now = libinput_now(libinput);
 	if (now == 0)
