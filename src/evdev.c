@@ -281,7 +281,10 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		}
 
 		/* Apply pointer acceleration. */
-		accel = filter_dispatch(device->pointer.filter, &unaccel, device, time);
+		accel = filter_dispatch(device->pointer.filter,
+					&unaccel,
+					device,
+					time);
 
 		if (normalized_is_zero(accel) && normalized_is_zero(unaccel))
 			break;
