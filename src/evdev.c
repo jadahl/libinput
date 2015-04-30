@@ -1953,7 +1953,8 @@ evdev_device_create(struct libinput_seat *seat,
 	/* Use non-blocking mode so that we can loop on read on
 	 * evdev_device_data() until all events on the fd are
 	 * read.  mtdev_get() also expects this. */
-	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
+	fd = open_restricted(libinput, devnode,
+			     O_RDWR | O_NONBLOCK | O_CLOEXEC);
 	if (fd < 0) {
 		log_info(libinput,
 			 "opening input device '%s' failed (%s).\n",
@@ -2436,7 +2437,8 @@ evdev_device_resume(struct evdev_device *device)
 		return -ENODEV;
 
 	devnode = udev_device_get_devnode(device->udev_device);
-	fd = open_restricted(libinput, devnode, O_RDWR | O_NONBLOCK);
+	fd = open_restricted(libinput, devnode,
+			     O_RDWR | O_NONBLOCK | O_CLOEXEC);
 
 	if (fd < 0)
 		return -errno;
