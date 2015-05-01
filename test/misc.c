@@ -583,7 +583,8 @@ START_TEST(trackpoint_accel_parser)
 }
 END_TEST
 
-int main (int argc, char **argv) {
+int main (int argc, char **argv)
+{
 	litest_add_no_device("events:conversion", event_conversion_device_notify);
 	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);
 	litest_add_for_device("events:conversion", event_conversion_pointer, LITEST_MOUSE);

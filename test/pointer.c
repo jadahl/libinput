@@ -1253,8 +1253,8 @@ START_TEST(middlebutton_default_touchpad)
 }
 END_TEST
 
-int main (int argc, char **argv) {
-
+int main (int argc, char **argv)
+{
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_unaccel, LITEST_RELATIVE, LITEST_ANY);

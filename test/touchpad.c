@@ -4116,8 +4116,8 @@ START_TEST(touchpad_trackpoint_no_trackpoint)
 }
 END_TEST
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv)
+{
 	litest_add("touchpad:motion", touchpad_1fg_motion, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:motion", touchpad_2fg_no_motion, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 

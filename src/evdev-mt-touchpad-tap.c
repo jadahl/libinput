@@ -59,8 +59,8 @@ enum tap_event {
  */
 
 static inline const char*
-tap_state_to_str(enum tp_tap_state state) {
-
+tap_state_to_str(enum tp_tap_state state)
+{
 	switch(state) {
 	CASE_RETURN_STRING(TAP_STATE_IDLE);
 	CASE_RETURN_STRING(TAP_STATE_HOLD);
@@ -82,8 +82,8 @@ tap_state_to_str(enum tp_tap_state state) {
 }
 
 static inline const char*
-tap_event_to_str(enum tap_event event) {
-
+tap_event_to_str(enum tap_event event)
+{
 	switch(event) {
 	CASE_RETURN_STRING(TAP_EVENT_TOUCH);
 	CASE_RETURN_STRING(TAP_EVENT_MOTION);

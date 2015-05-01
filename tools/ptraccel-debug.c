@@ -178,7 +178,8 @@ usage(void)
 }
 
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
 	struct motion_filter *filter;
 	double step = 0.1,
 	       max_dx = 10;

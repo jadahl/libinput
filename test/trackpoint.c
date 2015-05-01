@@ -130,8 +130,8 @@ START_TEST(trackpoint_scroll_source)
 }
 END_TEST
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv)
+{
 	litest_add("trackpoint:middlebutton", trackpoint_middlebutton, LITEST_POINTINGSTICK, LITEST_ANY);
 	litest_add("trackpoint:middlebutton", trackpoint_middlebutton_noscroll, LITEST_POINTINGSTICK, LITEST_ANY);
 	litest_add("trackpoint:scroll", trackpoint_scroll, LITEST_POINTINGSTICK, LITEST_ANY);
