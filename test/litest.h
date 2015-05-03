@@ -198,7 +198,7 @@ void litest_drain_events(struct libinput *li);
 void litest_assert_empty_queue(struct libinput *li);
 struct libinput_event_pointer * litest_is_button_event(
 		       struct libinput_event *event,
-		       int button,
+		       unsigned int button,
 		       enum libinput_button_state state);
 void litest_assert_button_event(struct libinput *li,
 				unsigned int button,

@@ -1457,7 +1457,7 @@ litest_create_uinput_device(const char *name, struct input_id *id, ...)
 
 struct libinput_event_pointer*
 litest_is_button_event(struct libinput_event *event,
-		       int button,
+		       unsigned int button,
 		       enum libinput_button_state state)
 {
 	struct libinput_event_pointer *ptrev;
