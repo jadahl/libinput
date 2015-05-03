@@ -1431,6 +1431,12 @@ litest_timeout_tap(void)
 }
 
 void
+litest_timeout_tapndrag(void)
+{
+	msleep(520);
+}
+
+void
 litest_timeout_softbuttons(void)
 {
 	msleep(300);

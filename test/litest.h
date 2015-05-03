@@ -196,6 +196,7 @@ struct libevdev_uinput * litest_create_uinput_abs_device(const char *name,
 							 ...);
 
 void litest_timeout_tap(void);
+void litest_timeout_tapndrag(void);
 void litest_timeout_softbuttons(void);
 void litest_timeout_buttonscroll(void);
 void litest_timeout_edgescroll(void);
