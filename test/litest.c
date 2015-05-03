@@ -1,5 +1,6 @@
 /*
  * Copyright © 2013 Red Hat, Inc.
+ * Copyright © 2013 Marcin Slusarz <marcin.slusarz@gmail.com>
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -50,6 +51,142 @@
 
 static int in_debugger = -1;
 static int verbose = 0;
+
+#ifdef HAVE_LIBUNWIND
+#define UNW_LOCAL_ONLY
+#include <libunwind.h>
+#include <dlfcn.h>
+
+/* defined for the litest selftest */
+#ifndef LITEST_DISABLE_BACKTRACE_LOGGING
+#define litest_log(...) fprintf(stderr, __VA_ARGS__)
+#define litest_vlog(format_, args_) vfprintf(stderr, format_, args_)
+#else
+#define litest_log(...) /* __VA_ARGS__ */
+#define litest_vlog(...) /* __VA_ARGS__ */
+#endif
+
+static void
+litest_backtrace(void)
+{
+	unw_cursor_t cursor;
+	unw_context_t context;
+	unw_word_t off;
+	unw_proc_info_t pip;
+	int ret;
+	char procname[256];
+	Dl_info dlinfo;
+	/* filename and i are unused ifdef LITEST_SHUTUP */
+	const char *filename __attribute__((unused));
+	int i __attribute__((unused)) = 0;
+
+	pip.unwind_info = NULL;
+	ret = unw_getcontext(&context);
+	if (ret) {
+		litest_log("unw_getcontext failed: %s [%d]\n",
+			   unw_strerror(ret),
+			   ret);
+		return;
+	}
+
+	ret = unw_init_local(&cursor, &context);
+	if (ret) {
+		litest_log("unw_init_local failed: %s [%d]\n",
+			   unw_strerror(ret),
+			   ret);
+		return;
+	}
+
+	litest_log("\nBacktrace:\n");
+	ret = unw_step(&cursor);
+	while (ret > 0) {
+		ret = unw_get_proc_info(&cursor, &pip);
+		if (ret) {
+			litest_log("unw_get_proc_info failed: %s [%d]\n",
+				   unw_strerror(ret),
+				   ret);
+			break;
+		}
+
+		ret = unw_get_proc_name(&cursor, procname, 256, &off);
+		if (ret && ret != -UNW_ENOMEM) {
+			if (ret != -UNW_EUNSPEC)
+				litest_log("unw_get_proc_name failed: %s [%d]\n",
+					   unw_strerror(ret),
+					   ret);
+			procname[0] = '?';
+			procname[1] = 0;
+		}
+
+		if (dladdr((void *)(pip.start_ip + off), &dlinfo) &&
+		    dlinfo.dli_fname &&
+		    *dlinfo.dli_fname)
+			filename = dlinfo.dli_fname;
+		else
+			filename = "?";
+
+		litest_log("%u: %s (%s%s+%#x) [%p]\n",
+			   i++,
+			   filename,
+			   procname,
+			   ret == -UNW_ENOMEM ? "..." : "",
+			   (int)off,
+			   (void *)(pip.start_ip + off));
+
+		ret = unw_step(&cursor);
+		if (ret < 0)
+			litest_log("unw_step failed: %s [%d]\n",
+				   unw_strerror(ret),
+				   ret);
+	}
+	litest_log("\n");
+}
+#else /* HAVE_LIBUNWIND */
+static inline void
+litest_backtrace(void)
+{
+	/* thou shall install libunwind */
+}
+#endif
+
+void
+litest_fail_condition(const char *file,
+		      int line,
+		      const char *func,
+		      const char *condition,
+		      const char *message,
+		      ...)
+{
+	litest_log("FAILED: %s\n", condition);
+
+	if (message) {
+		va_list args;
+		va_start(args, message);
+		litest_vlog(message, args);
+		va_end(args);
+	}
+
+	litest_log("in %s() (%s:%d)\n", func, file, line);
+	litest_backtrace();
+	abort();
+}
+
+void
+litest_fail_comparison_int(const char *file,
+			   int line,
+			   const char *func,
+			   const char *operator,
+			   int a,
+			   int b,
+			   const char *astr,
+			   const char *bstr)
+{
+	litest_log("FAILED COMPARISON: %s %s %s\n", astr, operator, bstr);
+	litest_log("Resolved to: %d %s %d\n", a, operator, b);
+	litest_log("in %s() (%s:%d)\n", func, file, line);
+	litest_backtrace();
+	abort();
+}
 
 struct test {
 	struct list node;
@@ -370,7 +507,7 @@ litest_add_ranged_for_device(const char *name,
 		dev++;
 	}
 
-	ck_abort_msg("Invalid test device type");
+	litest_abort_msg("Invalid test device type");
 }
 
 static int
@@ -533,13 +670,13 @@ merge_absinfo(const struct input_absinfo *orig,
 		return NULL;
 
 	abs = calloc(sz, sizeof(*abs));
-	ck_assert(abs != NULL);
+	litest_assert(abs != NULL);
 
 	nelem = 0;
 	while (orig[nelem].value != -1) {
 		abs[nelem] = orig[nelem];
 		nelem++;
-		ck_assert_int_lt(nelem, sz);
+		litest_assert_int_lt(nelem, sz);
 	}
 
 	/* just append, if the same axis is present twice, libevdev will
@@ -547,10 +684,10 @@ merge_absinfo(const struct input_absinfo *orig,
 	i = 0;
 	while (override && override[i].value != -1) {
 		abs[nelem++] = override[i++];
-		ck_assert_int_lt(nelem, sz);
+		litest_assert_int_lt(nelem, sz);
 	}
 
-	ck_assert_int_lt(nelem, sz);
+	litest_assert_int_lt(nelem, sz);
 	abs[nelem].value = -1;
 
 	return abs;
@@ -567,13 +704,13 @@ merge_events(const int *orig, const int *override)
 		return NULL;
 
 	events = calloc(sz, sizeof(int));
-	ck_assert(events != NULL);
+	litest_assert(events != NULL);
 
 	nelem = 0;
 	while (orig[nelem] != -1) {
 		events[nelem] = orig[nelem];
 		nelem++;
-		ck_assert_int_lt(nelem, sz);
+		litest_assert_int_lt(nelem, sz);
 	}
 
 	/* just append, if the same axis is present twice, libevdev will
@@ -581,10 +718,10 @@ merge_events(const int *orig, const int *override)
 	i = 0;
 	while (override && override[i] != -1) {
 		events[nelem++] = override[i++];
-		ck_assert_int_le(nelem, sz);
+		litest_assert_int_le(nelem, sz);
 	}
 
-	ck_assert_int_lt(nelem, sz);
+	litest_assert_int_lt(nelem, sz);
 	events[nelem] = -1;
 
 	return events;
@@ -610,14 +747,14 @@ litest_init_udev_rules(struct litest_test_device *dev)
 		      UDEV_RULES_D,
 		      UDEV_RULE_PREFIX,
 		      dev->shortname);
-	ck_assert_int_eq(rc,
-			 (int)(
-			 strlen(UDEV_RULES_D) +
-			 strlen(UDEV_RULE_PREFIX) +
-			 strlen(dev->shortname) + 7));
+	litest_assert_int_eq(rc,
+			     (int)(
+				   strlen(UDEV_RULES_D) +
+				   strlen(UDEV_RULE_PREFIX) +
+				   strlen(dev->shortname) + 7));
 	f = fopen(path, "w");
-	ck_assert_notnull(f);
-	ck_assert_int_ge(fputs(dev->udev_rule, f), 0);
+	litest_assert_notnull(f);
+	litest_assert_int_ge(fputs(dev->udev_rule, f), 0);
 	fclose(f);
 
 	litest_reload_udev_rules();
@@ -651,7 +788,7 @@ litest_create(enum litest_device_type which,
 		ck_abort_msg("Invalid device type %d\n", which);
 
 	d = zalloc(sizeof(*d));
-	ck_assert(d != NULL);
+	litest_assert(d != NULL);
 
 	udev_file = litest_init_udev_rules(*dev);
 
@@ -661,8 +798,7 @@ litest_create(enum litest_device_type which,
 		if (abs_override || events_override) {
 			if (udev_file)
 				unlink(udev_file);
-			ck_abort_msg("Custom create cannot"
-				     "be overridden");
+			litest_abort_msg("Custom create cannot be overridden");
 		}
 
 		return d;
@@ -691,7 +827,7 @@ litest_create_context(void)
 {
 	struct libinput *libinput =
 		libinput_path_create_context(&interface, NULL);
-	ck_assert_notnull(libinput);
+	litest_assert_notnull(libinput);
 
 	libinput_log_set_handler(libinput, litest_log_handler);
 	if (verbose)
@@ -732,16 +868,16 @@ litest_add_device_with_overrides(struct libinput *libinput,
 			  events_override);
 
 	path = libevdev_uinput_get_devnode(d->uinput);
-	ck_assert(path != NULL);
+	litest_assert(path != NULL);
 	fd = open(path, O_RDWR|O_NONBLOCK);
-	ck_assert_int_ne(fd, -1);
+	litest_assert_int_ne(fd, -1);
 
 	rc = libevdev_new_from_fd(fd, &d->evdev);
-	ck_assert_int_eq(rc, 0);
+	litest_assert_int_eq(rc, 0);
 
 	d->libinput = libinput;
 	d->libinput_device = libinput_path_add_device(d->libinput, path);
-	ck_assert(d->libinput_device != NULL);
+	litest_assert(d->libinput_device != NULL);
 	libinput_device_ref(d->libinput_device);
 
 	if (d->interface) {
@@ -836,7 +972,7 @@ litest_event(struct litest_device *d, unsigned int type,
 		return;
 
 	ret = libevdev_uinput_write_event(d->uinput, type, code, value);
-	ck_assert_int_eq(ret, 0);
+	litest_assert_int_eq(ret, 0);
 }
 
 int
@@ -1169,9 +1305,9 @@ int
 litest_scale(const struct litest_device *d, unsigned int axis, double val)
 {
 	int min, max;
-	ck_assert_int_ge((int)val, 0);
-	ck_assert_int_le((int)val, 100);
-	ck_assert_int_le(axis, (unsigned int)ABS_Y);
+	litest_assert_int_ge((int)val, 0);
+	litest_assert_int_le((int)val, 100);
+	litest_assert_int_le(axis, (unsigned int)ABS_Y);
 
 	min = d->interface->min[axis];
 	max = d->interface->max[axis];
@@ -1352,7 +1488,7 @@ litest_assert_empty_queue(struct libinput *li)
 		libinput_dispatch(li);
 	}
 
-	ck_assert(empty_queue);
+	litest_assert(empty_queue);
 }
 
 struct libevdev_uinput *
@@ -1378,7 +1514,7 @@ litest_create_uinput_device_from_description(const char *name,
 	const char *devnode;
 
 	dev = libevdev_new();
-	ck_assert(dev != NULL);
+	litest_assert(dev != NULL);
 
 	snprintf(buf, sizeof(buf), "litest %s", name);
 	libevdev_set_name(dev, buf);
@@ -1393,7 +1529,7 @@ litest_create_uinput_device_from_description(const char *name,
 	while (abs && abs->value != -1) {
 		rc = libevdev_enable_event_code(dev, EV_ABS,
 						abs->value, abs);
-		ck_assert_int_eq(rc, 0);
+		litest_assert_int_eq(rc, 0);
 		abs++;
 	}
 
@@ -1406,7 +1542,7 @@ litest_create_uinput_device_from_description(const char *name,
 			rc = libevdev_enable_event_code(dev, type, code,
 							type == EV_ABS ? &default_abs : NULL);
 		}
-		ck_assert_int_eq(rc, 0);
+		litest_assert_int_eq(rc, 0);
 	}
 
 	rc = libevdev_uinput_create_from_device(dev,
@@ -1416,16 +1552,16 @@ litest_create_uinput_device_from_description(const char *name,
 	   http://cgit.freedesktop.org/libevdev/commit/?id=debe9b030c8069cdf78307888ef3b65830b25122 */
 	if (rc == -EBADF)
 		rc = -EACCES;
-	ck_assert_msg(rc == 0, "Failed to create uinput device: %s", strerror(-rc));
+	litest_assert_msg(rc == 0, "Failed to create uinput device: %s", strerror(-rc));
 
 	libevdev_free(dev);
 
 	devnode = libevdev_uinput_get_devnode(uinput);
-	ck_assert_notnull(devnode);
+	litest_assert_notnull(devnode);
 	fd = open(devnode, O_RDONLY);
-	ck_assert_int_gt(fd, -1);
+	litest_assert_int_gt(fd, -1);
 	rc = libevdev_new_from_fd(fd, &dev);
-	ck_assert_int_eq(rc, 0);
+	litest_assert_int_eq(rc, 0);
 
 	/* uinput does not yet support setting the resolution, so we set it
 	 * afterwards. This is of course racy as hell but the way we
@@ -1437,7 +1573,7 @@ litest_create_uinput_device_from_description(const char *name,
 			rc = libevdev_kernel_set_abs_info(dev,
 							  abs->value,
 							  abs);
-			ck_assert_int_eq(rc, 0);
+			litest_assert_int_eq(rc, 0);
 		}
 		abs++;
 	}
@@ -1461,7 +1597,7 @@ litest_create_uinput_abs_device_v(const char *name,
 	       (code = va_arg(args, int)) != -1) {
 		*event++ = type;
 		*event++ = code;
-		ck_assert(event < &events[ARRAY_LENGTH(events) - 2]);
+		litest_assert(event < &events[ARRAY_LENGTH(events) - 2]);
 	}
 
 	*event++ = -1;
@@ -1508,13 +1644,13 @@ litest_is_button_event(struct libinput_event *event,
 	struct libinput_event_pointer *ptrev;
 	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_BUTTON;
 
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event), type);
+	litest_assert(event != NULL);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
 	ptrev = libinput_event_get_pointer_event(event);
-	ck_assert_int_eq(libinput_event_pointer_get_button(ptrev),
-			 button);
-	ck_assert_int_eq(libinput_event_pointer_get_button_state(ptrev),
-			 state);
+	litest_assert_int_eq(libinput_event_pointer_get_button(ptrev),
+			     button);
+	litest_assert_int_eq(libinput_event_pointer_get_button_state(ptrev),
+			     state);
 
 	return ptrev;
 }
@@ -1527,14 +1663,14 @@ litest_is_axis_event(struct libinput_event *event,
 	struct libinput_event_pointer *ptrev;
 	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_AXIS;
 
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event), type);
+	litest_assert(event != NULL);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
 	ptrev = libinput_event_get_pointer_event(event);
-	ck_assert(libinput_event_pointer_has_axis(ptrev, axis));
+	litest_assert(libinput_event_pointer_has_axis(ptrev, axis));
 
 	if (source != 0)
-		ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
-				 source);
+		litest_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+				     source);
 
 	return ptrev;
 }
@@ -1546,8 +1682,8 @@ litest_is_motion_event(struct libinput_event *event)
 	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_MOTION;
 	double x, y, ux, uy;
 
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event), type);
+	litest_assert(event != NULL);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
 	ptrev = libinput_event_get_pointer_event(event);
 
 	x = libinput_event_pointer_get_dx(ptrev);
@@ -1556,8 +1692,8 @@ litest_is_motion_event(struct libinput_event *event)
 	uy = libinput_event_pointer_get_dy_unaccelerated(ptrev);
 
 	/* No 0 delta motion events */
-	ck_assert(x != 0.0 || y != 0.0 ||
-		  ux != 0.0 || uy != 0.0);
+	litest_assert(x != 0.0 || y != 0.0 ||
+		      ux != 0.0 || uy != 0.0);
 
 	return ptrev;
 }
@@ -1582,7 +1718,7 @@ litest_is_touch_event(struct libinput_event *event,
 {
 	struct libinput_event_touch *touch;
 
-	ck_assert(event != NULL);
+	litest_assert(event != NULL);
 
 	if (type == 0)
 		type = libinput_event_get_type(event);
@@ -1592,7 +1728,7 @@ litest_is_touch_event(struct libinput_event *event,
 	case LIBINPUT_EVENT_TOUCH_UP:
 	case LIBINPUT_EVENT_TOUCH_MOTION:
 	case LIBINPUT_EVENT_TOUCH_FRAME:
-		ck_assert_int_eq(libinput_event_get_type(event), type);
+		litest_assert_int_eq(libinput_event_get_type(event), type);
 		break;
 	default:
 		ck_abort_msg("%s: invalid touch type %d\n", __func__, type);
@@ -1611,15 +1747,15 @@ litest_is_keyboard_event(struct libinput_event *event,
 	struct libinput_event_keyboard *kevent;
 	enum libinput_event_type type = LIBINPUT_EVENT_KEYBOARD_KEY;
 
-	ck_assert_notnull(event);
-	ck_assert_int_eq(libinput_event_get_type(event), type);
+	litest_assert(event != NULL);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
 
 	kevent = libinput_event_get_keyboard_event(event);
-	ck_assert_notnull(kevent);
+	litest_assert(kevent != NULL);
 
-	ck_assert_int_eq(libinput_event_keyboard_get_key(kevent), key);
-	ck_assert_int_eq(libinput_event_keyboard_get_key_state(kevent),
-			 state);
+	litest_assert_int_eq(libinput_event_keyboard_get_key(kevent), key);
+	litest_assert_int_eq(libinput_event_keyboard_get_key_state(kevent),
+			     state);
 	return kevent;
 }
 
@@ -1634,7 +1770,7 @@ litest_assert_scroll(struct libinput *li,
 
 	event = libinput_get_event(li);
 	next_event = libinput_get_event(li);
-	ck_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
+	litest_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
 
 	while (event) {
 		ptrev = litest_is_axis_event(event, axis, 0);
@@ -1644,13 +1780,13 @@ litest_assert_scroll(struct libinput *li,
 								      axis);
 			/* Normal scroll event, check dir */
 			if (minimum_movement > 0) {
-				ck_assert_int_ge(value, minimum_movement);
+				litest_assert_int_ge(value, minimum_movement);
 			} else {
-				ck_assert_int_le(value, minimum_movement);
+				litest_assert_int_le(value, minimum_movement);
 			}
 		} else {
 			/* Last scroll event, must be 0 */
-			ck_assert_int_eq(
+			litest_assert_int_eq(
 				libinput_event_pointer_get_axis_value(ptrev, axis),
 				0);
 		}
@@ -1670,11 +1806,11 @@ litest_assert_only_typed_events(struct libinput *li,
 
 	libinput_dispatch(li);
 	event = libinput_get_event(li);
-	ck_assert_notnull(event);
+	litest_assert_notnull(event);
 
 	while (event) {
-		ck_assert_int_eq(libinput_event_get_type(event),
-				 type);
+		litest_assert_int_eq(libinput_event_get_type(event),
+                                     type);
 		libinput_event_destroy(event);
 		libinput_dispatch(li);
 		event = libinput_get_event(li);

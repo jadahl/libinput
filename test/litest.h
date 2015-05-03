@@ -32,6 +32,62 @@
 #include <libevdev/libevdev.h>
 #include <libevdev/libevdev-uinput.h>
 #include <libinput.h>
+#include <math.h>
+
+#define litest_assert(cond) \
+	do { \
+		if (!(cond)) \
+			litest_fail_condition(__FILE__, __LINE__, __func__, \
+					      #cond, NULL); \
+	} while(0)
+
+#define litest_assert_msg(cond, ...) \
+	do { \
+		if (!(cond)) \
+			litest_fail_condition(__FILE__, __LINE__, __func__, \
+					      #cond, __VA_ARGS__); \
+	} while(0)
+
+#define litest_abort_msg(...) \
+	litest_fail_condition(__FILE__, __LINE__, __func__, \
+			      "aborting", __VA_ARGS__); \
+
+#define litest_assert_notnull(cond) \
+	do { \
+		if ((cond) == NULL) \
+			litest_fail_condition(__FILE__, __LINE__, __func__, \
+					      #cond, " expected to be not NULL"); \
+	} while(0)
+
+#define litest_assert_comparison_int_(a_, op_, b_) \
+	do { \
+		__typeof__(a_) _a = a_; \
+		__typeof__(b_) _b = b_; \
+		if (trunc(_a) != _a || trunc(_b) != _b) \
+			litest_abort_msg("litest_assert_int_* used for non-integer value\n"); \
+		if (!((_a) op_ (_b))) \
+			litest_fail_comparison_int(__FILE__, __LINE__, __func__,\
+						   #op_, _a, _b, \
+						   #a_, #b_); \
+	} while(0)
+
+#define litest_assert_int_eq(a_, b_) \
+	litest_assert_comparison_int_(a_, ==, b_)
+
+#define litest_assert_int_ne(a_, b_) \
+	litest_assert_comparison_int_(a_, !=, b_)
+
+#define litest_assert_int_lt(a_, b_) \
+	litest_assert_comparison_int_(a_, <, b_)
+
+#define litest_assert_int_le(a_, b_) \
+	litest_assert_comparison_int_(a_, <=, b_)
+
+#define litest_assert_int_ge(a_, b_) \
+	litest_assert_comparison_int_(a_, >=, b_)
+
+#define litest_assert_int_gt(a_, b_) \
+	litest_assert_comparison_int_(a_, >, b_)
 
 enum litest_device_type {
 	LITEST_NO_DEVICE = -1,
@@ -108,6 +164,23 @@ struct range {
 struct libinput *litest_create_context(void);
 void litest_disable_log_handler(struct libinput *libinput);
 void litest_restore_log_handler(struct libinput *libinput);
+
+void
+litest_fail_condition(const char *file,
+		      int line,
+		      const char *func,
+		      const char *condition,
+		      const char *message,
+		      ...);
+void
+litest_fail_comparison_int(const char *file,
+			   int line,
+			   const char *func,
+			   const char *operator,
+			   int a,
+			   int b,
+			   const char *astr,
+			   const char *bstr);
 
 void litest_add(const char *name, void *func,
 		enum litest_device_feature required_feature,

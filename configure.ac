@@ -60,6 +60,15 @@ PKG_PROG_PKG_CONFIG()
 PKG_CHECK_MODULES(MTDEV, [mtdev >= 1.1.0])
 PKG_CHECK_MODULES(LIBUDEV, [libudev])
 PKG_CHECK_MODULES(LIBEVDEV, [libevdev >= 0.4])
+PKG_CHECK_MODULES(LIBUNWIND,
+		  [libunwind],
+		  [HAVE_LIBUNWIND=yes],
+		  [HAVE_LIBUNWIND=no])
+if test "x$HAVE_LIBUNWIND" = "xyes"; then
+	AC_DEFINE(HAVE_LIBUNWIND, 1, [Have libunwind support])
+fi
+AM_CONDITIONAL(HAVE_LIBUNWIND, [test "x$HAVE_LIBUNWIND" = xyes])
+
 AC_CHECK_LIB([m], [atan2])
 AC_CHECK_LIB([rt], [clock_gettime])
 
@@ -190,5 +199,6 @@ AC_MSG_RESULT([
 	Build documentation	${build_documentation}
 	Build tests		${build_tests}
 	Tests use valgrind	${VALGRIND}
+	Tests use libunwind	${HAVE_LIBUNWIND}
 	Build GUI event tool	${build_eventgui}
 	])
