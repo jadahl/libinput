@@ -390,7 +390,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_click)
 
 	litest_drain_events(li);
 
-	for (i = 3; i < 8; i++) {
+	for (i = 3; i < 5; i++) {
 
 		for (ntaps = 0; ntaps <= i; ntaps++) {
 			litest_touch_down(dev, 0, 50, 50);
@@ -453,7 +453,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_timeout)
 
 	litest_drain_events(li);
 
-	for (i = 3; i < 8; i++) {
+	for (i = 3; i < 5; i++) {
 
 		for (ntaps = 0; ntaps <= i; ntaps++) {
 			litest_touch_down(dev, 0, 50, 50);
