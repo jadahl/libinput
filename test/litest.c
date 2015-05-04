@@ -611,9 +611,10 @@ litest_init_udev_rules(struct litest_test_device *dev)
 		      UDEV_RULE_PREFIX,
 		      dev->shortname);
 	ck_assert_int_eq(rc,
+			 (int)(
 			 strlen(UDEV_RULES_D) +
 			 strlen(UDEV_RULE_PREFIX) +
-			 strlen(dev->shortname) + 7);
+			 strlen(dev->shortname) + 7));
 	f = fopen(path, "w");
 	ck_assert_notnull(f);
 	ck_assert_int_ge(fputs(dev->udev_rule, f), 0);
@@ -1170,7 +1171,7 @@ litest_scale(const struct litest_device *d, unsigned int axis, double val)
 	int min, max;
 	ck_assert_int_ge(val, 0);
 	ck_assert_int_le(val, 100);
-	ck_assert_int_le(axis, ABS_Y);
+	ck_assert_int_le(axis, (unsigned int)ABS_Y);
 
 	min = d->interface->min[axis];
 	max = d->interface->max[axis];
