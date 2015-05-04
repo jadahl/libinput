@@ -4015,20 +4015,12 @@ assert_btnevent_from_device(struct litest_device *device,
 {
 	struct libinput *li = device->libinput;
 	struct libinput_event *e;
-	struct libinput_event_pointer *pev;
 
 	libinput_dispatch(li);
 	e = libinput_get_event(li);
-	ck_assert_notnull(e);
-	ck_assert_int_eq(libinput_event_get_type(e),
-			 LIBINPUT_EVENT_POINTER_BUTTON);
-	pev = libinput_event_get_pointer_event(e);
+	litest_is_button_event(e, button, state);
 
 	ck_assert_ptr_eq(libinput_event_get_device(e), device->libinput_device);
-	ck_assert_int_eq(libinput_event_pointer_get_button(pev),
-			 button);
-	ck_assert_int_eq(libinput_event_pointer_get_button_state(pev),
-			 state);
 	libinput_event_destroy(e);
 }
 
