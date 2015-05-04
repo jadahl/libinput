@@ -1531,6 +1531,33 @@ litest_assert_button_event(struct libinput *li, unsigned int button,
 	libinput_event_destroy(event);
 }
 
+struct libinput_event_touch *
+litest_is_touch_event(struct libinput_event *event,
+		      enum libinput_event_type type)
+{
+	struct libinput_event_touch *touch;
+
+	ck_assert(event != NULL);
+
+	if (type == 0)
+		type = libinput_event_get_type(event);
+
+	switch (type) {
+	case LIBINPUT_EVENT_TOUCH_DOWN:
+	case LIBINPUT_EVENT_TOUCH_UP:
+	case LIBINPUT_EVENT_TOUCH_MOTION:
+	case LIBINPUT_EVENT_TOUCH_FRAME:
+		ck_assert_int_eq(libinput_event_get_type(event), type);
+		break;
+	default:
+		ck_abort_msg("%s: invalid touch type %d\n", __func__, type);
+	}
+
+	touch = libinput_event_get_touch_event(event);
+
+	return touch;
+}
+
 void
 litest_assert_scroll(struct libinput *li,
 		     enum libinput_pointer_axis axis,

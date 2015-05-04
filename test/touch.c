@@ -244,9 +244,7 @@ START_TEST(touch_calibration_scale)
 
 		litest_wait_for_event(li);
 		ev = libinput_get_event(li);
-		ck_assert_int_eq(libinput_event_get_type(ev),
-				 LIBINPUT_EVENT_TOUCH_DOWN);
-		tev = libinput_event_get_touch_event(ev);
+		tev = litest_is_touch_event(ev, LIBINPUT_EVENT_TOUCH_DOWN);
 
 		x = libinput_event_touch_get_x_transformed(tev, width);
 		y = libinput_event_touch_get_y_transformed(tev, height);
@@ -315,9 +313,7 @@ START_TEST(touch_calibration_rotation)
 		litest_touch_up(dev, 0);
 		litest_wait_for_event(li);
 		ev = libinput_get_event(li);
-		ck_assert_int_eq(libinput_event_get_type(ev),
-				 LIBINPUT_EVENT_TOUCH_DOWN);
-		tev = libinput_event_get_touch_event(ev);
+		tev = litest_is_touch_event(ev, LIBINPUT_EVENT_TOUCH_DOWN);
 
 		x = libinput_event_touch_get_x_transformed(tev, width);
 		y = libinput_event_touch_get_y_transformed(tev, height);
@@ -381,9 +377,7 @@ START_TEST(touch_calibration_translation)
 
 		litest_wait_for_event(li);
 		ev = libinput_get_event(li);
-		ck_assert_int_eq(libinput_event_get_type(ev),
-				 LIBINPUT_EVENT_TOUCH_DOWN);
-		tev = libinput_event_get_touch_event(ev);
+		tev = litest_is_touch_event(ev, LIBINPUT_EVENT_TOUCH_DOWN);
 
 		x = libinput_event_touch_get_x_transformed(tev, width);
 		y = libinput_event_touch_get_y_transformed(tev, height);
@@ -499,7 +493,7 @@ START_TEST(touch_protocol_a_touch)
 	litest_wait_for_event_of_type(li, LIBINPUT_EVENT_TOUCH_DOWN, -1);
 
 	ev = libinput_get_event(li);
-	tev = libinput_event_get_touch_event(ev);
+	tev = litest_is_touch_event(ev, LIBINPUT_EVENT_TOUCH_DOWN);
 
 	oldx = libinput_event_touch_get_x(tev);
 	oldy = libinput_event_touch_get_y(tev);
