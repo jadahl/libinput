@@ -42,12 +42,7 @@ get_accelerated_motion_event(struct libinput *li)
 
 	while (1) {
 		event = libinput_get_event(li);
-		ck_assert_notnull(event);
-		ck_assert_int_eq(libinput_event_get_type(event),
-				 LIBINPUT_EVENT_POINTER_MOTION);
-
-		ptrev = libinput_event_get_pointer_event(event);
-		ck_assert_notnull(ptrev);
+		ptrev = litest_is_motion_event(event);
 
 		if (fabs(libinput_event_pointer_get_dx(ptrev)) < DBL_MIN &&
 		    fabs(libinput_event_pointer_get_dy(ptrev)) < DBL_MIN) {
@@ -190,12 +185,7 @@ test_unaccel_event(struct litest_device *dev, int dx, int dy)
       libinput_dispatch(li);
 
       event = libinput_get_event(li);
-      ck_assert_notnull(event);
-      ck_assert_int_eq(libinput_event_get_type(event),
-                       LIBINPUT_EVENT_POINTER_MOTION);
-
-      ptrev = libinput_event_get_pointer_event(event);
-      ck_assert(ptrev != NULL);
+      ptrev = litest_is_motion_event(event);
 
       ev_dx = libinput_event_pointer_get_dx_unaccelerated(ptrev);
       ev_dy = libinput_event_pointer_get_dy_unaccelerated(ptrev);

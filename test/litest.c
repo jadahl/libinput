@@ -1494,6 +1494,29 @@ litest_is_axis_event(struct libinput_event *event,
 	return ptrev;
 }
 
+struct libinput_event_pointer *
+litest_is_motion_event(struct libinput_event *event)
+{
+	struct libinput_event_pointer *ptrev;
+	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_MOTION;
+	double x, y, ux, uy;
+
+	ck_assert(event != NULL);
+	ck_assert_int_eq(libinput_event_get_type(event), type);
+	ptrev = libinput_event_get_pointer_event(event);
+
+	x = libinput_event_pointer_get_dx(ptrev);
+	y = libinput_event_pointer_get_dy(ptrev);
+	ux = libinput_event_pointer_get_dx_unaccelerated(ptrev);
+	uy = libinput_event_pointer_get_dy_unaccelerated(ptrev);
+
+	/* No 0 delta motion events */
+	ck_assert(x != 0.0 || y != 0.0 ||
+		  ux != 0.0 || uy != 0.0);
+
+	return ptrev;
+}
+
 void
 litest_assert_button_event(struct libinput *li, unsigned int button,
 			   enum libinput_button_state state)
