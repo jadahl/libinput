@@ -40,16 +40,16 @@ liblitest_la_SOURCES = \
 liblitest_la_LIBADD = $(top_builddir)/src/libinput-util.la
 
 run_tests = \
-	test-udev \
-	test-path \
+	test-touchpad \
+	test-device \
 	test-pointer \
 	test-touch \
-	test-log \
-	test-touchpad \
 	test-trackpoint \
+	test-udev \
+	test-path \
+	test-log \
 	test-misc \
-	test-keyboard \
-	test-device
+	test-keyboard
 build_tests = \
 	test-build-cxx \
 	test-build-linker \
