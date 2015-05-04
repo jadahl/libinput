@@ -2936,13 +2936,14 @@ END_TEST
 static void
 enable_edge_scroll(struct litest_device *dev)
 {
-	enum libinput_config_status status;
+	enum libinput_config_status status, expected;
 	struct libinput_device *device = dev->libinput_device;
 
 	status = libinput_device_config_scroll_set_method(device,
 					  LIBINPUT_CONFIG_SCROLL_EDGE);
-	ck_assert_int_eq(status,
-			 LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	litest_assert_int_eq(status, expected);
 }
 
 START_TEST(touchpad_edge_scroll)
@@ -4265,7 +4266,7 @@ assert_btnevent_from_device(struct litest_device *device,
 	e = libinput_get_event(li);
 	litest_is_button_event(e, button, state);
 
-	ck_assert_ptr_eq(libinput_event_get_device(e), device->libinput_device);
+	litest_assert_ptr_eq(libinput_event_get_device(e), device->libinput_device);
 	libinput_event_destroy(e);
 }
 

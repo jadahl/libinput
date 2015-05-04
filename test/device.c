@@ -827,7 +827,7 @@ assert_device_ignored(struct libinput *li, struct input_absinfo *absinfo)
 						 -1);
 	device = libinput_path_add_device(li,
 					  libevdev_uinput_get_devnode(uinput));
-	ck_assert(device == NULL);
+	litest_assert_ptr_null(device);
 	libevdev_uinput_destroy(uinput);
 }
 

@@ -53,7 +53,7 @@ get_accelerated_motion_event(struct libinput *li)
 		return ptrev;
 	}
 
-	ck_abort_msg("No accelerated pointer motion event found");
+	litest_abort_msg("No accelerated pointer motion event found");
 	return NULL;
 }
 
@@ -90,11 +90,11 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	actual_dir = atan2(ev_dx, ev_dy);
 
 	/* Check the length of the motion vector (tolerate 1.0 indifference). */
-	ck_assert(fabs(expected_length) >= actual_length);
+	litest_assert(fabs(expected_length) >= actual_length);
 
 	/* Check the direction of the motion vector (tolerate 2π/4 radians
 	 * indifference). */
-	ck_assert(fabs(expected_dir - actual_dir) < M_PI_2);
+	litest_assert(fabs(expected_dir - actual_dir) < M_PI_2);
 
 	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
 
@@ -112,7 +112,7 @@ disable_button_scrolling(struct litest_device *device)
 					LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
 
 	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
-	ck_assert_int_eq(status, expected);
+	litest_assert_int_eq(status, expected);
 }
 
 START_TEST(pointer_motion_relative)
@@ -146,16 +146,16 @@ test_absolute_event(struct litest_device *dev, double x, double y)
 	libinput_dispatch(li);
 
 	event = libinput_get_event(li);
-	ck_assert_notnull(event);
-	ck_assert_int_eq(libinput_event_get_type(event), type);
+	litest_assert_notnull(event);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
 
 	ptrev = libinput_event_get_pointer_event(event);
-	ck_assert(ptrev != NULL);
+	litest_assert(ptrev != NULL);
 
 	ex = libinput_event_pointer_get_absolute_x_transformed(ptrev, 100);
 	ey = libinput_event_pointer_get_absolute_y_transformed(ptrev, 100);
-	ck_assert_int_eq((int)(ex + 0.5), (int)x);
-	ck_assert_int_eq((int)(ey + 0.5), (int)y);
+	litest_assert_int_eq((int)(ex + 0.5), (int)x);
+	litest_assert_int_eq((int)(ey + 0.5), (int)y);
 
 	libinput_event_destroy(event);
 }
@@ -192,8 +192,8 @@ test_unaccel_event(struct litest_device *dev, int dx, int dy)
       ev_dx = libinput_event_pointer_get_dx_unaccelerated(ptrev);
       ev_dy = libinput_event_pointer_get_dy_unaccelerated(ptrev);
 
-      ck_assert_int_eq(dx, ev_dx);
-      ck_assert_int_eq(dy, ev_dy);
+      litest_assert_int_eq(dx, ev_dx);
+      litest_assert_int_eq(dy, ev_dy);
 
       libinput_event_destroy(event);
 
@@ -383,10 +383,10 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 				     axis,
 				     LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
 
-	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev, axis),
+	litest_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev, axis),
 			 expected);
-	ck_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev, axis),
-			 discrete);
+	litest_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev, axis),
+			     discrete);
 	libinput_event_destroy(event);
 }
 

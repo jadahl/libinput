@@ -58,8 +58,8 @@ simple_log_handler(struct libinput *libinput,
 {
 	log_handler_called++;
 	if (log_handler_context)
-		ck_assert(libinput == log_handler_context);
-	ck_assert(format != NULL);
+		litest_assert_ptr_eq(libinput, log_handler_context);
+	litest_assert_notnull(format);
 }
 
 START_TEST(log_default_priority)

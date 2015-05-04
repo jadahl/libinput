@@ -64,7 +64,7 @@ create_simple_test_device(const char *name, ...)
 	};
 
 	evdev = libevdev_new();
-	ck_assert(evdev != NULL);
+	litest_assert_notnull(evdev);
 	libevdev_set_name(evdev, name);
 
 	va_start(args, name);
@@ -82,7 +82,7 @@ create_simple_test_device(const char *name, ...)
 	rc = libevdev_uinput_create_from_device(evdev,
 						LIBEVDEV_UINPUT_OPEN_MANAGED,
 						&uinput);
-	ck_assert_int_eq(rc, 0);
+	litest_assert_int_eq(rc, 0);
 	libevdev_free(evdev);
 
 	return uinput;
