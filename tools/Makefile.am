@@ -29,7 +29,7 @@ dist_man1_MANS = libinput-list-devices.man
 libinput_debug_events_SOURCES = $(event_debug_SOURCES)
 libinput_debug_events_LDADD = $(event_debug_LDADD)
 libinput_debug_events_CFLAGS = $(event_debug_CFLAGS)
-dist_man1_MANS = libinput-debug-events.man
+dist_man1_MANS += libinput-debug-events.man
 
 if BUILD_EVENTGUI
 noinst_PROGRAMS += event-gui
