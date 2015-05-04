@@ -200,6 +200,10 @@ struct libinput_event_pointer * litest_is_button_event(
 		       struct libinput_event *event,
 		       unsigned int button,
 		       enum libinput_button_state state);
+struct libinput_event_pointer * litest_is_axis_event(
+		       struct libinput_event *event,
+		       enum libinput_pointer_axis axis,
+		       enum libinput_pointer_axis_source source);
 void litest_assert_button_event(struct libinput *li,
 				unsigned int button,
 				enum libinput_button_state state);

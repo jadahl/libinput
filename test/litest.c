@@ -1474,6 +1474,26 @@ litest_is_button_event(struct libinput_event *event,
 	return ptrev;
 }
 
+struct libinput_event_pointer *
+litest_is_axis_event(struct libinput_event *event,
+		     enum libinput_pointer_axis axis,
+		     enum libinput_pointer_axis_source source)
+{
+	struct libinput_event_pointer *ptrev;
+	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_AXIS;
+
+	ck_assert(event != NULL);
+	ck_assert_int_eq(libinput_event_get_type(event), type);
+	ptrev = libinput_event_get_pointer_event(event);
+	ck_assert(libinput_event_pointer_has_axis(ptrev, axis));
+
+	if (source != 0)
+		ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
+				 source);
+
+	return ptrev;
+}
+
 void
 litest_assert_button_event(struct libinput *li, unsigned int button,
 			   enum libinput_button_state state)
@@ -1501,10 +1521,7 @@ litest_assert_scroll(struct libinput *li,
 	ck_assert(next_event != NULL); /* At least 1 scroll + stop scroll */
 
 	while (event) {
-		ck_assert_int_eq(libinput_event_get_type(event),
-				 LIBINPUT_EVENT_POINTER_AXIS);
-		ptrev = libinput_event_get_pointer_event(event);
-		ck_assert(ptrev != NULL);
+		ptrev = litest_is_axis_event(event, axis, 0);
 
 		if (next_event) {
 			/* Normal scroll event, check dir */

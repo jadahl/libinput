@@ -383,22 +383,16 @@ test_wheel_event(struct litest_device *dev, int which, int amount)
 
 	libinput_dispatch(li);
 
-	event = libinput_get_event(li);
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event),
-			  LIBINPUT_EVENT_POINTER_AXIS);
-
-	ptrev = libinput_event_get_pointer_event(event);
-	ck_assert(ptrev != NULL);
-
 	axis = (which == REL_WHEEL) ?
 				LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL :
 				LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
+	event = libinput_get_event(li);
+	ptrev = litest_is_axis_event(event,
+				     axis,
+				     LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
 
 	ck_assert_int_eq(libinput_event_pointer_get_axis_value(ptrev, axis),
 			 expected);
-	ck_assert_int_eq(libinput_event_pointer_get_axis_source(ptrev),
-			 LIBINPUT_POINTER_AXIS_SOURCE_WHEEL);
 	ck_assert_int_eq(libinput_event_pointer_get_axis_value_discrete(ptrev, axis),
 			 discrete);
 	libinput_event_destroy(event);
