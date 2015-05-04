@@ -154,6 +154,7 @@ tp_tap_idle_handle_event(struct tp_dispatch *tp,
 		tp_tap_set_timer(tp, time);
 		break;
 	case TAP_EVENT_RELEASE:
+		break;
 	case TAP_EVENT_MOTION:
 		log_bug_libinput(libinput,
 				 "invalid tap event, no fingers are down\n");
@@ -531,7 +532,7 @@ tp_tap_dead_handle_event(struct tp_dispatch *tp,
 
 	switch (event) {
 	case TAP_EVENT_RELEASE:
-		if (tp->tap.tap_finger_count == 0)
+		if (tp->nfingers_down == 0)
 			tp->tap.state = TAP_STATE_IDLE;
 		break;
 	case TAP_EVENT_TOUCH:
@@ -652,7 +653,6 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 			t->tap.state = TAP_TOUCH_STATE_DEAD;
 
 		if (t->state == TOUCH_BEGIN) {
-			tp->tap.tap_finger_count++;
 			t->tap.state = TAP_TOUCH_STATE_TOUCH;
 			t->tap.initial = t->point;
 			tp_tap_handle_event(tp, t, TAP_EVENT_TOUCH, time);
@@ -665,7 +665,6 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 				tp_tap_handle_event(tp, t, TAP_EVENT_MOTION, time);
 
 		} else if (t->state == TOUCH_END) {
-			tp->tap.tap_finger_count--;
 			tp_tap_handle_event(tp, t, TAP_EVENT_RELEASE, time);
 			t->tap.state = TAP_TOUCH_STATE_IDLE;
 		} else if (tp->tap.state != TAP_STATE_IDLE &&
@@ -850,7 +849,6 @@ tp_release_all_taps(struct tp_dispatch *tp, uint64_t now)
 	}
 
 	tp->tap.state = tp->nfingers_down ? TAP_STATE_DEAD : TAP_STATE_IDLE;
-	tp->tap.tap_finger_count = 0;
 }
 
 void
