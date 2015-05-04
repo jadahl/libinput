@@ -105,12 +105,14 @@ static void
 disable_button_scrolling(struct litest_device *device)
 {
 	struct libinput_device *dev = device->libinput_device;
-	enum libinput_config_status status;
+	enum libinput_config_status status,
+				    expected;
 
 	status = libinput_device_config_scroll_set_method(dev,
 					LIBINPUT_CONFIG_SCROLL_NO_SCROLL);
 
-	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	ck_assert_int_eq(status, expected);
 }
 
 START_TEST(pointer_motion_relative)
@@ -138,14 +140,14 @@ test_absolute_event(struct litest_device *dev, double x, double y)
 	struct libinput_event *event;
 	struct libinput_event_pointer *ptrev;
 	double ex, ey;
+	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE;
 
 	litest_touch_down(dev, 0, x, y);
 	libinput_dispatch(li);
 
 	event = libinput_get_event(li);
 	ck_assert_notnull(event);
-	ck_assert_int_eq(libinput_event_get_type(event),
-			 LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE);
+	ck_assert_int_eq(libinput_event_get_type(event), type);
 
 	ptrev = libinput_event_get_pointer_event(event);
 	ck_assert(ptrev != NULL);

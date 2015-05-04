@@ -1506,10 +1506,10 @@ litest_is_button_event(struct libinput_event *event,
 		       enum libinput_button_state state)
 {
 	struct libinput_event_pointer *ptrev;
+	enum libinput_event_type type = LIBINPUT_EVENT_POINTER_BUTTON;
 
 	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event),
-			 LIBINPUT_EVENT_POINTER_BUTTON);
+	ck_assert_int_eq(libinput_event_get_type(event), type);
 	ptrev = libinput_event_get_pointer_event(event);
 	ck_assert_int_eq(libinput_event_pointer_get_button(ptrev),
 			 button);
