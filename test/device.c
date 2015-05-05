@@ -814,11 +814,26 @@ START_TEST(abs_mt_device_no_absx)
 }
 END_TEST
 
-START_TEST(abs_device_no_range)
+static void
+assert_device_ignored(struct libinput *li, struct input_absinfo *absinfo)
 {
 	struct libevdev_uinput *uinput;
-	struct libinput *li;
 	struct libinput_device *device;
+
+	uinput = litest_create_uinput_abs_device("test device", NULL,
+						 absinfo,
+						 EV_KEY, BTN_LEFT,
+						 EV_KEY, BTN_RIGHT,
+						 -1);
+	device = libinput_path_add_device(li,
+					  libevdev_uinput_get_devnode(uinput));
+	ck_assert(device == NULL);
+	libevdev_uinput_destroy(uinput);
+}
+
+START_TEST(abs_device_no_range)
+{
+	struct libinput *li;
 	int code;
 	/* set x/y so libinput doesn't just reject for missing axes */
 	struct input_absinfo absinfo[] = {
@@ -833,15 +848,7 @@ START_TEST(abs_device_no_range)
 
 	for (code = 0; code < ABS_MISC; code++) {
 		absinfo[2].value = code;
-		uinput = litest_create_uinput_abs_device("test device", NULL,
-							 absinfo,
-							 EV_KEY, BTN_LEFT,
-							 EV_KEY, BTN_RIGHT,
-							 -1);
-		device = libinput_path_add_device(li,
-						  libevdev_uinput_get_devnode(uinput));
-		ck_assert(device == NULL);
-		libevdev_uinput_destroy(uinput);
+		assert_device_ignored(li, absinfo);
 	}
 
 	litest_restore_log_handler(li);
@@ -851,9 +858,7 @@ END_TEST
 
 START_TEST(abs_mt_device_no_range)
 {
-	struct libevdev_uinput *uinput;
 	struct libinput *li;
-	struct libinput_device *device;
 	int code;
 	/* set x/y so libinput doesn't just reject for missing axes */
 	struct input_absinfo absinfo[] = {
@@ -876,15 +881,7 @@ START_TEST(abs_mt_device_no_range)
 			continue;
 
 		absinfo[6].value = code;
-		uinput = litest_create_uinput_abs_device("test device", NULL,
-							 absinfo,
-							 EV_KEY, BTN_LEFT,
-							 EV_KEY, BTN_RIGHT,
-							 -1);
-		device = libinput_path_add_device(li,
-						  libevdev_uinput_get_devnode(uinput));
-		ck_assert(device == NULL);
-		libevdev_uinput_destroy(uinput);
+		assert_device_ignored(li, absinfo);
 	}
 
 	litest_restore_log_handler(li);
@@ -894,9 +891,7 @@ END_TEST
 
 START_TEST(abs_device_missing_res)
 {
-	struct libevdev_uinput *uinput;
 	struct libinput *li;
-	struct libinput_device *device;
 	struct input_absinfo absinfo[] = {
 		{ ABS_X, 0, 10, 0, 0, 10 },
 		{ ABS_Y, 0, 10, 0, 0, 0 },
@@ -905,39 +900,22 @@ START_TEST(abs_device_missing_res)
 
 	li = litest_create_context();
 	litest_disable_log_handler(li);
-	uinput = litest_create_uinput_abs_device("test device", NULL,
-						 absinfo,
-						 EV_KEY, BTN_LEFT,
-						 EV_KEY, BTN_RIGHT,
-						 -1);
-	device = libinput_path_add_device(li,
-					  libevdev_uinput_get_devnode(uinput));
-	ck_assert(device == NULL);
-	libevdev_uinput_destroy(uinput);
+
+	assert_device_ignored(li, absinfo);
 
 	absinfo[0].resolution = 0;
 	absinfo[1].resolution = 20;
-	uinput = litest_create_uinput_abs_device("test device", NULL,
-						 absinfo,
-						 EV_KEY, BTN_LEFT,
-						 EV_KEY, BTN_RIGHT,
-						 -1);
-	device = libinput_path_add_device(li,
-					  libevdev_uinput_get_devnode(uinput));
-	ck_assert(device == NULL);
-	libevdev_uinput_destroy(uinput);
+
+	assert_device_ignored(li, absinfo);
 
 	litest_restore_log_handler(li);
 	libinput_unref(li);
-
 }
 END_TEST
 
 START_TEST(abs_mt_device_missing_res)
 {
-	struct libevdev_uinput *uinput;
 	struct libinput *li;
-	struct libinput_device *device;
 	struct input_absinfo absinfo[] = {
 		{ ABS_X, 0, 10, 0, 0, 10 },
 		{ ABS_Y, 0, 10, 0, 0, 10 },
@@ -950,27 +928,12 @@ START_TEST(abs_mt_device_missing_res)
 
 	li = litest_create_context();
 	litest_disable_log_handler(li);
-	uinput = litest_create_uinput_abs_device("test device", NULL,
-						 absinfo,
-						 EV_KEY, BTN_LEFT,
-						 EV_KEY, BTN_RIGHT,
-						 -1);
-	device = libinput_path_add_device(li,
-					  libevdev_uinput_get_devnode(uinput));
-	ck_assert(device == NULL);
-	libevdev_uinput_destroy(uinput);
+	assert_device_ignored(li, absinfo);
 
 	absinfo[4].resolution = 0;
 	absinfo[5].resolution = 20;
-	uinput = litest_create_uinput_abs_device("test device", NULL,
-						 absinfo,
-						 EV_KEY, BTN_LEFT,
-						 EV_KEY, BTN_RIGHT,
-						 -1);
-	device = libinput_path_add_device(li,
-					  libevdev_uinput_get_devnode(uinput));
-	ck_assert(device == NULL);
-	libevdev_uinput_destroy(uinput);
+
+	assert_device_ignored(li, absinfo);
 
 	litest_restore_log_handler(li);
 	libinput_unref(li);
