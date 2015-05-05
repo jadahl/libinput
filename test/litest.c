@@ -1169,8 +1169,8 @@ int
 litest_scale(const struct litest_device *d, unsigned int axis, double val)
 {
 	int min, max;
-	ck_assert_int_ge(val, 0);
-	ck_assert_int_le(val, 100);
+	ck_assert_int_ge((int)val, 0);
+	ck_assert_int_le((int)val, 100);
 	ck_assert_int_le(axis, (unsigned int)ABS_Y);
 
 	min = d->interface->min[axis];
@@ -1630,6 +1630,7 @@ litest_assert_scroll(struct libinput *li,
 {
 	struct libinput_event *event, *next_event;
 	struct libinput_event_pointer *ptrev;
+	int value;
 
 	event = libinput_get_event(li);
 	next_event = libinput_get_event(li);
@@ -1639,17 +1640,13 @@ litest_assert_scroll(struct libinput *li,
 		ptrev = litest_is_axis_event(event, axis, 0);
 
 		if (next_event) {
+			value = libinput_event_pointer_get_axis_value(ptrev,
+								      axis);
 			/* Normal scroll event, check dir */
 			if (minimum_movement > 0) {
-				ck_assert_int_ge(
-					libinput_event_pointer_get_axis_value(ptrev,
-									      axis),
-					minimum_movement);
+				ck_assert_int_ge(value, minimum_movement);
 			} else {
-				ck_assert_int_le(
-					libinput_event_pointer_get_axis_value(ptrev,
-									      axis),
-					minimum_movement);
+				ck_assert_int_le(value, minimum_movement);
 			}
 		} else {
 			/* Last scroll event, must be 0 */

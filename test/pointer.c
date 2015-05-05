@@ -154,8 +154,8 @@ test_absolute_event(struct litest_device *dev, double x, double y)
 
 	ex = libinput_event_pointer_get_absolute_x_transformed(ptrev, 100);
 	ey = libinput_event_pointer_get_absolute_y_transformed(ptrev, 100);
-	ck_assert_int_eq(ex + 0.5, x);
-	ck_assert_int_eq(ey + 0.5, y);
+	ck_assert_int_eq((int)(ex + 0.5), (int)x);
+	ck_assert_int_eq((int)(ey + 0.5), (int)y);
 
 	libinput_event_destroy(event);
 }
