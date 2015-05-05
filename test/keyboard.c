@@ -61,11 +61,9 @@ START_TEST(keyboard_seat_key_count)
 			continue;
 		}
 
-		kev = libinput_event_get_keyboard_event(ev);
-		ck_assert_notnull(kev);
-		ck_assert_int_eq(libinput_event_keyboard_get_key(kev), KEY_A);
-		ck_assert_int_eq(libinput_event_keyboard_get_key_state(kev),
-				 LIBINPUT_KEY_STATE_PRESSED);
+		kev = litest_is_keyboard_event(ev,
+					       KEY_A,
+					       LIBINPUT_KEY_STATE_PRESSED);
 
 		++expected_key_button_count;
 		seat_key_count =
@@ -175,31 +173,6 @@ START_TEST(keyboard_ignore_no_pressed_release)
 }
 END_TEST
 
-static void
-test_key_event(struct litest_device *dev, unsigned int key, int state)
-{
-	struct libinput *li = dev->libinput;
-	struct libinput_event *event;
-	struct libinput_event_keyboard *kevent;
-
-	litest_event(dev, EV_KEY, key, state);
-	litest_event(dev, EV_SYN, SYN_REPORT, 0);
-
-	libinput_dispatch(li);
-
-	event = libinput_get_event(li);
-	ck_assert(event != NULL);
-	ck_assert_int_eq(libinput_event_get_type(event), LIBINPUT_EVENT_KEYBOARD_KEY);
-
-	kevent = libinput_event_get_keyboard_event(event);
-	ck_assert(kevent != NULL);
-	ck_assert_int_eq(libinput_event_keyboard_get_key(kevent), key);
-	ck_assert_int_eq(libinput_event_keyboard_get_key_state(kevent),
-			 state ? LIBINPUT_KEY_STATE_PRESSED :
-				 LIBINPUT_KEY_STATE_RELEASED);
-	libinput_event_destroy(event);
-}
-
 START_TEST(keyboard_key_auto_release)
 {
 	struct libinput *libinput;
@@ -244,7 +217,17 @@ START_TEST(keyboard_key_auto_release)
 
 	/* Send pressed events, without releasing */
 	for (i = 0; i < ARRAY_LENGTH(keys); ++i) {
-		test_key_event(dev, keys[i].code, 1);
+		key = keys[i].code;
+		litest_event(dev, EV_KEY, key, 1);
+		litest_event(dev, EV_SYN, SYN_REPORT, 0);
+
+		libinput_dispatch(libinput);
+
+		event = libinput_get_event(libinput);
+		kevent = litest_is_keyboard_event(event,
+						  key,
+						  LIBINPUT_KEY_STATE_PRESSED);
+		libinput_event_destroy(event);
 	}
 
 	litest_drain_events(libinput);

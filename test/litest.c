@@ -1558,6 +1558,26 @@ litest_is_touch_event(struct libinput_event *event,
 	return touch;
 }
 
+struct libinput_event_keyboard *
+litest_is_keyboard_event(struct libinput_event *event,
+			 unsigned int key,
+			 enum libinput_key_state state)
+{
+	struct libinput_event_keyboard *kevent;
+	enum libinput_event_type type = LIBINPUT_EVENT_KEYBOARD_KEY;
+
+	ck_assert_notnull(event);
+	ck_assert_int_eq(libinput_event_get_type(event), type);
+
+	kevent = libinput_event_get_keyboard_event(event);
+	ck_assert_notnull(kevent);
+
+	ck_assert_int_eq(libinput_event_keyboard_get_key(kevent), key);
+	ck_assert_int_eq(libinput_event_keyboard_get_key_state(kevent),
+			 state);
+	return kevent;
+}
+
 void
 litest_assert_scroll(struct libinput *li,
 		     enum libinput_pointer_axis axis,
