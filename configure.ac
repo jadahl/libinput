@@ -2,7 +2,7 @@ AC_PREREQ([2.64])
 
 m4_define([libinput_major_version], [0])
 m4_define([libinput_minor_version], [15])
-m4_define([libinput_micro_version], [1])
+m4_define([libinput_micro_version], [0])
 m4_define([libinput_version],
           [libinput_major_version.libinput_minor_version.libinput_micro_version])
 
