@@ -831,7 +831,7 @@ assert_device_ignored(struct libinput *li, struct input_absinfo *absinfo)
 	libevdev_uinput_destroy(uinput);
 }
 
-START_TEST(abs_device_no_range)
+START_TEST(abs_device_no_range_lo)
 {
 	struct libinput *li;
 	int code;
@@ -846,7 +846,32 @@ START_TEST(abs_device_no_range)
 	li = litest_create_context();
 	litest_disable_log_handler(li);
 
-	for (code = 0; code < ABS_MISC; code++) {
+	for (code = 0; code < ABS_MISC/2; code++) {
+		absinfo[2].value = code;
+		assert_device_ignored(li, absinfo);
+	}
+
+	litest_restore_log_handler(li);
+	libinput_unref(li);
+}
+END_TEST
+
+START_TEST(abs_device_no_range_hi)
+{
+	struct libinput *li;
+	int code;
+	/* set x/y so libinput doesn't just reject for missing axes */
+	struct input_absinfo absinfo[] = {
+		{ ABS_X, 0, 10, 0, 0, 0 },
+		{ ABS_Y, 0, 10, 0, 0, 0 },
+		{ -1, 0, 0, 0, 0, 0 },
+		{ -1, -1, -1, -1, -1, -1 }
+	};
+
+	li = litest_create_context();
+	litest_disable_log_handler(li);
+
+	for (code = ABS_MISC/2; code < ABS_MISC; code++) {
 		absinfo[2].value = code;
 		assert_device_ignored(li, absinfo);
 	}
@@ -983,7 +1008,8 @@ int main (int argc, char **argv)
 	litest_add_no_device("device:invalid devices", abs_device_no_absy);
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_absx);
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_absy);
-	litest_add_no_device("device:invalid devices", abs_device_no_range);
+	litest_add_no_device("device:invalid devices", abs_device_no_range_hi);
+	litest_add_no_device("device:invalid devices", abs_device_no_range_lo);
 	litest_add_no_device("device:invalid devices", abs_mt_device_no_range);
 	litest_add_no_device("device:invalid devices", abs_device_missing_res);
 	litest_add_no_device("device:invalid devices", abs_mt_device_missing_res);
