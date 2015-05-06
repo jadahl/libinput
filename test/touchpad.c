@@ -3835,6 +3835,179 @@ START_TEST(touchpad_semi_mt_hover_2fg_1fg_down)
 }
 END_TEST
 
+START_TEST(touchpad_hover_noevent)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	litest_hover_start(dev, 0, 50, 50);
+	litest_hover_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+	litest_hover_end(dev, 0);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_hover_down)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	/* hover the finger */
+	litest_hover_start(dev, 0, 50, 50);
+
+	litest_hover_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+
+	litest_assert_empty_queue(li);
+
+	/* touch the finger on the sensor */
+	litest_touch_move_to(dev, 0, 70, 70, 50, 50, 10, 10);
+
+	libinput_dispatch(li);
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_MOTION);
+
+	/* go back to hover */
+	litest_hover_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+	litest_hover_end(dev, 0);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_hover_down_hover_down)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	int i;
+
+	litest_drain_events(li);
+
+	litest_hover_start(dev, 0, 50, 50);
+
+	for (i = 0; i < 3; i++) {
+
+		/* hover the finger */
+		litest_hover_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+
+		litest_assert_empty_queue(li);
+
+		/* touch the finger */
+		litest_touch_move_to(dev, 0, 70, 70, 50, 50, 10, 10);
+
+		libinput_dispatch(li);
+
+		litest_assert_only_typed_events(li,
+						LIBINPUT_EVENT_POINTER_MOTION);
+	}
+
+	litest_hover_end(dev, 0);
+
+	/* start a new touch to be sure */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+	litest_touch_up(dev, 0);
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_MOTION);
+}
+END_TEST
+
+START_TEST(touchpad_hover_down_up)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	/* hover two fingers, and a touch */
+	litest_push_event_frame(dev);
+	litest_hover_start(dev, 0, 50, 50);
+	litest_hover_start(dev, 1, 50, 50);
+	litest_touch_down(dev, 2, 50, 50);
+	litest_pop_event_frame(dev);;
+
+	litest_assert_empty_queue(li);
+
+	/* hover first finger, end second and third in same frame */
+	litest_push_event_frame(dev);
+	litest_hover_move(dev, 0, 70, 70);
+	litest_hover_end(dev, 1);
+	litest_touch_up(dev, 2);
+	litest_pop_event_frame(dev);;
+
+	litest_assert_empty_queue(li);
+
+	/* now move the finger */
+	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
+
+	litest_touch_up(dev, 0);
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_MOTION);
+}
+END_TEST
+
+START_TEST(touchpad_hover_2fg_noevent)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	litest_drain_events(li);
+
+	/* hover two fingers */
+	litest_push_event_frame(dev);
+	litest_hover_start(dev, 0, 25, 25);
+	litest_hover_start(dev, 1, 50, 50);
+	litest_pop_event_frame(dev);;
+
+	litest_hover_move_two_touches(dev, 25, 25, 50, 50, 50, 50, 10, 0);
+
+	litest_push_event_frame(dev);
+	litest_hover_end(dev, 0);
+	litest_hover_end(dev, 1);
+	litest_pop_event_frame(dev);;
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_hover_2fg_1fg_down)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	int i;
+
+	litest_drain_events(li);
+
+	/* hover two fingers */
+	litest_push_event_frame(dev);
+	litest_hover_start(dev, 0, 25, 25);
+	litest_touch_down(dev, 1, 50, 50);
+	litest_pop_event_frame(dev);;
+
+	for (i = 0; i < 10; i++) {
+		litest_push_event_frame(dev);
+		litest_hover_move(dev, 0, 25 + 5 * i, 25 + 5 * i);
+		litest_touch_move(dev, 1, 50 + 5 * i, 50 - 5 * i);
+		litest_pop_event_frame(dev);;
+	}
+
+	litest_push_event_frame(dev);
+	litest_hover_end(dev, 0);
+	litest_touch_up(dev, 1);
+	litest_pop_event_frame(dev);;
+
+	litest_assert_only_typed_events(li,
+					LIBINPUT_EVENT_POINTER_MOTION);
+}
+END_TEST
+
 static void
 assert_btnevent_from_device(struct litest_device *device,
 			    unsigned int button,
@@ -4241,6 +4414,13 @@ int main(int argc, char **argv)
 	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_down_hover_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
 	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_2fg_noevent, LITEST_SYNAPTICS_HOVER_SEMI_MT);
 	litest_add_for_device("touchpad:semi-mt-hover", touchpad_semi_mt_hover_2fg_1fg_down, LITEST_SYNAPTICS_HOVER_SEMI_MT);
+
+	litest_add("touchpad:hover", touchpad_hover_noevent, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
+	litest_add("touchpad:hover", touchpad_hover_down, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
+	litest_add("touchpad:hover", touchpad_hover_down_up, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
+	litest_add("touchpad:hover", touchpad_hover_down_hover_down, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
+	litest_add("touchpad:hover", touchpad_hover_2fg_noevent, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
+	litest_add("touchpad:hover", touchpad_hover_2fg_1fg_down, LITEST_TOUCHPAD|LITEST_HOVER, LITEST_ANY);
 
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_mb_scroll, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);

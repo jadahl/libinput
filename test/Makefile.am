@@ -14,6 +14,7 @@ liblitest_la_SOURCES = \
 	litest.h \
 	litest-int.h \
 	litest-alps-semi-mt.c \
+	litest-atmel-hover.c \
 	litest-bcm5974.c \
 	litest-generic-singletouch.c \
 	litest-keyboard.c \

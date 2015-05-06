@@ -103,6 +103,7 @@ extern struct litest_test_device litest_wheel_only_device;
 extern struct litest_test_device litest_mouse_roccat_device;
 extern struct litest_test_device litest_ms_surface_cover_device;
 extern struct litest_test_device litest_logitech_trackball_device;
+extern struct litest_test_device litest_atmel_hover_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -127,6 +128,7 @@ struct litest_test_device* devices[] = {
 	&litest_mouse_roccat_device,
 	&litest_ms_surface_cover_device,
 	&litest_logitech_trackball_device,
+	&litest_atmel_hover_device,
 	NULL,
 };
 
@@ -795,7 +797,8 @@ litest_event(struct litest_device *d, unsigned int type,
 int
 litest_auto_assign_value(struct litest_device *d,
 			 const struct input_event *ev,
-			 int slot, double x, double y)
+			 int slot, double x, double y,
+			 bool touching)
 {
 	static int tracking_id;
 	int value = ev->value;
@@ -818,6 +821,9 @@ litest_auto_assign_value(struct litest_device *d,
 	case ABS_MT_SLOT:
 		value = slot;
 		break;
+	case ABS_MT_DISTANCE:
+		value = touching ? 0 : 1;
+		break;
 	}
 
 	return value;
@@ -834,9 +840,9 @@ send_btntool(struct litest_device *d)
 	litest_event(d, EV_KEY, BTN_TOOL_QUINTTAP, d->ntouches_down == 5);
 }
 
-void
-litest_touch_down(struct litest_device *d, unsigned int slot,
-		  double x, double y)
+static void
+litest_slot_start(struct litest_device *d, unsigned int slot,
+		  double x, double y, bool touching)
 {
 	struct input_event *ev;
 
@@ -852,10 +858,23 @@ litest_touch_down(struct litest_device *d, unsigned int slot,
 
 	ev = d->interface->touch_down_events;
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = litest_auto_assign_value(d, ev, slot, x, y);
+		int value = litest_auto_assign_value(d,
+						     ev,
+						     slot,
+						     x,
+						     y,
+						     touching);
+
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}
+}
+
+void
+litest_touch_down(struct litest_device *d, unsigned int slot,
+		  double x, double y)
+{
+	litest_slot_start(d, slot, x, y, 1);
 }
 
 void
@@ -883,15 +902,20 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		ev = up;
 
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = litest_auto_assign_value(d, ev, slot, 0, 0);
+		int value = litest_auto_assign_value(d,
+						     ev,
+						     slot,
+						     0,
+						     0,
+						     false);
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}
 }
 
-void
-litest_touch_move(struct litest_device *d, unsigned int slot,
-		  double x, double y)
+static void
+litest_slot_move(struct litest_device *d, unsigned int slot,
+		 double x, double y, bool touching)
 {
 	struct input_event *ev;
 
@@ -902,10 +926,22 @@ litest_touch_move(struct litest_device *d, unsigned int slot,
 
 	ev = d->interface->touch_move_events;
 	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
-		int value = litest_auto_assign_value(d, ev, slot, x, y);
+		int value = litest_auto_assign_value(d,
+						     ev,
+						     slot,
+						     x,
+						     y,
+						     touching);
 		litest_event(d, ev->type, ev->code, value);
 		ev++;
 	}
+}
+
+void
+litest_touch_move(struct litest_device *d, unsigned int slot,
+		  double x, double y)
+{
+	litest_slot_move(d, slot, x, y, true);
 }
 
 void
@@ -948,6 +984,98 @@ litest_touch_move_two_touches(struct litest_device *d,
 	}
 	litest_touch_move(d, 0, x0 + dx, y0 + dy);
 	litest_touch_move(d, 1, x1 + dx, y1 + dy);
+}
+
+void
+litest_hover_start(struct litest_device *d, unsigned int slot,
+		   double x, double y)
+{
+	litest_slot_start(d, slot, x, y, 0);
+}
+
+void
+litest_hover_end(struct litest_device *d, unsigned int slot)
+{
+	struct input_event *ev;
+	struct input_event up[] = {
+		{ .type = EV_ABS, .code = ABS_MT_SLOT, .value = LITEST_AUTO_ASSIGN },
+		{ .type = EV_ABS, .code = ABS_MT_DISTANCE, .value = 1 },
+		{ .type = EV_ABS, .code = ABS_MT_TRACKING_ID, .value = -1 },
+		{ .type = EV_SYN, .code = SYN_REPORT, .value = 0 },
+		{ .type = -1, .code = -1 }
+	};
+
+	assert(d->ntouches_down > 0);
+	d->ntouches_down--;
+
+	send_btntool(d);
+
+	if (d->interface->touch_up) {
+		d->interface->touch_up(d, slot);
+		return;
+	} else if (d->interface->touch_up_events) {
+		ev = d->interface->touch_up_events;
+	} else
+		ev = up;
+
+	while (ev && (int16_t)ev->type != -1 && (int16_t)ev->code != -1) {
+		int value = litest_auto_assign_value(d, ev, slot, 0, 0, 0);
+		litest_event(d, ev->type, ev->code, value);
+		ev++;
+	}
+}
+
+void
+litest_hover_move(struct litest_device *d, unsigned int slot,
+		  double x, double y)
+{
+	litest_slot_move(d, slot, x, y, false);
+}
+
+void
+litest_hover_move_to(struct litest_device *d,
+		     unsigned int slot,
+		     double x_from, double y_from,
+		     double x_to, double y_to,
+		     int steps, int sleep_ms)
+{
+	for (int i = 0; i < steps - 1; i++) {
+		litest_hover_move(d, slot,
+				  x_from + (x_to - x_from)/steps * i,
+				  y_from + (y_to - y_from)/steps * i);
+		if (sleep_ms) {
+			libinput_dispatch(d->libinput);
+			msleep(sleep_ms);
+			libinput_dispatch(d->libinput);
+		}
+	}
+	litest_hover_move(d, slot, x_to, y_to);
+}
+
+void
+litest_hover_move_two_touches(struct litest_device *d,
+			      double x0, double y0,
+			      double x1, double y1,
+			      double dx, double dy,
+			      int steps, int sleep_ms)
+{
+	for (int i = 0; i < steps - 1; i++) {
+		litest_push_event_frame(d);
+		litest_hover_move(d, 0, x0 + dx / steps * i,
+					y0 + dy / steps * i);
+		litest_hover_move(d, 1, x1 + dx / steps * i,
+					y1 + dy / steps * i);
+		litest_pop_event_frame(d);
+		if (sleep_ms) {
+			libinput_dispatch(d->libinput);
+			msleep(sleep_ms);
+			libinput_dispatch(d->libinput);
+		}
+	}
+	litest_push_event_frame(d);
+	litest_hover_move(d, 0, x0 + dx, y0 + dy);
+	litest_hover_move(d, 1, x1 + dx, y1 + dy);
+	litest_pop_event_frame(d);
 }
 
 void
@@ -1490,11 +1618,11 @@ send_abs_xy(struct litest_device *d, double x, double y)
 	e.type = EV_ABS;
 	e.code = ABS_X;
 	e.value = LITEST_AUTO_ASSIGN;
-	val = litest_auto_assign_value(d, &e, 0, x, y);
+	val = litest_auto_assign_value(d, &e, 0, x, y, true);
 	litest_event(d, EV_ABS, ABS_X, val);
 
 	e.code = ABS_Y;
-	val = litest_auto_assign_value(d, &e, 0, x, y);
+	val = litest_auto_assign_value(d, &e, 0, x, y, true);
 	litest_event(d, EV_ABS, ABS_Y, val);
 }
 
@@ -1507,12 +1635,12 @@ send_abs_mt_xy(struct litest_device *d, double x, double y)
 	e.type = EV_ABS;
 	e.code = ABS_MT_POSITION_X;
 	e.value = LITEST_AUTO_ASSIGN;
-	val = litest_auto_assign_value(d, &e, 0, x, y);
+	val = litest_auto_assign_value(d, &e, 0, x, y, true);
 	litest_event(d, EV_ABS, ABS_MT_POSITION_X, val);
 
 	e.code = ABS_MT_POSITION_Y;
 	e.value = LITEST_AUTO_ASSIGN;
-	val = litest_auto_assign_value(d, &e, 0, x, y);
+	val = litest_auto_assign_value(d, &e, 0, x, y, true);
 	litest_event(d, EV_ABS, ABS_MT_POSITION_Y, val);
 }
 

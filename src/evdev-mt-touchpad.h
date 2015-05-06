@@ -129,6 +129,7 @@ struct tp_touch {
 	bool dirty;
 	struct device_coords point;
 	uint64_t millis;
+	int distance;				/* distance == 0 means touch */
 
 	struct {
 		struct device_coords samples[TOUCHPAD_HISTORY_LENGTH];
@@ -183,6 +184,7 @@ struct tp_dispatch {
 	unsigned int slot;			/* current slot */
 	bool has_mt;
 	bool semi_mt;
+	bool reports_distance;			/* does the device support true hovering */
 	enum touchpad_model model;
 
 	unsigned int num_slots;			/* number of slots */

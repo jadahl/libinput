@@ -57,6 +57,7 @@ enum litest_device_type {
 	LITEST_WHEEL_ONLY = -21,
 	LITEST_MOUSE_ROCCAT = -22,
 	LITEST_LOGITECH_TRACKBALL = -23,
+	LITEST_ATMEL_HOVER = -24,
 };
 
 enum litest_device_feature {
@@ -77,6 +78,7 @@ enum litest_device_feature {
 	LITEST_FAKE_MT = 1 << 12,
 	LITEST_ABSOLUTE = 1 << 13,
 	LITEST_PROTOCOL_A = 1 << 14,
+	LITEST_HOVER = 1 << 15,
 };
 
 struct litest_device {
@@ -141,7 +143,8 @@ void litest_event(struct litest_device *t,
 		  int value);
 int litest_auto_assign_value(struct litest_device *d,
 			     const struct input_event *ev,
-			     int slot, double x, double y);
+			     int slot, double x, double y,
+			     bool touching);
 void litest_touch_up(struct litest_device *d, unsigned int slot);
 void litest_touch_move(struct litest_device *d,
 		       unsigned int slot,
@@ -157,6 +160,25 @@ void litest_touch_move_to(struct litest_device *d,
 			  double x_to, double y_to,
 			  int steps, int sleep_ms);
 void litest_touch_move_two_touches(struct litest_device *d,
+				   double x0, double y0,
+				   double x1, double y1,
+				   double dx, double dy,
+				   int steps, int sleep_ms);
+void litest_hover_start(struct litest_device *d,
+			unsigned int slot,
+			double x,
+			double y);
+void litest_hover_end(struct litest_device *d, unsigned int slot);
+void litest_hover_move(struct litest_device *d,
+		       unsigned int slot,
+		       double x,
+		       double y);
+void litest_hover_move_to(struct litest_device *d,
+			  unsigned int slot,
+			  double x_from, double y_from,
+			  double x_to, double y_to,
+			  int steps, int sleep_ms);
+void litest_hover_move_two_touches(struct litest_device *d,
 				   double x0, double y0,
 				   double x1, double y1,
 				   double dx, double dy,

@@ -300,6 +300,9 @@ tp_process_absolute(struct tp_dispatch *tp,
 	case ABS_MT_SLOT:
 		tp->slot = e->value;
 		break;
+	case ABS_MT_DISTANCE:
+		t->distance = e->value;
+		break;
 	case ABS_MT_TRACKING_ID:
 		if (e->value != -1)
 			tp_new_touch(tp, t, time);
@@ -520,7 +523,29 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 }
 
 static void
-tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
+tp_unhover_abs_distance(struct tp_dispatch *tp, uint64_t time)
+{
+	struct tp_touch *t;
+	unsigned int i;
+
+	for (i = 0; i < tp->ntouches; i++) {
+		t = tp_get_touch(tp, i);
+
+		if (t->state == TOUCH_HOVERING) {
+			if (t->distance == 0) {
+				/* avoid jumps when landing a finger */
+				tp_motion_history_reset(t);
+				tp_begin_touch(tp, t, time);
+			}
+		} else {
+			if (t->distance > 0)
+				tp_end_touch(tp, t, time);
+		}
+	}
+}
+
+static void
+tp_unhover_fake_touches(struct tp_dispatch *tp, uint64_t time)
 {
 	struct tp_touch *t;
 	unsigned int nfake_touches;
@@ -576,6 +601,16 @@ tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
 				break;
 		}
 	}
+}
+
+static void
+tp_unhover_touches(struct tp_dispatch *tp, uint64_t time)
+{
+	if (tp->reports_distance)
+		tp_unhover_abs_distance(tp, time);
+	else
+		tp_unhover_fake_touches(tp, time);
+
 }
 
 static void
@@ -1190,6 +1225,10 @@ tp_init(struct tp_dispatch *tp,
 	height = abs(device->abs.absinfo_y->maximum -
 		     device->abs.absinfo_y->minimum);
 	diagonal = sqrt(width*width + height*height);
+
+	tp->reports_distance = libevdev_has_event_code(device->evdev,
+						       EV_ABS,
+						       ABS_MT_DISTANCE);
 
 	tp->hysteresis_margin.x =
 		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
