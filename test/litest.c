@@ -1246,11 +1246,6 @@ litest_create_uinput_device_from_description(const char *name,
 
 	libevdev_free(dev);
 
-	/* uinput does not yet support setting the resolution, so we set it
-	 * afterwards. This is of course racy as hell but the way we
-	 * _generally_ use this function by the time libinput uses the
-	 * device, we're finished here */
-
 	devnode = libevdev_uinput_get_devnode(uinput);
 	ck_assert_notnull(devnode);
 	fd = open(devnode, O_RDONLY);
@@ -1258,6 +1253,10 @@ litest_create_uinput_device_from_description(const char *name,
 	rc = libevdev_new_from_fd(fd, &dev);
 	ck_assert_int_eq(rc, 0);
 
+	/* uinput does not yet support setting the resolution, so we set it
+	 * afterwards. This is of course racy as hell but the way we
+	 * _generally_ use this function by the time libinput uses the
+	 * device, we're finished here */
 	abs = abs_info;
 	while (abs && abs->value != -1) {
 		if (abs->resolution != 0) {
