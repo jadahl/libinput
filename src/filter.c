@@ -1,4 +1,5 @@
 /*
+ * Copyright © 2006-2009 Simon Thum
  * Copyright © 2012 Jonas Ådahl
  *
  * Permission to use, copy, modify, distribute, and sell this software and
