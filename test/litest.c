@@ -393,7 +393,8 @@ litest_log_handler(struct libinput *libinput,
 static int
 open_restricted(const char *path, int flags, void *userdata)
 {
-	return open(path, flags);
+	int fd = open(path, flags);
+	return fd < 0 ? -errno : fd;
 }
 
 static void
