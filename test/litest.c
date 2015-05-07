@@ -66,6 +66,68 @@ static int verbose = 0;
 #define litest_vlog(...) /* __VA_ARGS__ */
 #endif
 
+static char cwd[PATH_MAX];
+
+static bool
+litest_backtrace_get_lineno(const char *executable,
+			    unw_word_t addr,
+			    char *file_return,
+			    int *line_return)
+{
+#if HAVE_ADDR2LINE
+	FILE* f;
+	char buffer[PATH_MAX];
+	char *s;
+	int i;
+
+	if (!cwd[0])
+		getcwd(cwd, sizeof(cwd));
+
+	sprintf (buffer,
+		 ADDR2LINE " -C -e %s -i %lx",
+		 executable,
+		 (unsigned long) addr);
+
+	f = popen(buffer, "r");
+	if (f == NULL) {
+		litest_log("Failed to execute: %s\n", buffer);
+		return false;
+	}
+
+	buffer[0] = '?';
+	fgets(buffer, sizeof(buffer), f);
+	fclose(f);
+
+	if (buffer[0] == '?')
+		return false;
+
+	s = strrchr(buffer, ':');
+	if (!s)
+		return false;
+
+	*s = '\0';
+	s++;
+	sscanf(s, "%d", line_return);
+
+	/* now strip cwd from buffer */
+	s = buffer;
+	i = 0;
+	while(cwd[i] == *s) {
+		*s = '\0';
+		s++;
+		i++;
+	}
+
+	if (i > 0)
+		*(--s) = '.';
+	strcpy(file_return, s);
+
+	return true;
+#else /* HAVE_ADDR2LINE */
+	return false;
+#endif
+}
+
 static void
 litest_backtrace(void)
 {
@@ -100,6 +162,10 @@ litest_backtrace(void)
 	litest_log("\nBacktrace:\n");
 	ret = unw_step(&cursor);
 	while (ret > 0) {
+		char file[PATH_MAX];
+		int line;
+		bool have_lineno = false;
+
 		ret = unw_get_proc_info(&cursor, &pip);
 		if (ret) {
 			litest_log("unw_get_proc_info failed: %s [%d]\n",
@@ -120,19 +186,33 @@ litest_backtrace(void)
 
 		if (dladdr((void *)(pip.start_ip + off), &dlinfo) &&
 		    dlinfo.dli_fname &&
-		    *dlinfo.dli_fname)
+		    *dlinfo.dli_fname) {
 			filename = dlinfo.dli_fname;
-		else
+			have_lineno = litest_backtrace_get_lineno(filename,
+								  (pip.start_ip + off),
+								  file,
+								  &line);
+		} else {
 			filename = "?";
+		}
 
-		litest_log("%u: %s (%s%s+%#x) [%p]\n",
-			   i++,
-			   filename,
-			   procname,
-			   ret == -UNW_ENOMEM ? "..." : "",
-			   (int)off,
-			   (void *)(pip.start_ip + off));
+		if (have_lineno) {
+			litest_log("%u: %s() (%s:%d)\n",
+				   i,
+				   procname,
+				   file,
+				   line);
+		} else  {
+			litest_log("%u: %s (%s%s+%#x) [%p]\n",
+				   i,
+				   filename,
+				   procname,
+				   ret == -UNW_ENOMEM ? "..." : "",
+				   (int)off,
+				   (void *)(pip.start_ip + off));
+		}
 
+		i++;
 		ret = unw_step(&cursor);
 		if (ret < 0)
 			litest_log("unw_step failed: %s [%d]\n",

@@ -68,6 +68,11 @@ if test "x$HAVE_LIBUNWIND" = "xyes"; then
 	AC_DEFINE(HAVE_LIBUNWIND, 1, [Have libunwind support])
 fi
 AM_CONDITIONAL(HAVE_LIBUNWIND, [test "x$HAVE_LIBUNWIND" = xyes])
+AC_PATH_PROG(ADDR2LINE, [addr2line])
+if test "x$ADDR2LINE" != "x"; then
+	AC_DEFINE_UNQUOTED(HAVE_ADDR2LINE, 1, [addr2line found])
+	AC_DEFINE_UNQUOTED(ADDR2LINE, ["$ADDR2LINE"], [Path to addr2line])
+fi
 
 AC_CHECK_LIB([m], [atan2])
 AC_CHECK_LIB([rt], [clock_gettime])
