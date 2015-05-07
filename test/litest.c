@@ -188,6 +188,18 @@ litest_fail_comparison_int(const char *file,
 	abort();
 }
 
+void
+litest_fail_comparison_ptr(const char *file,
+			   int line,
+			   const char *func,
+			   const char *comparison)
+{
+	litest_log("FAILED COMPARISON: %s\n", comparison);
+	litest_log("in %s() (%s:%d)\n", func, file, line);
+	litest_backtrace();
+	abort();
+}
+
 struct test {
 	struct list node;
 	char *name;

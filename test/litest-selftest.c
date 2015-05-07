@@ -164,6 +164,131 @@ START_TEST(litest_int_ge_notrigger)
 }
 END_TEST
 
+START_TEST(litest_ptr_eq_notrigger)
+{
+	int v = 10;
+	int *a = &v;
+	int *b = &v;
+	int c = NULL;
+	int d = NULL;
+
+	litest_assert_ptr_eq(a, b);
+	litest_assert_ptr_eq(c, d);
+}
+END_TEST
+
+START_TEST(litest_ptr_eq_trigger)
+{
+	int v = 10;
+	int v2 = 11;
+	int *a = &v;
+	int *b = &v2;
+
+	litest_assert_ptr_eq(a, b);
+}
+END_TEST
+
+START_TEST(litest_ptr_eq_trigger_NULL)
+{
+	int v = 10;
+	int *a = &v;
+	int *b = NULL;
+
+	litest_assert_ptr_eq(a, b);
+}
+END_TEST
+
+START_TEST(litest_ptr_eq_trigger_NULL2)
+{
+	int v = 10;
+	int *a = &v;
+	int *b = NULL;
+
+	litest_assert_ptr_eq(b, a);
+}
+END_TEST
+
+START_TEST(litest_ptr_ne_trigger)
+{
+	int v = 10;
+	int *a = &v;
+	int *b = &v;
+
+	litest_assert_ptr_ne(a, b);
+}
+END_TEST
+
+START_TEST(litest_ptr_ne_trigger_NULL)
+{
+	int *a = NULL;
+
+	litest_assert_ptr_ne(a, NULL);
+}
+END_TEST
+
+START_TEST(litest_ptr_ne_trigger_NULL2)
+{
+	int *a = NULL;
+
+	litest_assert_ptr_ne(NULL, a);
+}
+END_TEST
+
+START_TEST(litest_ptr_ne_notrigger)
+{
+	int v1 = 10;
+	int v2 = 10;
+	int *a = &v1;
+	int *b = &v2;
+	int *c = NULL;
+
+	litest_assert_ptr_ne(a, b);
+	litest_assert_ptr_ne(a, c);
+	litest_assert_ptr_ne(c, b);
+}
+END_TEST
+
+START_TEST(litest_ptr_null_notrigger)
+{
+	int *a = NULL;
+
+	litest_assert_ptr_null(a);
+	litest_assert_ptr_null(NULL);
+}
+END_TEST
+
+START_TEST(litest_ptr_null_trigger)
+{
+	int v;
+	int *a = &v;
+
+	litest_assert_ptr_null(a);
+}
+END_TEST
+
+START_TEST(litest_ptr_notnull_notrigger)
+{
+	int v;
+	int *a = &v;
+
+	litest_assert_ptr_notnull(a);
+}
+END_TEST
+
+START_TEST(litest_ptr_notnull_trigger)
+{
+	int *a = NULL;
+
+	litest_assert_ptr_notnull(a);
+}
+END_TEST
+
+START_TEST(litest_ptr_notnull_trigger_NULL)
+{
+	litest_assert_ptr_notnull(NULL);
+}
+END_TEST
+
 static Suite *
 litest_assert_macros_suite(void)
 {
@@ -199,6 +324,22 @@ litest_assert_macros_suite(void)
 	tcase_add_test_raise_signal(tc, litest_int_gt_trigger_eq, SIGABRT);
 	tcase_add_test_raise_signal(tc, litest_int_gt_trigger_lt, SIGABRT);
 	tcase_add_test(tc, litest_int_gt_notrigger);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("pointer comparison ");
+	tcase_add_test_raise_signal(tc, litest_ptr_eq_trigger, SIGABRT);
+	tcase_add_test_raise_signal(tc, litest_ptr_eq_trigger_NULL, SIGABRT);
+	tcase_add_test_raise_signal(tc, litest_ptr_eq_trigger_NULL2, SIGABRT);
+	tcase_add_test(tc, litest_ptr_eq_notrigger);
+	tcase_add_test_raise_signal(tc, litest_ptr_ne_trigger, SIGABRT);
+	tcase_add_test_raise_signal(tc, litest_ptr_ne_trigger_NULL, SIGABRT);
+	tcase_add_test_raise_signal(tc, litest_ptr_ne_trigger_NULL2, SIGABRT);
+	tcase_add_test(tc, litest_ptr_ne_notrigger);
+	tcase_add_test_raise_signal(tc, litest_ptr_null_trigger, SIGABRT);
+	tcase_add_test(tc, litest_ptr_null_notrigger);
+	tcase_add_test_raise_signal(tc, litest_ptr_notnull_trigger, SIGABRT);
+	tcase_add_test_raise_signal(tc, litest_ptr_notnull_trigger_NULL, SIGABRT);
+	tcase_add_test(tc, litest_ptr_notnull_notrigger);
 	suite_add_tcase(s, tc);
 
 	return s;
