@@ -26,7 +26,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libinput.h>
-#include <libudev.h>
 #include <unistd.h>
 
 #include "litest.h"
