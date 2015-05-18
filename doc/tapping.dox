@@ -33,6 +33,10 @@ continue the dragging process, so that multiple touchpad-widths of distance
 can be covered easily. If two-fingers are supported by the hardware, a
 second finger can be used to drag while the first is held in-place.
 
+An alternative method to end a drag process is to tap immediately after
+lifting the finger. The full sequence is thus: tap, finger down, drag,
+finger up, tap.
+
 @section tap_constraints Constraints while tapping
 
 A couple of constraints apply to the contact to be converted into a press, the most common ones are:
