@@ -57,5 +57,26 @@ the palm on the touchpad while using the trackstick).
 If the touchpad is disabled, the @ref t440_support "top software buttons"
 remain enabled.
 
+@section disable-while-typing Disable-while-typing
+
+libinput automatically disables the touchpad for a timeout after a key
+press, a feature traditionally referred to as "disable while typing" and
+previously available through the
+[syndaemon(1)](http://linux.die.net/man/1/syndaemon) command. libinput does
+not require an external command and the feature is currently enabled for all
+touchpads but will be reduced in the future to only apply to touchpads where
+finger width or pressure data is unreliable.
+
+Notable behaviors of libinput's disable-while-typing feature:
+- Two different timeouts are used, after a single key press the timeout is
+  short to ensure responsiveness. After multiple key events, the timeout is
+  longer to avoid accidental pointer manipulation while typing.
+- Some keys do not trigger the timeout, specifically some modifier keys 
+  (Ctrl, Alt, Shift, and Fn). Actions such as Ctrl + click thus stay
+  responsive.
+- Touches started while the touchpad is disabled do not control the cursor,
+  it is thus possible to rest the palm on the touchpad while typing.
+- Physical buttons work even while the touchpad is disabled. This includes
+  software-emulated buttons.
 
 */
