@@ -55,7 +55,7 @@ libinput:name:SynPS/2 Synaptics TouchPad:dmi:*svnSystem76*pvrbonp5*
 
 # Clevo
 libinput:name:SynPS/2 Synaptics TouchPad:dmi:*pnW740SU*rnW740SU*
- LIBINPUT_MODEL_SYSTEM76_CLEVO=1
+ LIBINPUT_MODEL_CLEVO_W740SU=1
 
 # Galago Ultra Pro
 libinput:name:SynPS/2 Synaptics TouchPad:dmi:*svnSystem76*pvrgalu1*

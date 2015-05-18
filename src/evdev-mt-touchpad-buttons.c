@@ -656,9 +656,9 @@ tp_click_get_default_method(struct tp_dispatch *tp)
 	switch (device->model) {
 	case EVDEV_MODEL_CHROMEBOOK:
 	case EVDEV_MODEL_SYSTEM76_BONOBO:
-	case EVDEV_MODEL_SYSTEM76_CLEVO:
 	case EVDEV_MODEL_SYSTEM76_GALAGO:
 	case EVDEV_MODEL_SYSTEM76_KUDU:
+	case EVDEV_MODEL_CLEVO_W740SU:
 		return LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
 	default:
 		break;
