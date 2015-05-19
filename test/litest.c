@@ -67,11 +67,13 @@ struct suite {
 
 static struct litest_device *current_device;
 
-struct litest_device *litest_current_device(void) {
+struct litest_device *litest_current_device(void)
+{
 	return current_device;
 }
 
-void litest_set_current_device(struct litest_device *device) {
+void litest_set_current_device(struct litest_device *device)
+{
 	current_device = device;
 }
 
@@ -461,7 +463,8 @@ static const struct option opts[] = {
 };
 
 int
-litest_run(int argc, char **argv) {
+litest_run(int argc, char **argv)
+{
 	struct suite *s, *snext;
 	int failed;
 	SRunner *sr = NULL;
