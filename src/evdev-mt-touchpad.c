@@ -739,10 +739,10 @@ tp_handle_state(struct tp_dispatch *tp,
 }
 
 static void
-tp_process(struct evdev_dispatch *dispatch,
-	   struct evdev_device *device,
-	   struct input_event *e,
-	   uint64_t time)
+tp_interface_process(struct evdev_dispatch *dispatch,
+		     struct evdev_device *device,
+		     struct input_event *e,
+		     uint64_t time)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch *)dispatch;
@@ -779,7 +779,7 @@ tp_remove_sendevents(struct tp_dispatch *tp)
 }
 
 static void
-tp_remove(struct evdev_dispatch *dispatch)
+tp_interface_remove(struct evdev_dispatch *dispatch)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch*)dispatch;
@@ -792,7 +792,7 @@ tp_remove(struct evdev_dispatch *dispatch)
 }
 
 static void
-tp_destroy(struct evdev_dispatch *dispatch)
+tp_interface_destroy(struct evdev_dispatch *dispatch)
 {
 	struct tp_dispatch *tp =
 		(struct tp_dispatch*)dispatch;
@@ -953,8 +953,8 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 }
 
 static void
-tp_device_added(struct evdev_device *device,
-		struct evdev_device *added_device)
+tp_interface_device_added(struct evdev_device *device,
+			  struct evdev_device *added_device)
 {
 	struct tp_dispatch *tp = (struct tp_dispatch*)device->dispatch;
 	unsigned int bus_tp = libevdev_get_id_bustype(device->evdev),
@@ -997,8 +997,8 @@ tp_device_added(struct evdev_device *device,
 }
 
 static void
-tp_device_removed(struct evdev_device *device,
-		  struct evdev_device *removed_device)
+tp_interface_device_removed(struct evdev_device *device,
+			    struct evdev_device *removed_device)
 {
 	struct tp_dispatch *tp = (struct tp_dispatch*)device->dispatch;
 	struct libinput_device *dev;
@@ -1036,8 +1036,8 @@ tp_device_removed(struct evdev_device *device,
 }
 
 static void
-tp_tag_device(struct evdev_device *device,
-	      struct udev_device *udev_device)
+tp_interface_tag_device(struct evdev_device *device,
+			struct udev_device *udev_device)
 {
 	int bustype;
 
@@ -1059,14 +1059,14 @@ tp_tag_device(struct evdev_device *device,
 }
 
 static struct evdev_dispatch_interface tp_interface = {
-	tp_process,
-	tp_remove,
-	tp_destroy,
-	tp_device_added,
-	tp_device_removed,
-	tp_device_removed, /* device_suspended, treat as remove */
-	tp_device_added,   /* device_resumed, treat as add */
-	tp_tag_device,
+	tp_interface_process,
+	tp_interface_remove,
+	tp_interface_destroy,
+	tp_interface_device_added,
+	tp_interface_device_removed,
+	tp_interface_device_removed, /* device_suspended, treat as remove */
+	tp_interface_device_added,   /* device_resumed, treat as add */
+	tp_interface_tag_device,
 };
 
 static void
@@ -1495,7 +1495,7 @@ evdev_mt_touchpad_create(struct evdev_device *device)
 	tp->model = tp_get_model(device);
 
 	if (tp_init(tp, device) != 0) {
-		tp_destroy(&tp->base);
+		tp_interface_destroy(&tp->base);
 		return NULL;
 	}
 
