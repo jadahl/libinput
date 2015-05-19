@@ -313,6 +313,9 @@ START_TEST(device_reenable_syspath_changed)
 
 	litest_device = litest_add_device(li, LITEST_MOUSE);
 	device2 = litest_device->libinput_device;
+	/* Note: if the sysname isn't the same, some other device got added
+	 * or removed while this test was running.  This is unlikely and
+	 * would result in a false positive, so let's fail the test here */
 	ck_assert_str_eq(libinput_device_get_sysname(device1),
 			 libinput_device_get_sysname(device2));
 
