@@ -761,6 +761,58 @@ fallback_process(struct evdev_dispatch *dispatch,
 }
 
 static void
+release_pressed_keys(struct evdev_device *device)
+{
+	struct libinput *libinput = device->base.seat->libinput;
+	uint64_t time;
+	int code;
+
+	if ((time = libinput_now(libinput)) == 0)
+		return;
+
+	for (code = 0; code < KEY_CNT; code++) {
+		int count = get_key_down_count(device, code);
+
+		if (count == 0)
+			continue;
+
+		if (count > 1) {
+			log_bug_libinput(libinput,
+					 "Key %d is down %d times.\n",
+					 code,
+					 count);
+		}
+
+		switch (get_key_type(code)) {
+		case EVDEV_KEY_TYPE_NONE:
+			break;
+		case EVDEV_KEY_TYPE_KEY:
+			evdev_keyboard_notify_key(
+				device,
+				time,
+				code,
+				LIBINPUT_KEY_STATE_RELEASED);
+			break;
+		case EVDEV_KEY_TYPE_BUTTON:
+			evdev_pointer_notify_physical_button(
+				device,
+				time,
+				evdev_to_left_handed(device, code),
+				LIBINPUT_BUTTON_STATE_RELEASED);
+			break;
+		}
+
+		count = get_key_down_count(device, code);
+		if (count != 0) {
+			log_bug_libinput(libinput,
+					 "Releasing key %d failed.\n",
+					 code);
+			break;
+		}
+	}
+}
+
+static void
 fallback_destroy(struct evdev_dispatch *dispatch)
 {
 	free(dispatch);
@@ -2315,58 +2367,6 @@ evdev_stop_scroll(struct evdev_device *device,
 	device->scroll.buildup.x = 0;
 	device->scroll.buildup.y = 0;
 	device->scroll.direction = 0;
-}
-
-static void
-release_pressed_keys(struct evdev_device *device)
-{
-	struct libinput *libinput = device->base.seat->libinput;
-	uint64_t time;
-	int code;
-
-	if ((time = libinput_now(libinput)) == 0)
-		return;
-
-	for (code = 0; code < KEY_CNT; code++) {
-		int count = get_key_down_count(device, code);
-
-		if (count == 0)
-			continue;
-
-		if (count > 1) {
-			log_bug_libinput(libinput,
-					 "Key %d is down %d times.\n",
-					 code,
-					 count);
-		}
-
-		switch (get_key_type(code)) {
-		case EVDEV_KEY_TYPE_NONE:
-			break;
-		case EVDEV_KEY_TYPE_KEY:
-			evdev_keyboard_notify_key(
-				device,
-				time,
-				code,
-				LIBINPUT_KEY_STATE_RELEASED);
-			break;
-		case EVDEV_KEY_TYPE_BUTTON:
-			evdev_pointer_notify_physical_button(
-				device,
-				time,
-				evdev_to_left_handed(device, code),
-				LIBINPUT_BUTTON_STATE_RELEASED);
-			break;
-		}
-
-		count = get_key_down_count(device, code);
-		if (count != 0) {
-			log_bug_libinput(libinput,
-					 "Releasing key %d failed.\n",
-					 code);
-			break;
-		}
-	}
 }
 
 void
