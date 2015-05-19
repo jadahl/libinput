@@ -456,12 +456,6 @@ struct libinput_interface interface = {
 	.close_restricted = close_restricted,
 };
 
-static const struct option opts[] = {
-	{ "list", 0, 0, 'l' },
-	{ "verbose", 0, 0, 'v' },
-	{ 0, 0, 0, 0}
-};
-
 static int
 litest_run(int argc, char **argv)
 {
@@ -480,27 +474,6 @@ litest_run(int argc, char **argv)
 			sr = srunner_create(s->suite);
 		else
 			srunner_add_suite(sr, s->suite);
-	}
-
-	while(1) {
-		int c;
-		int option_index = 0;
-
-		c = getopt_long(argc, argv, "", opts, &option_index);
-		if (c == -1)
-			break;
-		switch(c) {
-			case 'l':
-				litest_list_tests(&all_tests);
-				return 0;
-			case 'v':
-				verbose = 1;
-				break;
-			default:
-				fprintf(stderr, "usage: %s [--list]\n", argv[0]);
-				return 1;
-
-		}
 	}
 
 	if (getenv("LITEST_VERBOSE"))
@@ -1887,9 +1860,44 @@ litest_semi_mt_touch_up(struct litest_device *d,
 	litest_event(d, EV_SYN, SYN_REPORT, 0);
 }
 
+static int
+litest_parse_argv(int argc, char **argv)
+{
+	static const struct option opts[] = {
+		{ "list", 0, 0, 'l' },
+		{ "verbose", 0, 0, 'v' },
+		{ 0, 0, 0, 0}
+	};
+
+	while(1) {
+		int c;
+		int option_index = 0;
+
+		c = getopt_long(argc, argv, "", opts, &option_index);
+		if (c == -1)
+			break;
+		switch(c) {
+		case 'l':
+			litest_list_tests(&all_tests);
+			exit(0);
+		case 'v':
+			verbose = 1;
+			break;
+		default:
+			fprintf(stderr, "usage: %s [--list]\n", argv[0]);
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
+	if (litest_parse_argv(argc, argv) != 0)
+		return EXIT_FAILURE;
+
 	litest_setup_tests();
 
 	return litest_run(argc, argv);
