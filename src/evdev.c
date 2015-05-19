@@ -2330,6 +2330,9 @@ release_pressed_keys(struct evdev_device *device)
 	for (code = 0; code < KEY_CNT; code++) {
 		int count = get_key_down_count(device, code);
 
+		if (count == 0)
+			continue;
+
 		if (count > 1) {
 			log_bug_libinput(libinput,
 					 "Key %d is down %d times.\n",
@@ -2337,25 +2340,31 @@ release_pressed_keys(struct evdev_device *device)
 					 count);
 		}
 
-		while (get_key_down_count(device, code) > 0) {
-			switch (get_key_type(code)) {
-			case EVDEV_KEY_TYPE_NONE:
-				break;
-			case EVDEV_KEY_TYPE_KEY:
-				evdev_keyboard_notify_key(
-					device,
-					time,
-					code,
-					LIBINPUT_KEY_STATE_RELEASED);
-				break;
-			case EVDEV_KEY_TYPE_BUTTON:
-				evdev_pointer_notify_physical_button(
-					device,
-					time,
-					evdev_to_left_handed(device, code),
-					LIBINPUT_BUTTON_STATE_RELEASED);
-				break;
-			}
+		switch (get_key_type(code)) {
+		case EVDEV_KEY_TYPE_NONE:
+			break;
+		case EVDEV_KEY_TYPE_KEY:
+			evdev_keyboard_notify_key(
+				device,
+				time,
+				code,
+				LIBINPUT_KEY_STATE_RELEASED);
+			break;
+		case EVDEV_KEY_TYPE_BUTTON:
+			evdev_pointer_notify_physical_button(
+				device,
+				time,
+				evdev_to_left_handed(device, code),
+				LIBINPUT_BUTTON_STATE_RELEASED);
+			break;
+		}
+
+		count = get_key_down_count(device, code);
+		if (count != 0) {
+			log_bug_libinput(libinput,
+					 "Releasing key %d failed.\n",
+					 code);
+			break;
 		}
 	}
 }
