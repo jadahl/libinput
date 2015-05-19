@@ -1708,11 +1708,12 @@ libinput_device_config_tap_set_enabled(struct libinput_device *device,
 	    enable != LIBINPUT_CONFIG_TAP_DISABLED)
 		return LIBINPUT_CONFIG_STATUS_INVALID;
 
-	if (enable &&
-	    libinput_device_config_tap_get_finger_count(device) == 0)
-		return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+	if (libinput_device_config_tap_get_finger_count(device) == 0)
+		return enable ? LIBINPUT_CONFIG_STATUS_UNSUPPORTED :
+				LIBINPUT_CONFIG_STATUS_SUCCESS;
 
 	return device->config.tap->set_enabled(device, enable);
+
 }
 
 LIBINPUT_EXPORT enum libinput_config_tap_state

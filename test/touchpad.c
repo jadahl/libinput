@@ -3154,6 +3154,9 @@ START_TEST(touchpad_tap_is_not_available)
 	ck_assert_int_eq(libinput_device_config_tap_set_enabled(dev->libinput_device,
 								LIBINPUT_CONFIG_TAP_ENABLED),
 			 LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+	ck_assert_int_eq(libinput_device_config_tap_set_enabled(dev->libinput_device,
+								LIBINPUT_CONFIG_TAP_DISABLED),
+			 LIBINPUT_CONFIG_STATUS_SUCCESS);
 }
 END_TEST
 
