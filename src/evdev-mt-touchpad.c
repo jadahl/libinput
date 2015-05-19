@@ -854,6 +854,15 @@ tp_suspend(struct tp_dispatch *tp, struct evdev_device *device)
 }
 
 static void
+tp_interface_suspend(struct evdev_dispatch *dispatch,
+		     struct evdev_device *device)
+{
+	struct tp_dispatch *tp = (struct tp_dispatch *)dispatch;
+
+	tp_clear_state(tp);
+}
+
+static void
 tp_resume(struct tp_dispatch *tp, struct evdev_device *device)
 {
 	if (tp->buttons.has_topbuttons) {
@@ -1060,6 +1069,7 @@ tp_interface_tag_device(struct evdev_device *device,
 
 static struct evdev_dispatch_interface tp_interface = {
 	tp_interface_process,
+	tp_interface_suspend,
 	tp_interface_remove,
 	tp_interface_destroy,
 	tp_interface_device_added,

@@ -227,6 +227,10 @@ struct evdev_dispatch_interface {
 			struct input_event *event,
 			uint64_t time);
 
+	/* Device is being suspended */
+	void (*suspend)(struct evdev_dispatch *dispatch,
+			struct evdev_device *device);
+
 	/* Device is being removed (may be NULL) */
 	void (*remove)(struct evdev_dispatch *dispatch);
 

@@ -813,6 +813,13 @@ release_pressed_keys(struct evdev_device *device)
 }
 
 static void
+fallback_suspend(struct evdev_dispatch *dispatch,
+		 struct evdev_device *device)
+{
+	release_pressed_keys(device);
+}
+
+static void
 fallback_destroy(struct evdev_dispatch *dispatch)
 {
 	free(dispatch);
@@ -869,6 +876,7 @@ evdev_calibration_get_default_matrix(struct libinput_device *libinput_device,
 
 struct evdev_dispatch_interface fallback_interface = {
 	fallback_process,
+	fallback_suspend,
 	NULL, /* remove */
 	fallback_destroy,
 	NULL, /* device_added */
@@ -2414,13 +2422,15 @@ evdev_device_suspend(struct evdev_device *device)
 {
 	evdev_notify_suspended_device(device);
 
+	if (device->dispatch->interface->suspend)
+		device->dispatch->interface->suspend(device->dispatch,
+						     device);
+
 	if (device->source) {
 		libinput_remove_source(device->base.seat->libinput,
 				       device->source);
 		device->source = NULL;
 	}
-
-	release_pressed_keys(device);
 
 	if (device->mtdev) {
 		mtdev_close_delete(device->mtdev);
