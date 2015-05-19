@@ -130,7 +130,7 @@ void litest_add_ranged_no_device(const char *name,
 				 void *func,
 				 const struct range *range);
 
-int litest_run(int argc, char **argv);
+extern void litest_setup_tests(void);
 struct litest_device * litest_create_device(enum litest_device_type which);
 struct litest_device * litest_add_device(struct libinput *libinput,
 					 enum litest_device_type which);

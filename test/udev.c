@@ -502,8 +502,8 @@ START_TEST(udev_seat_recycle)
 }
 END_TEST
 
-int
-main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add_no_device("udev:create", udev_create_NULL);
 	litest_add_no_device("udev:create", udev_create_seat0);
@@ -518,6 +518,4 @@ main(int argc, char **argv)
 	litest_add_for_device("udev:suspend", udev_suspend_resume, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add_for_device("udev:device events", udev_device_sysname, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add_for_device("udev:seat", udev_seat_recycle, LITEST_SYNAPTICS_CLICKPAD);
-
-	return litest_run(argc, argv);
 }

@@ -582,8 +582,8 @@ START_TEST(touch_protocol_a_2fg_touch)
 }
 END_TEST
 
-int
-main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add("touch:frame", touch_frame_events, LITEST_TOUCH, LITEST_ANY);
 	litest_add_no_device("touch:abs-transform", touch_abs_transform);
@@ -604,6 +604,4 @@ main(int argc, char **argv)
 	litest_add("touch:protocol a", touch_protocol_a_init, LITEST_PROTOCOL_A, LITEST_ANY);
 	litest_add("touch:protocol a", touch_protocol_a_touch, LITEST_PROTOCOL_A, LITEST_ANY);
 	litest_add("touch:protocol a", touch_protocol_a_2fg_touch, LITEST_PROTOCOL_A, LITEST_ANY);
-
-	return litest_run(argc, argv);
 }

@@ -946,7 +946,8 @@ START_TEST(device_wheel_only)
 }
 END_TEST
 
-int main (int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	struct range abs_range = { 0, ABS_MISC };
 	struct range abs_mt_range = { ABS_MT_SLOT + 1, ABS_CNT };
@@ -987,6 +988,4 @@ int main (int argc, char **argv)
 	litest_add_no_device("device:invalid devices", abs_mt_device_missing_res);
 
 	litest_add("device:wheel", device_wheel_only, LITEST_WHEEL, LITEST_RELATIVE|LITEST_ABSOLUTE);
-
-	return litest_run(argc, argv);
 }

@@ -1261,7 +1261,8 @@ START_TEST(middlebutton_default_disabled)
 }
 END_TEST
 
-int main (int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
@@ -1299,6 +1300,4 @@ int main (int argc, char **argv)
 	litest_add("pointer:middlebutton", middlebutton_default_clickpad, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("pointer:middlebutton", middlebutton_default_touchpad, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	litest_add("pointer:middlebutton", middlebutton_default_disabled, LITEST_ANY, LITEST_BUTTON);
-
-	return litest_run(argc, argv);
 }

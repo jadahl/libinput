@@ -462,7 +462,7 @@ static const struct option opts[] = {
 	{ 0, 0, 0, 0}
 };
 
-int
+static int
 litest_run(int argc, char **argv)
 {
 	struct suite *s, *snext;
@@ -1885,4 +1885,12 @@ litest_semi_mt_touch_up(struct litest_device *d,
 	}
 
 	litest_event(d, EV_SYN, SYN_REPORT, 0);
+}
+
+int
+main(int argc, char **argv)
+{
+	litest_setup_tests();
+
+	return litest_run(argc, argv);
 }

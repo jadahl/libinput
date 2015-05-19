@@ -4530,7 +4530,8 @@ START_TEST(touchpad_trackpoint_no_trackpoint)
 }
 END_TEST
 
-int main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	struct range multitap_range = {3, 8};
 
@@ -4674,6 +4675,4 @@ int main(int argc, char **argv)
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons_softbuttons, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_buttons_2fg_scroll, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_no_trackpoint, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
-
-	return litest_run(argc, argv);
 }

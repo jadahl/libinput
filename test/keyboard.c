@@ -310,14 +310,12 @@ START_TEST(keyboard_keys_bad_device)
 }
 END_TEST
 
-int
-main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add_no_device("keyboard:seat key count", keyboard_seat_key_count);
 	litest_add_no_device("keyboard:key counting", keyboard_ignore_no_pressed_release);
 	litest_add_no_device("keyboard:key counting", keyboard_key_auto_release);
 	litest_add("keyboard:keys", keyboard_has_key, LITEST_KEYS, LITEST_ANY);
 	litest_add("keyboard:keys", keyboard_keys_bad_device, LITEST_ANY, LITEST_ANY);
-
-	return litest_run(argc, argv);
 }

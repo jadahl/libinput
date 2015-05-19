@@ -874,8 +874,8 @@ START_TEST(path_seat_recycle)
 }
 END_TEST
 
-int
-main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add_no_device("path:create", path_create_NULL);
 	litest_add_no_device("path:create", path_create_invalid);
@@ -896,6 +896,4 @@ main(int argc, char **argv)
 	litest_add_for_device("path:device events", path_remove_device, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add_for_device("path:device events", path_double_remove_device, LITEST_SYNAPTICS_CLICKPAD);
 	litest_add_no_device("path:seat", path_seat_recycle);
-
-	return litest_run(argc, argv);
 }
