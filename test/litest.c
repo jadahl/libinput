@@ -500,6 +500,9 @@ litest_run(int argc, char **argv) {
 		}
 	}
 
+	if (getenv("LITEST_VERBOSE"))
+		verbose = 1;
+
 	srunner_run_all(sr, CK_ENV);
 	failed = srunner_ntests_failed(sr);
 	srunner_free(sr);

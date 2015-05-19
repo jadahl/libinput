@@ -63,4 +63,16 @@ $ CK_RUN_SUITE="device:wheel" CK_RUN_CASE="wheel only" ./test/test-device
 
 Check and litest currently do not provide a way to run a specific test
 function only.
+
+@section test-verbosity Controlling test output
+
+Each test supports the `--verbose` commandline option to enable debugging
+output, see libinput_log_set_priority() for details. The `LITEST_VERBOSE`
+environment variable, if set, also enables verbose mode.
+
+@code
+$ ./test/test-device --verbose
+$ LITEST_VERBOSE=1 make check
+@endcode
+
 */
