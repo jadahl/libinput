@@ -109,26 +109,45 @@ struct libinput *litest_create_context(void);
 void litest_disable_log_handler(struct libinput *libinput);
 void litest_restore_log_handler(struct libinput *libinput);
 
-void litest_add(const char *name, void *func,
-		enum litest_device_feature required_feature,
-		enum litest_device_feature excluded_feature);
-void litest_add_ranged(const char *name,
-		       void *func,
-		       enum litest_device_feature required,
-		       enum litest_device_feature excluded,
-		       const struct range *range);
-void
-litest_add_for_device(const char *name,
-		      void *func,
-		      enum litest_device_type type);
-void litest_add_ranged_for_device(const char *name,
+#define litest_add(name_, func_, ...) \
+	_litest_add(name_, #func_, func_, __VA_ARGS__)
+#define litest_add_ranged(name_, func_, ...) \
+	_litest_add_ranged(name_, #func_, func_, __VA_ARGS__)
+#define litest_add_for_device(name_, func_, ...) \
+	_litest_add_for_device(name_, #func_, func_, __VA_ARGS__)
+#define litest_add_ranged_for_device(name_, func_, ...) \
+	_litest_add_ranged_for_device(name_, #func_, func_, __VA_ARGS__)
+#define litest_add_no_device(name_, func_) \
+	_litest_add_no_device(name_, #func_, func_)
+#define litest_add_ranged_no_device(name_, func_, ...) \
+	_litest_add_ranged_no_device(name_, #func_, func_, __VA_ARGS__)
+void _litest_add(const char *name,
+		 const char *funcname,
+		 void *func,
+		 enum litest_device_feature required_feature,
+		 enum litest_device_feature excluded_feature);
+void _litest_add_ranged(const char *name,
+			const char *funcname,
+			void *func,
+			enum litest_device_feature required,
+			enum litest_device_feature excluded,
+			const struct range *range);
+void _litest_add_for_device(const char *name,
+			    const char *funcname,
+			    void *func,
+			    enum litest_device_type type);
+void _litest_add_ranged_for_device(const char *name,
+				   const char *funcname,
+				   void *func,
+				   enum litest_device_type type,
+				   const struct range *range);
+void _litest_add_no_device(const char *name,
+			   const char *funcname,
+			   void *func);
+void _litest_add_ranged_no_device(const char *name,
+				  const char *funcname,
 				  void *func,
-				  enum litest_device_type type,
 				  const struct range *range);
-void litest_add_no_device(const char *name, void *func);
-void litest_add_ranged_no_device(const char *name,
-				 void *func,
-				 const struct range *range);
 
 extern void litest_setup_tests(void);
 struct litest_device * litest_create_device(enum litest_device_type which);

@@ -62,8 +62,12 @@ $ CK_RUN_CASE="wheel only" ./test/test-device
 $ CK_RUN_SUITE="device:wheel" CK_RUN_CASE="wheel only" ./test/test-device
 @endcode
 
-Check and litest currently do not provide a way to run a specific test
-function only.
+The `--filter-test` argument enables selective running of tests through
+basic shell-style function name matching. For example:
+
+@code
+$ ./test/test-touchpad --filter-test="*1fg_tap*"
+@endcode
 
 @section test-verbosity Controlling test output
 
