@@ -52,6 +52,7 @@
 static int in_debugger = -1;
 static int verbose = 0;
 const char *filter_test = NULL;
+const char *filter_device = NULL;
 
 struct test {
 	struct list node;
@@ -237,6 +238,10 @@ litest_add_tcase_no_device(struct suite *suite,
 	struct test *t;
 	const char *test_name = "no device";
 
+	if (filter_device &&
+	    fnmatch(filter_device, test_name, 0) != 0)
+		return;
+
 	list_for_each(t, &suite->tests, node) {
 		if (strcmp(t->name, test_name) != 0)
 			continue;
@@ -305,24 +310,31 @@ litest_add_tcase(const char *suite_name,
 	    excluded == LITEST_DISABLE_DEVICE) {
 		litest_add_tcase_no_device(suite, func, range);
 	} else if (required != LITEST_ANY || excluded != LITEST_ANY) {
-		while (*dev) {
-			if (((*dev)->features & required) == required &&
-			    ((*dev)->features & excluded) == 0)
-				litest_add_tcase_for_device(suite,
-							    funcname,
-							    func,
-							    *dev,
-							    range);
-			dev++;
-		}
-	} else {
-		while (*dev) {
+		for (; *dev; dev++) {
+			if (filter_device &&
+			    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+				continue;
+			if (((*dev)->features & required) != required ||
+			    ((*dev)->features & excluded) != 0)
+				continue;
+
 			litest_add_tcase_for_device(suite,
 						    funcname,
 						    func,
 						    *dev,
 						    range);
-			dev++;
+		}
+	} else {
+		for (; *dev; dev++) {
+			if (filter_device &&
+			    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+				continue;
+
+			litest_add_tcase_for_device(suite,
+						    funcname,
+						    func,
+						    *dev,
+						    range);
 		}
 	}
 }
@@ -395,7 +407,11 @@ _litest_add_ranged_for_device(const char *name,
 	assert(type < LITEST_NO_DEVICE);
 
 	s = get_suite(name);
-	while (*dev) {
+	for (; *dev; dev++) {
+		if (filter_device &&
+		    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+			continue;
+
 		if ((*dev)->type == type) {
 			litest_add_tcase_for_device(s,
 						    funcname,
@@ -404,7 +420,6 @@ _litest_add_ranged_for_device(const char *name,
 						    range);
 			return;
 		}
-		dev++;
 	}
 
 	ck_abort_msg("Invalid test device type");
@@ -1900,11 +1915,13 @@ litest_parse_argv(int argc, char **argv)
 {
 	enum {
 		OPT_FILTER_TEST,
+		OPT_FILTER_DEVICE,
 		OPT_LIST,
 		OPT_VERBOSE,
 	};
 	static const struct option opts[] = {
 		{ "filter-test", 1, 0, OPT_FILTER_TEST },
+		{ "filter-device", 1, 0, OPT_FILTER_DEVICE },
 		{ "list", 0, 0, OPT_LIST },
 		{ "verbose", 0, 0, OPT_VERBOSE },
 		{ 0, 0, 0, 0}
@@ -1920,6 +1937,9 @@ litest_parse_argv(int argc, char **argv)
 		switch(c) {
 		case OPT_FILTER_TEST:
 			filter_test = optarg;
+			break;
+		case OPT_FILTER_DEVICE:
+			filter_device = optarg;
 			break;
 		case OPT_LIST:
 			litest_list_tests(&all_tests);

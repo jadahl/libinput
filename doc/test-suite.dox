@@ -69,6 +69,17 @@ basic shell-style function name matching. For example:
 $ ./test/test-touchpad --filter-test="*1fg_tap*"
 @endcode
 
+The `--filter-device` argument enables selective running of tests through
+basic shell-style device name matching. The device names matched are the
+litest-specific shortnames, see the output of `--list`. For example:
+
+@code
+$ ./test/test-touchpad --filter-device="synaptics*"
+@endcode
+
+The `--filter-device` argument can be combined with `--list` to show
+which devices will be affected.
+
 @section test-verbosity Controlling test output
 
 Each test supports the `--verbose` commandline option to enable debugging
