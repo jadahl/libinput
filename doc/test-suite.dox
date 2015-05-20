@@ -49,7 +49,8 @@ device:group:
 In the above example, the "device:wheel" suite is run for the "wheel only" and
 the "blackwidow" device. Both devices are automatically instantiated through
 uinput by litest. The "no device" entry signals that litest does not
-instantiate a uinput device for a specific test.
+instantiate a uinput device for a specific test (though the test itself may
+instantiate one).
 
 Check provides two filters through environment variables: <b>CK_RUN_SUITE</b>
 and <b>CK_RUN_CASE</b>. They may be used independently or combined to narrow
