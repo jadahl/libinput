@@ -77,8 +77,16 @@ litest-specific shortnames, see the output of `--list`. For example:
 $ ./test/test-touchpad --filter-device="synaptics*"
 @endcode
 
-The `--filter-device` argument can be combined with `--list` to show
-which devices will be affected.
+The `--filter-group` argument enables selective running of test groups
+through basic shell-style test group matching. The test groups matched are
+litest-specific test groups, see the output of `--list`. For example:
+
+@code
+$ ./test/test-touchpad --filter-group="touchpad:*hover*"
+@endcode
+
+The `--filter-device` and `--filter-group` arguments can be combined with
+`--list` to show which groups and devices will be affected.
 
 @section test-verbosity Controlling test output
 

@@ -53,6 +53,7 @@ static int in_debugger = -1;
 static int verbose = 0;
 const char *filter_test = NULL;
 const char *filter_device = NULL;
+const char *filter_group = NULL;
 
 struct test {
 	struct list node;
@@ -304,6 +305,10 @@ litest_add_tcase(const char *suite_name,
 	    fnmatch(filter_test, funcname, 0) != 0)
 		return;
 
+	if (filter_group &&
+	    fnmatch(filter_group, suite_name, 0) != 0)
+		return;
+
 	suite = get_suite(suite_name);
 
 	if (required == LITEST_DISABLE_DEVICE &&
@@ -405,6 +410,10 @@ _litest_add_ranged_for_device(const char *name,
 	struct litest_test_device **dev = devices;
 
 	assert(type < LITEST_NO_DEVICE);
+
+	if (filter_group &&
+	    fnmatch(filter_group, name, 0) != 0)
+		return;
 
 	s = get_suite(name);
 	for (; *dev; dev++) {
@@ -1916,12 +1925,14 @@ litest_parse_argv(int argc, char **argv)
 	enum {
 		OPT_FILTER_TEST,
 		OPT_FILTER_DEVICE,
+		OPT_FILTER_GROUP,
 		OPT_LIST,
 		OPT_VERBOSE,
 	};
 	static const struct option opts[] = {
 		{ "filter-test", 1, 0, OPT_FILTER_TEST },
 		{ "filter-device", 1, 0, OPT_FILTER_DEVICE },
+		{ "filter-group", 1, 0, OPT_FILTER_GROUP },
 		{ "list", 0, 0, OPT_LIST },
 		{ "verbose", 0, 0, OPT_VERBOSE },
 		{ 0, 0, 0, 0}
@@ -1940,6 +1951,9 @@ litest_parse_argv(int argc, char **argv)
 			break;
 		case OPT_FILTER_DEVICE:
 			filter_device = optarg;
+			break;
+		case OPT_FILTER_GROUP:
+			filter_group = optarg;
 			break;
 		case OPT_LIST:
 			litest_list_tests(&all_tests);
