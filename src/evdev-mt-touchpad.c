@@ -481,6 +481,22 @@ tp_palm_tap_is_palm(struct tp_dispatch *tp, struct tp_touch *t)
 	return false;
 }
 
+static int
+tp_palm_detect_dwt(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
+{
+	if (!tp->dwt.keyboard_active)
+		return 0;
+
+	if (t->state == TOUCH_BEGIN) {
+		t->palm.state = PALM_TYPING;
+		t->palm.time = time;
+		t->palm.first = t->point;
+		return 1;
+	}
+
+	return 0;
+}
+
 static void
 tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
@@ -489,13 +505,8 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	struct device_float_coords delta;
 	int dirs;
 
-	if (tp->dwt.keyboard_active &&
-	    t->state == TOUCH_BEGIN) {
-		t->palm.state = PALM_TYPING;
-		t->palm.time = time;
-		t->palm.first = t->point;
-		return;
-	}
+	if (tp_palm_detect_dwt(tp, t, time))
+	    return;
 
 	/* If labelled a touch as palm, we unlabel as palm when
 	   we move out of the palm edge zone within the timeout, provided
