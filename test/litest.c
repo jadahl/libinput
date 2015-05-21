@@ -30,6 +30,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include <getopt.h>
 #include <poll.h>
 #include <stdint.h>
@@ -51,6 +52,9 @@
 
 static int in_debugger = -1;
 static int verbose = 0;
+const char *filter_test = NULL;
+const char *filter_device = NULL;
+const char *filter_group = NULL;
 
 #ifdef HAVE_LIBUNWIND
 #define UNW_LOCAL_ONLY
@@ -416,6 +420,7 @@ litest_drop_udev_rules(void)
 
 static void
 litest_add_tcase_for_device(struct suite *suite,
+			    const char *funcname,
 			    void *func,
 			    const struct litest_test_device *dev,
 			    const struct range *range)
@@ -463,6 +468,10 @@ litest_add_tcase_no_device(struct suite *suite,
 	struct test *t;
 	const char *test_name = "no device";
 
+	if (filter_device &&
+	    fnmatch(filter_device, test_name, 0) != 0)
+		return;
+
 	list_for_each(t, &suite->tests, node) {
 		if (strcmp(t->name, test_name) != 0)
 			continue;
@@ -481,53 +490,6 @@ litest_add_tcase_no_device(struct suite *suite,
 	list_insert(&suite->tests, &t->node);
 	tcase_add_test(t->tc, func);
 	suite_add_tcase(suite->suite, t->tc);
-}
-
-static void
-litest_add_tcase(struct suite *suite, void *func,
-		 enum litest_device_feature required,
-		 enum litest_device_feature excluded,
-		 const struct range *range)
-{
-	struct litest_test_device **dev = devices;
-
-	assert(required >= LITEST_DISABLE_DEVICE);
-	assert(excluded >= LITEST_DISABLE_DEVICE);
-
-	if (required == LITEST_DISABLE_DEVICE &&
-	    excluded == LITEST_DISABLE_DEVICE) {
-		litest_add_tcase_no_device(suite, func, range);
-	} else if (required != LITEST_ANY || excluded != LITEST_ANY) {
-		while (*dev) {
-			if (((*dev)->features & required) == required &&
-			    ((*dev)->features & excluded) == 0)
-				litest_add_tcase_for_device(suite, func, *dev, range);
-			dev++;
-		}
-	} else {
-		while (*dev) {
-			litest_add_tcase_for_device(suite, func, *dev, range);
-			dev++;
-		}
-	}
-}
-
-void
-litest_add_no_device(const char *name, void *func)
-{
-	litest_add(name, func, LITEST_DISABLE_DEVICE, LITEST_DISABLE_DEVICE);
-}
-
-void
-litest_add_ranged_no_device(const char *name,
-			    void *func,
-			    const struct range *range)
-{
-	litest_add_ranged(name,
-			  func,
-			  LITEST_DISABLE_DEVICE,
-			  LITEST_DISABLE_DEVICE,
-			  range);
 }
 
 static struct suite *
@@ -554,51 +516,148 @@ get_suite(const char *name)
 	return s;
 }
 
-void
-litest_add(const char *name,
-	   void *func,
-	   enum litest_device_feature required,
-	   enum litest_device_feature excluded)
+static void
+litest_add_tcase(const char *suite_name,
+		 const char *funcname,
+		 void *func,
+		 enum litest_device_feature required,
+		 enum litest_device_feature excluded,
+		 const struct range *range)
 {
-	litest_add_ranged(name, func, required, excluded, NULL);
+	struct litest_test_device **dev = devices;
+	struct suite *suite;
+
+	assert(required >= LITEST_DISABLE_DEVICE);
+	assert(excluded >= LITEST_DISABLE_DEVICE);
+
+	if (filter_test &&
+	    fnmatch(filter_test, funcname, 0) != 0)
+		return;
+
+	if (filter_group &&
+	    fnmatch(filter_group, suite_name, 0) != 0)
+		return;
+
+	suite = get_suite(suite_name);
+
+	if (required == LITEST_DISABLE_DEVICE &&
+	    excluded == LITEST_DISABLE_DEVICE) {
+		litest_add_tcase_no_device(suite, func, range);
+	} else if (required != LITEST_ANY || excluded != LITEST_ANY) {
+		for (; *dev; dev++) {
+			if (filter_device &&
+			    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+				continue;
+			if (((*dev)->features & required) != required ||
+			    ((*dev)->features & excluded) != 0)
+				continue;
+
+			litest_add_tcase_for_device(suite,
+						    funcname,
+						    func,
+						    *dev,
+						    range);
+		}
+	} else {
+		for (; *dev; dev++) {
+			if (filter_device &&
+			    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+				continue;
+
+			litest_add_tcase_for_device(suite,
+						    funcname,
+						    func,
+						    *dev,
+						    range);
+		}
+	}
 }
 
 void
-litest_add_ranged(const char *name,
-		  void *func,
-		  enum litest_device_feature required,
-		  enum litest_device_feature excluded,
-		  const struct range *range)
+_litest_add_no_device(const char *name, const char *funcname, void *func)
 {
-	litest_add_tcase(get_suite(name), func, required, excluded, range);
+	_litest_add(name, funcname, func, LITEST_DISABLE_DEVICE, LITEST_DISABLE_DEVICE);
 }
 
 void
-litest_add_for_device(const char *name,
-		      void *func,
-		      enum litest_device_type type)
-{
-	litest_add_ranged_for_device(name, func, type, NULL);
-}
-
-void
-litest_add_ranged_for_device(const char *name,
+_litest_add_ranged_no_device(const char *name,
+			     const char *funcname,
 			     void *func,
-			     enum litest_device_type type,
 			     const struct range *range)
+{
+	_litest_add_ranged(name,
+			   funcname,
+			   func,
+			   LITEST_DISABLE_DEVICE,
+			   LITEST_DISABLE_DEVICE,
+			   range);
+}
+
+void
+_litest_add(const char *name,
+	    const char *funcname,
+	    void *func,
+	    enum litest_device_feature required,
+	    enum litest_device_feature excluded)
+{
+	_litest_add_ranged(name,
+			   funcname,
+			   func,
+			   required,
+			   excluded,
+			   NULL);
+}
+
+void
+_litest_add_ranged(const char *name,
+		   const char *funcname,
+		   void *func,
+		   enum litest_device_feature required,
+		   enum litest_device_feature excluded,
+		   const struct range *range)
+{
+	litest_add_tcase(name, funcname, func, required, excluded, range);
+}
+
+void
+_litest_add_for_device(const char *name,
+		       const char *funcname,
+		       void *func,
+		       enum litest_device_type type)
+{
+	_litest_add_ranged_for_device(name, funcname, func, type, NULL);
+}
+
+void
+_litest_add_ranged_for_device(const char *name,
+			      const char *funcname,
+			      void *func,
+			      enum litest_device_type type,
+			      const struct range *range)
 {
 	struct suite *s;
 	struct litest_test_device **dev = devices;
 
 	assert(type < LITEST_NO_DEVICE);
 
+	if (filter_group &&
+	    fnmatch(filter_group, name, 0) != 0)
+		return;
+
 	s = get_suite(name);
-	while (*dev) {
+	for (; *dev; dev++) {
+		if (filter_device &&
+		    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+			continue;
+
 		if ((*dev)->type == type) {
-			litest_add_tcase_for_device(s, func, *dev, range);
+			litest_add_tcase_for_device(s,
+						    funcname,
+						    func,
+						    *dev,
+						    range);
 			return;
 		}
-		dev++;
 	}
 
 	litest_abort_msg("Invalid test device type");
@@ -685,13 +744,7 @@ struct libinput_interface interface = {
 	.close_restricted = close_restricted,
 };
 
-static const struct option opts[] = {
-	{ "list", 0, 0, 'l' },
-	{ "verbose", 0, 0, 'v' },
-	{ 0, 0, 0, 0}
-};
-
-int
+static inline int
 litest_run(int argc, char **argv)
 {
 	struct suite *s, *snext;
@@ -709,27 +762,6 @@ litest_run(int argc, char **argv)
 			sr = srunner_create(s->suite);
 		else
 			srunner_add_suite(sr, s->suite);
-	}
-
-	while(1) {
-		int c;
-		int option_index = 0;
-
-		c = getopt_long(argc, argv, "", opts, &option_index);
-		if (c == -1)
-			break;
-		switch(c) {
-			case 'l':
-				litest_list_tests(&all_tests);
-				return 0;
-			case 'v':
-				verbose = 1;
-				break;
-			default:
-				fprintf(stderr, "usage: %s [--list]\n", argv[0]);
-				return 1;
-
-		}
 	}
 
 	if (getenv("LITEST_VERBOSE"))
@@ -2112,3 +2144,67 @@ litest_semi_mt_touch_up(struct litest_device *d,
 
 	litest_event(d, EV_SYN, SYN_REPORT, 0);
 }
+
+static inline int
+litest_parse_argv(int argc, char **argv)
+{
+	enum {
+		OPT_FILTER_TEST,
+		OPT_FILTER_DEVICE,
+		OPT_FILTER_GROUP,
+		OPT_LIST,
+		OPT_VERBOSE,
+	};
+	static const struct option opts[] = {
+		{ "filter-test", 1, 0, OPT_FILTER_TEST },
+		{ "filter-device", 1, 0, OPT_FILTER_DEVICE },
+		{ "filter-group", 1, 0, OPT_FILTER_GROUP },
+		{ "list", 0, 0, OPT_LIST },
+		{ "verbose", 0, 0, OPT_VERBOSE },
+		{ 0, 0, 0, 0}
+	};
+
+	while(1) {
+		int c;
+		int option_index = 0;
+
+		c = getopt_long(argc, argv, "", opts, &option_index);
+		if (c == -1)
+			break;
+		switch(c) {
+		case OPT_FILTER_TEST:
+			filter_test = optarg;
+			break;
+		case OPT_FILTER_DEVICE:
+			filter_device = optarg;
+			break;
+		case OPT_FILTER_GROUP:
+			filter_group = optarg;
+			break;
+		case OPT_LIST:
+			litest_list_tests(&all_tests);
+			exit(0);
+		case OPT_VERBOSE:
+			verbose = 1;
+			break;
+		default:
+			fprintf(stderr, "usage: %s [--list]\n", argv[0]);
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+#ifndef LITEST_NO_MAIN
+int
+main(int argc, char **argv)
+{
+	if (litest_parse_argv(argc, argv) != 0)
+		return EXIT_FAILURE;
+
+	litest_setup_tests();
+
+	return litest_run(argc, argv);
+}
+#endif

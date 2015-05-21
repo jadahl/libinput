@@ -139,12 +139,11 @@ START_TEST(log_priority)
 }
 END_TEST
 
-int main (int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	litest_add_no_device("log:defaults", log_default_priority);
 	litest_add_no_device("log:logging", log_handler_invoked);
 	litest_add_no_device("log:logging", log_handler_NULL);
 	litest_add_no_device("log:logging", log_priority);
-
-	return litest_run(argc, argv);
 }

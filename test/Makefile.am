@@ -110,7 +110,7 @@ test_device_LDADD = $(TEST_LIBS)
 test_device_LDFLAGS = -no-install
 
 test_litest_selftest_SOURCES = litest-selftest.c litest.c litest-int.h litest.h
-test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING
+test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING -DLITEST_NO_MAIN
 test_litest_selftest_LDADD = $(TEST_LIBS)
 test_litest_selftest_LDFLAGS = -no-install
 

@@ -4590,7 +4590,8 @@ START_TEST(touchpad_initial_state)
 }
 END_TEST
 
-int main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	struct range multitap_range = {3, 8};
 	struct range axis_range = {ABS_X, ABS_Y + 1};
@@ -4737,6 +4738,4 @@ int main(int argc, char **argv)
 	litest_add_for_device("touchpad:trackpoint", touchpad_trackpoint_no_trackpoint, LITEST_SYNAPTICS_TRACKPOINT_BUTTONS);
 
 	litest_add_ranged("touchpad:state", touchpad_initial_state, LITEST_TOUCHPAD, LITEST_ANY, &axis_range);
-
-	return litest_run(argc, argv);
 }

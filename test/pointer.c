@@ -1318,7 +1318,8 @@ START_TEST(middlebutton_default_disabled)
 }
 END_TEST
 
-int main (int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	struct range axis_range = {ABS_X, ABS_Y + 1};
 
@@ -1360,6 +1361,4 @@ int main (int argc, char **argv)
 	litest_add("pointer:middlebutton", middlebutton_default_disabled, LITEST_ANY, LITEST_BUTTON);
 
 	litest_add_ranged("pointer:state", pointer_absolute_initial_state, LITEST_ABSOLUTE, LITEST_ANY, &axis_range);
-
-	return litest_run(argc, argv);
 }

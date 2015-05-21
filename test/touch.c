@@ -650,8 +650,8 @@ START_TEST(touch_initial_state)
 }
 END_TEST
 
-int
-main(int argc, char **argv)
+void
+litest_setup_tests(void)
 {
 	struct range axes = { ABS_X, ABS_Y + 1};
 
@@ -676,6 +676,4 @@ main(int argc, char **argv)
 	litest_add("touch:protocol a", touch_protocol_a_2fg_touch, LITEST_PROTOCOL_A, LITEST_ANY);
 
 	litest_add_ranged("touch:state", touch_initial_state, LITEST_TOUCH, LITEST_PROTOCOL_A, &axes);
-
-	return litest_run(argc, argv);
 }
