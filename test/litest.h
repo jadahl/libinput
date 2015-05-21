@@ -56,7 +56,7 @@
 	do { \
 		if ((cond) == NULL) \
 			litest_fail_condition(__FILE__, __LINE__, __func__, \
-					      #cond, " expected to be not NULL"); \
+					      #cond, " expected to be not NULL\n"); \
 	} while(0)
 
 #define litest_assert_comparison_int_(a_, op_, b_) \
