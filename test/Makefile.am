@@ -38,6 +38,11 @@ liblitest_la_SOURCES = \
 	litest-vmware-virtual-usb-mouse.c \
 	litest.c
 liblitest_la_LIBADD = $(top_builddir)/src/libinput-util.la
+liblitest_la_CFLAGS = $(AM_CFLAGS)
+if HAVE_LIBUNWIND
+liblitest_la_LIBADD += $(LIBUNWIND_LIBS) -ldl
+liblitest_la_CFLAGS += $(LIBUNWIND_CFLAGS)
+endif
 
 run_tests = \
 	test-touchpad \
@@ -49,7 +54,9 @@ run_tests = \
 	test-path \
 	test-log \
 	test-misc \
-	test-keyboard
+	test-keyboard \
+	test-litest-selftest
+
 build_tests = \
 	test-build-cxx \
 	test-build-linker \
@@ -102,6 +109,11 @@ test_device_SOURCES = device.c
 test_device_LDADD = $(TEST_LIBS)
 test_device_LDFLAGS = -no-install
 
+test_litest_selftest_SOURCES = litest-selftest.c litest.c litest-int.h litest.h
+test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING
+test_litest_selftest_LDADD = $(TEST_LIBS)
+test_litest_selftest_LDFLAGS = -no-install
+
 # build-test only
 test_build_pedantic_c99_SOURCES = build-pedantic.c
 test_build_pedantic_c99_CFLAGS = -std=c99 -pedantic -Werror
@@ -127,7 +139,7 @@ VALGRIND_FLAGS=--leak-check=full \
 	       --suppressions=$(srcdir)/valgrind.suppressions
 
 valgrind:
-	$(MAKE) check-TESTS LOG_COMPILER="$(VALGRIND)" LOG_FLAGS="$(VALGRIND_FLAGS)" CK_FORK=no
+	$(MAKE) check-TESTS LOG_COMPILER="$(VALGRIND)" LOG_FLAGS="$(VALGRIND_FLAGS)" CK_FORK=no USING_VALGRIND=yes
 
 check: valgrind
 

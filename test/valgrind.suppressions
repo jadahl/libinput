@@ -13,3 +13,11 @@
    ...
    fun:mtdev_put_event
 }
+{
+   libunwind:msync_uninitialized_bytes
+   Memcheck:Param
+   msync(start)
+   fun:__msync_nocancel
+   ...
+   fun:litest_backtrace
+}
