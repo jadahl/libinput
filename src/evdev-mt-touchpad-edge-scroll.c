@@ -361,6 +361,9 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 		if (!t->dirty)
 			continue;
 
+		if (t->palm.state != PALM_NONE)
+			continue;
+
 		switch (t->scroll.edge) {
 			case EDGE_NONE:
 				if (t->scroll.direction != -1) {

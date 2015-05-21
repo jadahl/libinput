@@ -287,6 +287,8 @@ struct tp_dispatch {
 		struct libinput_event_listener keyboard_listener;
 		struct libinput_timer keyboard_timer;
 		struct evdev_device *keyboard;
+
+		uint64_t keyboard_last_press_time;
 	} dwt;
 };
 

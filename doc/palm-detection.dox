@@ -74,8 +74,9 @@ Notable behaviors of libinput's disable-while-typing feature:
 - Some keys do not trigger the timeout, specifically some modifier keys 
   (Ctrl, Alt, Shift, and Fn). Actions such as Ctrl + click thus stay
   responsive.
-- Touches started while the touchpad is disabled do not control the cursor,
-  it is thus possible to rest the palm on the touchpad while typing.
+- Touches started while typing do not control the cursor even after typing
+  has stopped, it is thus possible to rest the palm on the touchpad while
+  typing.
 - Physical buttons work even while the touchpad is disabled. This includes
   software-emulated buttons.
 

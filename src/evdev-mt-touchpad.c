@@ -237,6 +237,7 @@ tp_end_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	t->state = TOUCH_END;
 	t->pinned.is_pinned = false;
 	t->millis = time;
+	t->palm.time = 0;
 	assert(tp->nfingers_down >= 1);
 	tp->nfingers_down--;
 	tp->queued |= TOUCHPAD_EVENT_MOTION;
@@ -487,14 +488,28 @@ tp_palm_tap_is_palm(struct tp_dispatch *tp, struct tp_touch *t)
 static int
 tp_palm_detect_dwt(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	if (!tp->dwt.keyboard_active)
-		return 0;
-
-	if (t->state == TOUCH_BEGIN) {
+	if (tp->dwt.keyboard_active &&
+	    t->state == TOUCH_BEGIN) {
 		t->palm.state = PALM_TYPING;
 		t->palm.time = time;
 		t->palm.first = t->point;
 		return 1;
+	} else if (!tp->dwt.keyboard_active &&
+		   t->state == TOUCH_UPDATE &&
+		   t->palm.state == PALM_TYPING)
+	{
+		/* If a touch has started before the first or after the last
+		   key press, release it on timeout. Benefit: a palm rested
+		   while typing on the touchpad will be ignored, but a touch
+		   started once we stop typing will be able to control the
+		   pointer (alas not tap, etc.).
+		   */
+		if (t->palm.time == 0 ||
+		    t->palm.time > tp->dwt.keyboard_last_press_time) {
+			t->palm.state = PALM_NONE;
+			log_debug(tp_libinput_context(tp),
+				  "palm: touch released, timeout after typing\n");
+		}
 	}
 
 	return 0;
@@ -1002,6 +1017,7 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 		timeout = DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2;
 	}
 
+	tp->dwt.keyboard_last_press_time = time;
 	libinput_timer_set(&tp->dwt.keyboard_timer,
 			   time + timeout);
 }
