@@ -475,8 +475,11 @@ tp_palm_tap_is_palm(struct tp_dispatch *tp, struct tp_touch *t)
 
 	/* We're inside the left/right palm edge and in the northern half of
 	 * the touchpad - this tap is a palm */
-	if (t->point.y < tp->palm.vert_center)
+	if (t->point.y < tp->palm.vert_center) {
+		log_debug(tp_libinput_context(tp),
+			  "palm: palm-tap detected\n");
 		return true;
+	}
 
 	return false;
 }
@@ -506,7 +509,7 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	int dirs;
 
 	if (tp_palm_detect_dwt(tp, t, time))
-	    return;
+	    goto out;
 
 	/* If labelled a touch as palm, we unlabel as palm when
 	   we move out of the palm edge zone within the timeout, provided
@@ -520,6 +523,8 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 						tp_normalize_delta(tp, delta));
 			if ((dirs & DIRECTIONS) && !(dirs & ~DIRECTIONS)) {
 				t->palm.state = PALM_NONE;
+				log_debug(tp_libinput_context(tp),
+					  "palm: touch released, out of edge zone\n");
 			}
 		}
 		return;
@@ -541,6 +546,11 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	t->palm.state = PALM_EDGE;
 	t->palm.time = time;
 	t->palm.first = t->point;
+
+out:
+	log_debug(tp_libinput_context(tp),
+		  "palm: palm detected (%s)\n",
+		  t->palm.state == PALM_EDGE ? "edge" : "typing");
 }
 
 static void
@@ -923,7 +933,10 @@ tp_keyboard_timeout(uint64_t now, void *data)
 	struct tp_dispatch *tp = data;
 
 	tp_tap_resume(tp, now);
+
 	tp->dwt.keyboard_active = false;
+
+	log_debug(tp_libinput_context(tp), "palm: keyboard timeout\n");
 }
 
 static inline bool
@@ -1048,6 +1061,11 @@ tp_interface_device_added(struct evdev_device *device,
 	if (added_device->tags & EVDEV_TAG_KEYBOARD &&
 	    tp->dwt.keyboard == NULL &&
 	    tp_want_dwt(device, added_device)) {
+		log_debug(tp_libinput_context(tp),
+			  "palm: dwt activated with %s<->%s\n",
+			  device->devname,
+			  added_device->devname);
+
 		libinput_device_add_event_listener(&added_device->base,
 					&tp->dwt.keyboard_listener,
 					tp_keyboard_event, tp);
