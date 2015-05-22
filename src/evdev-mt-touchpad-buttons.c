@@ -392,7 +392,7 @@ tp_button_handle_event(struct tp_dispatch *tp,
 		       enum button_event event,
 		       uint64_t time)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 	enum button_state current = t->button.state;
 
 	switch(t->button.state) {
@@ -478,7 +478,7 @@ tp_process_button(struct tp_dispatch *tp,
 		  const struct input_event *e,
 		  uint64_t time)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 	uint32_t mask = 1 << (e->code - BTN_LEFT);
 
 	/* Ignore other buttons on clickpads */
@@ -680,7 +680,7 @@ int
 tp_init_buttons(struct tp_dispatch *tp,
 		struct evdev_device *device)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 	struct tp_touch *t;
 	int width, height;
 	double diagonal;
@@ -731,7 +731,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 	tp_for_each_touch(tp, t) {
 		t->button.state = BUTTON_STATE_NONE;
 		libinput_timer_init(&t->button.timer,
-				    tp->device->base.seat->libinput,
+				    tp_libinput_context(tp),
 				    tp_button_handle_timeout, t);
 	}
 

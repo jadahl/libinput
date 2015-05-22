@@ -121,7 +121,7 @@ tp_edge_scroll_handle_none(struct tp_dispatch *tp,
 			   struct tp_touch *t,
 			   enum scroll_event event)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 
 	switch (event) {
 	case SCROLL_EVENT_TOUCH:
@@ -149,7 +149,7 @@ tp_edge_scroll_handle_edge_new(struct tp_dispatch *tp,
 			       struct tp_touch *t,
 			       enum scroll_event event)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 
 	switch (event) {
 	case SCROLL_EVENT_TOUCH:
@@ -178,7 +178,7 @@ tp_edge_scroll_handle_edge(struct tp_dispatch *tp,
 			   struct tp_touch *t,
 			   enum scroll_event event)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 
 	switch (event) {
 	case SCROLL_EVENT_TOUCH:
@@ -209,7 +209,7 @@ tp_edge_scroll_handle_area(struct tp_dispatch *tp,
 			   struct tp_touch *t,
 			   enum scroll_event event)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 
 	switch (event) {
 	case SCROLL_EVENT_TOUCH:
@@ -232,7 +232,7 @@ tp_edge_scroll_handle_event(struct tp_dispatch *tp,
 			    struct tp_touch *t,
 			    enum scroll_event event)
 {
-	struct libinput *libinput = tp->device->base.seat->libinput;
+	struct libinput *libinput = tp_libinput_context(tp);
 	enum tp_edge_scroll_touch_state current = t->scroll.edge_state;
 
 	switch (current) {
@@ -301,7 +301,7 @@ tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device)
 	tp_for_each_touch(tp, t) {
 		t->scroll.direction = -1;
 		libinput_timer_init(&t->scroll.timer,
-				    device->base.seat->libinput,
+				    tp_libinput_context(tp),
 				    tp_edge_scroll_handle_timeout, t);
 	}
 

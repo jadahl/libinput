@@ -810,7 +810,7 @@ tp_release_fake_touches(struct tp_dispatch *tp)
 static void
 tp_clear_state(struct tp_dispatch *tp)
 {
-	uint64_t now = libinput_now(tp->device->base.seat->libinput);
+	uint64_t now = libinput_now(tp_libinput_context(tp));
 	struct tp_touch *t;
 
 	/* Unroll the touchpad state.
@@ -1251,7 +1251,7 @@ tp_scroll_config_scroll_method_set_method(struct libinput_device *device,
 {
 	struct evdev_device *evdev = (struct evdev_device*)device;
 	struct tp_dispatch *tp = (struct tp_dispatch*)evdev->dispatch;
-	uint64_t time = libinput_now(device->seat->libinput);
+	uint64_t time = libinput_now(tp_libinput_context(tp));
 
 	if (method == tp->scroll.method)
 		return LIBINPUT_CONFIG_STATUS_SUCCESS;
@@ -1352,11 +1352,11 @@ tp_init_sendevents(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
 	libinput_timer_init(&tp->sendevents.trackpoint_timer,
-			    tp->device->base.seat->libinput,
+			    tp_libinput_context(tp),
 			    tp_trackpoint_timeout, tp);
 
 	libinput_timer_init(&tp->dwt.keyboard_timer,
-			    tp->device->base.seat->libinput,
+			    tp_libinput_context(tp),
 			    tp_keyboard_timeout, tp);
 	return 0;
 }

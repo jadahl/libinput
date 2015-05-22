@@ -295,6 +295,12 @@ struct tp_dispatch {
 #define tp_for_each_touch(_tp, _t) \
 	for (unsigned int _i = 0; _i < (_tp)->ntouches && (_t = &(_tp)->touches[_i]); _i++)
 
+static inline struct libinput*
+tp_libinput_context(struct tp_dispatch *tp)
+{
+	return tp->device->base.seat->libinput;
+}
+
 static inline struct normalized_coords
 tp_normalize_delta(struct tp_dispatch *tp, struct device_float_coords delta)
 {
