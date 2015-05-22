@@ -1006,16 +1006,18 @@ tp_interface_device_added(struct evdev_device *device,
 					tp_trackpoint_event, tp);
 	}
 
-	/* FIXME: detect external keyboard better */
-	kbd_is_internal = bus_tp != BUS_BLUETOOTH &&
-			  bus_kbd == bus_tp;
-	if (tp_is_internal && kbd_is_internal &&
-	    tp->dwt.keyboard == NULL) {
-		libinput_device_add_event_listener(&added_device->base,
-					&tp->dwt.keyboard_listener,
-					tp_keyboard_event, tp);
-		tp->dwt.keyboard = added_device;
-		tp->dwt.keyboard_active = false;
+	if (added_device->tags & EVDEV_TAG_KEYBOARD) {
+		/* FIXME: detect external keyboard better */
+		kbd_is_internal = bus_tp != BUS_BLUETOOTH &&
+				  bus_kbd == bus_tp;
+		if (tp_is_internal && kbd_is_internal &&
+		    tp->dwt.keyboard == NULL) {
+			libinput_device_add_event_listener(&added_device->base,
+						&tp->dwt.keyboard_listener,
+						tp_keyboard_event, tp);
+			tp->dwt.keyboard = added_device;
+			tp->dwt.keyboard_active = false;
+		}
 	}
 
 	if (tp->sendevents.current_mode !=

@@ -734,6 +734,25 @@ evdev_tag_trackpoint(struct evdev_device *device,
 }
 
 static void
+evdev_tag_keyboard(struct evdev_device *device,
+		   struct udev_device *udev_device)
+{
+	int code;
+
+	if (!libevdev_has_event_type(device->evdev, EV_KEY))
+		return;
+
+	for (code = KEY_Q; code <= KEY_P; code++) {
+		if (!libevdev_has_event_code(device->evdev,
+					     EV_KEY,
+					     code))
+			return;
+	}
+
+	device->tags |= EVDEV_TAG_KEYBOARD;
+}
+
+static void
 fallback_process(struct evdev_dispatch *dispatch,
 		 struct evdev_device *device,
 		 struct input_event *event,
@@ -831,6 +850,7 @@ fallback_tag_device(struct evdev_device *device,
 {
 	evdev_tag_external_mouse(device, udev_device);
 	evdev_tag_trackpoint(device, udev_device);
+	evdev_tag_keyboard(device, udev_device);
 }
 
 static int
