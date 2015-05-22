@@ -982,15 +982,43 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 			   time + timeout);
 }
 
+static bool
+tp_want_dwt(struct evdev_device *touchpad,
+	    struct evdev_device *keyboard)
+{
+	unsigned int bus_tp = libevdev_get_id_bustype(touchpad->evdev),
+		     bus_kbd = libevdev_get_id_bustype(keyboard->evdev);
+
+	if (bus_tp == BUS_BLUETOOTH || bus_kbd == BUS_BLUETOOTH)
+		return false;
+
+	/* evemu will set the right bus type */
+	if (bus_tp == BUS_VIRTUAL || bus_kbd == BUS_VIRTUAL)
+		return false;
+
+	/* If the touchpad is on serio, the keyboard is too, so ignore any
+	   other devices */
+	if (bus_tp == BUS_I8042 && bus_kbd != bus_tp)
+		return false;
+
+	/* Wacom makes touchpads, but not internal ones */
+	if (libevdev_get_id_vendor(touchpad->evdev) == VENDOR_ID_WACOM)
+		return false;
+
+	/* everything else we don't really know, so we have to assume
+	   they go together */
+
+	return true;
+}
+
 static void
 tp_interface_device_added(struct evdev_device *device,
 			  struct evdev_device *added_device)
 {
 	struct tp_dispatch *tp = (struct tp_dispatch*)device->dispatch;
 	unsigned int bus_tp = libevdev_get_id_bustype(device->evdev),
-		     bus_trp = libevdev_get_id_bustype(added_device->evdev),
-		     bus_kbd = libevdev_get_id_bustype(added_device->evdev);
-	bool tp_is_internal, trp_is_internal, kbd_is_internal;
+		     bus_trp = libevdev_get_id_bustype(added_device->evdev);
+	bool tp_is_internal, trp_is_internal;
 
 	tp_is_internal = bus_tp != BUS_USB && bus_tp != BUS_BLUETOOTH;
 	trp_is_internal = bus_trp != BUS_USB && bus_trp != BUS_BLUETOOTH;
@@ -1006,18 +1034,14 @@ tp_interface_device_added(struct evdev_device *device,
 					tp_trackpoint_event, tp);
 	}
 
-	if (added_device->tags & EVDEV_TAG_KEYBOARD) {
-		/* FIXME: detect external keyboard better */
-		kbd_is_internal = bus_tp != BUS_BLUETOOTH &&
-				  bus_kbd == bus_tp;
-		if (tp_is_internal && kbd_is_internal &&
-		    tp->dwt.keyboard == NULL) {
-			libinput_device_add_event_listener(&added_device->base,
-						&tp->dwt.keyboard_listener,
-						tp_keyboard_event, tp);
-			tp->dwt.keyboard = added_device;
-			tp->dwt.keyboard_active = false;
-		}
+	if (added_device->tags & EVDEV_TAG_KEYBOARD &&
+	    tp->dwt.keyboard == NULL &&
+	    tp_want_dwt(device, added_device)) {
+		libinput_device_add_event_listener(&added_device->base,
+					&tp->dwt.keyboard_listener,
+					tp_keyboard_event, tp);
+		tp->dwt.keyboard = added_device;
+		tp->dwt.keyboard_active = false;
 	}
 
 	if (tp->sendevents.current_mode !=

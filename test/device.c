@@ -69,7 +69,7 @@ START_TEST(device_sendevents_config_touchpad)
 	expected = LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
 
 	/* The wacom devices in the test suite are external */
-	if (libevdev_get_id_vendor(dev->evdev) != 0x56a) /* wacom */
+	if (libevdev_get_id_vendor(dev->evdev) != VENDOR_ID_WACOM)
 		expected |=
 			LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE;
 

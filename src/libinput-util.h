@@ -30,6 +30,9 @@
 
 #include "libinput.h"
 
+#define VENDOR_ID_APPLE 0x5ac
+#define VENDOR_ID_WACOM 0x56a
+
 void
 set_logging_enabled(int enabled);
 

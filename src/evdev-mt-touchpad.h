@@ -32,8 +32,6 @@
 #define TOUCHPAD_HISTORY_LENGTH 4
 #define TOUCHPAD_MIN_SAMPLES 4
 
-#define VENDOR_ID_APPLE 0x5ac
-
 /* Convert mm to a distance normalized to DEFAULT_MOUSE_DPI */
 #define TP_MM_TO_DPI_NORMALIZED(mm) (DEFAULT_MOUSE_DPI/25.4 * mm)
 
