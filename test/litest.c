@@ -755,6 +755,12 @@ litest_run(int argc, char **argv)
 	int failed;
 	SRunner *sr = NULL;
 
+	if (list_empty(&all_tests)) {
+		fprintf(stderr,
+			"Error: filters are too strict, no tests to run.\n");
+		return 1;
+	}
+
 	if (in_debugger == -1) {
 		in_debugger = is_debugger_attached();
 		if (in_debugger)
@@ -2204,6 +2210,8 @@ litest_parse_argv(int argc, char **argv)
 int
 main(int argc, char **argv)
 {
+	list_init(&all_tests);
+
 	if (litest_parse_argv(argc, argv) != 0)
 		return EXIT_FAILURE;
 
