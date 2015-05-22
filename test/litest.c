@@ -640,6 +640,10 @@ _litest_add_ranged_for_device(const char *name,
 
 	assert(type < LITEST_NO_DEVICE);
 
+	if (filter_test &&
+	    fnmatch(filter_test, funcname, 0) != 0)
+		return;
+
 	if (filter_group &&
 	    fnmatch(filter_group, name, 0) != 0)
 		return;
