@@ -915,6 +915,37 @@ tp_keyboard_timeout(uint64_t now, void *data)
 	tp->dwt.keyboard_active = false;
 }
 
+static inline bool
+tp_key_ignore_for_dwt(unsigned int keycode)
+{
+	switch (keycode) {
+	/* Ignore modifiers to be responsive to ctrl-click, alt-tab, etc. */
+	case KEY_LEFTCTRL:
+	case KEY_RIGHTCTRL:
+	case KEY_LEFTALT:
+	case KEY_RIGHTALT:
+	case KEY_LEFTSHIFT:
+	case KEY_RIGHTSHIFT:
+	case KEY_FN:
+	case KEY_CAPSLOCK:
+	case KEY_TAB:
+	case KEY_COMPOSE:
+	case KEY_RIGHTMETA:
+	case KEY_LEFTMETA:
+		return true;
+	default:
+		break;
+	}
+
+	/* Ignore keys not part of the "typewriter set", i.e. F-keys,
+	 * multimedia keys, numpad, etc.
+	 */
+	if (keycode >= KEY_F1)
+		return true;
+
+	return false;
+}
+
 static void
 tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 {
@@ -934,18 +965,8 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 
 	/* modifier keys don't trigger disable-while-typing so things like
 	 * ctrl+zoom or ctrl+click are possible */
-	switch (libinput_event_keyboard_get_key(kbdev)) {
-		case KEY_LEFTCTRL:
-		case KEY_RIGHTCTRL:
-		case KEY_LEFTALT:
-		case KEY_RIGHTALT:
-		case KEY_LEFTSHIFT:
-		case KEY_RIGHTSHIFT:
-		case KEY_FN:
-			return;
-	default:
-		break;
-	}
+	if (tp_key_ignore_for_dwt(libinput_event_keyboard_get_key(kbdev)))
+		return;
 
 	if (!tp->dwt.keyboard_active) {
 		tp_edge_scroll_stop_events(tp, time);
