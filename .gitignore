@@ -3,6 +3,13 @@
 *.la
 *.lo
 *.swp
+*~
+*.sig
+*.tar.*
+*.announce
+*.patch
+*.rej
+*.trs
 Makefile
 Makefile.in
 aclocal.m4
