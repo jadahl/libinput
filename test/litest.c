@@ -697,20 +697,6 @@ is_debugger_attached(void)
 }
 
 static void
-litest_list_tests(struct list *tests)
-{
-	struct suite *s;
-
-	list_for_each(s, tests, node) {
-		struct test *t;
-		printf("%s:\n", s->name);
-		list_for_each(t, &s->tests, node) {
-			printf("	%s\n", t->name);
-		}
-	}
-}
-
-static void
 litest_log_handler(struct libinput *libinput,
 		   enum libinput_log_priority pri,
 		   const char *format,
@@ -2155,7 +2141,13 @@ litest_semi_mt_touch_up(struct litest_device *d,
 	litest_event(d, EV_SYN, SYN_REPORT, 0);
 }
 
-static inline int
+enum litest_mode {
+	LITEST_MODE_ERROR,
+	LITEST_MODE_TEST,
+	LITEST_MODE_LIST,
+};
+
+static inline enum litest_mode
 litest_parse_argv(int argc, char **argv)
 {
 	enum {
@@ -2192,30 +2184,51 @@ litest_parse_argv(int argc, char **argv)
 			filter_group = optarg;
 			break;
 		case OPT_LIST:
-			litest_list_tests(&all_tests);
-			exit(0);
+			return LITEST_MODE_LIST;
 		case OPT_VERBOSE:
 			verbose = 1;
 			break;
 		default:
 			fprintf(stderr, "usage: %s [--list]\n", argv[0]);
-			return 1;
+			return LITEST_MODE_ERROR;
 		}
 	}
 
-	return 0;
+	return LITEST_MODE_TEST;
 }
 
 #ifndef LITEST_NO_MAIN
+static void
+litest_list_tests(struct list *tests)
+{
+	struct suite *s;
+
+	list_for_each(s, tests, node) {
+		struct test *t;
+		printf("%s:\n", s->name);
+		list_for_each(t, &s->tests, node) {
+			printf("	%s\n", t->name);
+		}
+	}
+}
+
 int
 main(int argc, char **argv)
 {
+	enum litest_mode mode;
+
 	list_init(&all_tests);
 
-	if (litest_parse_argv(argc, argv) != 0)
+	mode = litest_parse_argv(argc, argv);
+	if (mode == LITEST_MODE_ERROR)
 		return EXIT_FAILURE;
 
 	litest_setup_tests();
+
+	if (mode == LITEST_MODE_LIST) {
+		litest_list_tests(&all_tests);
+		return EXIT_SUCCESS;
+	}
 
 	return litest_run(argc, argv);
 }
