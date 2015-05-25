@@ -1955,13 +1955,13 @@ evdev_notify_added_device(struct evdev_device *device)
 	notify_added_device(&device->base);
 }
 
-static int
-evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
+static bool
+evdev_device_have_same_syspath(struct udev_device *udev_device, int fd)
 {
 	struct udev *udev = udev_device_get_udev(udev_device);
 	struct udev_device *udev_device_new = NULL;
 	struct stat st;
-	int rc = 1;
+	bool rc = false;
 
 	if (fstat(fd, &st) < 0)
 		goto out;
@@ -1970,8 +1970,8 @@ evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
 	if (!udev_device_new)
 		goto out;
 
-	rc = !streq(udev_device_get_syspath(udev_device_new),
-		    udev_device_get_syspath(udev_device));
+	rc = streq(udev_device_get_syspath(udev_device_new),
+		   udev_device_get_syspath(udev_device));
 out:
 	if (udev_device_new)
 		udev_device_unref(udev_device_new);
@@ -2037,7 +2037,7 @@ evdev_device_create(struct libinput_seat *seat,
 		return NULL;
 	}
 
-	if (evdev_device_compare_syspath(udev_device, fd) != 0)
+	if (!evdev_device_have_same_syspath(udev_device, fd))
 		goto err;
 
 	device = zalloc(sizeof *device);
@@ -2477,7 +2477,7 @@ evdev_device_resume(struct evdev_device *device)
 	if (fd < 0)
 		return -errno;
 
-	if (evdev_device_compare_syspath(device->udev_device, fd)) {
+	if (!evdev_device_have_same_syspath(device->udev_device, fd)) {
 		close_restricted(libinput, fd);
 		return -ENODEV;
 	}
