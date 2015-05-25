@@ -282,12 +282,14 @@ struct tp_dispatch {
 		bool trackpoint_active;
 		struct libinput_event_listener trackpoint_listener;
 		struct libinput_timer trackpoint_timer;
+	} sendevents;
 
+	struct {
 		bool keyboard_active;
 		struct libinput_event_listener keyboard_listener;
 		struct libinput_timer keyboard_timer;
 		struct evdev_device *keyboard;
-	} sendevents;
+	} dwt;
 };
 
 #define tp_for_each_touch(_tp, _t) \

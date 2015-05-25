@@ -489,7 +489,7 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	struct device_float_coords delta;
 	int dirs;
 
-	if (tp->sendevents.keyboard_active &&
+	if (tp->dwt.keyboard_active &&
 	    t->state == TOUCH_BEGIN) {
 		t->palm.state = PALM_TYPING;
 		t->palm.time = time;
@@ -717,7 +717,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 
 	if (filter_motion ||
 	    tp->sendevents.trackpoint_active ||
-	    tp->sendevents.keyboard_active) {
+	    tp->dwt.keyboard_active) {
 		tp_edge_scroll_stop_events(tp, time);
 		tp_gesture_stop(tp, time);
 		return;
@@ -767,15 +767,15 @@ static void
 tp_remove_sendevents(struct tp_dispatch *tp)
 {
 	libinput_timer_cancel(&tp->sendevents.trackpoint_timer);
-	libinput_timer_cancel(&tp->sendevents.keyboard_timer);
+	libinput_timer_cancel(&tp->dwt.keyboard_timer);
 
 	if (tp->buttons.trackpoint)
 		libinput_device_remove_event_listener(
 					&tp->sendevents.trackpoint_listener);
 
-	if (tp->sendevents.keyboard)
+	if (tp->dwt.keyboard)
 		libinput_device_remove_event_listener(
-					&tp->sendevents.keyboard_listener);
+					&tp->dwt.keyboard_listener);
 }
 
 static void
@@ -912,7 +912,7 @@ tp_keyboard_timeout(uint64_t now, void *data)
 	struct tp_dispatch *tp = data;
 
 	tp_tap_resume(tp, now);
-	tp->sendevents.keyboard_active = false;
+	tp->dwt.keyboard_active = false;
 }
 
 static void
@@ -947,17 +947,17 @@ tp_keyboard_event(uint64_t time, struct libinput_event *event, void *data)
 		break;
 	}
 
-	if (!tp->sendevents.keyboard_active) {
+	if (!tp->dwt.keyboard_active) {
 		tp_edge_scroll_stop_events(tp, time);
 		tp_gesture_stop(tp, time);
 		tp_tap_suspend(tp, time);
-		tp->sendevents.keyboard_active = true;
+		tp->dwt.keyboard_active = true;
 		timeout = DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1;
 	} else {
 		timeout = DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2;
 	}
 
-	libinput_timer_set(&tp->sendevents.keyboard_timer,
+	libinput_timer_set(&tp->dwt.keyboard_timer,
 			   time + timeout);
 }
 
@@ -989,12 +989,12 @@ tp_interface_device_added(struct evdev_device *device,
 	kbd_is_internal = bus_tp != BUS_BLUETOOTH &&
 			  bus_kbd == bus_tp;
 	if (tp_is_internal && kbd_is_internal &&
-	    tp->sendevents.keyboard == NULL) {
+	    tp->dwt.keyboard == NULL) {
 		libinput_device_add_event_listener(&added_device->base,
-					&tp->sendevents.keyboard_listener,
+					&tp->dwt.keyboard_listener,
 					tp_keyboard_event, tp);
-		tp->sendevents.keyboard = added_device;
-		tp->sendevents.keyboard_active = false;
+		tp->dwt.keyboard = added_device;
+		tp->dwt.keyboard_active = false;
 	}
 
 	if (tp->sendevents.current_mode !=
@@ -1023,10 +1023,10 @@ tp_interface_device_removed(struct evdev_device *device,
 		tp->buttons.trackpoint = NULL;
 	}
 
-	if (removed_device == tp->sendevents.keyboard) {
+	if (removed_device == tp->dwt.keyboard) {
 		libinput_device_remove_event_listener(
-					&tp->sendevents.keyboard_listener);
-		tp->sendevents.keyboard = NULL;
+					&tp->dwt.keyboard_listener);
+		tp->dwt.keyboard = NULL;
 	}
 
 	if (tp->sendevents.current_mode !=
@@ -1334,7 +1334,7 @@ tp_init_sendevents(struct tp_dispatch *tp,
 			    tp->device->base.seat->libinput,
 			    tp_trackpoint_timeout, tp);
 
-	libinput_timer_init(&tp->sendevents.keyboard_timer,
+	libinput_timer_init(&tp->dwt.keyboard_timer,
 			    tp->device->base.seat->libinput,
 			    tp_keyboard_timeout, tp);
 	return 0;
