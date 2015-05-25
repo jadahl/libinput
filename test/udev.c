@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <libinput.h>
+#include <libinput-util.h>
 #include <libudev.h>
 #include <unistd.h>
 
@@ -184,7 +185,7 @@ START_TEST(udev_added_seat_default)
 		ck_assert(seat != NULL);
 
 		seat_name = libinput_seat_get_logical_name(seat);
-		default_seat_found = !strcmp(seat_name, "default");
+		default_seat_found = streq(seat_name, "default");
 		libinput_event_destroy(event);
 	}
 

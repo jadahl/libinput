@@ -31,6 +31,7 @@
 #include <libudev.h>
 
 #include <libevdev/libevdev.h>
+#include <libinput-util.h>
 
 #include "shared.h"
 
@@ -189,13 +190,13 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 					tools_usage();
 					return 1;
 				}
-				if (strcmp(optarg, "none") == 0) {
+				if (streq(optarg, "none")) {
 					options->click_method =
 						LIBINPUT_CONFIG_CLICK_METHOD_NONE;
-				} else if (strcmp(optarg, "clickfinger") == 0) {
+				} else if (streq(optarg, "clickfinger")) {
 					options->click_method =
 						LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
-				} else if (strcmp(optarg, "buttonareas") == 0) {
+				} else if (streq(optarg, "buttonareas")) {
 					options->click_method =
 						LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
 				} else {
@@ -208,16 +209,16 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 					tools_usage();
 					return 1;
 				}
-				if (strcmp(optarg, "none") == 0) {
+				if (streq(optarg, "none")) {
 					options->scroll_method =
 						LIBINPUT_CONFIG_SCROLL_NO_SCROLL;
-				} else if (strcmp(optarg, "twofinger") == 0) {
+				} else if (streq(optarg, "twofinger")) {
 					options->scroll_method =
 						LIBINPUT_CONFIG_SCROLL_2FG;
-				} else if (strcmp(optarg, "edge") == 0) {
+				} else if (streq(optarg, "edge")) {
 					options->scroll_method =
 						LIBINPUT_CONFIG_SCROLL_EDGE;
-				} else if (strcmp(optarg, "button") == 0) {
+				} else if (streq(optarg, "button")) {
 					options->scroll_method =
 						LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
 				} else {

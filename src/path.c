@@ -101,8 +101,8 @@ path_seat_get_named(struct path_input *input,
 	struct path_seat *seat;
 
 	list_for_each(seat, &input->base.seat_list, base.link) {
-		if (strcmp(seat->base.physical_name, seat_name_physical) == 0 &&
-		    strcmp(seat->base.logical_name, seat_name_logical) == 0)
+		if (streq(seat->base.physical_name, seat_name_physical) &&
+		    streq(seat->base.logical_name, seat_name_logical))
 			return seat;
 	}
 

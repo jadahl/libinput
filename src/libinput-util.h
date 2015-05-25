@@ -83,6 +83,8 @@ int list_empty(const struct list *list);
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
+#define streq(s1, s2) (strcmp((s1), (s2)) == 0)
+#define strneq(s1, s2, n) (strncmp((s1), (s2), (n)) == 0)
 
 #define LIBINPUT_EXPORT __attribute__ ((visibility("default")))
 

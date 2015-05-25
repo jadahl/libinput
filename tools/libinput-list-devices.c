@@ -30,6 +30,7 @@
 #include <libudev.h>
 
 #include <libinput.h>
+#include <libinput-util.h>
 #include <libinput-version.h>
 
 #include "shared.h"
@@ -279,10 +280,10 @@ main(int argc, char **argv)
 	struct libinput_event *ev;
 
 	if (argc > 1) {
-		if (strcmp(argv[1], "--help") == 0) {
+		if (streq(argv[1], "--help")) {
 			usage();
 			return 0;
-		} else if (strcmp(argv[1], "--version") == 0) {
+		} else if (streq(argv[1], "--version")) {
 			printf("%s\n", LIBINPUT_VERSION);
 			return 0;
 		} else {

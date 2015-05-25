@@ -220,13 +220,13 @@ main(int argc, char **argv)
 
 		switch (c) {
 		case OPT_MODE:
-			if (strcmp(optarg, "accel") == 0)
+			if (streq(optarg, "accel"))
 				print_accel = true;
-			else if (strcmp(optarg, "motion") == 0)
+			else if (streq(optarg, "motion"))
 				print_motion = true;
-			else if (strcmp(optarg, "delta") == 0)
+			else if (streq(optarg, "delta"))
 				print_delta = true;
-			else if (strcmp(optarg, "sequence") == 0)
+			else if (streq(optarg, "sequence"))
 				print_sequence = true;
 			else {
 				usage();

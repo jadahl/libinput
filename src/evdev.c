@@ -1970,7 +1970,7 @@ evdev_device_compare_syspath(struct udev_device *udev_device, int fd)
 	if (!udev_device_new)
 		goto out;
 
-	rc = strcmp(udev_device_get_syspath(udev_device_new),
+	rc = !streq(udev_device_get_syspath(udev_device_new),
 		    udev_device_get_syspath(udev_device));
 out:
 	if (udev_device_new)

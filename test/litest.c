@@ -432,7 +432,7 @@ litest_add_tcase_for_device(struct suite *suite,
 	const char *test_name = dev->shortname;
 
 	list_for_each(t, &suite->tests, node) {
-		if (strcmp(t->name, test_name) != 0)
+		if (!streq(t->name, test_name))
 			continue;
 
 		if (range)
@@ -476,7 +476,7 @@ litest_add_tcase_no_device(struct suite *suite,
 		return;
 
 	list_for_each(t, &suite->tests, node) {
-		if (strcmp(t->name, test_name) != 0)
+		if (!streq(t->name, test_name))
 			continue;
 
 		if (range)
@@ -504,7 +504,7 @@ get_suite(const char *name)
 		list_init(&all_tests);
 
 	list_for_each(s, &all_tests, node) {
-		if (strcmp(s->name, name) == 0)
+		if (streq(s->name, name))
 			return s;
 	}
 

@@ -57,7 +57,7 @@ device_added(struct udev_device *udev_device,
 	if (!device_seat)
 		device_seat = default_seat;
 
-	if (strcmp(device_seat, input->seat_id))
+	if (!streq(device_seat, input->seat_id))
 		return 0;
 
 	devnode = udev_device_get_devnode(udev_device);
@@ -131,8 +131,8 @@ device_removed(struct udev_device *udev_device, struct udev_input *input)
 	list_for_each(seat, &input->base.seat_list, base.link) {
 		list_for_each_safe(device, next,
 				   &seat->base.devices_list, base.link) {
-			if (!strcmp(syspath,
-				    udev_device_get_syspath(device->udev_device))) {
+			if (streq(syspath,
+				  udev_device_get_syspath(device->udev_device))) {
 				log_info(&input->base,
 					 "input device %s, %s removed\n",
 					 device->devname,
@@ -198,9 +198,9 @@ evdev_udev_handler(void *data)
 	if (strncmp("event", udev_device_get_sysname(udev_device), 5) != 0)
 		goto out;
 
-	if (!strcmp(action, "add"))
+	if (streq(action, "add"))
 		device_added(udev_device, input, NULL);
-	else if (!strcmp(action, "remove"))
+	else if (streq(action, "remove"))
 		device_removed(udev_device, input);
 
 out:
@@ -328,7 +328,7 @@ udev_seat_get_named(struct udev_input *input, const char *seat_name)
 	struct udev_seat *seat;
 
 	list_for_each(seat, &input->base.seat_list, base.link) {
-		if (strcmp(seat->base.logical_name, seat_name) == 0)
+		if (streq(seat->base.logical_name, seat_name))
 			return seat;
 	}
 
