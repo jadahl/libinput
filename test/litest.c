@@ -56,11 +56,6 @@ const char *filter_test = NULL;
 const char *filter_device = NULL;
 const char *filter_group = NULL;
 
-#ifdef HAVE_LIBUNWIND
-#define UNW_LOCAL_ONLY
-#include <libunwind.h>
-#include <dlfcn.h>
-
 /* defined for the litest selftest */
 #ifndef LITEST_DISABLE_BACKTRACE_LOGGING
 #define litest_log(...) fprintf(stderr, __VA_ARGS__)
@@ -69,6 +64,11 @@ const char *filter_group = NULL;
 #define litest_log(...) /* __VA_ARGS__ */
 #define litest_vlog(...) /* __VA_ARGS__ */
 #endif
+
+#ifdef HAVE_LIBUNWIND
+#define UNW_LOCAL_ONLY
+#include <libunwind.h>
+#include <dlfcn.h>
 
 static char cwd[PATH_MAX];
 
