@@ -438,6 +438,10 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time)
 					    &zero,
 					    &zero_discrete);
 			t->scroll.direction = -1;
+			/* reset touch to area state, avoids loading the
+			 * state machine with special case handling */
+			t->scroll.edge = EDGE_NONE;
+			t->scroll.edge_state = EDGE_SCROLL_TOUCH_STATE_AREA;
 		}
 	}
 }
