@@ -99,7 +99,10 @@ litest_backtrace_get_lineno(const char *executable,
 	}
 
 	buffer[0] = '?';
-	fgets(buffer, sizeof(buffer), f);
+	if (fgets(buffer, sizeof(buffer), f) == NULL) {
+		pclose(f);
+		return false;
+	}
 	pclose(f);
 
 	if (buffer[0] == '?')
