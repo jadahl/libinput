@@ -82,7 +82,7 @@ litest_backtrace_get_lineno(const char *executable,
 	FILE* f;
 	char buffer[PATH_MAX];
 	char *s;
-	int i;
+	unsigned int i;
 
 	if (!cwd[0])
 		getcwd(cwd, sizeof(cwd));
@@ -119,7 +119,7 @@ litest_backtrace_get_lineno(const char *executable,
 	/* now strip cwd from buffer */
 	s = buffer;
 	i = 0;
-	while(cwd[i] == *s) {
+	while(i < strlen(cwd) && *s != '\0' && cwd[i] == *s) {
 		*s = '\0';
 		s++;
 		i++;
