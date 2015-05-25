@@ -3198,9 +3198,13 @@ static int
 touchpad_has_palm_detect_size(struct litest_device *dev)
 {
 	double width, height;
+	unsigned int vendor;
 	int rc;
 
-	if (libinput_device_get_id_vendor(dev->libinput_device) == ID_VENDOR_APPLE)
+	vendor = libinput_device_get_id_vendor(dev->libinput_device);
+	if (vendor == VENDOR_ID_WACOM)
+		return 0;
+	if (vendor == VENDOR_ID_APPLE)
 		return 1;
 
 	rc = libinput_device_get_size(dev->libinput_device, &width, &height);
