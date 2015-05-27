@@ -63,4 +63,23 @@ the motion events. Cross-device scrolling is not supported but
 for one exception: libinput's @ref t440_support enables the use of the middle
 button for button scrolling (even when the touchpad is disabled).
 
+@section scroll_sources Scroll sources
+
+libinput provides a pointer axis *source* for each scroll event. The
+source can be obtained with the libinput_event_pointer_get_axis_source()
+function and is one of **wheel**, **finger**, or **continuous**. The source
+information lets a caller decide when to implement kinetic scrolling.
+Usually, a caller will process events of source wheel as they come in.
+For events of source finger a caller should calculate the velocity of the
+scroll motion and upon finger release start a kinetic scrolling motion (i.e.
+continue executing a scroll according to some friction factor).
+libinput expects the caller to be in charge of widget handling, the source
+information is thus enough to provide kinetic scrolling on a per-widget
+basis. A caller should cancel kinetic scrolling when the pointer leaves the
+current widget or when a key is pressed.
+
+See the libinput_event_pointer_get_axis_source() for details on the
+behavior of each scroll source.
+
+See also http://who-t.blogspot.com.au/2015/03/libinput-scroll-sources.html
 */
