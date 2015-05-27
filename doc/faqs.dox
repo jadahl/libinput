@@ -1,0 +1,51 @@
+/**
+@page faq FAQs - Frequently Asked Questions
+
+Frequently asked questions about libinput.
+
+@section faq_kinetic_scrolling Kinetic scrolling does not work
+
+The X.Org synaptics driver implemented kinetic scrolling in the driver. It
+measures the scroll speed and once the finger leaves the touchpad the driver
+keeps sending scroll events for a predetermined time. This effectively
+provides for kinetic scrolling without client support but triggers an
+unfixable [bug](https://bugs.freedesktop.org/show_bug.cgi?id=38909): the
+client cannot know that the events are from a kinetic scroll source. Scroll
+events in X are always sent to the current cursor position, a movement of the
+cursor after lifting the finger will send the kinetic scroll events to the
+new client, something the user does not usually expect. A key event during
+the kinetic scroll procedure causes side-effects such as triggering zoom.
+
+libinput does not implement kinetic scrolling for touchpads. Instead it
+provides the libinput_event_pointer_get_axis_source() function that enables
+callers to implement kinetic scrolling on a per-widget basis, see @ref
+scroll_sources.
+
+@section faq_gpl Is libinput GPL-licensed?
+
+No, libinput is MIT licensed. The Linux kernel header file linux/input.h in
+libinput's tree is provded to ensure the same behavior regardless of which
+kernel version libinput is built on. It does not make libinput GPL-licensed.
+
+@section faq_config_options Where is the configuration stored?
+
+libinput does not store configuration options, it is up to the caller to
+manage these and decide which configuration option to apply to each device.
+This must be done at startup, after a resume and whenever a new device is
+detected.
+
+In a GNOME X.Org stack a user would usually toggle an option in
+the gnome-control-center which adjusts a gsettings entry. That change is
+picked up by gnome-settings-daemon and applied to the device by adjusting
+input device properties that the xf86-input-libinput driver provides.
+The input device property changes map to the respective libinput
+configuration options.
+
+@dotfile libinput-stack-gnome.gv
+
+This has an effect on the availability of configuration options: if an
+option is not exposed by the intermediary, it cannot be configured by the
+client. Also some configuration options that are provided by the
+intermediary may not be libinput-specific configuration options.
+
+*/

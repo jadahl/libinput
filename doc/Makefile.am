@@ -13,6 +13,7 @@ header_files = \
 	$(srcdir)/absolute-axes.dox \
 	$(srcdir)/clickpad-softbuttons.dox \
 	$(srcdir)/device-configuration-via-udev.dox \
+	$(srcdir)/faqs.dox \
 	$(srcdir)/normalization-of-relative-motion.dox \
 	$(srcdir)/palm-detection.dox \
 	$(srcdir)/scrolling.dox \
@@ -26,6 +27,7 @@ diagram_files = \
 	$(srcdir)/dot/seats-sketch-libinput.gv \
 	$(srcdir)/dot/libinput-stack-wayland.gv \
 	$(srcdir)/dot/libinput-stack-xorg.gv \
+	$(srcdir)/dot/libinput-stack-gnome.gv \
 	$(srcdir)/svg/software-buttons.svg \
 	$(srcdir)/svg/clickfinger.svg \
 	$(srcdir)/svg/button-scrolling.svg \
