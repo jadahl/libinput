@@ -23,3 +23,11 @@ CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
 DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
 OF THIS SOFTWARE.
+
+libinput ships a copy of the GPL-licensed Linux kernel's linux/input.h
+header file. [1] This does not make libinput GPL.
+This copy is provided to provide consistent behavior regardless which kernel
+version libinput is compiled against. The header is used during compilation
+only, libinput does not link against GPL libraries.
+
+[1] http://cgit.freedesktop.org/wayland/libinput/tree/include/linux/input.h
