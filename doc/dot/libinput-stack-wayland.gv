@@ -1,0 +1,17 @@
+digraph stack
+{
+  rankdir="LR";
+  node [
+    shape="box";
+  ]
+
+  kernel [label="Kernel"];
+
+  libinput;
+  compositor [label="Wayland Compositor"];
+  client [label="Wayland Client"];
+
+  kernel -> libinput
+  libinput -> compositor
+  compositor -> client
+}

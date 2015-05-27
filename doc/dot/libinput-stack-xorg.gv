@@ -1,0 +1,19 @@
+digraph stack
+{
+  rankdir="LR";
+  node [
+    shape="box";
+  ]
+
+  kernel [label="Kernel"];
+
+  libinput;
+  xf86libinput [label="xf86-input-libinput"];
+  xserver [label="X Server"];
+  client [label="X11 client"];
+
+  kernel -> libinput
+  libinput -> xf86libinput
+  xf86libinput -> xserver
+  xserver -> client
+}

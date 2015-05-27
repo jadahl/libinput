@@ -24,6 +24,8 @@ header_files = \
 diagram_files = \
 	$(srcdir)/dot/seats-sketch.gv \
 	$(srcdir)/dot/seats-sketch-libinput.gv \
+	$(srcdir)/dot/libinput-stack-wayland.gv \
+	$(srcdir)/dot/libinput-stack-xorg.gv \
 	$(srcdir)/svg/software-buttons.svg \
 	$(srcdir)/svg/clickfinger.svg \
 	$(srcdir)/svg/button-scrolling.svg \

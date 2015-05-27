@@ -16,6 +16,27 @@ libinput originates from
 [weston](http://cgit.freedesktop.org/wayland/weston/), the Wayland reference
 compositor.
 
+Architecture
+------------
+
+libinput is not used directly by applications, rather it is used by the
+xf86-input-libinput X.Org driver or wayland compositors. The typical
+software stack for a system running Wayland is:
+
+@dotfile libinput-stack-wayland.gv
+
+Where the Wayland compositor may be Weston, mutter, KWin, etc. Note that
+Wayland encourages the use of toolkits, so the Wayland client (your
+application) does not usually talk directly to the compositor but rather
+employs a toolkit (e.g. GTK) to do so.
+
+The simplified software stack for a system running X.Org is:
+
+@dotfile libinput-stack-xorg.gv
+
+Again, on a modern system the application does not usually talk directly to
+the X server using Xlib but rather employs a toolkit to do so.
+
 Source code
 -----------
 
