@@ -311,6 +311,7 @@ tp_process_absolute(struct tp_dispatch *tp,
 			tp_new_touch(tp, t, time);
 		else
 			tp_end_sequence(tp, t, time);
+		break;
 	}
 }
 
