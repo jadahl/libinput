@@ -1122,6 +1122,11 @@ litest_delete_device(struct litest_device *d)
 	free(d->private);
 	memset(d,0, sizeof(*d));
 	free(d);
+
+	/* zzz so udev can catch up with things, so we don't accidentally open
+	 * an old device in the next test and then get all upset when things blow
+	 * up */
+	msleep(10);
 }
 
 void
