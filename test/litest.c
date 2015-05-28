@@ -640,6 +640,7 @@ _litest_add_ranged_for_device(const char *name,
 {
 	struct suite *s;
 	struct litest_test_device **dev = devices;
+	bool device_filtered = false;
 
 	assert(type < LITEST_NO_DEVICE);
 
@@ -654,8 +655,10 @@ _litest_add_ranged_for_device(const char *name,
 	s = get_suite(name);
 	for (; *dev; dev++) {
 		if (filter_device &&
-		    fnmatch(filter_device, (*dev)->shortname, 0) != 0)
+		    fnmatch(filter_device, (*dev)->shortname, 0) != 0) {
+			device_filtered = true;
 			continue;
+		}
 
 		if ((*dev)->type == type) {
 			litest_add_tcase_for_device(s,
@@ -667,7 +670,9 @@ _litest_add_ranged_for_device(const char *name,
 		}
 	}
 
-	litest_abort_msg("Invalid test device type");
+	/* only abort if no filter was set, that's a bug */
+	if (!device_filtered)
+		litest_abort_msg("Invalid test device type");
 }
 
 static int
