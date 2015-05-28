@@ -24,21 +24,14 @@ is split in the middle to generate left or right button events on click. The
 height of the button area depends on the hardware but is usually around
 10mm.
 
-@dot
-digraph G {
-  clickpad [
-      shape = "record";
-    label = "{\nMain\nArea\n\n|{LEFT|RIGHT}}";
-  ]
-}
-@enddot
-
 Left, right and middle button events can be triggered as follows:
 - if a finger is in the main area or the left button area, a click generates
   left button events.
 - if a finger is in the right area, a click generates right button events.
 - if there is a finger in both the left and right button area, a click
   generates middle button events.
+
+@image html software-buttons.svg "Left, right and middle-button click with software button areas"
 
 If fingers are down in the main area in addition to fingers in the
 left or right button area, those fingers are are ignored.
@@ -68,6 +61,8 @@ Here, a left, right, middle button event is generated when one, two, or
 three fingers are held down on the touchpad when a physical click is
 generated. The location of the fingers does not matter and there are no
 software-defined button areas.
+
+@image html clickfinger.svg "One, two and three-finger click with Clickfinger behavior"
 
 The Xorg synaptics driver uses 30% of the touchpad dimensions as threshold,
 libinput does not have this restriction. If two fingers are on the pad

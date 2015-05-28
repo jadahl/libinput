@@ -24,9 +24,12 @@ header_files = \
 diagram_files = \
 	$(srcdir)/dot/seats-sketch.gv \
 	$(srcdir)/dot/seats-sketch-libinput.gv \
+	$(srcdir)/svg/software-buttons.svg \
+	$(srcdir)/svg/clickfinger.svg \
 	$(srcdir)/svg/button-scrolling.svg \
 	$(srcdir)/svg/edge-scrolling.svg \
 	$(srcdir)/svg/palm-detection.svg \
+	$(srcdir)/svg/top-software-buttons.svg \
 	$(srcdir)/svg/twofinger-scrolling.svg
 
 html/index.html: libinput.doxygen $(header_files) $(diagram_files)

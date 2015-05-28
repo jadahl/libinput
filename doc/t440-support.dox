@@ -11,21 +11,10 @@ laptops had a separate set of physical buttons for the
 <a href="http://en.wikipedia.org/wiki/Pointing_stick">trackstick</a>. This
 series removed these buttons, relying on a software emulation of the top
 section of the touchpad. This is visually marked on the trackpad itself,
-approximately like this:
+and clicks can be triggered by pressing the touchpad down with a finger in
+the respective area:
 
-@dot
-digraph G {
-  subgraph cluster_0 {
-    margin="0";
-
-    clickpad [
-      shape = "record";
-      color = "none";
-    label = "{{LLLLLLLLLL|MMMMM|RRRRRRRRR}|\n\n\n\n\n\n\n\n|{LLLLLLLL|          |RRRRRRRR}}";
-    ]
-  }
-}
-@enddot
+@image html top-software-buttons.svg "Left, right and middle-button click with top software button areas"
 
 This page only covers the top software buttons, the bottom button behavior
 is covered in @ref clickpad_softbuttons "Clickpad software buttons".
