@@ -13,9 +13,9 @@ libshared_la_CFLAGS = $(LIBEVDEV_CFLAGS)
 libshared_la_LIBADD = $(LIBEVDEV_LIBS)
 
 event_debug_SOURCES = event-debug.c
-event_debug_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS)
+event_debug_LDADD = ../src/libinput.la libshared.la $(LIBUDEV_LIBS) $(LIBEVDEV_LIBS)
 event_debug_LDFLAGS = -no-install
-event_debug_CFLAGS = $(LIBUDEV_CFLAGS)
+event_debug_CFLAGS = $(LIBUDEV_CFLAGS) $(LIBEVDEV_CFLAGS)
 
 ptraccel_debug_SOURCES = ptraccel-debug.c
 ptraccel_debug_LDADD = ../src/libfilter.la

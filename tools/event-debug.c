@@ -34,6 +34,7 @@
 #include <sys/ioctl.h>
 
 #include <libinput.h>
+#include <libevdev/libevdev.h>
 
 #include "shared.h"
 
@@ -193,11 +194,17 @@ print_key_event(struct libinput_event *ev)
 {
 	struct libinput_event_keyboard *k = libinput_event_get_keyboard_event(ev);
 	enum libinput_key_state state;
+	uint32_t key;
+	const char *keyname;
 
 	print_event_time(libinput_event_keyboard_get_time(k));
 	state = libinput_event_keyboard_get_key_state(k);
-	printf("%d %s\n",
-	       libinput_event_keyboard_get_key(k),
+
+	key = libinput_event_keyboard_get_key(k);
+	keyname = libevdev_event_code_get_name(EV_KEY, key);
+	printf("%s (%d) %s\n",
+	       keyname ? keyname : "???",
+	       key,
 	       state == LIBINPUT_KEY_STATE_PRESSED ? "pressed" : "released");
 }
 
