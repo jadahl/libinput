@@ -876,7 +876,7 @@ litest_init_udev_rules(struct litest_test_device *dev)
 		ck_abort_msg("Failed to create udev rules directory (%s)\n",
 			     strerror(errno));
 
-	rc = asprintf(&path,
+	rc = xasprintf(&path,
 		      "%s/%s%s.rules",
 		      UDEV_RULES_D,
 		      UDEV_RULE_PREFIX,

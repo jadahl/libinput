@@ -120,17 +120,17 @@ calibration_default(struct libinput_device *device)
 	float calibration[6];
 
 	if (!libinput_device_config_calibration_has_matrix(device)) {
-		asprintf(&str, "n/a");
+		xasprintf(&str, "n/a");
 		return str;
 	}
 
 	if (libinput_device_config_calibration_get_default_matrix(device,
 						  calibration) == 0) {
-		asprintf(&str, "identity matrix");
+		xasprintf(&str, "identity matrix");
 		return str;
 	}
 
-	asprintf(&str,
+	xasprintf(&str,
 		 "%.2f %.2f %.2f %.2f %.2f %.2f",
 		 calibration[0],
 		 calibration[1],
@@ -150,13 +150,13 @@ scroll_defaults(struct libinput_device *device)
 
 	scroll_methods = libinput_device_config_scroll_get_methods(device);
 	if (scroll_methods == LIBINPUT_CONFIG_SCROLL_NO_SCROLL) {
-		asprintf(&str, "none");
+		xasprintf(&str, "none");
 		return str;
 	}
 
 	method = libinput_device_config_scroll_get_default_method(device);
 
-	asprintf(&str,
+	xasprintf(&str,
 		 "%s%s%s%s%s%s",
 		 (method == LIBINPUT_CONFIG_SCROLL_2FG) ? "*" : "",
 		 (scroll_methods & LIBINPUT_CONFIG_SCROLL_2FG) ? "two-finger " : "",
@@ -176,12 +176,12 @@ click_defaults(struct libinput_device *device)
 
 	click_methods = libinput_device_config_click_get_methods(device);
 	if (click_methods == LIBINPUT_CONFIG_CLICK_METHOD_NONE) {
-		asprintf(&str, "none");
+		xasprintf(&str, "none");
 		return str;
 	}
 
 	method = libinput_device_config_click_get_default_method(device);
-	asprintf(&str,
+	xasprintf(&str,
 		 "%s%s%s%s",
 		 (method == LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS) ? "*" : "",
 		 (click_methods & LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS) ? "button-areas " : "",
