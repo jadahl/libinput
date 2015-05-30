@@ -586,7 +586,8 @@ START_TEST(touch_initial_state)
 {
 	struct litest_device *dev;
 	struct libinput *libinput1, *libinput2;
-	struct libinput_event *ev1, *ev2;
+	struct libinput_event *ev1 = NULL;
+	struct libinput_event *ev2 = NULL;
 	struct libinput_event_touch *t1, *t2;
 	struct libinput_device *device1, *device2;
 	int axis = _i; /* looped test */
