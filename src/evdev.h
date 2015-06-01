@@ -150,6 +150,8 @@ struct evdev_device {
 		/* Currently enabled method, button */
 		enum libinput_config_scroll_method method;
 		uint32_t button;
+		uint64_t button_down_time;
+
 		/* set during device init, used at runtime to delay changes
 		 * until all buttons are up */
 		enum libinput_config_scroll_method want_method;

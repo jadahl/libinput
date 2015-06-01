@@ -35,15 +35,34 @@ START_TEST(trackpoint_middlebutton)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+	uint64_t ptime, rtime;
 
 	litest_drain_events(li);
 
 	/* A quick middle button click should get reported normally */
 	litest_button_click(dev, BTN_MIDDLE, 1);
+	msleep(2);
 	litest_button_click(dev, BTN_MIDDLE, 0);
 
-	litest_assert_button_event(li, BTN_MIDDLE, 1);
-	litest_assert_button_event(li, BTN_MIDDLE, 0);
+	litest_wait_for_event(li);
+
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_MIDDLE,
+				       LIBINPUT_BUTTON_STATE_PRESSED);
+	ptime = libinput_event_pointer_get_time(ptrev);
+	libinput_event_destroy(event);
+
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_MIDDLE,
+				       LIBINPUT_BUTTON_STATE_RELEASED);
+	rtime = libinput_event_pointer_get_time(ptrev);
+	libinput_event_destroy(event);
+
+	ck_assert_int_lt(ptime, rtime);
 
 	litest_assert_empty_queue(li);
 }
