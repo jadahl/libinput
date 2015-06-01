@@ -1,0 +1,79 @@
+- Indentation in tabs, 8 characters wide, spaces after the tabs where
+  vertical alignment is required (see below)
+
+- Max line width 80ch, do not break up printed strings though
+
+- Break up long lines at logical groupings, one line for each logical group
+
+  int a = somelongname() +
+  	  someotherlongname();
+
+  if (a < 0 &&
+      (b > 20 & d < 10) &&
+      d != 0.0)
+
+
+  somelongfunctioncall(arg1,
+  		       arg2,
+  		       arg3);
+
+- Function declarations: return type on separate line, {} on separate line,
+  arguments broken up as above.
+
+  static inline int
+  foobar(int a, int b)
+  {
+
+  }
+
+  void
+  somenamethatiswaytoolong(int a,
+  			   int b,
+  			   int c)
+  {
+  }
+
+- /* comments only */, no // comments
+
+- variable_name, not VariableName or variableName. same for functions.
+
+- no typedefs of structs, enums, unions
+
+- if it generates a compiler warning, it needs to be fixed
+- if it generates a static checker warning, it needs to be fixed or
+  commented
+
+- declare variables at the top, try to keep them as local as possible.
+  Exception: if the same variable is re-used in multiple blocks, declare it
+  at the top.
+
+  int a;
+  int c;
+
+  if (foo) {
+  	int b;
+
+  	c = get_value();
+  	usevalue(c);
+  }
+
+  if (bar) {
+  	c = get_value();
+  	useit(c);
+  }
+
+- public functions MUST be doxygen-commented, use doxygen's @foo rather than
+  \foo notation
+
+- include "config.h" comes first, followed by system headers, followed by
+  external library headers, followed by internal headers.
+  sort alphabetically where it makes sense (specifically system headers)
+
+  #include "config.h"
+
+  #include <stdio.h>
+  #include <string.h>
+
+  #include <libevdev/libevdev.h>
+
+  #include "libinput-private.h"
