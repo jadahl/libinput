@@ -1060,7 +1060,7 @@ evdev_scroll_get_default_method(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device *)device;
 
-	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
+	if (evdev->tags & EVDEV_TAG_TRACKPOINT)
 		return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
 
 	/* Mice without a scroll wheel but with middle button have on-button
@@ -1480,7 +1480,7 @@ evdev_read_dpi_prop(struct evdev_device *device)
 	 * POINTINGSTICK_CONST_ACCEL value to compensate for sensitivity
 	 * differences between models, we translate this to a fake dpi.
 	 */
-	if (libevdev_has_property(device->evdev, INPUT_PROP_POINTING_STICK))
+	if (device->tags & EVDEV_TAG_TRACKPOINT)
 		return evdev_get_trackpoint_dpi(device);
 
 	mouse_dpi = udev_device_get_property_value(device->udev_device,
@@ -2078,7 +2078,6 @@ evdev_device_create(struct libinput_seat *seat,
 	device->scroll.direction = 0;
 	device->scroll.wheel_click_angle =
 		evdev_read_wheel_click_prop(device);
-	device->dpi = evdev_read_dpi_prop(device);
 	device->model = evdev_read_model(device);
 	/* at most 5 SYN_DROPPED log-messages per 30s */
 	ratelimit_init(&device->syn_drop_limit, 30ULL * 1000, 5);
@@ -2089,6 +2088,8 @@ evdev_device_create(struct libinput_seat *seat,
 
 	if (evdev_configure_device(device) == -1)
 		goto err;
+
+	device->dpi = evdev_read_dpi_prop(device);
 
 	if (device->seat_caps == 0) {
 		unhandled_device = 1;
