@@ -33,6 +33,7 @@ diagram_files = \
 	$(srcdir)/svg/button-scrolling.svg \
 	$(srcdir)/svg/edge-scrolling.svg \
 	$(srcdir)/svg/palm-detection.svg \
+	$(srcdir)/svg/tap-n-drag.svg \
 	$(srcdir)/svg/top-software-buttons.svg \
 	$(srcdir)/svg/twofinger-scrolling.svg
 
