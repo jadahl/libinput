@@ -84,8 +84,10 @@ litest_backtrace_get_lineno(const char *executable,
 	char *s;
 	unsigned int i;
 
-	if (!cwd[0])
-		getcwd(cwd, sizeof(cwd));
+	if (!cwd[0]) {
+		if (getcwd(cwd, sizeof(cwd)) == NULL)
+			cwd[0] = 0; /* contents otherwise undefined. */
+	}
 
 	sprintf (buffer,
 		 ADDR2LINE " -C -e %s -i %lx",
@@ -375,7 +377,17 @@ static struct list all_tests;
 static void
 litest_reload_udev_rules(void)
 {
-	system("udevadm control --reload-rules");
+	int ret = system("udevadm control --reload-rules");
+	if (ret == -1) {
+		litest_abort_msg("Failed to execute: udevadm");
+	} else if (WIFEXITED(ret)) {
+		if (WEXITSTATUS(ret))
+			litest_abort_msg("udevadm failed with %d",
+					 WEXITSTATUS(ret));
+	} else if (WIFSIGNALED(ret)) {
+		litest_abort_msg("udevadm terminated with signal %d",
+				 WTERMSIG(ret));
+	}
 }
 
 static int
