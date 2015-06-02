@@ -1112,14 +1112,7 @@ evdev_scroll_get_default_button(struct libinput_device *device)
 {
 	struct evdev_device *evdev = (struct evdev_device *)device;
 
-	if (libevdev_has_property(evdev->evdev, INPUT_PROP_POINTING_STICK))
-		return BTN_MIDDLE;
-
-	/* A device that defaults to button scrolling defaults
-	   to BTN_MIDDLE */
-	if (evdev_scroll_get_default_method(device) ==
-		LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
-	    libevdev_has_event_code(evdev->evdev, EV_KEY, BTN_MIDDLE))
+	if( libevdev_has_event_code(evdev->evdev, EV_KEY, BTN_MIDDLE))
 		return BTN_MIDDLE;
 
 	return 0;
