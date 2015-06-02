@@ -256,10 +256,6 @@ struct evdev_dispatch_interface {
 	/* A device was resumed */
 	void (*device_resumed)(struct evdev_device *device,
 			       struct evdev_device *resumed_device);
-
-	/* Tag device with one of EVDEV_TAG */
-	void (*tag_device)(struct evdev_device *device,
-			   struct udev_device *udev_device);
 };
 
 struct evdev_dispatch {
@@ -292,6 +288,10 @@ evdev_touchpad_create(struct evdev_device *device);
 
 struct evdev_dispatch *
 evdev_mt_touchpad_create(struct evdev_device *device);
+
+void
+evdev_tag_touchpad(struct evdev_device *device,
+		   struct udev_device *udev_device);
 
 void
 evdev_device_led_update(struct evdev_device *device, enum libinput_led leds);

@@ -724,10 +724,8 @@ evdev_tag_external_mouse(struct evdev_device *device,
 	int bustype;
 
 	bustype = libevdev_get_id_bustype(device->evdev);
-	if (bustype == BUS_USB || bustype == BUS_BLUETOOTH) {
-		if (device->seat_caps & EVDEV_DEVICE_POINTER)
-			device->tags |= EVDEV_TAG_EXTERNAL_MOUSE;
-	}
+	if (bustype == BUS_USB || bustype == BUS_BLUETOOTH)
+		device->tags |= EVDEV_TAG_EXTERNAL_MOUSE;
 }
 
 static void
@@ -852,15 +850,6 @@ fallback_destroy(struct evdev_dispatch *dispatch)
 	free(dispatch);
 }
 
-static void
-fallback_tag_device(struct evdev_device *device,
-		    struct udev_device *udev_device)
-{
-	evdev_tag_external_mouse(device, udev_device);
-	evdev_tag_trackpoint(device, udev_device);
-	evdev_tag_keyboard(device, udev_device);
-}
-
 static int
 evdev_calibration_has_matrix(struct libinput_device *libinput_device)
 {
@@ -911,7 +900,6 @@ struct evdev_dispatch_interface fallback_interface = {
 	NULL, /* device_removed */
 	NULL, /* device_suspended */
 	NULL, /* device_resumed */
-	fallback_tag_device,
 };
 
 static uint32_t
@@ -1432,14 +1420,6 @@ evdev_need_mtdev(struct evdev_device *device)
 		!libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT));
 }
 
-static void
-evdev_tag_device(struct evdev_device *device)
-{
-	if (device->dispatch->interface->tag_device)
-		device->dispatch->interface->tag_device(device,
-							device->udev_device);
-}
-
 static inline int
 evdev_read_wheel_click_prop(struct evdev_device *device)
 {
@@ -1902,6 +1882,8 @@ evdev_configure_device(struct evdev_device *device)
 		log_info(libinput,
 			 "input device '%s', %s is a touchpad\n",
 			 device->devname, devnode);
+
+		evdev_tag_touchpad(device, device->udev_device);
 		return device->dispatch == NULL ? -1 : 0;
 	}
 
@@ -1926,6 +1908,9 @@ evdev_configure_device(struct evdev_device *device)
 		device->scroll.natural_scrolling_enabled = true;
 		/* want button scrolling config option */
 		device->scroll.want_button = 1;
+
+		evdev_tag_external_mouse(device, device->udev_device);
+		evdev_tag_trackpoint(device, device->udev_device);
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_KEYBOARD) {
@@ -1940,6 +1925,8 @@ evdev_configure_device(struct evdev_device *device)
 			device->scroll.natural_scrolling_enabled = true;
 			device->seat_caps |= EVDEV_DEVICE_POINTER;
 		}
+
+		evdev_tag_keyboard(device, device->udev_device);
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_TOUCHSCREEN) {
@@ -2124,7 +2111,6 @@ evdev_device_create(struct libinput_seat *seat,
 
 	list_insert(seat->devices_list.prev, &device->base.link);
 
-	evdev_tag_device(device);
 	evdev_notify_added_device(device);
 
 	return device;

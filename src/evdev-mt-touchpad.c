@@ -1137,9 +1137,9 @@ tp_interface_device_removed(struct evdev_device *device,
 	tp_resume(tp, device);
 }
 
-static void
-tp_interface_tag_device(struct evdev_device *device,
-			struct udev_device *udev_device)
+void
+evdev_tag_touchpad(struct evdev_device *device,
+		   struct udev_device *udev_device)
 {
 	int bustype;
 
@@ -1169,7 +1169,6 @@ static struct evdev_dispatch_interface tp_interface = {
 	tp_interface_device_removed,
 	tp_interface_device_removed, /* device_suspended, treat as remove */
 	tp_interface_device_added,   /* device_resumed, treat as add */
-	tp_interface_tag_device,
 };
 
 static void
