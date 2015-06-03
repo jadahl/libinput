@@ -1273,7 +1273,7 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	 * and y resolution, so that a circle on the
 	 * touchpad does not turn into an elipse on the screen.
 	 */
-	if (res_x > 1 && res_y > 1) {
+	if (!tp->device->abs.fake_resolution) {
 		tp->accel.x_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_x;
 		tp->accel.y_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_y;
 	} else {
