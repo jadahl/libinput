@@ -789,27 +789,38 @@ tp_check_clickfinger_distance(struct tp_dispatch *tp,
 			      struct tp_touch *t1,
 			      struct tp_touch *t2)
 {
-	int res_x, res_y;
 	double x, y;
 
 	if (!t1 || !t2)
 		return 0;
 
+	x = abs(t1->point.x - t2->point.x);
+	y = abs(t1->point.y - t2->point.y);
+
 	/* no resolution, so let's assume they're close enough together */
-	if (tp->device->abs.fake_resolution)
-		return 1;
+	if (tp->device->abs.fake_resolution) {
+		int w, h;
 
-	res_x = tp->device->abs.absinfo_x->resolution;
-	res_y = tp->device->abs.absinfo_y->resolution;
+		/* Use a maximum of 30% of the touchpad width or height if
+		 * we dont' have resolution. */
+		w = tp->device->abs.absinfo_x->maximum -
+		    tp->device->abs.absinfo_x->minimum;
+		h = tp->device->abs.absinfo_y->maximum -
+		    tp->device->abs.absinfo_y->minimum;
 
-	x = abs(t1->point.x - t2->point.x)/res_x;
-	y = abs(t1->point.y - t2->point.y)/res_y;
+		return (x < w * 0.3 && y < h * 0.3) ? 1 : 0;
+	} else {
+		/* maximum spread is 40mm horiz, 20mm vert. Anything wider than that
+		 * is probably a gesture. The y spread is small so we ignore clicks
+		 * with thumbs at the bottom of the touchpad while the pointer
+		 * moving finger is still on the pad */
 
-	/* maximum spread is 40mm horiz, 20mm vert. Anything wider than that
-	 * is probably a gesture. The y spread is small so we ignore clicks
-	 * with thumbs at the bottom of the touchpad while the pointer
-	 * moving finger is still on the pad */
-	return (x < 40 && y < 20) ? 1 : 0;
+		x /= tp->device->abs.absinfo_x->resolution;
+		y /= tp->device->abs.absinfo_y->resolution;
+
+		return (x < 40 && y < 20) ? 1 : 0;
+	}
+
 }
 
 static uint32_t
