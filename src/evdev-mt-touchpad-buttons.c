@@ -784,12 +784,81 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 	return 0;
 }
 
+static inline int
+tp_check_clickfinger_distance(struct tp_dispatch *tp,
+			      struct tp_touch *t1,
+			      struct tp_touch *t2)
+{
+	int res_x, res_y;
+	double x, y;
+
+	if (!t1 || !t2)
+		return 0;
+
+	/* no resolution, so let's assume they're close enough together */
+	if (tp->device->abs.fake_resolution)
+		return 1;
+
+	res_x = tp->device->abs.absinfo_x->resolution;
+	res_y = tp->device->abs.absinfo_y->resolution;
+
+	x = abs(t1->point.x - t2->point.x)/res_x;
+	y = abs(t1->point.y - t2->point.y)/res_y;
+
+	/* maximum spread is 40mm horiz, 20mm vert. Anything wider than that
+	 * is probably a gesture. The y spread is small so we ignore clicks
+	 * with thumbs at the bottom of the touchpad while the pointer
+	 * moving finger is still on the pad */
+	return (x < 40 && y < 20) ? 1 : 0;
+}
+
 static uint32_t
 tp_clickfinger_set_button(struct tp_dispatch *tp)
 {
 	uint32_t button;
+	unsigned int nfingers = tp->nfingers_down;
+	struct tp_touch *t;
+	struct tp_touch *first = NULL,
+			*second = NULL,
+			*third = NULL;
+	uint32_t close_touches = 0;
 
-	switch (tp->nfingers_down) {
+	if (nfingers < 2 || nfingers > 3)
+		goto out;
+
+	/* two or three fingers down on the touchpad. Check for distance
+	 * between the fingers. */
+	tp_for_each_touch(tp, t) {
+		if (t->state != TOUCH_BEGIN && t->state != TOUCH_UPDATE)
+			continue;
+
+		if (!first)
+			first = t;
+		else if (!second)
+			second = t;
+		else if (!third) {
+			third = t;
+			break;
+		}
+	}
+
+	if (!first || !second) {
+		nfingers = 1;
+		goto out;
+	}
+
+	close_touches |= tp_check_clickfinger_distance(tp, first, second) << 0;
+	close_touches |= tp_check_clickfinger_distance(tp, second, third) << 1;
+	close_touches |= tp_check_clickfinger_distance(tp, first, third) << 2;
+
+	switch(__builtin_popcount(close_touches)) {
+	case 0: nfingers = 1; break;
+	case 1: nfingers = 2; break;
+	default: nfingers = 3; break;
+	}
+
+out:
+	switch (nfingers) {
 	case 0:
 	case 1: button = BTN_LEFT; break;
 	case 2: button = BTN_RIGHT; break;

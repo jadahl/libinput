@@ -64,9 +64,16 @@ software-defined button areas.
 
 @image html clickfinger.svg "One, two and three-finger click with Clickfinger behavior"
 
-The Xorg synaptics driver uses 30% of the touchpad dimensions as threshold,
-libinput does not have this restriction. If two fingers are on the pad
-while clicking, that is a two-finger click.
+On some touchpads, libinput imposes a limit on how the fingers may be placed
+on the touchpad. In the most common use-case this allows for a user to
+trigger a click with the thumb while leaving the pointer-moving finger on
+the touchpad.
+
+@image html clickfinger-distance.svg "Illustration of the distance detection algorithm"
+
+In the illustration above the red area marks the proximity area around the
+first finger. Since the thumb is outside of that area libinput considers the
+click a single-finger click rather than a two-finger click.
 
 Clickfinger configuration can be enabled through the
 libinput_device_config_click_set_method() call. If clickfingers are
