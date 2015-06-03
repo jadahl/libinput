@@ -784,6 +784,24 @@ tp_post_physical_buttons(struct tp_dispatch *tp, uint64_t time)
 	return 0;
 }
 
+static uint32_t
+tp_clickfinger_set_button(struct tp_dispatch *tp)
+{
+	uint32_t button;
+
+	switch (tp->nfingers_down) {
+	case 0:
+	case 1: button = BTN_LEFT; break;
+	case 2: button = BTN_RIGHT; break;
+	case 3: button = BTN_MIDDLE; break;
+	default:
+		button = 0;
+		break;
+	}
+
+	return button;
+}
+
 static int
 tp_notify_clickpadbutton(struct tp_dispatch *tp,
 			 uint64_t time,
@@ -818,14 +836,7 @@ tp_notify_clickpadbutton(struct tp_dispatch *tp,
 	 */
 	if (tp->buttons.click_method == LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER &&
 	    state == LIBINPUT_BUTTON_STATE_PRESSED) {
-		switch (tp->nfingers_down) {
-		case 0:
-		case 1: button = BTN_LEFT; break;
-		case 2: button = BTN_RIGHT; break;
-		case 3: button = BTN_MIDDLE; break;
-		default:
-			button = 0;
-		}
+		button = tp_clickfinger_set_button(tp);
 		tp->buttons.active = button;
 
 		if (!button)
