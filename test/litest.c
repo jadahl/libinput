@@ -61,8 +61,8 @@ const char *filter_group = NULL;
 #define litest_log(...) fprintf(stderr, __VA_ARGS__)
 #define litest_vlog(format_, args_) vfprintf(stderr, format_, args_)
 #else
-#define litest_log(...) /* __VA_ARGS__ */
-#define litest_vlog(...) /* __VA_ARGS__ */
+#define litest_log(...) { /* __VA_ARGS__ */ }
+#define litest_vlog(...) { /* __VA_ARGS__ */ }
 #endif
 
 #ifdef HAVE_LIBUNWIND
