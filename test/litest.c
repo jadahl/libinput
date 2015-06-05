@@ -393,9 +393,9 @@ litest_reload_udev_rules(void)
 static int
 litest_udev_rule_filter(const struct dirent *entry)
 {
-	return strncmp(entry->d_name,
-		       UDEV_RULE_PREFIX,
-		       strlen(UDEV_RULE_PREFIX)) == 0;
+	return strneq(entry->d_name,
+		      UDEV_RULE_PREFIX,
+		      strlen(UDEV_RULE_PREFIX));
 }
 
 static void
