@@ -1395,7 +1395,6 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
 	int width, height;
-	unsigned int vendor_id;
 
 	tp->palm.right_edge = INT_MAX;
 	tp->palm.left_edge = INT_MIN;
@@ -1406,11 +1405,9 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 	height = abs(device->abs.absinfo_y->maximum -
 		    device->abs.absinfo_y->minimum);
 
-	vendor_id = evdev_device_get_id_vendor(device);
-
 	/* Wacom doesn't have internal touchpads,
 	 * Apple touchpads are always big enough to warrant palm detection */
-	if (vendor_id == VENDOR_ID_WACOM) {
+	if (device->model == EVDEV_MODEL_WACOM_TOUCHPAD) {
 		return 0;
 	} else if (device->model != EVDEV_MODEL_APPLE_TOUCHPAD) {
 		/* We don't know how big the touchpad is */
