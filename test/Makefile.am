@@ -38,7 +38,9 @@ liblitest_la_SOURCES = \
 	litest-vmware-virtual-usb-mouse.c \
 	litest.c
 liblitest_la_LIBADD = $(top_builddir)/src/libinput-util.la
-liblitest_la_CFLAGS = $(AM_CFLAGS)
+liblitest_la_CFLAGS = $(AM_CFLAGS) \
+	      -DLIBINPUT_UDEV_RULES_FILE="\"$(abs_top_srcdir)/udev/90-libinput-model-quirks.rules\"" \
+	      -DLIBINPUT_UDEV_HWDB_FILE="\"$(abs_top_srcdir)/udev/90-libinput-model-quirks.hwdb\""
 if HAVE_LIBUNWIND
 liblitest_la_LIBADD += $(LIBUNWIND_LIBS) -ldl
 liblitest_la_CFLAGS += $(LIBUNWIND_CFLAGS)
@@ -110,7 +112,7 @@ test_device_LDADD = $(TEST_LIBS)
 test_device_LDFLAGS = -no-install
 
 test_litest_selftest_SOURCES = litest-selftest.c litest.c litest-int.h litest.h
-test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING -DLITEST_NO_MAIN
+test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING -DLITEST_NO_MAIN $(liblitest_la_CFLAGS)
 test_litest_selftest_LDADD = $(TEST_LIBS)
 test_litest_selftest_LDFLAGS = -no-install
 if HAVE_LIBUNWIND

@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include "linux/input.h"
 #include <sys/ptrace.h>
+#include <sys/sendfile.h>
 #include <sys/timerfd.h>
 #include <sys/wait.h>
 
@@ -49,12 +50,17 @@
 
 #define UDEV_RULES_D "/run/udev/rules.d"
 #define UDEV_RULE_PREFIX "99-litest-"
+#define UDEV_HWDB_D "/etc/udev/hwdb.d"
+#define UDEV_COMMON_RULE_FILE UDEV_RULES_D "/91-litest-model-quirks.rules"
+#define UDEV_COMMON_HWDB_FILE UDEV_HWDB_D "/91-litest-model-quirks-REMOVEME.hwdb"
 
 static int in_debugger = -1;
 static int verbose = 0;
 const char *filter_test = NULL;
 const char *filter_device = NULL;
 const char *filter_group = NULL;
+
+static inline void litest_remove_model_quirks(void);
 
 /* defined for the litest selftest */
 #ifndef LITEST_DISABLE_BACKTRACE_LOGGING
@@ -374,20 +380,32 @@ struct litest_test_device* devices[] = {
 
 static struct list all_tests;
 
+static inline void
+litest_system(const char *command)
+{
+	int ret;
+
+	ret = system(command);
+
+	if (ret == -1) {
+		litest_abort_msg("Failed to execute: %s", command);
+	} else if (WIFEXITED(ret)) {
+		if (WEXITSTATUS(ret))
+			litest_abort_msg("'%s' failed with %d",
+					 command,
+					 WEXITSTATUS(ret));
+	} else if (WIFSIGNALED(ret)) {
+		litest_abort_msg("'%s' terminated with signal %d",
+				 command,
+				 WTERMSIG(ret));
+	}
+}
+
 static void
 litest_reload_udev_rules(void)
 {
-	int ret = system("udevadm control --reload-rules");
-	if (ret == -1) {
-		litest_abort_msg("Failed to execute: udevadm");
-	} else if (WIFEXITED(ret)) {
-		if (WEXITSTATUS(ret))
-			litest_abort_msg("udevadm failed with %d",
-					 WEXITSTATUS(ret));
-	} else if (WIFSIGNALED(ret)) {
-		litest_abort_msg("udevadm terminated with signal %d",
-				 WTERMSIG(ret));
-	}
+	litest_system("udevadm control --reload-rules");
+	litest_system("udevadm hwdb --update");
 }
 
 static int
@@ -430,6 +448,7 @@ litest_drop_udev_rules(void)
 	}
 	free(entries);
 
+	litest_remove_model_quirks();
 	litest_reload_udev_rules();
 }
 
@@ -873,20 +892,69 @@ merge_events(const int *orig, const int *override)
 	return events;
 }
 
+static inline void
+litest_copy_file(const char *dest, const char *src, const char *header)
+{
+	int in, out;
+
+	out = open(dest, O_CREAT|O_WRONLY, 0644);
+	litest_assert_int_gt(out, -1);
+
+	if (header)
+		write(out, header, strlen(header));
+
+	in = open(src, O_RDONLY);
+	litest_assert_int_gt(in, -1);
+	/* lazy, just check for error and empty file copy */
+	litest_assert_int_gt(sendfile(out, in, NULL, 4096), 0);
+	close(out);
+	close(in);
+}
+
+static inline void
+litest_install_model_quirks(void)
+{
+	litest_copy_file(UDEV_COMMON_RULE_FILE, LIBINPUT_UDEV_RULES_FILE, NULL);
+	litest_copy_file(UDEV_COMMON_HWDB_FILE,
+			 LIBINPUT_UDEV_HWDB_FILE,
+			 "#################################################################\n"
+			 "# WARNING: REMOVE THIS FILE\n"
+			 "# This is the run-time hwdb file for the libinput test suite and\n"
+			 "# should be removed on exit. If the test-suite is not currently \n"
+			 "# running, remove this file and update your hwdb: \n"
+			 "#       sudo udevadm hwdb --update\n"
+			 "#################################################################\n\n");
+}
+
+static inline void
+litest_remove_model_quirks(void)
+{
+	unlink(UDEV_COMMON_RULE_FILE);
+	unlink(UDEV_COMMON_HWDB_FILE);
+}
+
 static char *
 litest_init_udev_rules(struct litest_test_device *dev)
 {
 	int rc;
 	FILE *f;
-	char *path;
-
-	if (!dev->udev_rule)
-		return NULL;
+	char *path = NULL;
 
 	rc = mkdir(UDEV_RULES_D, 0755);
 	if (rc == -1 && errno != EEXIST)
 		ck_abort_msg("Failed to create udev rules directory (%s)\n",
 			     strerror(errno));
+
+	rc = mkdir(UDEV_HWDB_D, 0755);
+	if (rc == -1 && errno != EEXIST)
+		ck_abort_msg("Failed to create udev hwdb directory (%s)\n",
+			     strerror(errno));
+
+	litest_install_model_quirks();
+
+	/* device-specific udev rules */
+	if (!dev->udev_rule)
+		goto out;
 
 	rc = xasprintf(&path,
 		      "%s/%s%s.rules",
@@ -903,6 +971,7 @@ litest_init_udev_rules(struct litest_test_device *dev)
 	litest_assert_int_ge(fputs(dev->udev_rule, f), 0);
 	fclose(f);
 
+out:
 	litest_reload_udev_rules();
 
 	return path;
@@ -942,6 +1011,7 @@ litest_create(enum litest_device_type which,
 	if ((*dev)->create) {
 		(*dev)->create(d);
 		if (abs_override || events_override) {
+			litest_remove_model_quirks();
 			if (udev_file)
 				unlink(udev_file);
 			litest_abort_msg("Custom create cannot be overridden");
@@ -1120,6 +1190,7 @@ litest_delete_device(struct litest_device *d)
 		return;
 
 	if (d->udev_rule_file) {
+		litest_remove_model_quirks();
 		unlink(d->udev_rule_file);
 		free(d->udev_rule_file);
 		d->udev_rule_file = NULL;
