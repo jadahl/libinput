@@ -13,13 +13,15 @@ KERNEL!="event*", GOTO="libinput_model_quirks_end"
 
 # hwdb matches:
 # 
-# libinput:<modalias>
-IMPORT{builtin}="hwdb --subsystem=input --lookup-prefix=libinput:", \
+# libinput:touchpad:<modalias>
+ENV{ID_INPUT_TOUCHPAD}=="1", \
+  IMPORT{builtin}="hwdb --subsystem=input --lookup-prefix=libinput:touchpad:", \
   GOTO="libinput_model_quirks_end"
 
 # libinput:name:<name>:dmi:<dmi string>
 KERNELS=="input*", \
   IMPORT{builtin}="hwdb 'libinput:name:$attr{name}:$attr{[dmi/id]modalias}'", \
   GOTO="libinput_model_quirks_end"
+
 
 LABEL="libinput_model_quirks_end"

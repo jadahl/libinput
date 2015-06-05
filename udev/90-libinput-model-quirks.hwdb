@@ -16,6 +16,13 @@
 # Sort by brand, model
 
 ##########################################
+# Apple
+##########################################
+libinput:touchpad:input:b0003v05ACp*
+libinput:touchpad:input:b0005v05ACp*
+ LIBINPUT_MODEL_APPLE_TOUCHPAD=1
+
+##########################################
 # Google
 ##########################################
 

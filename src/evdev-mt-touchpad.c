@@ -1157,7 +1157,7 @@ evdev_tag_touchpad(struct evdev_device *device,
 	 */
 	bustype = libevdev_get_id_bustype(device->evdev);
 	if (bustype == BUS_USB) {
-		if (libevdev_get_id_vendor(device->evdev) == VENDOR_ID_APPLE)
+		if (device->model == EVDEV_MODEL_APPLE_TOUCHPAD)
 			 device->tags |= EVDEV_TAG_INTERNAL_TOUCHPAD;
 	} else if (bustype != BUS_BLUETOOTH)
 		device->tags |= EVDEV_TAG_INTERNAL_TOUCHPAD;
@@ -1412,7 +1412,7 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 	 * Apple touchpads are always big enough to warrant palm detection */
 	if (vendor_id == VENDOR_ID_WACOM) {
 		return 0;
-	} else if (vendor_id != VENDOR_ID_APPLE) {
+	} else if (device->model != EVDEV_MODEL_APPLE_TOUCHPAD) {
 		/* We don't know how big the touchpad is */
 		if (device->abs.absinfo_x->resolution == 1)
 			return 0;
