@@ -18,6 +18,8 @@ libinput_device_config_scroll_set_method() for documentation on how to
 switch methods and libinput_device_config_scroll_get_methods() for
 documentation on how to query a device for available scroll methods.
 
+@section horizontal_scrolling Horizontal scrolling
+
 Scroll movements provide vertical and horizontal directions, each
 scroll event contains both directions where applicable, see
 libinput_event_pointer_get_axis_value(). libinput does not provide separate
