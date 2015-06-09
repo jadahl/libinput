@@ -2,8 +2,18 @@
 @page scrolling Scrolling
 
 libinput supports three different types of scrolling methods: @ref
-twofinger_scrolling, @ref edge_scrolling and @ref button_scrolling. Some devices
-support multiple methods, though only one can be enabled at a time. See
+twofinger_scrolling, @ref edge_scrolling and @ref button_scrolling. Some
+devices support multiple methods, though only one can be enabled at a time.
+As a general overview:
+- touchpad devices with physical buttons below the touchpad support edge and
+  two-finger scrolling
+- touchpad devices without physical buttons (@ref clickpad_softbuttons
+  "clickpads") support two-finger scrolling only
+- pointing sticks provide on-button scrolling by default
+- mice and other pointing devices support on-button scrolling but it is not
+  enabled by default
+
+A device may differ from the above based on its capabilities. See
 libinput_device_config_scroll_set_method() for documentation on how to
 switch methods and libinput_device_config_scroll_get_methods() for
 documentation on how to query a device for available scroll methods.
