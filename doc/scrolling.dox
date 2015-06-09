@@ -55,6 +55,10 @@ a designated button is held down. For example, Lenovo devices provide a
 <a href="http://en.wikipedia.org/wiki/Pointing_stick">pointing stick</a> that emulates
 scroll events when the trackstick's middle mouse button is held down.
 
+@note On-button scrolling is enabled by default for pointing sticks. This
+prevents middle-button dragging; all motion events while the middle button is
+down are converted to scroll events.
+
 @image html button-scrolling.svg "Button scrolling"
 
 The button may be changed with
