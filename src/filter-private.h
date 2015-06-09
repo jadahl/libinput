@@ -32,6 +32,9 @@ struct motion_filter_interface {
 			   struct motion_filter *filter,
 			   const struct normalized_coords *unaccelerated,
 			   void *data, uint64_t time);
+	void (*restart)(struct motion_filter *filter,
+			void *data,
+			uint64_t time);
 	void (*destroy)(struct motion_filter *filter);
 	bool (*set_speed)(struct motion_filter *filter,
 			  double speed);

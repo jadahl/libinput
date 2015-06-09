@@ -666,6 +666,7 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	struct tp_touch *first = tp_get_touch(tp, 0);
 	unsigned int i;
+	bool restart_filter = false;
 
 	tp_process_fake_touches(tp, time);
 	tp_unhover_touches(tp, time);
@@ -692,7 +693,13 @@ tp_process_state(struct tp_dispatch *tp, uint64_t time)
 		tp_motion_history_push(t);
 
 		tp_unpin_finger(tp, t);
+
+		if (t->state == TOUCH_BEGIN)
+			restart_filter = true;
 	}
+
+	if (restart_filter)
+		filter_restart(tp->device->pointer.filter, tp, time);
 
 	tp_button_handle_state(tp, time);
 	tp_edge_scroll_handle_state(tp, time);

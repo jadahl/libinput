@@ -37,6 +37,11 @@ struct normalized_coords
 filter_dispatch(struct motion_filter *filter,
 		const struct normalized_coords *unaccelerated,
 		void *data, uint64_t time);
+
+void
+filter_restart(struct motion_filter *filter,
+	       void *data, uint64_t time);
+
 void
 filter_destroy(struct motion_filter *filter);
 

@@ -44,6 +44,13 @@ filter_dispatch(struct motion_filter *filter,
 }
 
 void
+filter_restart(struct motion_filter *filter,
+	       void *data, uint64_t time)
+{
+	filter->interface->restart(filter, data, time);
+}
+
+void
 filter_destroy(struct motion_filter *filter)
 {
 	if (!filter)
@@ -274,6 +281,29 @@ accelerator_filter(struct motion_filter *filter,
 }
 
 static void
+accelerator_restart(struct motion_filter *filter,
+		    void *data,
+		    uint64_t time)
+{
+	struct pointer_accelerator *accel =
+		(struct pointer_accelerator *) filter;
+	unsigned int offset;
+	struct pointer_tracker *tracker;
+
+	for (offset = 1; offset < NUM_POINTER_TRACKERS; offset++) {
+		tracker = tracker_by_offset(accel, offset);
+		tracker->time = 0;
+		tracker->dir = 0;
+		tracker->delta.x = 0;
+		tracker->delta.y = 0;
+	}
+
+	tracker = tracker_by_offset(accel, 0);
+	tracker->time = time;
+	tracker->dir = UNDEFINED_DIRECTION;
+}
+
+static void
 accelerator_destroy(struct motion_filter *filter)
 {
 	struct pointer_accelerator *accel =
@@ -309,6 +339,7 @@ accelerator_set_speed(struct motion_filter *filter,
 
 struct motion_filter_interface accelerator_interface = {
 	accelerator_filter,
+	accelerator_restart,
 	accelerator_destroy,
 	accelerator_set_speed,
 };
