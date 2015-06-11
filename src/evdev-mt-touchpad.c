@@ -1492,10 +1492,18 @@ tp_init(struct tp_dispatch *tp,
 						       EV_ABS,
 						       ABS_MT_DISTANCE);
 
-	tp->hysteresis_margin.x =
-		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
-	tp->hysteresis_margin.y =
-		diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
+	if (device->abs.fake_resolution) {
+		tp->hysteresis_margin.x =
+			diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
+		tp->hysteresis_margin.y =
+			diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
+	} else {
+		int res_x = tp->device->abs.absinfo_x->resolution,
+		    res_y = tp->device->abs.absinfo_y->resolution;
+
+		tp->hysteresis_margin.x = res_x/2;
+		tp->hysteresis_margin.y = res_y/2;
+	}
 
 	if (tp_init_accel(tp, diagonal) != 0)
 		return -1;
