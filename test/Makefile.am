@@ -113,6 +113,10 @@ test_litest_selftest_SOURCES = litest-selftest.c litest.c litest-int.h litest.h
 test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING -DLITEST_NO_MAIN
 test_litest_selftest_LDADD = $(TEST_LIBS)
 test_litest_selftest_LDFLAGS = -no-install
+if HAVE_LIBUNWIND
+test_litest_selftest_LDADD += $(LIBUNWIND_LIBS) -ldl
+test_litest_selftest_CFLAGS += $(LIBUNWIND_CFLAGS)
+endif
 
 # build-test only
 test_build_pedantic_c99_SOURCES = build-pedantic.c
