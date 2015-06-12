@@ -440,8 +440,8 @@ tp_unpin_finger(struct tp_dispatch *tp, struct tp_touch *t)
 	}
 
 	/* The finger may slowly drift, adjust the center */
-	t->pinned.center.x = t->point.x + t->pinned.center.x / 2;
-	t->pinned.center.y = t->point.y + t->pinned.center.y / 2;
+	t->pinned.center.x = (t->point.x + t->pinned.center.x)/2;
+	t->pinned.center.y = (t->point.y + t->pinned.center.y)/2;
 }
 
 static void
