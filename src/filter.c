@@ -387,7 +387,7 @@ pointer_accel_profile_linear(struct motion_filter *filter,
 	const double incline = accel_filter->incline;
 	double factor;
 
-	s1 = min(1, 0.3 + speed_in * 4);
+	s1 = min(1, 0.3 + speed_in * 10);
 	s2 = 1 + (speed_in - threshold) * incline;
 
 	factor =  min(max_accel, s2 > 1 ? s2 : s1);
