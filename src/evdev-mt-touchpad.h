@@ -223,7 +223,10 @@ struct tp_dispatch {
 		bool click_pending;
 		uint32_t state;
 		uint32_t old_state;
-		uint32_t motion_dist;		/* for pinned touches */
+		struct {
+			double x_scale_coeff;
+			double y_scale_coeff;
+		} motion_dist;			/* for pinned touches */
 		unsigned int active;		/* currently active button, for release event */
 		bool active_is_topbutton;	/* is active a top button? */
 

@@ -31,7 +31,6 @@
 
 #include "evdev-mt-touchpad.h"
 
-#define DEFAULT_BUTTON_MOTION_THRESHOLD 0.02 /* 2% of size */
 #define DEFAULT_BUTTON_ENTER_TIMEOUT 100 /* ms */
 #define DEFAULT_BUTTON_LEAVE_TIMEOUT 300 /* ms */
 
@@ -709,11 +708,19 @@ tp_init_buttons(struct tp_dispatch *tp,
 	absinfo_x = device->abs.absinfo_x;
 	absinfo_y = device->abs.absinfo_y;
 
-	width = abs(absinfo_x->maximum - absinfo_x->minimum);
-	height = abs(absinfo_y->maximum - absinfo_y->minimum);
-	diagonal = sqrt(width*width + height*height);
-
-	tp->buttons.motion_dist = diagonal * DEFAULT_BUTTON_MOTION_THRESHOLD;
+	/* pinned-finger motion threshold, see tp_unpin_finger.
+	   The MAGIC for resolution-less touchpads ends up as 2% of the diagonal */
+	if (device->abs.fake_resolution) {
+		const int BUTTON_MOTION_MAGIC = 0.007;
+		width = abs(absinfo_x->maximum - absinfo_x->minimum);
+		height = abs(absinfo_y->maximum - absinfo_y->minimum);
+		diagonal = sqrt(width*width + height*height);
+		tp->buttons.motion_dist.x_scale_coeff = diagonal * BUTTON_MOTION_MAGIC;
+		tp->buttons.motion_dist.y_scale_coeff = diagonal * BUTTON_MOTION_MAGIC;
+	} else {
+		tp->buttons.motion_dist.x_scale_coeff = 1.0/absinfo_x->resolution;
+		tp->buttons.motion_dist.y_scale_coeff = 1.0/absinfo_y->resolution;
+	}
 
 	tp->buttons.config_method.get_methods = tp_button_config_click_get_methods;
 	tp->buttons.config_method.set_method = tp_button_config_click_set_method;

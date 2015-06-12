@@ -2153,6 +2153,53 @@ START_TEST(clickpad_click_n_drag)
 }
 END_TEST
 
+START_TEST(clickpad_finger_pin)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libevdev *evdev = dev->evdev;
+	const struct input_absinfo *abs;
+
+	abs = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
+	ck_assert_notnull(abs);
+	if (abs->resolution == 0)
+		return;
+
+	litest_drain_events(li);
+
+	/* make sure the movement generates pointer events when
+	   not pinned */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_move_to(dev, 0, 50, 50, 52, 52, 10, 1);
+	litest_touch_move_to(dev, 0, 52, 52, 48, 48, 10, 1);
+	litest_touch_move_to(dev, 0, 48, 48, 50, 50, 10, 1);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	litest_button_click(dev, BTN_LEFT, true);
+	litest_drain_events(li);
+
+	litest_touch_move_to(dev, 0, 50, 50, 52, 52, 10, 1);
+	litest_touch_move_to(dev, 0, 52, 52, 48, 48, 10, 1);
+	litest_touch_move_to(dev, 0, 48, 48, 50, 50, 10, 1);
+
+	litest_assert_empty_queue(li);
+
+	litest_button_click(dev, BTN_LEFT, false);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+
+	/* still pinned after release */
+	litest_touch_move_to(dev, 0, 50, 50, 52, 52, 10, 1);
+	litest_touch_move_to(dev, 0, 52, 52, 48, 48, 10, 1);
+	litest_touch_move_to(dev, 0, 48, 48, 50, 50, 10, 1);
+
+	litest_assert_empty_queue(li);
+
+	/* move to unpin */
+	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 10, 1);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+}
+END_TEST
+
 START_TEST(clickpad_softbutton_left)
 {
 	struct litest_device *dev = litest_current_device();
@@ -5144,6 +5191,7 @@ litest_setup_tests(void)
 	litest_add("touchpad:click", touchpad_btn_left, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:click", clickpad_btn_left, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:click", clickpad_click_n_drag, LITEST_CLICKPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:click", clickpad_finger_pin, LITEST_CLICKPAD, LITEST_ANY);
 
 	litest_add("touchpad:softbutton", clickpad_softbutton_left, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
 	litest_add("touchpad:softbutton", clickpad_softbutton_right, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);

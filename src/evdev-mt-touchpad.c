@@ -431,17 +431,15 @@ tp_unpin_finger(struct tp_dispatch *tp, struct tp_touch *t)
 		return;
 
 	xdist = abs(t->point.x - t->pinned.center.x);
+	xdist *= tp->buttons.motion_dist.x_scale_coeff;
 	ydist = abs(t->point.y - t->pinned.center.y);
+	ydist *= tp->buttons.motion_dist.y_scale_coeff;
 
-	if (xdist * xdist + ydist * ydist >=
-			tp->buttons.motion_dist * tp->buttons.motion_dist) {
+	/* 3mm movement -> unpin */
+	if (vector_length(xdist, ydist) >= 3.0) {
 		t->pinned.is_pinned = false;
 		return;
 	}
-
-	/* The finger may slowly drift, adjust the center */
-	t->pinned.center.x = (t->point.x + t->pinned.center.x)/2;
-	t->pinned.center.y = (t->point.y + t->pinned.center.y)/2;
 }
 
 static void
