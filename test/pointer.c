@@ -1279,6 +1279,11 @@ START_TEST(middlebutton_default_touchpad)
 	struct libinput_device *device = dev->libinput_device;
 	enum libinput_config_middle_emulation_state state;
 	int available;
+	const char *name = libinput_device_get_name(dev->libinput_device);
+
+	if (streq(name, "litest AlpsPS/2 ALPS GlidePoint") ||
+	    streq(name, "litest AlpsPS/2 ALPS DualPoint TouchPad"))
+	    return;
 
 	available = libinput_device_config_middle_emulation_is_available(device);
 	ck_assert(!available);
@@ -1292,6 +1297,25 @@ START_TEST(middlebutton_default_touchpad)
 	state = libinput_device_config_middle_emulation_get_default_enabled(
 					    device);
 	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_DISABLED);
+}
+END_TEST
+
+START_TEST(middlebutton_default_alps)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_middle_emulation_state state;
+	int available;
+
+	available = libinput_device_config_middle_emulation_is_available(device);
+	ck_assert(available);
+
+	state = libinput_device_config_middle_emulation_get_enabled(
+					    device);
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
+	state = libinput_device_config_middle_emulation_get_default_enabled(
+					    device);
+	ck_assert_int_eq(state, LIBINPUT_CONFIG_MIDDLE_EMULATION_ENABLED);
 }
 END_TEST
 
@@ -1360,6 +1384,7 @@ litest_setup_tests(void)
 	litest_add("pointer:middlebutton", middlebutton_default_clickpad, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("pointer:middlebutton", middlebutton_default_touchpad, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	litest_add("pointer:middlebutton", middlebutton_default_disabled, LITEST_ANY, LITEST_BUTTON);
+	litest_add_for_device("pointer:middlebutton", middlebutton_default_alps, LITEST_ALPS_SEMI_MT);
 
 	litest_add_ranged("pointer:state", pointer_absolute_initial_state, LITEST_ABSOLUTE, LITEST_ANY, &axis_range);
 }

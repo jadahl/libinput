@@ -16,6 +16,13 @@
 # Sort by brand, model
 
 ##########################################
+# ALPS
+##########################################
+libinput:name:*AlpsPS/2 ALPS DualPoint TouchPad:dmi:*
+libinput:name:*AlpsPS/2 ALPS GlidePoint:dmi:*
+ LIBINPUT_MODEL_ALPS_TOUCHPAD=1
+
+##########################################
 # Apple
 ##########################################
 libinput:touchpad:input:b0003v05ACp*
