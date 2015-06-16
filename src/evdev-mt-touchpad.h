@@ -399,6 +399,9 @@ tp_edge_scroll_stop_events(struct tp_dispatch *tp, uint64_t time);
 int
 tp_edge_scroll_touch_active(struct tp_dispatch *tp, struct tp_touch *t);
 
+uint32_t
+tp_touch_get_edge(struct tp_dispatch *tp, struct tp_touch *t);
+
 int
 tp_init_gesture(struct tp_dispatch *tp);
 

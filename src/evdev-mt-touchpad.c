@@ -558,6 +558,9 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	    tp_button_is_inside_softbutton_area(tp, t))
 		return;
 
+	if (tp_touch_get_edge(tp, t) & EDGE_RIGHT)
+		return;
+
 	t->palm.state = PALM_EDGE;
 	t->palm.time = time;
 	t->palm.first = t->point;

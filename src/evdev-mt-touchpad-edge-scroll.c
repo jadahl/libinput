@@ -75,7 +75,7 @@ edge_event_to_str(enum scroll_event event)
 	return NULL;
 }
 
-static uint32_t
+uint32_t
 tp_touch_get_edge(struct tp_dispatch *tp, struct tp_touch *t)
 {
 	uint32_t edge = EDGE_NONE;

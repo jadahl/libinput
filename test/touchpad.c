@@ -1692,6 +1692,26 @@ START_TEST(touchpad_palm_detect_at_edge)
 }
 END_TEST
 
+START_TEST(touchpad_no_palm_detect_at_edge_for_edge_scrolling)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	if (!touchpad_has_palm_detect_size(dev))
+		return;
+
+	enable_edge_scroll(dev);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 99, 50);
+	litest_touch_move_to(dev, 0, 99, 50, 99, 70, 5, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
+}
+END_TEST
+
 START_TEST(touchpad_palm_detect_at_bottom_corners)
 {
 	struct litest_device *dev = litest_current_device();
@@ -3543,6 +3563,7 @@ litest_setup_tests(void)
 	litest_add("touchpad:palm", touchpad_palm_detect_palm_stays_palm, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_no_palm_moving_into_edges, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:palm", touchpad_palm_detect_tap, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:palm", touchpad_no_palm_detect_at_edge_for_edge_scrolling, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 
 	litest_add("touchpad:left-handed", touchpad_left_handed, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_CLICKPAD);
 	litest_add("touchpad:left-handed", touchpad_left_handed_clickpad, LITEST_CLICKPAD, LITEST_APPLE_CLICKPAD);
