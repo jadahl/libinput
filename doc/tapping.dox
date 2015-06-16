@@ -29,17 +29,24 @@ libinput also supports "tap-and-drag" where a tap immediately followed by a
 finger down and that finger being held down emulates a button press. Moving
 the finger around can thus drag the selected item on the screen.
 
+Optional is a feature called "drag lock". With drag lock disabled, lifting
+the finger will stop any drag process. When enabled, libinput will ignore a
+finger up event during a drag process, provided the finger is set down again
+within a implementation-specific timeout. Drag lock can be enabled and
+disabled with libinput_device_config_tap_set_drag_lock_enabled().
+
 @image html tap-n-drag.svg "Tap-and-drag process"
 
 The above diagram explains the process, a tap (a) followed by a finger held
 down (b) starts the drag process and logically holds the left mouse button
 down. A movement of the finger (c) will drag the selected item until the
-finger is relased (e). If needed, the finger's position can be reset by
-lifting and quickly setting it down again on the touchpad (d). This will be
-interpreted as continuing move and is especially useful on small touchpads
-or with slow pointer acceleration.
-The release of the mouse buttons after the finger release (e) is triggered
-by a timeout. To release the button immediately, simply tap again (f).
+finger is relased (e). If needed and drag lock is enabled, the finger's
+position can be reset by lifting and quickly setting it down again on the
+touchpad (d). This will be interpreted as continuing move and is especially
+useful on small touchpads or with slow pointer acceleration.
+If drag lock is enabled, the release of the mouse buttons after the finger
+release (e) is triggered by a timeout. To release the button immediately,
+simply tap again (f).
 
 If two fingers are supported by the hardware, a second finger can be used to
 drag while the first is held in-place.

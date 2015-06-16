@@ -117,6 +117,11 @@ struct libinput_device_config_tap {
 						   enum libinput_config_tap_state enable);
 	enum libinput_config_tap_state (*get_enabled)(struct libinput_device *device);
 	enum libinput_config_tap_state (*get_default)(struct libinput_device *device);
+
+	enum libinput_config_status (*set_draglock_enabled)(struct libinput_device *device,
+							    enum libinput_config_drag_lock_state);
+	enum libinput_config_drag_lock_state (*get_draglock_enabled)(struct libinput_device *device);
+	enum libinput_config_drag_lock_state (*get_default_draglock_enabled)(struct libinput_device *device);
 };
 
 struct libinput_device_config_calibration {

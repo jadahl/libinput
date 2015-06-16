@@ -845,6 +845,25 @@ tp_tap_config_get_default(struct libinput_device *device)
 	return tp_tap_default(evdev);
 }
 
+static enum libinput_config_status
+tp_tap_config_set_draglock_enabled(struct libinput_device *device,
+				   enum libinput_config_drag_lock_state enabled)
+{
+	return LIBINPUT_CONFIG_STATUS_UNSUPPORTED;
+}
+
+static enum libinput_config_drag_lock_state
+tp_tap_config_get_draglock_enabled(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_DRAG_LOCK_ENABLED;
+}
+
+static enum libinput_config_drag_lock_state
+tp_tap_config_get_default_draglock_enabled(struct libinput_device *device)
+{
+	return LIBINPUT_CONFIG_DRAG_LOCK_ENABLED;
+}
+
 int
 tp_init_tap(struct tp_dispatch *tp)
 {
@@ -852,6 +871,9 @@ tp_init_tap(struct tp_dispatch *tp)
 	tp->tap.config.set_enabled = tp_tap_config_set_enabled;
 	tp->tap.config.get_enabled = tp_tap_config_is_enabled;
 	tp->tap.config.get_default = tp_tap_config_get_default;
+	tp->tap.config.set_draglock_enabled = tp_tap_config_set_draglock_enabled;
+	tp->tap.config.get_draglock_enabled = tp_tap_config_get_draglock_enabled;
+	tp->tap.config.get_default_draglock_enabled = tp_tap_config_get_default_draglock_enabled;
 	tp->device->base.config.tap = &tp->tap.config;
 
 	tp->tap.state = TAP_STATE_IDLE;

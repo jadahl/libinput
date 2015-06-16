@@ -140,3 +140,9 @@ LIBINPUT_0.15.0 {
 global:
 	libinput_device_keyboard_has_key;
 } LIBINPUT_0.14.0;
+
+LIBINPUT_0.19.0 {
+	libinput_device_config_tap_set_drag_lock_enabled;
+	libinput_device_config_tap_get_drag_lock_enabled;
+	libinput_device_config_tap_get_default_drag_lock_enabled;
+} LIBINPUT_0.15.0;
