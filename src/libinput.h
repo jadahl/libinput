@@ -1879,7 +1879,8 @@ libinput_device_config_tap_set_enabled(struct libinput_device *device,
  * @ingroup config
  *
  * Check if tap-to-click is enabled on this device. If the device does not
- * support tapping, this function always returns 0.
+ * support tapping, this function always returns @ref
+ * LIBINPUT_CONFIG_TAP_DISABLED.
  *
  * @param device The device to configure
  *
