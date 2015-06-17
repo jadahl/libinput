@@ -1320,7 +1320,7 @@ litest_touch_up(struct litest_device *d, unsigned int slot)
 		{ .type = -1, .code = -1 }
 	};
 
-	assert(d->ntouches_down > 0);
+	litest_assert_int_gt(d->ntouches_down, 0);
 	d->ntouches_down--;
 
 	send_btntool(d);
@@ -1437,7 +1437,7 @@ litest_hover_end(struct litest_device *d, unsigned int slot)
 		{ .type = -1, .code = -1 }
 	};
 
-	assert(d->ntouches_down > 0);
+	litest_assert_int_gt(d->ntouches_down, 0);
 	d->ntouches_down--;
 
 	send_btntool(d);
