@@ -414,4 +414,28 @@ void litest_semi_mt_touch_up(struct litest_device *d,
 #define ck_assert_notnull(ptr) ck_assert_ptr_ne(ptr, NULL)
 #endif
 
+static inline void
+litest_enable_tap(struct libinput_device *device)
+{
+	enum libinput_config_status status, expected;
+
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	status = libinput_device_config_tap_set_enabled(device,
+							LIBINPUT_CONFIG_TAP_ENABLED);
+
+	litest_assert_int_eq(status, expected);
+}
+
+static inline void
+litest_disable_tap(struct libinput_device *device)
+{
+	enum libinput_config_status status, expected;
+
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	status = libinput_device_config_tap_set_enabled(device,
+							LIBINPUT_CONFIG_TAP_DISABLED);
+
+	litest_assert_int_eq(status, expected);
+}
+
 #endif /* LITEST_H */

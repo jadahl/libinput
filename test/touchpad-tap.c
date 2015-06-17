@@ -38,8 +38,7 @@ START_TEST(touchpad_1fg_tap)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -68,8 +67,7 @@ START_TEST(touchpad_1fg_doubletap)
 	struct libinput_event_pointer *ptrev;
 	uint32_t oldtime, curtime;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -129,8 +127,7 @@ START_TEST(touchpad_1fg_multitap)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -178,8 +175,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_move)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -245,8 +241,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_2fg)
 	int range = _i,
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -317,8 +312,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_click)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -378,8 +372,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_timeout)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -449,8 +442,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_tap)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -522,8 +514,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_tap_click)
 	int range = _i, /* looped test */
 	    ntaps;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -601,8 +592,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -642,8 +632,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -684,8 +673,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -729,8 +717,7 @@ START_TEST(touchpad_1fg_tap_n_drag_timeout)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -759,8 +746,7 @@ START_TEST(touchpad_2fg_tap_n_drag)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -796,8 +782,7 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg_btntool)
 				     ABS_MT_SLOT) > 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -842,8 +827,7 @@ START_TEST(touchpad_2fg_tap_n_drag_3fg)
 				     ABS_MT_SLOT) <= 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -881,8 +865,7 @@ START_TEST(touchpad_2fg_tap)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -908,8 +891,7 @@ START_TEST(touchpad_2fg_tap_inverted)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -935,8 +917,7 @@ START_TEST(touchpad_2fg_tap_quickrelease)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -967,8 +948,7 @@ START_TEST(touchpad_1fg_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1000,8 +980,7 @@ START_TEST(touchpad_2fg_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1036,8 +1015,7 @@ START_TEST(clickpad_2fg_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1068,8 +1046,7 @@ START_TEST(touchpad_2fg_tap_click_apple)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1101,8 +1078,7 @@ START_TEST(touchpad_no_2fg_tap_after_move)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 	litest_drain_events(dev->libinput);
 
 	/* one finger down, move past threshold,
@@ -1125,8 +1101,7 @@ START_TEST(touchpad_no_2fg_tap_after_timeout)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 	litest_drain_events(dev->libinput);
 
 	/* one finger down, wait past tap timeout,
@@ -1152,8 +1127,7 @@ START_TEST(touchpad_no_first_fg_tap_after_move)
 	struct libinput *li = dev->libinput;
 	struct libinput_event *event;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1184,8 +1158,7 @@ START_TEST(touchpad_1fg_double_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1220,8 +1193,7 @@ START_TEST(touchpad_1fg_tap_n_drag_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
@@ -1269,8 +1241,7 @@ START_TEST(touchpad_3fg_tap)
 				     ABS_MT_SLOT) <= 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	for (i = 0; i < 3; i++) {
 		litest_drain_events(li);
@@ -1307,8 +1278,7 @@ START_TEST(touchpad_3fg_tap_quickrelease)
 				     ABS_MT_SLOT) <= 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -1348,7 +1318,7 @@ START_TEST(touchpad_3fg_tap_btntool)
 				     ABS_MT_SLOT) > 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device, 1);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -1387,7 +1357,7 @@ START_TEST(touchpad_3fg_tap_btntool_inverted)
 				     ABS_MT_SLOT) > 2)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device, 1);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -1427,8 +1397,7 @@ START_TEST(touchpad_4fg_tap)
 				     ABS_MT_SLOT) <= 3)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	for (i = 0; i < 4; i++) {
 		litest_drain_events(li);
@@ -1462,8 +1431,7 @@ START_TEST(touchpad_4fg_tap_quickrelease)
 				     ABS_MT_SLOT) <= 3)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -1502,8 +1470,7 @@ START_TEST(touchpad_5fg_tap)
 				     ABS_MT_SLOT) <= 4)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	for (i = 0; i < 5; i++) {
 		litest_drain_events(li);
@@ -1539,8 +1506,7 @@ START_TEST(touchpad_5fg_tap_quickrelease)
 				     ABS_MT_SLOT) <= 4)
 		return;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -1576,8 +1542,7 @@ START_TEST(clickpad_1fg_tap_click)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	libinput_device_config_tap_set_enabled(dev->libinput_device,
-					       LIBINPUT_CONFIG_TAP_ENABLED);
+	litest_enable_tap(dev->libinput_device);
 
 	litest_drain_events(dev->libinput);
 
