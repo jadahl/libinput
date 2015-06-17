@@ -617,6 +617,50 @@ START_TEST(touchpad_1fg_tap_n_drag)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev __attribute__((unused));
+
+	litest_enable_tap(dev->libinput_device);
+	disable_drag_lock(dev->libinput_device);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
+
+	libinput_dispatch(li);
+
+	litest_assert_button_event(li, BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+
+	libinput_dispatch(li);
+
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	litest_touch_up(dev, 0);
+
+	/* don't use helper functions here, we expect the event be available
+	 * immediately, not after a timeout that the helper functions may
+	 * trigger.
+	 */
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ck_assert_notnull(event);
+	ptrev = litest_is_button_event(event,
+				       BTN_LEFT,
+				       LIBINPUT_BUTTON_STATE_RELEASED);
+	libinput_event_destroy(event);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_1fg_tap_n_drag_draglock)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
 	enable_drag_lock(dev->libinput_device);
@@ -654,7 +698,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 }
 END_TEST
 
-START_TEST(touchpad_1fg_tap_n_drag_tap)
+START_TEST(touchpad_1fg_tap_n_drag_draglock_tap)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -696,7 +740,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap)
 }
 END_TEST
 
-START_TEST(touchpad_1fg_tap_n_drag_tap_click)
+START_TEST(touchpad_1fg_tap_n_drag_draglock_tap_click)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -741,7 +785,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap_click)
 }
 END_TEST
 
-START_TEST(touchpad_1fg_tap_n_drag_timeout)
+START_TEST(touchpad_1fg_tap_n_drag_draglock_timeout)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
@@ -1723,8 +1767,9 @@ litest_setup_tests(void)
 	litest_add_ranged("touchpad:tap", touchpad_1fg_multitap_n_drag_2fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH, &multitap_range);
 	litest_add_ranged("touchpad:tap", touchpad_1fg_multitap_n_drag_click, LITEST_CLICKPAD, LITEST_ANY, &multitap_range);
 	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag, LITEST_TOUCHPAD, LITEST_ANY);
-	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_tap, LITEST_TOUCHPAD, LITEST_ANY);
-	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_timeout, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_draglock, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_draglock_tap, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_draglock_timeout, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg_btntool, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
 	litest_add("touchpad:tap", touchpad_2fg_tap_n_drag_3fg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
@@ -1753,7 +1798,7 @@ litest_setup_tests(void)
 	litest_add("touchpad:tap", touchpad_1fg_double_tap_click, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_click, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add_ranged("touchpad:tap", touchpad_1fg_multitap_n_drag_tap_click, LITEST_CLICKPAD, LITEST_ANY, &multitap_range);
-	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_tap_click, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_1fg_tap_n_drag_draglock_tap_click, LITEST_CLICKPAD, LITEST_ANY);
 
 	litest_add("touchpad:tap", touchpad_tap_default_disabled, LITEST_TOUCHPAD|LITEST_BUTTON, LITEST_ANY);
 	litest_add("touchpad:tap", touchpad_tap_default_enabled, LITEST_TOUCHPAD, LITEST_BUTTON);
