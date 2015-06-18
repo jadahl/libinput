@@ -353,7 +353,7 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 	struct tp_touch *t;
 	enum libinput_pointer_axis axis;
 	double *delta;
-	struct normalized_coords normalized;
+	struct normalized_coords normalized, tmp;
 	const struct normalized_coords zero = { 0.0, 0.0 };
 	const struct discrete_coords zero_discrete = { 0.0, 0.0 };
 
@@ -402,11 +402,14 @@ tp_edge_scroll_post_events(struct tp_dispatch *tp, uint64_t time)
 					 t->scroll.edge_state);
 			break;
 		case EDGE_SCROLL_TOUCH_STATE_EDGE_NEW:
+			tmp = normalized;
 			normalized = tp_normalize_delta(tp,
 					device_delta(t->point,
 						     t->scroll.initial));
 			if (fabs(*delta) < DEFAULT_SCROLL_THRESHOLD)
 				normalized = zero;
+			else
+				normalized = tmp;
 			break;
 		case EDGE_SCROLL_TOUCH_STATE_EDGE:
 			break;
