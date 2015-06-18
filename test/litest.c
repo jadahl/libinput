@@ -491,7 +491,13 @@ litest_add_tcase_for_device(struct suite *suite,
 				    litest_drop_udev_rules);
 	tcase_add_checked_fixture(t->tc, dev->setup,
 				  dev->teardown ? dev->teardown : litest_generic_device_teardown);
-	tcase_add_test(t->tc, func);
+	if (range)
+		tcase_add_loop_test(t->tc,
+				    func,
+				    range->lower,
+				    range->upper);
+	else
+		tcase_add_test(t->tc, func);
 	suite_add_tcase(suite->suite, t->tc);
 }
 
