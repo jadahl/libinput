@@ -39,7 +39,7 @@
    avoid accidentally locking in scrolling mode when trying to use the entire
    touchpad to move the pointer. The user can wait for the timeout to trigger
    to do a small scroll. */
-#define DEFAULT_SCROLL_THRESHOLD TP_MM_TO_DPI_NORMALIZED(5)
+#define DEFAULT_SCROLL_THRESHOLD TP_MM_TO_DPI_NORMALIZED(3)
 
 enum scroll_event {
 	SCROLL_EVENT_TOUCH,
