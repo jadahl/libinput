@@ -48,6 +48,7 @@ endif
 
 run_tests = \
 	test-touchpad \
+	test-touchpad-tap \
 	test-device \
 	test-pointer \
 	test-touch \
@@ -94,6 +95,10 @@ test_log_LDFLAGS = -no-install
 test_touchpad_SOURCES = touchpad.c
 test_touchpad_LDADD = $(TEST_LIBS)
 test_touchpad_LDFLAGS = -no-install
+
+test_touchpad_tap_SOURCES = touchpad-tap.c
+test_touchpad_tap_LDADD = $(TEST_LIBS)
+test_touchpad_tap_LDFLAGS = -no-install
 
 test_trackpoint_SOURCES = trackpoint.c
 test_trackpoint_LDADD = $(TEST_LIBS)
