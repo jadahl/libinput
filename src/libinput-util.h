@@ -37,6 +37,9 @@
 #define VENDOR_ID_APPLE 0x5ac
 #define VENDOR_ID_WACOM 0x56a
 
+/* The HW DPI rate we normalize to before calculating pointer acceleration */
+#define DEFAULT_MOUSE_DPI 1000
+
 void
 set_logging_enabled(int enabled);
 
