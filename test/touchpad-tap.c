@@ -693,20 +693,12 @@ START_TEST(touchpad_1fg_tap_n_drag_tap_click)
 	litest_touch_up(dev, 0);
 	litest_touch_down(dev, 0, 50, 50);
 	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
-	litest_touch_up(dev, 0);
-
 	libinput_dispatch(li);
 
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 
 	libinput_dispatch(li);
-
-	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
-
-	/* lift finger, set down again, should continue dragging */
-	litest_touch_down(dev, 0, 50, 50);
-	litest_touch_move_to(dev, 0, 50, 50, 80, 80, 5, 40);
 
 	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
