@@ -157,8 +157,13 @@ print_device_notify(struct libinput_event *ev)
 	if (libinput_device_get_size(dev, &w, &h) == 0)
 		printf("\tsize %.2f/%.2fmm", w, h);
 
-	if (libinput_device_config_tap_get_finger_count(dev))
+	if (libinput_device_config_tap_get_finger_count(dev)) {
 	    printf(" tap");
+	    if (libinput_device_config_tap_get_drag_lock_enabled(dev))
+		    printf("(dl on)");
+	    else
+		    printf("(dl off)");
+	}
 	if (libinput_device_config_left_handed_is_available(dev))
 	    printf(" left");
 	if (libinput_device_config_scroll_has_natural_scroll(dev))
