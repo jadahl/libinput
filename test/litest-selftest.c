@@ -289,6 +289,61 @@ START_TEST(litest_ptr_notnull_trigger_NULL)
 }
 END_TEST
 
+START_TEST(ck_double_eq_and_ne)
+{
+	ck_assert_double_eq(0.4,0.4);
+	ck_assert_double_eq(0.4,0.4 + 1E-6);
+	ck_assert_double_ne(0.4,0.4 + 1E-3);
+}
+END_TEST
+
+START_TEST(ck_double_lt_gt)
+{
+	ck_assert_double_lt(12.0,13.0);
+	ck_assert_double_gt(15.4,13.0);
+	ck_assert_double_le(12.0,12.0);
+	ck_assert_double_le(12.0,20.0);
+	ck_assert_double_ge(12.0,12.0);
+	ck_assert_double_ge(20.0,12.0);
+}
+END_TEST
+
+START_TEST(ck_double_eq_fails)
+{
+	ck_assert_double_eq(0.41,0.4);
+}
+END_TEST
+
+START_TEST(ck_double_ne_fails)
+{
+	ck_assert_double_ne(0.4 + 1E-7,0.4);
+}
+END_TEST
+
+START_TEST(ck_double_lt_fails)
+{
+	ck_assert_double_lt(6,5);
+}
+END_TEST
+
+START_TEST(ck_double_gt_fails)
+{
+	ck_assert_double_gt(5,6);
+}
+END_TEST
+
+START_TEST(ck_double_le_fails)
+{
+	ck_assert_double_le(6,5);
+}
+END_TEST
+
+START_TEST(ck_double_ge_fails)
+{
+	ck_assert_double_ge(5,6);
+}
+END_TEST
+
 static Suite *
 litest_assert_macros_suite(void)
 {
@@ -340,6 +395,17 @@ litest_assert_macros_suite(void)
 	tcase_add_test_raise_signal(tc, litest_ptr_notnull_trigger, SIGABRT);
 	tcase_add_test_raise_signal(tc, litest_ptr_notnull_trigger_NULL, SIGABRT);
 	tcase_add_test(tc, litest_ptr_notnull_notrigger);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("double comparison ");
+	tcase_add_test(tc, ck_double_eq_and_ne);
+	tcase_add_test(tc, ck_double_lt_gt);
+	tcase_add_exit_test(tc, ck_double_eq_fails, 1);
+	tcase_add_exit_test(tc, ck_double_ne_fails, 1);
+	tcase_add_exit_test(tc, ck_double_lt_fails, 1);
+	tcase_add_exit_test(tc, ck_double_gt_fails, 1);
+	tcase_add_exit_test(tc, ck_double_le_fails, 1);
+	tcase_add_exit_test(tc, ck_double_ge_fails, 1);
 	suite_add_tcase(s, tc);
 
 	return s;

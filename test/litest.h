@@ -458,4 +458,54 @@ litest_disable_tap(struct libinput_device *device)
 	litest_assert_int_eq(status, expected);
 }
 
+#define CK_DOUBLE_EQ_EPSILON 1E-3
+#define ck_assert_double_eq(X,Y)  \
+	do { \
+		double _ck_x = X; \
+		double _ck_y = Y; \
+		ck_assert_msg(fabs(_ck_x - _ck_y) < CK_DOUBLE_EQ_EPSILON, \
+			      "Assertion '" #X " == " #Y \
+			      "' failed: "#X"==%f, "#Y"==%f", \
+			      _ck_x, \
+			      _ck_y); \
+	} while (0)
+
+#define ck_assert_double_ne(X,Y)  \
+	do { \
+		double _ck_x = X; \
+		double _ck_y = Y; \
+		ck_assert_msg(fabs(_ck_x - _ck_y) > CK_DOUBLE_EQ_EPSILON, \
+			      "Assertion '" #X " != " #Y \
+			      "' failed: "#X"==%f, "#Y"==%f", \
+			      _ck_x, \
+			      _ck_y); \
+	} while (0)
+
+#define _ck_assert_double_eq(X, OP, Y)  \
+	do { \
+		double _ck_x = X; \
+		double _ck_y = Y; \
+		ck_assert_msg(_ck_x OP _ck_y || \
+			      fabs(_ck_x - _ck_y) < CK_DOUBLE_EQ_EPSILON, \
+			      "Assertion '" #X#OP#Y \
+			      "' failed: "#X"==%f, "#Y"==%f", \
+			      _ck_x, \
+			      _ck_y); \
+	} while (0)
+
+#define _ck_assert_double_ne(X, OP,Y) \
+	do { \
+		double _ck_x = X; \
+		double _ck_y = Y; \
+		ck_assert_msg(_ck_x OP _ck_y && \
+			      fabs(_ck_x - _ck_y) > CK_DOUBLE_EQ_EPSILON, \
+			      "Assertion '" #X#OP#Y \
+			      "' failed: "#X"==%f, "#Y"==%f", \
+			      _ck_x, \
+			      _ck_y); \
+	} while (0)
+#define ck_assert_double_lt(X, Y) _ck_assert_double_ne(X, <, Y)
+#define ck_assert_double_le(X, Y) _ck_assert_double_eq(X, <=, Y)
+#define ck_assert_double_gt(X, Y) _ck_assert_double_ne(X, >, Y)
+#define ck_assert_double_ge(X, Y) _ck_assert_double_eq(X, >=, Y)
 #endif /* LITEST_H */
