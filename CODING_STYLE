@@ -62,6 +62,17 @@
   	useit(c);
   }
 
+- if/else: { on the same line, no curly braces if both blocks are a single
+  statement. If either if or else block are multiple statements, both must
+  have curly braces.
+
+  if (foo) {
+  	blah();
+  	bar();
+  } else {
+  	a = 10;
+  }
+
 - public functions MUST be doxygen-commented, use doxygen's @foo rather than
   \foo notation
 
