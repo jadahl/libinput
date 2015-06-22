@@ -32,6 +32,30 @@
 #include "libinput-util.h"
 #include "litest.h"
 
+static inline void
+enable_drag_lock(struct libinput_device *device)
+{
+	enum libinput_config_status status, expected;
+
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+
+	litest_assert_int_eq(status, expected);
+}
+
+static inline void
+disable_drag_lock(struct libinput_device *device)
+{
+	enum libinput_config_status status, expected;
+
+	expected = LIBINPUT_CONFIG_STATUS_SUCCESS;
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
+
+	litest_assert_int_eq(status, expected);
+}
+
 START_TEST(touchpad_1fg_tap)
 {
 	struct litest_device *dev = litest_current_device();
@@ -443,6 +467,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_tap)
 	    ntaps;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -515,6 +540,7 @@ START_TEST(touchpad_1fg_multitap_n_drag_tap_click)
 	    ntaps;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -593,6 +619,7 @@ START_TEST(touchpad_1fg_tap_n_drag)
 	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -633,6 +660,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap)
 	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -674,6 +702,7 @@ START_TEST(touchpad_1fg_tap_n_drag_tap_click)
 	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -718,6 +747,7 @@ START_TEST(touchpad_1fg_tap_n_drag_timeout)
 	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
+	enable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -747,6 +777,7 @@ START_TEST(touchpad_2fg_tap_n_drag)
 	struct libinput *li = dev->libinput;
 
 	litest_enable_tap(dev->libinput_device);
+	disable_drag_lock(dev->libinput_device);
 
 	litest_drain_events(li);
 
@@ -765,7 +796,6 @@ START_TEST(touchpad_2fg_tap_n_drag)
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
 
-	/* This will wait for the DRAGGING_WAIT timeout */
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_RELEASED);
 
@@ -1625,6 +1655,60 @@ START_TEST(touchpad_tap_invalid)
 }
 END_TEST
 
+START_TEST(touchpad_drag_lock_default_enabled)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+
+	ck_assert_int_eq(libinput_device_config_tap_get_drag_lock_enabled(device),
+			 LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+	ck_assert_int_eq(libinput_device_config_tap_get_default_drag_lock_enabled(device),
+			 LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  3);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+}
+END_TEST
+
+START_TEST(touchpad_drag_lock_default_disabled)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	enum libinput_config_status status;
+
+	ck_assert_int_eq(libinput_device_config_tap_get_drag_lock_enabled(device),
+			 LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
+	ck_assert_int_eq(libinput_device_config_tap_get_default_drag_lock_enabled(device),
+			 LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_UNSUPPORTED);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_SUCCESS);
+
+	status = libinput_device_config_tap_set_drag_lock_enabled(device,
+								  3);
+	ck_assert_int_eq(status, LIBINPUT_CONFIG_STATUS_INVALID);
+}
+END_TEST
+
 void
 litest_setup_tests(void)
 {
@@ -1679,5 +1763,8 @@ litest_setup_tests(void)
 
 	litest_add("touchpad:tap", clickpad_1fg_tap_click, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", clickpad_2fg_tap_click, LITEST_CLICKPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
+
+	litest_add("touchpad:tap", touchpad_drag_lock_default_enabled, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_drag_lock_default_disabled, LITEST_ANY, LITEST_TOUCHPAD);
 
 }

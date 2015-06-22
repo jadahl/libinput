@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2722px" height="3014px" version="1.1">
   <defs/>
   <g transform="translate(0.5,0.5)">
-    <path d="M 1884 1347 L 2616.6 890.37" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2621.05 887.59 L 2616.96 894.26 L 2616.6 890.37 L 2613.26 888.32 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1771 332 L 2616.5 825.79" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2621.03 828.44 L 2613.22 827.93 L 2616.5 825.79 L 2616.76 821.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1318 2071 L 1342.18 2091.84" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1346.15 2095.27 L 1338.57 2093.35 L 1342.18 2091.84 L 1343.14 2088.05 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1883.62 1347 L 2616.92 890.37" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2621.37 887.59 L 2617.28 894.26 L 2616.92 890.37 L 2613.58 888.32 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1771.26 332 L 2616.5 825.47" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2621.03 828.12 L 2613.22 827.61 L 2616.5 825.47 L 2616.75 821.57 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1318.06 2070.5 L 1341.99 2091.77" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1345.91 2095.26 L 1338.36 2093.22 L 1341.99 2091.77 L 1343.01 2087.99 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="1730" cy="32" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1729.75" y="35.75">
@@ -28,15 +26,15 @@
       <text x="1733.75" y="142.75">
 	finger down</text>
     </g>
-    <path d="M 1731 62 L 1732.68 95.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1732.94 100.88 L 1729.1 94.07 L 1732.68 95.64 L 1736.09 93.72 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1731.2 62 L 1732.55 95.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1732.76 100.88 L 1728.98 94.03 L 1732.55 95.64 L 1735.97 93.75 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1436.04 407 C 1438.84 403.86 1442.82 402.05 1447.02 402 L 1480.99 402 C 1485.19 402.05 1489.17 403.86 1491.97 407 L 1511.95 430 C 1512.51 431.28 1512.51 432.72 1511.95 434 L 1491.97 457 C 1489.17 460.14 1485.19 461.95 1480.99 462 L 1447.02 462 C 1442.82 461.95 1438.84 460.14 1436.04 457 L 1416.06 434 C 1415.5 432.72 1415.5 431.28 1416.06 430 L 1436.04 407 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1463.75" y="435.75">
 	finger up</text>
     </g>
-    <path d="M 1692 332 L 1518.83 408.43" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1514.02 410.55 L 1519.01 404.52 L 1518.83 408.43 L 1521.84 410.92 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1691.5 332 L 1518.33 408.12" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1513.52 410.23 L 1518.52 404.21 L 1518.33 408.12 L 1521.34 410.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1434.22 722.1 C 1435.36 718.9 1437.22 717.04 1439.18 717.12 L 1507.64 717.12 C 1509.2 717.08 1510.7 717.63 1511.67 718.61 C 1512.65 719.59 1512.99 720.88 1512.6 722.1 L 1493.75 771.9 C 1492.61 775.1 1490.75 776.96 1488.79 776.88 L 1419.34 776.88 C 1417.95 776.69 1416.73 776.05 1415.97 775.1 C 1415.22 774.15 1415 772.99 1415.37 771.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1463.75" y="743.75">
@@ -49,8 +47,8 @@
       <text x="2011.25" y="435.75">
 	timeout</text>
     </g>
-    <path d="M 1783 332 L 1957.17 408.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1961.98 410.55 L 1954.16 410.94 L 1957.17 408.44 L 1956.97 404.53 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1782.75 332 L 1957.17 408.25" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1961.98 410.35 L 1954.16 410.75 L 1957.17 408.25 L 1956.96 404.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1802.54 407 C 1805.34 403.86 1809.32 402.05 1813.52 402 L 1847.49 402 C 1851.69 402.05 1855.67 403.86 1858.47 407 L 1878.45 430 C 1879.01 431.28 1879.01 432.72 1878.45 434 L 1858.47 457 C 1855.67 460.14 1851.69 461.95 1847.49 462 L 1813.52 462 C 1809.32 461.95 1805.34 460.14 1802.54 457 L 1782.56 434 C 1782 432.72 1782 431.28 1782.56 430 L 1802.54 407 Z" fill="#67ab9f" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1830.25" y="428.75">
@@ -58,8 +56,8 @@
       <text x="1830.25" y="442.75">
 	threshold</text>
     </g>
-    <path d="M 1753 332 L 1803.11 396.96" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1806.32 401.11 L 1799.27 397.71 L 1803.11 396.96 L 1804.81 393.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1752.58 332 L 1803.21 396.98" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1806.44 401.12 L 1799.37 397.75 L 1803.21 396.98 L 1804.9 393.45 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1613.54 407 C 1616.34 403.86 1620.32 402.05 1624.52 402 L 1658.49 402 C 1662.69 402.05 1666.67 403.86 1669.47 407 L 1689.45 430 C 1690.01 431.28 1690.01 432.72 1689.45 434 L 1669.47 457 C 1666.67 460.14 1662.69 461.95 1658.49 462 L 1624.52 462 C 1620.32 461.95 1616.34 460.14 1613.54 457 L 1593.56 434 C 1593 432.72 1593 431.28 1593.56 430 L 1613.54 407 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1641.25" y="428.75">
@@ -67,8 +65,8 @@
       <text x="1641.25" y="442.75">
 	finger down</text>
     </g>
-    <path d="M 1721 332 L 1668.98 397.03" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1665.7 401.13 L 1667.34 393.47 L 1668.98 397.03 L 1672.8 397.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1721.08 332 L 1669.34 397.02" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1666.07 401.13 L 1667.69 393.47 L 1669.34 397.02 L 1673.17 397.83 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1817" y="847" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1881.75" y="870.75">
@@ -81,8 +79,8 @@
       <text x="1754.75" y="1017.75">
 	finger up</text>
     </g>
-    <path d="M 1864 887 L 1786.29 972.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1782.75 976.17 L 1784.88 968.64 L 1786.29 972.29 L 1790.05 973.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1863.86 887 L 1786.49 972.28" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1782.97 976.17 L 1785.08 968.64 L 1786.49 972.28 L 1790.26 973.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1575.22 642.1 C 1576.36 638.9 1578.22 637.04 1580.18 637.12 L 1648.64 637.12 C 1650.2 637.08 1651.7 637.63 1652.67 638.61 C 1653.65 639.59 1653.99 640.88 1653.6 642.1 L 1634.75 691.9 C 1633.61 695.1 1631.75 696.96 1629.79 696.88 L 1560.34 696.88 C 1558.95 696.69 1557.73 696.05 1556.97 695.1 C 1556.22 694.15 1556 692.99 1556.37 691.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1604.75" y="663.75">
@@ -102,10 +100,10 @@
       <text x="2130.25" y="930.75">
 	timeout</text>
     </g>
-    <path d="M 1947 883 L 2075.8 913.53" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2080.91 914.74 L 2073.29 916.53 L 2075.8 913.53 L 2074.91 909.72 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1902 887 L 1969.43 952.56" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1973.2 956.22 L 1965.74 953.85 L 1969.43 952.56 L 1970.62 948.83 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1947 882.69 L 2075.81 913.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2080.91 915.03 L 2073.29 916.79 L 2075.81 913.8 L 2074.93 909.98 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1902.42 887 L 1969.33 952.54" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1973.08 956.22 L 1965.63 953.82 L 1969.33 952.54 L 1970.53 948.82 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1638.72 1112.1 C 1639.86 1108.9 1641.72 1107.04 1643.68 1107.12 L 1712.14 1107.12 C 1713.7 1107.08 1715.2 1107.63 1716.17 1108.61 C 1717.15 1109.59 1717.49 1110.88 1717.1 1112.1 L 1698.25 1161.9 C 1697.11 1165.1 1695.25 1166.96 1693.29 1166.88 L 1623.84 1166.88 C 1622.45 1166.69 1621.23 1166.05 1620.47 1165.1 C 1619.72 1164.15 1619.5 1162.99 1619.87 1161.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1668.25" y="1133.75">
@@ -120,10 +118,10 @@
       <text x="1614.25" y="582.75">
 	release</text>
     </g>
-    <path d="M 1719 778 L 1640.56 701.45" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1636.8 697.78 L 1644.25 700.16 L 1640.56 701.45 L 1639.37 705.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1608 637 L 1610.46 608.34" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1610.9 603.11 L 1613.79 610.39 L 1610.46 608.34 L 1606.82 609.79 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1718.98 777.5 L 1640.52 701.43" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1636.75 697.78 L 1644.21 700.14 L 1640.52 701.43 L 1639.34 705.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1608 637 L 1610.87 608.34" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1611.39 603.11 L 1614.17 610.43 L 1610.87 608.34 L 1607.21 609.73 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1399" y="917" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1463.75" y="940.75">
@@ -134,8 +132,8 @@
       <text x="1555.75" y="1070.75">
 	timeout</text>
     </g>
-    <path d="M 1478 957 L 1531.3 1031.81" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1534.35 1036.09 L 1527.44 1032.42 L 1531.3 1031.81 L 1533.14 1028.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1478.15 957 L 1531.09 1031.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1534.12 1036.09 L 1527.22 1032.4 L 1531.09 1031.8 L 1532.94 1028.35 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1372.54 1012 C 1375.34 1008.86 1379.32 1007.05 1383.52 1007 L 1417.49 1007 C 1421.69 1007.05 1425.67 1008.86 1428.47 1012 L 1448.45 1035 C 1449.01 1036.28 1449.01 1037.72 1448.45 1039 L 1428.47 1062 C 1425.67 1065.14 1421.69 1066.95 1417.49 1067 L 1383.52 1067 C 1379.32 1066.95 1375.34 1065.14 1372.54 1062 L 1352.56 1039 C 1352 1037.72 1352 1036.28 1352.56 1035 L 1372.54 1012 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1400.25" y="1033.75">
@@ -143,8 +141,8 @@
       <text x="1400.25" y="1047.75">
 	finger down</text>
     </g>
-    <path d="M 1451 957 L 1423.36 1001.59" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1420.59 1006.05 L 1421.3 998.26 L 1423.36 1001.59 L 1427.25 1001.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1451.3 957 L 1422.96 1001.62" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1420.15 1006.06 L 1420.95 998.27 L 1422.96 1001.62 L 1426.86 1002.02 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="830" y="1487" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="894.75" y="1510.75">
@@ -157,19 +155,19 @@
       <text x="751.75" y="1652.75">
 	finger up</text>
     </g>
-    <path d="M 903.22 1959.1 C 904.36 1955.9 906.22 1954.04 908.18 1954.12 L 976.64 1954.12 C 978.2 1954.08 979.7 1954.63 980.67 1955.61 C 981.65 1956.59 981.99 1957.88 981.6 1959.1 L 962.75 2008.9 C 961.61 2012.1 959.75 2013.96 957.79 2013.88 L 888.34 2013.88 C 886.95 2013.69 885.73 2013.05 884.97 2012.1 C 884.22 2011.15 884 2009.99 884.37 2008.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 840.22 2039.1 C 841.36 2035.9 843.22 2034.04 845.18 2034.12 L 913.64 2034.12 C 915.2 2034.08 916.7 2034.63 917.67 2035.61 C 918.65 2036.59 918.99 2037.88 918.6 2039.1 L 899.75 2088.9 C 898.61 2092.1 896.75 2093.96 894.79 2093.88 L 825.34 2093.88 C 823.95 2093.69 822.73 2093.05 821.97 2092.1 C 821.22 2091.15 821 2089.99 821.37 2088.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
-      <text x="932.75" y="1980.75">
+      <text x="869.75" y="2060.75">
 	btn1</text>
-      <text x="932.75" y="1994.75">
+      <text x="869.75" y="2074.75">
 	release</text>
     </g>
-    <path d="M 874 1527 L 788.63 1607.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 784.81 1611.23 L 787.5 1603.88 L 788.63 1607.63 L 792.31 1608.97 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 873.81 1527 L 788.41 1607.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 784.59 1611.23 L 787.28 1603.88 L 788.41 1607.63 L 792.08 1608.97 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1464 777 L 1464 910.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1464 915.88 L 1460.5 908.88 L 1464 910.63 L 1467.5 908.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1604 1097 L 1614.6 1103.62" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1619.05 1106.41 L 1611.26 1105.67 L 1614.6 1103.62 L 1614.97 1099.73 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1604.21 1097 L 1614.88 1103.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1619.34 1106.41 L 1611.54 1105.68 L 1614.88 1103.64 L 1615.24 1099.74 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="2341" cy="810" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2341.25" y="813.75">
@@ -182,15 +180,15 @@
       <text x="1888.25" y="1033.75">
 	finger down</text>
     </g>
-    <path d="M 1883 887 L 1886.76 986.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1886.96 991.88 L 1883.2 985.02 L 1886.76 986.64 L 1890.19 984.76 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1882.83 887 L 1886.98 986.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1887.2 991.88 L 1883.42 985.03 L 1886.98 986.64 L 1890.41 984.74 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1786.5" y="1347" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1851.25" y="1370.75">
 	TOUCH_3</text>
     </g>
-    <path d="M 1859 1250 L 1853.39 1340.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1853.07 1345.88 L 1850.01 1338.68 L 1853.39 1340.64 L 1856.99 1339.11 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1859.33 1249.5 L 1853.26 1340.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1852.91 1345.88 L 1849.88 1338.67 L 1853.26 1340.65 L 1856.87 1339.13 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1707.22 1853.1 C 1708.36 1849.9 1710.22 1848.04 1712.18 1848.12 L 1780.64 1848.12 C 1782.2 1848.08 1783.7 1848.63 1784.67 1849.61 C 1785.65 1850.59 1785.99 1851.88 1785.6 1853.1 L 1766.75 1902.9 C 1765.61 1906.1 1763.75 1907.96 1761.79 1907.88 L 1692.34 1907.88 C 1690.95 1907.69 1689.73 1907.05 1688.97 1906.1 C 1688.22 1905.15 1688 1903.99 1688.37 1902.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1736.75" y="1874.75">
@@ -214,8 +212,8 @@
       <text x="1937.75" y="1572.75">
 	threshold</text>
     </g>
-    <path d="M 1860 1387 L 1922.4 1526.19" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1924.54 1530.98 L 1918.49 1526.02 L 1922.4 1526.19 L 1924.87 1523.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1860.37 1387 L 1922.11 1526.18" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1924.24 1530.98 L 1918.2 1526 L 1922.11 1526.18 L 1924.6 1523.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="1085" cy="1999" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1084.25" y="2002.75">
@@ -226,8 +224,8 @@
       <text x="2066.25" y="1555.75">
 	timeout</text>
     </g>
-    <path d="M 1875 1387 L 2027.17 1517.85" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2031.15 1521.27 L 2023.56 1519.36 L 2027.17 1517.85 L 2028.13 1514.05 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1874.74 1387 L 2026.81 1517.85" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2030.79 1521.27 L 2023.2 1519.36 L 2026.81 1517.85 L 2027.76 1514.05 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1595.54 962 C 1598.34 958.86 1602.32 957.05 1606.52 957 L 1640.49 957 C 1644.69 957.05 1648.67 958.86 1651.47 962 L 1671.45 985 C 1672.01 986.28 1672.01 987.72 1671.45 989 L 1651.47 1012 C 1648.67 1015.14 1644.69 1016.95 1640.49 1017 L 1606.52 1017 C 1602.32 1016.95 1598.34 1015.14 1595.54 1012 L 1575.56 989 C 1575 987.72 1575 986.28 1575.56 985 L 1595.54 962 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1623.25" y="983.75">
@@ -235,8 +233,8 @@
       <text x="1623.25" y="997.75">
 	finger up</text>
     </g>
-    <path d="M 1839 887 L 1677.78 961.33" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1673.02 963.53 L 1677.91 957.42 L 1677.78 961.33 L 1680.84 963.78 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1838.92 887 L 1677.78 961.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1673.01 964.01 L 1677.89 957.89 L 1677.78 961.8 L 1680.84 964.24 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="1673" cy="1272" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1672.75" y="1275.75">
@@ -249,24 +247,24 @@
       <text x="1650.75" y="1567.75">
 	finger down</text>
     </g>
-    <path d="M 1830 1387 L 1687.61 1522.61" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1683.81 1526.23 L 1686.46 1518.87 L 1687.61 1522.61 L 1691.29 1523.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1670 1167 L 1671.83 1235.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1671.97 1240.88 L 1668.28 1233.98 L 1671.83 1235.63 L 1675.28 1233.79 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1830.39 1387 L 1687.28 1522.62" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1683.47 1526.23 L 1686.14 1518.88 L 1687.28 1522.62 L 1690.96 1523.96 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1669.5 1167 L 1671.79 1235.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1671.96 1240.88 L 1668.23 1234 L 1671.79 1235.64 L 1675.23 1233.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1070.5" y="1167" width="209" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1174.75" y="1190.75">
 	DRAGGING_OR_DOUBLETAP</text>
     </g>
-    <path d="M 1253 1144 L 1216.59 1163.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1211.98 1166.46 L 1216.44 1160.03 L 1216.59 1163.94 L 1219.8 1166.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1252.5 1144.45 L 1217.01 1163.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1212.41 1166.46 L 1216.86 1160.03 L 1217.01 1163.94 L 1220.23 1166.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 947.54 1252 C 950.34 1248.86 954.32 1247.05 958.52 1247 L 992.49 1247 C 996.69 1247.05 1000.67 1248.86 1003.47 1252 L 1023.45 1275 C 1024.01 1276.28 1024.01 1277.72 1023.45 1279 L 1003.47 1302 C 1000.67 1305.14 996.69 1306.95 992.49 1307 L 958.52 1307 C 954.32 1306.95 950.34 1305.14 947.54 1302 L 927.56 1279 C 927 1277.72 927 1276.28 927.56 1275 L 947.54 1252 Z" fill="#99ffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="975.25" y="1280.75">
 	timeout</text>
     </g>
-    <path d="M 1131 1207 L 1029.81 1252.39" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1025.02 1254.54 L 1029.97 1248.48 L 1029.81 1252.39 L 1032.84 1254.87 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1130.67 1207 L 1029.8 1252.5" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1025.02 1254.66 L 1029.96 1248.59 L 1029.8 1252.5 L 1032.84 1254.97 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 784.04 1018 C 786.84 1014.86 790.82 1013.05 795.02 1013 L 828.99 1013 C 833.19 1013.05 837.17 1014.86 839.97 1018 L 859.95 1041 C 860.51 1042.28 860.51 1043.72 859.95 1045 L 839.97 1068 C 837.17 1071.14 833.19 1072.95 828.99 1073 L 795.02 1073 C 790.82 1072.95 786.84 1071.14 784.04 1068 L 764.06 1045 C 763.5 1043.72 763.5 1042.28 764.06 1041 L 784.04 1018 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="811.75" y="1039.75">
@@ -274,8 +272,8 @@
       <text x="811.75" y="1053.75">
 	finger up</text>
     </g>
-    <path d="M 1125 1167 L 866.92 1064.35" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 862.04 1062.41 L 869.84 1061.75 L 866.92 1064.35 L 867.25 1068.25 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1124.58 1167 L 866.42 1064.59" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 861.54 1062.65 L 869.34 1061.98 L 866.42 1064.59 L 866.76 1068.49 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 471.22 968.1 C 472.36 964.9 474.22 963.04 476.18 963.12 L 544.64 963.12 C 546.2 963.08 547.7 963.63 548.67 964.61 C 549.65 965.59 549.99 966.88 549.6 968.1 L 530.75 1017.9 C 529.61 1021.1 527.75 1022.96 525.79 1022.88 L 456.34 1022.88 C 454.95 1022.69 453.73 1022.05 452.97 1021.1 C 452.22 1020.15 452 1018.99 452.37 1017.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="500.75" y="989.75">
@@ -297,8 +295,8 @@
       <text x="252.25" y="1482.75">
 	release</text>
     </g>
-    <path d="M 252 1362 L 252 1435.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 252 1440.88 L 248.5 1433.88 L 252 1435.63 L 255.5 1433.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 252.11 1362 L 252.37 1435.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 252.39 1440.88 L 248.86 1433.89 L 252.37 1435.63 L 255.86 1433.87 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1102.54 1252 C 1105.34 1248.86 1109.32 1247.05 1113.52 1247 L 1147.49 1247 C 1151.69 1247.05 1155.67 1248.86 1158.47 1252 L 1178.45 1275 C 1179.01 1276.28 1179.01 1277.72 1178.45 1279 L 1158.47 1302 C 1155.67 1305.14 1151.69 1306.95 1147.49 1307 L 1113.52 1307 C 1109.32 1306.95 1105.34 1305.14 1102.54 1302 L 1082.56 1279 C 1082 1277.72 1082 1276.28 1082.56 1275 L 1102.54 1252 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1130.25" y="1273.75">
@@ -306,8 +304,8 @@
       <text x="1130.25" y="1287.75">
 	finger down</text>
     </g>
-    <path d="M 1165 1207 L 1147.85 1241.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1145.5 1246 L 1145.5 1238.17 L 1147.85 1241.3 L 1151.76 1241.3 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1165.11 1207 L 1148.16 1241.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1145.83 1246 L 1145.79 1238.17 L 1148.16 1241.29 L 1152.07 1241.27 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 742.54 1257 C 745.34 1253.86 749.32 1252.05 753.52 1252 L 787.49 1252 C 791.69 1252.05 795.67 1253.86 798.47 1257 L 818.45 1280 C 819.01 1281.28 819.01 1282.72 818.45 1284 L 798.47 1307 C 795.67 1310.14 791.69 1311.95 787.49 1312 L 753.52 1312 C 749.32 1311.95 745.34 1310.14 742.54 1307 L 722.56 1284 C 722 1282.72 722 1281.28 722.56 1280 L 742.54 1257 Z" fill="#67ab9f" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="770.25" y="1278.75">
@@ -315,10 +313,10 @@
       <text x="770.25" y="1292.75">
 	threshold</text>
     </g>
-    <path d="M 1090 1207 L 825.2 1269.54" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 820.09 1270.74 L 826.1 1265.73 L 825.2 1269.54 L 827.71 1272.54 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 906 1413 L 897.77 1480.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 897.13 1485.89 L 894.51 1478.52 L 897.77 1480.68 L 901.45 1479.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1089.84 1207 L 825.2 1269.15" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 820.09 1270.35 L 826.1 1265.35 L 825.2 1269.15 L 827.7 1272.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 906.53 1412.5 L 898.21 1480.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 897.58 1485.89 L 894.95 1478.52 L 898.21 1480.68 L 901.9 1479.37 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1872" y="577" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1936.75" y="600.75">
@@ -331,10 +329,10 @@
       <text x="2122.75" y="740.75">
 	finger up</text>
     </g>
-    <path d="M 1965 617 L 2075.82 696.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2080.09 699.35 L 2072.36 698.12 L 2075.82 696.29 L 2076.43 692.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2264 807 L 2285.64 807.77" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2290.88 807.96 L 2283.76 811.21 L 2285.64 807.77 L 2284.01 804.21 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1964.97 617 L 2075.87 696.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2080.14 699.35 L 2072.41 698.13 L 2075.87 696.3 L 2076.48 692.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2263.5 806.95 L 2285.64 807.82" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2290.88 808.02 L 2283.75 811.25 L 2285.64 807.82 L 2284.02 804.25 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1879.54 672 C 1882.34 668.86 1886.32 667.05 1890.52 667 L 1924.49 667 C 1928.69 667.05 1932.67 668.86 1935.47 672 L 1955.45 695 C 1956.01 696.28 1956.01 697.72 1955.45 699 L 1935.47 722 C 1932.67 725.14 1928.69 726.95 1924.49 727 L 1890.52 727 C 1886.32 726.95 1882.34 725.14 1879.54 722 L 1859.56 699 C 1859 697.72 1859 696.28 1859.56 695 L 1879.54 672 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1907.25" y="693.75">
@@ -342,12 +340,12 @@
       <text x="1907.25" y="707.75">
 	finger down</text>
     </g>
-    <path d="M 1931 617 L 1917.83 660.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1916.32 665.93 L 1914.98 658.22 L 1917.83 660.9 L 1921.69 660.23 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1887 818 L 1884.66 840.67" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1884.12 845.89 L 1881.35 838.56 L 1884.66 840.67 L 1888.32 839.29 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1803 670 L 1894.41 620.05" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1899.02 617.54 L 1894.55 623.96 L 1894.41 620.05 L 1891.2 617.82 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1931.1 617 L 1918.15 660.89" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1916.67 665.93 L 1915.29 658.22 L 1918.15 660.89 L 1922 660.2 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1886.53 817.5 L 1884.41 840.66" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1883.93 845.89 L 1881.08 838.6 L 1884.41 840.66 L 1888.05 839.23 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1802.5 669.9 L 1894.5 620.03" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1899.12 617.53 L 1894.63 623.95 L 1894.5 620.03 L 1891.3 617.79 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="2213.25" y="1117" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2278" y="1140.75">
@@ -360,8 +358,8 @@
       <text x="2420.5" y="1257.75">
 	finger up</text>
     </g>
-    <path d="M 2304 1157 L 2376.95 1213.12" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2381.11 1216.32 L 2373.43 1214.82 L 2376.95 1213.12 L 2377.7 1209.28 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2304.16 1157 L 2376.85 1213.11" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2381 1216.32 L 2373.32 1214.81 L 2376.85 1213.11 L 2377.6 1209.27 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2088.29 1227 C 2091.09 1223.86 2095.07 1222.05 2099.27 1222 L 2133.24 1222 C 2137.44 1222.05 2141.42 1223.86 2144.22 1227 L 2164.2 1250 C 2164.76 1251.28 2164.76 1252.72 2164.2 1254 L 2144.22 1277 C 2141.42 1280.14 2137.44 1281.95 2133.24 1282 L 2099.27 1282 C 2095.07 1281.95 2091.09 1280.14 2088.29 1277 L 2068.31 1254 C 2067.75 1252.72 2067.75 1251.28 2068.31 1250 L 2088.29 1227 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2116" y="1248.75">
@@ -369,11 +367,11 @@
       <text x="2116" y="1262.75">
 	finger up</text>
     </g>
-    <path d="M 2250 1157 L 2164.18 1218.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2159.91 1221.35 L 2163.57 1214.43 L 2164.18 1218.3 L 2167.64 1220.13 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2402 873 L 2402 607 Q 2402 597 2392 597 L 2008.37 597" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2250.08 1157 L 2163.7 1218.31" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2159.42 1221.35 L 2163.1 1214.45 L 2163.7 1218.31 L 2167.16 1220.15 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2402 872.5 L 2402 607 Q 2402 597 2392 597 L 2008.37 597" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2003.12 597 L 2010.12 593.5 L 2008.37 597 L 2010.12 600.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2062 1083 L 2062 607 Q 2062 597 2052 597 L 2008.37 597" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2062 1082.5 L 2062 607 Q 2062 597 2052 597 L 2008.37 597" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2003.12 597 L 2010.12 593.5 L 2008.37 597 L 2010.12 600.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2233.79 1232 C 2236.59 1228.86 2240.57 1227.05 2244.77 1227 L 2278.74 1227 C 2282.94 1227.05 2286.92 1228.86 2289.72 1232 L 2309.7 1255 C 2310.26 1256.28 2310.26 1257.72 2309.7 1259 L 2289.72 1282 C 2286.92 1285.14 2282.94 1286.95 2278.74 1287 L 2244.77 1287 C 2240.57 1286.95 2236.59 1285.14 2233.79 1282 L 2213.81 1259 C 2213.25 1257.72 2213.25 1256.28 2213.81 1255 L 2233.79 1232 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
@@ -382,19 +380,19 @@
       <text x="2261.5" y="1267.75">
 	finger down</text>
     </g>
-    <path d="M 2276 1157 L 2266.9 1220.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2266.16 1225.89 L 2263.68 1218.47 L 2266.9 1220.7 L 2270.61 1219.46 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1987 1352 L 1922.33 1359.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1917.11 1359.87 L 1923.68 1355.61 L 1922.33 1359.29 L 1924.46 1362.57 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1988 1984 L 2482 1984 Q 2492 1984 2492 1974 L 2492 1147 Q 2492 1137 2482 1137 L 2349.37 1137" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2344.12 1137 L 2351.12 1133.5 L 2349.37 1137 L 2351.12 1140.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2275.5 1157 L 2266.74 1220.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2266.03 1225.89 L 2263.51 1218.48 L 2266.74 1220.69 L 2270.45 1219.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1986.5 1352.41 L 1922.83 1359.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1917.61 1359.85 L 1924.19 1355.62 L 1922.83 1359.29 L 1924.95 1362.58 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1987.5 1984 L 2482 1984 Q 2492 1984 2492 1974 L 2492 1147 Q 2492 1137 2482 1137 L 2349.62 1137" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2344.37 1137 L 2351.37 1133.5 L 2349.62 1137 L 2351.37 1140.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="1952" y="2224" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2016.75" y="2247.75">
 	TOUCH_3_HOLD</text>
     </g>
-    <path d="M 2009 1824 L 2016.87 2217.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2016.98 2222.88 L 2013.34 2215.95 L 2016.87 2217.63 L 2020.34 2215.81 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2009.11 1823.5 L 2016.51 2217.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2016.6 2222.88 L 2012.97 2215.95 L 2016.51 2217.63 L 2019.97 2215.82 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1713.04 2362 C 1715.84 2358.86 1719.82 2357.05 1724.02 2357 L 1757.99 2357 C 1762.19 2357.05 1766.17 2358.86 1768.97 2362 L 1788.95 2385 C 1789.51 2386.28 1789.51 2387.72 1788.95 2389 L 1768.97 2412 C 1766.17 2415.14 1762.19 2416.95 1757.99 2417 L 1724.02 2417 C 1719.82 2416.95 1715.84 2415.14 1713.04 2412 L 1693.06 2389 C 1692.5 2387.72 1692.5 2386.28 1693.06 2385 L 1713.04 2362 Z" fill="#ffffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1740.75" y="2383.75">
@@ -407,12 +405,12 @@
       <text x="1536.75" y="2505.75">
 	DEAD</text>
     </g>
-    <path d="M 1979 2264 L 1795.65 2359.07" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1790.99 2361.49 L 1795.6 2355.16 L 1795.65 2359.07 L 1798.82 2361.37 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1693 2414 L 1577.55 2478.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1572.97 2481.45 L 1577.36 2474.97 L 1577.55 2478.88 L 1580.79 2481.07 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1647 1587 L 1539.76 2475.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1539.13 2480.89 L 1536.5 2473.52 L 1539.76 2475.68 L 1543.45 2474.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1978.4 2264 L 1795.15 2358.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1790.49 2361.36 L 1795.1 2355.03 L 1795.15 2358.94 L 1798.32 2361.24 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1692.5 2414.34 L 1578.03 2478.87" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1573.45 2481.45 L 1577.83 2474.96 L 1578.03 2478.87 L 1581.27 2481.06 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1647.38 1587 L 1540.18 2475.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1539.55 2480.89 L 1536.91 2473.52 L 1540.18 2475.68 L 1543.86 2474.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1453.04 2577 C 1455.84 2573.86 1459.82 2572.05 1464.02 2572 L 1497.99 2572 C 1502.19 2572.05 1506.17 2573.86 1508.97 2577 L 1528.95 2600 C 1529.51 2601.28 1529.51 2602.72 1528.95 2604 L 1508.97 2627 C 1506.17 2630.14 1502.19 2631.95 1497.99 2632 L 1464.02 2632 C 1459.82 2631.95 1455.84 2630.14 1453.04 2627 L 1433.06 2604 C 1432.5 2602.72 1432.5 2601.28 1433.06 2600 L 1453.04 2577 Z" fill="#e1d5e7" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1480.75" y="2605.75">
@@ -430,13 +428,13 @@
       <text x="1803.25" y="1565.75">
 	any finger up</text>
     </g>
-    <path d="M 1847 1387 L 1812.53 1525.82" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1811.27 1530.91 L 1809.56 1523.28 L 1812.53 1525.82 L 1816.35 1524.96 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1785 1750 L 1750.25 1842.04" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1748.39 1846.95 L 1747.59 1839.17 L 1750.25 1842.04 L 1754.14 1841.64 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1846.58 1387 L 1812.41 1525.82" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1811.15 1530.91 L 1809.43 1523.28 L 1812.41 1525.82 L 1816.22 1524.95 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1784.82 1750 L 1750.44 1842.03" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1748.6 1846.95 L 1747.77 1839.17 L 1750.44 1842.03 L 1754.33 1841.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <rect fill="#ffffff" stroke="none" x="1758" y="1787" width="18" height="27" stroke-width="0"/>
-      <text x="1766.5" y="1809">
+      <rect fill="#ffffff" stroke="none" x="1757" y="1786" width="20" height="27" stroke-width="0"/>
+      <text x="1766.62" y="1808.71">
 	yes</text>
     </g>
     <path d="M 2009.04 2332 C 2011.84 2328.86 2015.82 2327.05 2020.02 2327 L 2053.99 2327 C 2058.19 2327.05 2062.17 2328.86 2064.97 2332 L 2084.95 2355 C 2085.51 2356.28 2085.51 2357.72 2084.95 2359 L 2064.97 2382 C 2062.17 2385.14 2058.19 2386.95 2053.99 2387 L 2020.02 2387 C 2015.82 2386.95 2011.84 2385.14 2009.04 2382 L 1989.06 2359 C 1988.5 2357.72 1988.5 2356.28 1989.06 2355 L 2009.04 2332 Z" fill="#e1d5e7" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
@@ -444,14 +442,14 @@
       <text x="2036.75" y="2360.75">
 	any finger up</text>
     </g>
-    <path d="M 2021 2264 L 2030.9 2320.73" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2031.81 2325.9 L 2027.16 2319.6 L 2030.9 2320.73 L 2034.05 2318.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2376 2352 L 2482 2352 Q 2492 2352 2492 2342 L 2492 1147 Q 2492 1137 2482 1137 L 2349.37 1137" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2344.12 1137 L 2351.12 1133.5 L 2349.37 1137 L 2351.12 1140.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1526 2522 L 1501.11 2566.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1498.55 2571.02 L 1498.91 2563.21 L 1501.11 2566.44 L 1505.02 2566.63 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1550 2522 L 1599.45 2595.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1602.38 2600.07 L 1595.57 2596.21 L 1599.45 2595.71 L 1601.38 2592.31 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2020.54 2264 L 2030.58 2320.73" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2031.5 2325.9 L 2026.83 2319.62 L 2030.58 2320.73 L 2033.72 2318.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2375.5 2352 L 2482 2352 Q 2492 2352 2492 2342 L 2492 1147 Q 2492 1137 2482 1137 L 2349.62 1137" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2344.37 1137 L 2351.37 1133.5 L 2349.62 1137 L 2351.37 1140.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1525.8 2522 L 1500.91 2566.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1498.35 2571.02 L 1498.71 2563.21 L 1500.91 2566.44 L 1504.82 2566.63 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1550.41 2522 L 1599.84 2595.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1602.76 2600.07 L 1595.96 2596.21 L 1599.84 2595.71 L 1601.77 2592.31 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="1544" cy="2982" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1543.75" y="2985.75">
@@ -464,12 +462,12 @@
       <text x="1539.15" y="2877.75">
 	count == 0</text>
     </g>
-    <path d="M 1497 2726 L 1524.16 2815.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1525.68 2820.93 L 1520.3 2815.24 L 1524.16 2815.9 L 1527 2813.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1613 2661 L 1557.16 2816.01" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1555.38 2820.95 L 1554.46 2813.18 L 1557.16 2816.01 L 1561.04 2815.55 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1541 2912 L 1542.68 2945.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1542.94 2950.88 L 1539.1 2944.07 L 1542.68 2945.64 L 1546.09 2943.72 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1497.19 2725.5 L 1524.16 2815.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1525.66 2820.93 L 1520.3 2815.22 L 1524.16 2815.9 L 1527.01 2813.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1612.81 2661 L 1557.57 2816" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1555.81 2820.95 L 1554.86 2813.18 L 1557.57 2816 L 1561.46 2815.53 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1541.2 2912 L 1542.55 2945.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1542.76 2950.88 L 1538.98 2944.03 L 1542.55 2945.64 L 1545.97 2943.75 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1076.54 1645 C 1079.34 1641.86 1083.32 1640.05 1087.52 1640 L 1121.49 1640 C 1125.69 1640.05 1129.67 1641.86 1132.47 1645 L 1152.45 1668 C 1153.01 1669.28 1153.01 1670.72 1152.45 1672 L 1132.47 1695 C 1129.67 1698.14 1125.69 1699.95 1121.49 1700 L 1087.52 1700 C 1083.32 1699.95 1079.34 1698.14 1076.54 1695 L 1056.56 1672 C 1056 1670.72 1056 1669.28 1056.56 1668 L 1076.54 1645 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1104.25" y="1666.75">
@@ -482,10 +480,10 @@
       <text x="1081.75" y="1510.75">
 	DRAGGING_2</text>
     </g>
-    <path d="M 1096 1433 L 1087.16 1480.74" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1086.2 1485.9 L 1084.04 1478.38 L 1087.16 1480.74 L 1090.92 1479.66 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1085 1527 L 1099.16 1633.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1099.85 1638.89 L 1095.46 1632.41 L 1099.16 1633.69 L 1102.4 1631.49 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1096.27 1432.5 L 1087.03 1480.75" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1086.04 1485.9 L 1083.92 1478.37 L 1087.03 1480.75 L 1090.8 1479.69 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1084.76 1527 L 1099.49 1633.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1100.21 1638.89 L 1095.78 1632.44 L 1099.49 1633.69 L 1102.72 1631.48 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 903.54 1709 C 906.34 1705.86 910.32 1704.05 914.52 1704 L 948.49 1704 C 952.69 1704.05 956.67 1705.86 959.47 1709 L 979.45 1732 C 980.01 1733.28 980.01 1734.72 979.45 1736 L 959.47 1759 C 956.67 1762.14 952.69 1763.95 948.49 1764 L 914.52 1764 C 910.32 1763.95 906.34 1762.14 903.54 1759 L 883.56 1736 C 883 1734.72 883 1733.28 883.56 1732 L 903.54 1709 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="931.25" y="1730.75">
@@ -493,12 +491,12 @@
       <text x="931.25" y="1744.75">
 	finger up</text>
     </g>
-    <path d="M 1069 1527 L 954.53 1698.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 951.62 1703.07 L 952.59 1695.3 L 954.53 1698.7 L 958.42 1699.19 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 912 1610 L 899.06 1533.28" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 898.19 1528.1 L 902.8 1534.42 L 899.06 1533.28 L 895.9 1535.59 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1058 1726 L 913.8 1532.11" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 910.67 1527.9 L 917.65 1531.43 L 913.8 1532.11 L 912.04 1535.6 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1068.74 1527 L 954.91 1698.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 952.01 1703.07 L 952.96 1695.3 L 954.91 1698.69 L 958.79 1699.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 912.08 1609.5 L 899.38 1533.28" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 898.52 1528.1 L 903.12 1534.43 L 899.38 1533.28 L 896.22 1535.58 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1058.22 1725.5 L 913.75 1532.1" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 910.61 1527.9 L 917.6 1531.41 L 913.75 1532.1 L 911.99 1535.6 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 790.54 1739 C 793.34 1735.86 797.32 1734.05 801.52 1734 L 835.49 1734 C 839.69 1734.05 843.67 1735.86 846.47 1739 L 866.45 1762 C 867.01 1763.28 867.01 1764.72 866.45 1766 L 846.47 1789 C 843.67 1792.14 839.69 1793.95 835.49 1794 L 801.52 1794 C 797.32 1793.95 793.34 1792.14 790.54 1789 L 770.56 1766 C 770 1764.72 770 1763.28 770.56 1762 L 790.54 1739 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="818.25" y="1760.75">
@@ -506,12 +504,12 @@
       <text x="818.25" y="1774.75">
 	finger down</text>
     </g>
-    <path d="M 889 1527 L 828.83 1727.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 827.32 1732.93 L 825.98 1725.22 L 828.83 1727.9 L 832.68 1727.23 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 979 1815 L 1072.99 1533.04" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1074.65 1528.06 L 1075.75 1535.81 L 1072.99 1533.04 L 1069.11 1533.59 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 982 1989 L 1028.66 1993.4" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1033.89 1993.89 L 1026.59 1996.72 L 1028.66 1993.4 L 1027.25 1989.75 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 889.05 1527 L 829.25 1727.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 827.75 1732.93 L 826.39 1725.22 L 829.25 1727.9 L 833.1 1727.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 979.35 1814.5 L 1073.31 1533.04" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1074.97 1528.06 L 1076.07 1535.81 L 1073.31 1533.04 L 1069.43 1533.59 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 919 2049.15 L 1028.91 2015.85" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1033.93 2014.32 L 1028.25 2019.7 L 1028.91 2015.85 L 1026.22 2013 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1167.54 1617 C 1170.34 1613.86 1174.32 1612.05 1178.52 1612 L 1212.49 1612 C 1216.69 1612.05 1220.67 1613.86 1223.47 1617 L 1243.45 1640 C 1244.01 1641.28 1244.01 1642.72 1243.45 1644 L 1223.47 1667 C 1220.67 1670.14 1216.69 1671.95 1212.49 1672 L 1178.52 1672 C 1174.32 1671.95 1170.34 1670.14 1167.54 1667 L 1147.56 1644 C 1147 1642.72 1147 1641.28 1147.56 1640 L 1167.54 1617 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1195.25" y="1638.75">
@@ -519,8 +517,8 @@
       <text x="1195.25" y="1652.75">
 	finger down</text>
     </g>
-    <path d="M 1099 1527 L 1165.92 1607.11" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1169.28 1611.14 L 1162.11 1608.01 L 1165.92 1607.11 L 1167.48 1603.53 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1098.81 1527 L 1166.18 1607.13" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1169.56 1611.14 L 1162.37 1608.04 L 1166.18 1607.13 L 1167.73 1603.53 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1350.72 2101.1 C 1351.86 2097.9 1353.72 2096.04 1355.68 2096.12 L 1424.14 2096.12 C 1425.7 2096.08 1427.2 2096.63 1428.17 2097.61 C 1429.15 2098.59 1429.49 2099.88 1429.1 2101.1 L 1410.25 2150.9 C 1409.11 2154.1 1407.25 2155.96 1405.29 2155.88 L 1335.84 2155.88 C 1334.45 2155.69 1333.23 2155.05 1332.47 2154.1 C 1331.72 2153.15 1331.5 2151.99 1331.87 2150.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1380.25" y="2122.75">
@@ -528,8 +526,8 @@
       <text x="1380.25" y="2136.75">
 	release</text>
     </g>
-    <path d="M 1393 2156 L 1526.55 2476.12" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1528.57 2480.97 L 1522.64 2475.86 L 1526.55 2476.12 L 1529.1 2473.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1392.99 2156 L 1526.23 2476.12" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1528.25 2480.97 L 1522.32 2475.85 L 1526.23 2476.12 L 1528.79 2473.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2642.54 832 C 2645.34 828.86 2649.32 827.05 2653.52 827 L 2687.49 827 C 2691.69 827.05 2695.67 828.86 2698.47 832 L 2718.45 855 C 2719.01 856.28 2719.01 857.72 2718.45 859 L 2698.47 882 C 2695.67 885.14 2691.69 886.95 2687.49 887 L 2653.52 887 C 2649.32 886.95 2645.34 885.14 2642.54 882 L 2622.56 859 C 2622 857.72 2622 856.28 2622.56 855 L 2642.54 832 Z" fill="#000000" stroke="#ffffff" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#FFFFFF" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2670.25" y="846.75">
@@ -539,18 +537,18 @@
       <text x="2670.25" y="874.75">
 	press</text>
     </g>
-    <path d="M 1993 617 L 2616 837.87" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2620.95 839.63 L 2613.18 840.59 L 2616 837.87 L 2615.52 833.99 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1947 866 L 2615.63 858.08" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2620.88 858.01 L 2613.92 861.6 L 2615.63 858.08 L 2613.84 854.6 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2306 1117 L 2622.82 890.7" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2627.09 887.65 L 2623.43 894.57 L 2622.82 890.7 L 2619.36 888.87 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2026 2224 L 2653.29 892.76" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2655.52 888.01 L 2655.71 895.84 L 2653.29 892.76 L 2649.37 892.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2670 2011 L 2670 2492 Q 2670 2502 2660 2502 L 1608.37 2502" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1993.42 617 L 2616 837.68" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2620.95 839.43 L 2613.18 840.4 L 2616 837.68 L 2615.52 833.8 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1947 866.18 L 2615.63 857.7" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2620.88 857.63 L 2613.93 861.22 L 2615.63 857.7 L 2613.84 854.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2306.27 1117 L 2623.29 890.7" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2627.56 887.65 L 2623.9 894.57 L 2623.29 890.7 L 2619.83 888.87 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2026.42 2224 L 2653.65 892.76" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2655.89 888.01 L 2656.07 895.84 L 2653.65 892.76 L 2649.74 892.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2670 2010.5 L 2670 2492 Q 2670 2502 2660 2502 L 1608.37 2502" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1603.12 2502 L 1610.12 2498.5 L 1608.37 2502 L 1610.12 2505.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1764 62 L 2631.21 822.8" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 2635.16 826.26 L 2627.59 824.28 L 2631.21 822.8 L 2632.21 819.02 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1764.2 62 L 2631.51 822.8" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 2635.46 826.26 L 2627.89 824.28 L 2631.51 822.8 L 2632.51 819.02 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 442.54 1202 C 445.34 1198.86 449.32 1197.05 453.52 1197 L 487.49 1197 C 491.69 1197.05 495.67 1198.86 498.47 1202 L 518.45 1225 C 519.01 1226.28 519.01 1227.72 518.45 1229 L 498.47 1252 C 495.67 1255.14 491.69 1256.95 487.49 1257 L 453.52 1257 C 449.32 1256.95 445.34 1255.14 442.54 1252 L 422.56 1229 C 422 1227.72 422 1226.28 422.56 1225 L 442.54 1202 Z" fill="#000000" stroke="#ffffff" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#FFFFFF" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="470.25" y="1216.75">
@@ -560,8 +558,8 @@
       <text x="470.25" y="1244.75">
 	press</text>
     </g>
-    <path d="M 1399 956 L 525.11 1211.21" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 520.07 1212.69 L 525.81 1207.36 L 525.11 1211.21 L 527.77 1214.08 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1399 955.97 L 525.11 1211.06" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 520.07 1212.53 L 525.81 1207.21 L 525.11 1211.06 L 527.77 1213.93 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 241.22 2117.1 C 242.36 2113.9 244.22 2112.04 246.18 2112.12 L 314.64 2112.12 C 316.2 2112.08 317.7 2112.63 318.67 2113.61 C 319.65 2114.59 319.99 2115.88 319.6 2117.1 L 300.75 2166.9 C 299.61 2170.1 297.75 2171.96 295.79 2171.88 L 226.34 2171.88 C 224.95 2171.69 223.73 2171.05 222.97 2170.1 C 222.22 2169.15 222 2167.99 222.37 2166.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="270.75" y="2138.75">
@@ -569,41 +567,41 @@
       <text x="270.75" y="2152.75">
 	release</text>
     </g>
-    <path d="M 464 1257 L 279.35 2105.78" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 278.24 2110.91 L 276.31 2103.32 L 279.35 2105.78 L 283.15 2104.81 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1071 2281 L 1489.25 2479.27" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1493.99 2481.52 L 1486.17 2481.69 L 1489.25 2479.27 L 1489.16 2475.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1071 1193 L 525.36 1223.64" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 520.12 1223.94 L 526.91 1220.05 L 525.36 1223.64 L 527.3 1227.04 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 865 1487 L 521.32 1260.5" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 516.93 1257.62 L 524.7 1258.54 L 521.32 1260.5 L 520.85 1264.39 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1038 1487 L 524.79 1251.65" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
-    <path d="M 520.02 1249.47 L 527.84 1249.2 L 524.79 1251.65 L 524.92 1255.57 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <rect x="643.5" y="1839" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
+    <path d="M 463.96 1257 L 278.9 2105.78" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 277.78 2110.91 L 275.85 2103.32 L 278.9 2105.78 L 282.69 2104.81 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1070.5 2280.72 L 1489.08 2479.27" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1493.83 2481.52 L 1486 2481.68 L 1489.08 2479.27 L 1489 2475.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1070.5 1192.93 L 525.36 1223.89" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 520.12 1224.18 L 526.91 1220.29 L 525.36 1223.89 L 527.3 1227.28 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 864.68 1487 L 521.3 1260.51" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 516.92 1257.62 L 524.69 1258.55 L 521.3 1260.51 L 520.83 1264.39 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1038.32 1487 L 524.79 1251.86" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="none"/>
+    <path d="M 520.02 1249.67 L 527.84 1249.41 L 524.79 1251.86 L 524.92 1255.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <rect x="660.5" y="1929" width="130" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
-      <text x="708.25" y="1862.75">
+      <text x="725.25" y="1952.75">
 	DRAGGING_WAIT</text>
     </g>
-    <path d="M 775.04 1944 C 777.84 1940.86 781.82 1939.05 786.02 1939 L 819.99 1939 C 824.19 1939.05 828.17 1940.86 830.97 1944 L 850.95 1967 C 851.51 1968.28 851.51 1969.72 850.95 1971 L 830.97 1994 C 828.17 1997.14 824.19 1998.95 819.99 1999 L 786.02 1999 C 781.82 1998.95 777.84 1997.14 775.04 1994 L 755.06 1971 C 754.5 1969.72 754.5 1968.28 755.06 1967 L 775.04 1944 Z" fill="#99ffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 724.04 1989 C 726.84 1985.86 730.82 1984.05 735.02 1984 L 768.99 1984 C 773.19 1984.05 777.17 1985.86 779.97 1989 L 799.95 2012 C 800.51 2013.28 800.51 2014.72 799.95 2016 L 779.97 2039 C 777.17 2042.14 773.19 2043.95 768.99 2044 L 735.02 2044 C 730.82 2043.95 726.84 2042.14 724.04 2039 L 704.06 2016 C 703.5 2014.72 703.5 2013.28 704.06 2012 L 724.04 1989 Z" fill="#99ffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
-      <text x="802.75" y="1972.75">
+      <text x="751.75" y="2017.75">
 	timeout</text>
     </g>
-    <path d="M 699 1785 L 707.84 1832.74" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 708.8 1837.9 L 704.08 1831.66 L 707.84 1832.74 L 710.96 1830.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 726 1879 L 772.88 1934.15" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 776.28 1938.15 L 769.08 1935.08 L 772.88 1934.15 L 774.41 1930.55 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 852 1974 L 877.68 1977.21" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 882.89 1977.86 L 875.51 1980.47 L 877.68 1977.21 L 876.38 1973.52 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 595.54 1944 C 598.34 1940.86 602.32 1939.05 606.52 1939 L 640.49 1939 C 644.69 1939.05 648.67 1940.86 651.47 1944 L 671.45 1967 C 672.01 1968.28 672.01 1969.72 671.45 1971 L 651.47 1994 C 648.67 1997.14 644.69 1998.95 640.49 1999 L 606.52 1999 C 602.32 1998.95 598.34 1997.14 595.54 1994 L 575.56 1971 C 575 1969.72 575 1968.28 575.56 1967 L 595.54 1944 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 707.57 1784.5 L 721.65 1814.89" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 723.86 1819.65 L 717.74 1814.78 L 721.65 1814.89 L 724.09 1811.83 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 733.65 1969 L 737.37 1978.1" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 739.35 1982.96 L 733.46 1977.8 L 737.37 1978.1 L 739.95 1975.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 800.5 2034.55 L 815.14 2040.75" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 819.97 2042.8 L 812.16 2043.29 L 815.14 2040.75 L 814.89 2036.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 547.54 1936 C 550.34 1932.86 554.32 1931.05 558.52 1931 L 592.49 1931 C 596.69 1931.05 600.67 1932.86 603.47 1936 L 623.45 1959 C 624.01 1960.28 624.01 1961.72 623.45 1963 L 603.47 1986 C 600.67 1989.14 596.69 1990.95 592.49 1991 L 558.52 1991 C 554.32 1990.95 550.34 1989.14 547.54 1986 L 527.56 1963 C 527 1961.72 527 1960.28 527.56 1959 L 547.54 1936 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
-      <text x="623.25" y="1965.75">
+      <text x="575.25" y="1957.75">
 	first</text>
-      <text x="623.25" y="1979.75">
+      <text x="575.25" y="1971.75">
 	finger down</text>
     </g>
-    <path d="M 693 1879 L 650.87 1933.95" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 647.68 1938.11 L 649.16 1930.43 L 650.87 1933.95 L 654.72 1934.69 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 660.5 1954.2 L 630.35 1956.61" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 625.11 1957.03 L 631.81 1952.98 L 630.35 1956.61 L 632.37 1959.96 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1682.5 201.7 C 1698.62 207.91 1716.38 207.91 1732.5 201.7 C 1748.62 195.5 1766.38 195.5 1782.5 201.7 L 1782.5 254.28 C 1766.38 248.08 1748.62 248.08 1732.5 254.28 C 1716.38 260.49 1698.62 260.49 1682.5 254.28 L 1682.5 201.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1732.25" y="231.75">
@@ -614,31 +612,31 @@
       <text x="1465.25" y="620.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1464 462 L 1464.95 578.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1464.99 583.88 L 1461.43 576.91 L 1464.95 578.63 L 1468.43 576.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1465 650 L 1464.1 710.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1464.02 715.88 L 1460.62 708.83 L 1464.1 710.63 L 1467.62 708.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1734 162 L 1733.19 189.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1733.03 194.88 L 1729.74 187.78 L 1733.19 189.63 L 1736.74 187.99 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1734 261 L 1735.59 285.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1735.93 290.88 L 1731.98 284.12 L 1735.59 285.65 L 1738.97 283.67 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1464.24 462 L 1465.18 578.13" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1465.23 583.38 L 1461.67 576.41 L 1465.18 578.13 L 1468.67 576.35 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1465.13 649.5 L 1464.42 710.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1464.36 715.88 L 1460.94 708.84 L 1464.42 710.63 L 1467.94 708.92 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1733.53 162 L 1733.11 189.13" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1733.03 194.38 L 1729.64 187.33 L 1733.11 189.13 L 1736.63 187.44 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1734.24 260.5 L 1735.59 285.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1735.87 290.88 L 1732 284.08 L 1735.59 285.64 L 1738.99 283.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1879.5 501.7 C 1895.62 507.91 1913.38 507.91 1929.5 501.7 C 1945.62 495.5 1963.38 495.5 1979.5 501.7 L 1979.5 554.28 C 1963.38 548.08 1945.62 548.08 1929.5 554.28 C 1913.38 560.49 1895.62 560.49 1879.5 554.28 L 1879.5 501.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1929.25" y="531.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 1861 462 L 1891.43 491.56" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1895.2 495.22 L 1887.74 492.85 L 1891.43 491.56 L 1892.62 487.83 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1986 462 L 1961.13 491.16" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1957.73 495.15 L 1959.61 487.55 L 1961.13 491.16 L 1964.93 492.09 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1933 561 L 1934.21 570.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1934.86 575.89 L 1930.52 569.38 L 1934.21 570.68 L 1937.47 568.51 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1617 957 L 1606.43 911.2" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1605.25 906.09 L 1610.24 912.12 L 1606.43 911.2 L 1603.42 913.7 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1861.44 462 L 1891.41 491.07" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1895.18 494.72 L 1887.72 492.36 L 1891.41 491.07 L 1892.59 487.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1985.88 462 L 1961.4 490.66" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1957.99 494.65 L 1959.87 487.05 L 1961.4 490.66 L 1965.19 491.6 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1933.03 560.5 L 1934.14 570.67" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1934.71 575.89 L 1930.47 569.31 L 1934.14 570.67 L 1937.43 568.55 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1616.73 957 L 1606.4 911.21" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1605.25 906.09 L 1610.2 912.15 L 1606.4 911.21 L 1603.37 913.69 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1605 805 L 1605 703.37" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1605 698.12 L 1608.5 705.12 L 1605 703.37 L 1601.5 705.12 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <rect fill="#ffffff" stroke="none" x="1597" y="745" width="18" height="14" stroke-width="0"/>
+      <rect fill="#ffffff" stroke="none" x="1596" y="745" width="20" height="14" stroke-width="0"/>
       <text x="1605" y="754.5">
 	yes</text>
     </g>
@@ -647,56 +645,56 @@
       <text x="2261.25" y="978.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 2268 1073 L 2274 1110.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2274.82 1115.9 L 2270.27 1109.53 L 2274 1110.71 L 2277.18 1108.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2179 945 L 2206.02 954.82" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2210.95 956.62 L 2203.17 957.52 L 2206.02 954.82 L 2205.57 950.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2053 985 L 2205.64 977.32" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2210.88 977.06 L 2204.07 980.9 L 2205.64 977.32 L 2203.72 973.91 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2268.44 1072.5 L 2274.25 1110.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2275.04 1115.89 L 2270.53 1109.5 L 2274.25 1110.7 L 2277.45 1108.45 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2179 944.77 L 2205.52 954.49" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2210.45 956.29 L 2202.67 957.17 L 2205.52 954.49 L 2205.08 950.6 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2053 984.74 L 2205.14 977.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2210.38 977.39 L 2203.55 981.21 L 2205.14 977.63 L 2203.23 974.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2362.5 878.7 C 2378.62 884.91 2396.38 884.91 2412.5 878.7 C 2428.62 872.5 2446.38 872.5 2462.5 878.7 L 2462.5 931.28 C 2446.38 925.08 2428.62 925.08 2412.5 931.28 C 2396.38 937.49 2378.62 937.49 2362.5 931.28 L 2362.5 878.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2412.25" y="908.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 2420 1217 L 2413.16 944.37" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2413.03 939.12 L 2416.7 946.03 L 2413.16 944.37 L 2409.7 946.2 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2420.03 1217 L 2413.44 943.87" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2413.31 938.62 L 2416.98 945.53 L 2413.44 943.87 L 2409.98 945.7 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1839.5 758.7 C 1855.62 764.91 1873.38 764.91 1889.5 758.7 C 1905.62 752.5 1923.38 752.5 1939.5 758.7 L 1939.5 811.28 C 1923.38 805.08 1905.62 805.08 1889.5 811.28 C 1873.38 817.49 1855.62 817.49 1839.5 811.28 L 1839.5 758.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1889.25" y="788.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1901 727 L 1897.2 746.75" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1896.21 751.9 L 1894.1 744.37 L 1897.2 746.75 L 1900.97 745.69 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1663 462 L 1863.34 747.79" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1866.36 752.08 L 1859.47 748.36 L 1863.34 747.79 L 1865.21 744.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1901.36 727 L 1897.42 746.26" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1896.37 751.4 L 1894.35 743.85 L 1897.42 746.26 L 1901.2 745.25 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1662.58 462 L 1863.01 747.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1866.02 751.59 L 1859.14 747.87 L 1863.01 747.29 L 1864.86 743.85 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1702.5 670.7 C 1718.62 676.91 1736.38 676.91 1752.5 670.7 C 1768.62 664.5 1786.38 664.5 1802.5 670.7 L 1802.5 723.28 C 1786.38 717.08 1768.62 717.08 1752.5 723.28 C 1736.38 729.49 1718.62 729.49 1702.5 723.28 L 1702.5 670.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1752.25" y="700.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1648 602 L 1712.3 660.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1716.17 664.25 L 1708.65 662.11 L 1712.3 660.71 L 1713.36 656.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1647.62 602 L 1711.9 660.22" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1715.79 663.75 L 1708.25 661.64 L 1711.9 660.22 L 1712.95 656.46 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1702.5 783.7 C 1718.62 789.91 1736.38 789.91 1752.5 783.7 C 1768.62 777.5 1786.38 777.5 1802.5 783.7 L 1802.5 836.28 C 1786.38 830.08 1768.62 830.08 1752.5 836.28 C 1736.38 842.49 1718.62 842.49 1702.5 836.28 L 1702.5 783.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1752.25" y="813.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1755 977 L 1753.1 849.37" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1753.02 844.12 L 1756.62 851.06 L 1753.1 849.37 L 1749.62 851.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1754.62 977 L 1752.99 848.87" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1752.93 843.62 L 1756.52 850.57 L 1752.99 848.87 L 1749.52 850.66 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2011.5 1088.7 C 2027.62 1094.91 2045.38 1094.91 2061.5 1088.7 C 2077.62 1082.5 2095.38 1082.5 2111.5 1088.7 L 2111.5 1141.28 C 2095.38 1135.08 2077.62 1135.08 2061.5 1141.28 C 2045.38 1147.49 2027.62 1147.49 2011.5 1141.28 L 2011.5 1088.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2061.25" y="1118.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 2104 1222 L 2076.39 1153.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2074.42 1149.04 L 2080.29 1154.21 L 2076.39 1153.9 L 2073.81 1156.84 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2104.26 1222 L 2076.85 1153.41" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2074.9 1148.54 L 2080.75 1153.74 L 2076.85 1153.41 L 2074.25 1156.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1986.5 1320.7 C 2002.62 1326.91 2020.38 1326.91 2036.5 1320.7 C 2052.62 1314.5 2070.38 1314.5 2086.5 1320.7 L 2086.5 1373.28 C 2070.38 1367.08 2052.62 1367.08 2036.5 1373.28 C 2020.38 1379.49 2002.62 1379.49 1986.5 1373.28 L 1986.5 1320.7 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2036.25" y="1350.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 2213 1276 L 2092.9 1324.61" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2088.04 1326.58 L 2093.21 1320.71 L 2092.9 1324.61 L 2095.84 1327.2 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2213.25 1276.38 L 2092.41 1324.66" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2087.54 1326.61 L 2092.74 1320.76 L 2092.41 1324.66 L 2095.34 1327.26 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2275.5 2325.7 C 2291.62 2331.91 2309.38 2331.91 2325.5 2325.7 C 2341.62 2319.5 2359.38 2319.5 2375.5 2325.7 L 2375.5 2378.28 C 2359.38 2372.08 2341.62 2372.08 2325.5 2378.28 C 2309.38 2384.49 2291.62 2384.49 2275.5 2378.28 L 2275.5 2325.7 Z" fill="#e1d5e7" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2325.25" y="2348.75">
@@ -704,19 +702,19 @@
       <text x="2325.25" y="2362.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 2086 2356 L 2269.63 2353.1" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2274.88 2353.02 L 2267.94 2356.63 L 2269.63 2353.1 L 2267.83 2349.63 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2085.5 2356.16 L 2269.13 2352.98" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2274.38 2352.89 L 2267.44 2356.51 L 2269.13 2352.98 L 2267.32 2349.51 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1958.5 1660.7 C 1974.62 1666.91 1992.38 1666.91 2008.5 1660.7 C 2024.62 1654.5 2042.38 1654.5 2058.5 1660.7 L 2058.5 1713.28 C 2042.38 1707.08 2024.62 1707.08 2008.5 1713.28 C 1992.38 1719.49 1974.62 1719.49 1958.5 1713.28 L 1958.5 1660.7 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2008.25" y="1690.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 2054 1582 L 2024.56 1649.17" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2022.45 1653.98 L 2022.05 1646.16 L 2024.56 1649.17 L 2028.46 1648.97 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1955 1592 L 1986.91 1649.43" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1989.46 1654.02 L 1983 1649.6 L 1986.91 1649.43 L 1989.12 1646.2 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1804 1592 L 1804 1643.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1804 1648.88 L 1800.5 1641.88 L 1804 1643.63 L 1807.5 1641.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2053.61 1582 L 2024.98 1648.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2022.9 1653.47 L 2022.45 1645.66 L 2024.98 1648.65 L 2028.88 1648.42 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1954.92 1592 L 1987.04 1648.95" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1989.62 1653.53 L 1983.13 1649.15 L 1987.04 1648.95 L 1989.23 1645.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1803.5 1592 L 1803.5 1643.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1803.5 1648.88 L 1800 1641.88 L 1803.5 1643.63 L 1807 1641.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1887.5 1957.7 C 1903.62 1963.91 1921.38 1963.91 1937.5 1957.7 C 1953.62 1951.5 1971.38 1951.5 1987.5 1957.7 L 1987.5 2010.28 C 1971.38 2004.08 1953.62 2004.08 1937.5 2010.28 C 1921.38 2016.49 1903.62 2016.49 1887.5 2010.28 L 1887.5 1957.7 Z" fill="#e1d5e7" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1937.25" y="1980.75">
@@ -724,13 +722,13 @@
       <text x="1937.25" y="1994.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1786 1977 L 1881.64 1981.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1886.88 1981.95 L 1879.72 1985.1 L 1881.64 1981.69 L 1880.06 1978.11 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1827 1750 L 1919.29 1946.24" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1921.52 1950.99 L 1915.38 1946.14 L 1919.29 1946.24 L 1921.71 1943.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1786 1977.2 L 1881.14 1981.47" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1886.38 1981.71 L 1879.23 1984.89 L 1881.14 1981.47 L 1879.55 1977.9 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1827.09 1750 L 1919.45 1945.74" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1921.69 1950.49 L 1915.54 1945.65 L 1919.45 1945.74 L 1921.87 1942.66 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <rect fill="#ffffff" stroke="none" x="1868" y="1845" width="15" height="14" stroke-width="0"/>
-      <text x="1874.5" y="1854.5">
+      <rect fill="#ffffff" stroke="none" x="1868" y="1844" width="14" height="14" stroke-width="0"/>
+      <text x="1874.46" y="1853.89">
 	no</text>
     </g>
     <path d="M 1252.5 1090.7 C 1268.62 1096.91 1286.38 1096.91 1302.5 1090.7 C 1318.62 1084.5 1336.38 1084.5 1352.5 1090.7 L 1352.5 1143.28 C 1336.38 1137.08 1318.62 1137.08 1302.5 1143.28 C 1286.38 1149.49 1268.62 1149.49 1252.5 1143.28 L 1252.5 1090.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
@@ -738,8 +736,8 @@
       <text x="1302.25" y="1120.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1364 1067 L 1346.93 1080.97" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1342.87 1084.29 L 1346.07 1077.15 L 1346.93 1080.97 L 1350.5 1082.57 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1363.75 1067 L 1347.25 1080.47" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1343.18 1083.79 L 1346.39 1076.66 L 1347.25 1080.47 L 1350.81 1082.08 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 594 984.2 C 610.12 990.41 627.88 990.41 644 984.2 C 660.12 978 677.88 978 694 984.2 L 694 1036.78 C 677.88 1030.58 660.12 1030.58 644 1036.78 C 627.88 1042.99 610.12 1042.99 594 1036.78 L 594 984.2 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="643.75" y="1014.25">
@@ -750,24 +748,24 @@
       <text x="1102.25" y="1403.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1124 1307 L 1111.42 1361.79" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1110.25 1366.91 L 1108.4 1359.3 L 1111.42 1361.79 L 1115.23 1360.87 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1123.67 1307 L 1111.31 1361.29" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1110.15 1366.41 L 1108.29 1358.81 L 1111.31 1361.29 L 1115.11 1360.36 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 860.5 1353.7 C 876.62 1359.91 894.38 1359.91 910.5 1353.7 C 926.62 1347.5 944.38 1347.5 960.5 1353.7 L 960.5 1406.28 C 944.38 1400.08 926.62 1400.08 910.5 1406.28 C 894.38 1412.49 876.62 1412.49 860.5 1406.28 L 860.5 1353.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="910.25" y="1383.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 813 1312 L 858.8 1344.33" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 863.09 1347.36 L 855.35 1346.18 L 858.8 1344.33 L 859.39 1340.46 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 957 1307 L 934.41 1342.62" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 931.6 1347.06 L 932.39 1339.27 L 934.41 1342.62 L 938.3 1343.02 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 813.36 1312 L 858.85 1343.85" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 863.16 1346.86 L 855.41 1345.71 L 858.85 1343.85 L 859.43 1339.98 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 956.57 1307 L 934.41 1342.11" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 931.61 1346.55 L 932.38 1338.77 L 934.41 1342.11 L 938.3 1342.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 642.5 1725.7 C 658.62 1731.91 676.38 1731.91 692.5 1725.7 C 708.62 1719.5 726.38 1719.5 742.5 1725.7 L 742.5 1778.28 C 726.38 1772.08 708.62 1772.08 692.5 1778.28 C 676.38 1784.49 658.62 1784.49 642.5 1778.28 L 642.5 1725.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="692.25" y="1755.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 729 1672 L 696.82 1714.91" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 693.67 1719.11 L 695.07 1711.41 L 696.82 1714.91 L 700.67 1715.61 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 729.31 1672 L 696.84 1714.92" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 693.67 1719.11 L 695.11 1711.41 L 696.84 1714.92 L 700.69 1715.64 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 521.5 1723.7 C 537.62 1729.91 555.38 1729.91 571.5 1723.7 C 587.62 1717.5 605.38 1717.5 621.5 1723.7 L 621.5 1776.28 C 605.38 1770.08 587.62 1770.08 571.5 1776.28 C 555.38 1782.49 537.62 1782.49 521.5 1776.28 L 521.5 1723.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="571.25" y="1753.75">
@@ -778,43 +776,43 @@
       <text x="968.25" y="1850.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 867 1791 L 913.39 1815.98" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 918.02 1818.47 L 910.19 1818.23 L 913.39 1815.98 L 913.51 1812.07 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 867 1790.84 L 912.93 1816.25" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 917.52 1818.79 L 909.7 1818.47 L 912.93 1816.25 L 913.09 1812.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 867.5 1615.7 C 883.62 1621.91 901.38 1621.91 917.5 1615.7 C 933.62 1609.5 951.38 1609.5 967.5 1615.7 L 967.5 1668.28 C 951.38 1662.08 933.62 1662.08 917.5 1668.28 C 901.38 1674.49 883.62 1674.49 867.5 1668.28 L 867.5 1615.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="917.25" y="1645.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 927 1704 L 923.08 1681.28" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 922.19 1676.1 L 926.83 1682.41 L 923.08 1681.28 L 919.93 1683.59 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 926.93 1704 L 923.4 1680.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 922.61 1675.61 L 927.13 1682 L 923.4 1680.8 L 920.21 1683.05 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1032.5 1731.7 C 1048.62 1737.91 1066.38 1737.91 1082.5 1731.7 C 1098.62 1725.5 1116.38 1725.5 1132.5 1731.7 L 1132.5 1784.28 C 1116.38 1778.08 1098.62 1778.08 1082.5 1784.28 C 1066.38 1790.49 1048.62 1790.49 1032.5 1784.28 L 1032.5 1731.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1082.25" y="1761.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1097 1700 L 1092.43 1719.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1091.25 1724.91 L 1089.42 1717.3 L 1092.43 1719.8 L 1096.24 1718.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1097 1700 L 1092.17 1719.32" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1090.9 1724.42 L 1089.2 1716.78 L 1092.17 1719.32 L 1095.99 1718.47 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1231.5 2011.7 C 1247.62 2017.91 1265.38 2017.91 1281.5 2011.7 C 1297.62 2005.5 1315.38 2005.5 1331.5 2011.7 L 1331.5 2064.28 C 1315.38 2058.08 1297.62 2058.08 1281.5 2064.28 C 1265.38 2070.49 1247.62 2070.49 1231.5 2064.28 L 1231.5 2011.7 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1281.25" y="2041.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1202 1672 L 1272.66 1999.77" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1273.76 2004.91 L 1268.87 1998.8 L 1272.66 1999.77 L 1275.71 1997.33 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1202.02 1672 L 1273.09 1999.28" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1274.2 2004.41 L 1269.3 1998.31 L 1273.09 1999.28 L 1276.14 1996.82 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2163.5 778.7 C 2179.62 784.91 2197.38 784.91 2213.5 778.7 C 2229.62 772.5 2247.38 772.5 2263.5 778.7 L 2263.5 831.28 C 2247.38 825.08 2229.62 825.08 2213.5 831.28 C 2197.38 837.49 2179.62 837.49 2163.5 831.28 L 2163.5 778.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2213.25" y="808.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 2159 760 L 2169.19 768.83" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2173.16 772.27 L 2165.57 770.33 L 2169.19 768.83 L 2170.16 765.04 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2159.2 760 L 2169.38 768.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2173.42 771.79 L 2165.8 770.01 L 2169.38 768.44 L 2170.27 764.63 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1811.5 1190.7 C 1827.62 1196.91 1845.38 1196.91 1861.5 1190.7 C 1877.62 1184.5 1895.38 1184.5 1911.5 1190.7 L 1911.5 1243.28 C 1895.38 1237.08 1877.62 1237.08 1861.5 1243.28 C 1845.38 1249.49 1827.62 1249.49 1811.5 1243.28 L 1811.5 1190.7 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1861.25" y="1220.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1884 1053 L 1866.86 1178.69" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1866.15 1183.89 L 1863.63 1176.48 L 1866.86 1178.69 L 1870.56 1177.43 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1884.32 1053 L 1866.9 1178.19" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1866.18 1183.39 L 1863.68 1175.98 L 1866.9 1178.19 L 1870.61 1176.94 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1437.5 2666.7 C 1453.62 2672.91 1471.38 2672.91 1487.5 2666.7 C 1503.62 2660.5 1521.38 2660.5 1537.5 2666.7 L 1537.5 2719.28 C 1521.38 2713.08 1503.62 2713.08 1487.5 2719.28 C 1471.38 2725.49 1453.62 2725.49 1437.5 2719.28 L 1437.5 2666.7 Z" fill="#e1d5e7" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1487.25" y="2689.75">
@@ -822,8 +820,8 @@
       <text x="1487.25" y="2703.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 1483 2632 L 1484.56 2654.65" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1484.92 2659.88 L 1480.95 2653.14 L 1484.56 2654.65 L 1487.93 2652.66 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1483.14 2632 L 1484.72 2654.15" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1485.1 2659.38 L 1481.11 2652.65 L 1484.72 2654.15 L 1488.09 2652.15 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 2620 1851.2 C 2636.12 1857.41 2653.88 1857.41 2670 1851.2 C 2686.12 1845 2703.88 1845 2720 1851.2 L 2720 1903.78 C 2703.88 1897.58 2686.12 1897.58 2670 1903.78 C 2653.88 1909.99 2636.12 1909.99 2620 1903.78 L 2620 1851.2 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2669.75" y="1881.25">
@@ -846,22 +844,22 @@
       <text x="752.75" y="2162.25">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 320 2144 L 696.64 2156.78" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 701.88 2156.96 L 694.77 2160.22 L 696.64 2156.78 L 695.01 2153.23 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 320 2143.68 L 696.64 2156.57" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 701.88 2156.75 L 694.77 2160.01 L 696.64 2156.57 L 695.01 2153.01 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 845.5 2185.7 C 861.62 2191.91 879.38 2191.91 895.5 2185.7 C 911.62 2179.5 929.38 2179.5 945.5 2185.7 L 945.5 2238.28 C 929.38 2232.08 911.62 2232.08 895.5 2238.28 C 879.38 2244.49 861.62 2244.49 845.5 2238.28 L 845.5 2185.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="895.25" y="2215.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 803 2177 L 840.03 2190.78" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 844.95 2192.61 L 837.17 2193.45 L 840.03 2190.78 L 839.61 2186.89 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 803 2177.27 L 839.54 2190.99" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 844.45 2192.84 L 836.67 2193.65 L 839.54 2190.99 L 839.13 2187.1 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 970.5 2230.7 C 986.62 2236.91 1004.38 2236.91 1020.5 2230.7 C 1036.62 2224.5 1054.38 2224.5 1070.5 2230.7 L 1070.5 2283.28 C 1054.38 2277.08 1036.62 2277.08 1020.5 2283.28 C 1004.38 2289.49 986.62 2289.49 970.5 2283.28 L 970.5 2230.7 Z" fill="#ffb570" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1020.25" y="2260.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 946 2230 L 965.01 2236.84" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 969.95 2238.62 L 962.18 2239.54 L 965.01 2236.84 L 964.55 2232.96 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 945.5 2230 L 964.51 2236.84" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 969.45 2238.62 L 961.68 2239.54 L 964.51 2236.84 L 964.05 2232.96 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1604.5 805 L 1668 855 L 1604.5 905 L 1541 855 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="1604.25" y="851.75">
@@ -876,11 +874,11 @@
       <text x="1803.25" y="1710.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 1652 805 L 1717.65 734.66" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1721.24 730.82 L 1719.02 738.32 L 1717.65 734.66 L 1713.9 733.55 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1651.34 805 L 1717.7 734.15" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1721.29 730.32 L 1719.06 737.82 L 1717.7 734.15 L 1713.95 733.03 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="11px">
-      <rect fill="#ffffff" stroke="none" x="1680" y="762" width="15" height="14" stroke-width="0"/>
-      <text x="1687" y="771">
+      <rect fill="#ffffff" stroke="none" x="1680" y="761" width="14" height="14" stroke-width="0"/>
+      <text x="1686.88" y="770.55">
 	no</text>
     </g>
     <path d="M 2213.5 1013.7 C 2229.62 1019.91 2247.38 1019.91 2263.5 1013.7 C 2279.62 1007.5 2297.38 1007.5 2313.5 1013.7 L 2313.5 1066.28 C 2297.38 1060.08 2279.62 1060.08 2263.5 1066.28 C 2247.38 1072.49 2229.62 1072.49 2213.5 1066.28 L 2213.5 1013.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
@@ -888,8 +886,8 @@
       <text x="2263.25" y="1043.75">
 	TOUCH_DEAD</text>
     </g>
-    <path d="M 2263 1008 L 2263 1008" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 2263 1008 L 2263 1008 L 2263 1008 L 2263 1008 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2262.5 1007.5 L 2262.5 1007.5" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2262.5 1007.5 L 2262.5 1007.5 L 2262.5 1007.5 L 2262.5 1007.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 1958.5 1712.7 C 1974.62 1718.91 1992.38 1718.91 2008.5 1712.7 C 2024.62 1706.5 2042.38 1706.5 2058.5 1712.7 L 2058.5 1765.28 C 2042.38 1759.08 2024.62 1759.08 2008.5 1765.28 C 1992.38 1771.49 1974.62 1771.49 1958.5 1765.28 L 1958.5 1712.7 Z" fill="#7ea6e0" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="2008.25" y="1742.75">
@@ -912,30 +910,30 @@
       <text x="365.75" y="1085.75">
 	MULTITAP</text>
     </g>
-    <path d="M 455 1023 L 401.31 1058.49" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 396.93 1061.38 L 400.84 1054.6 L 401.31 1058.49 L 404.7 1060.44 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 351 1062 L 277.77 962.14" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 274.66 957.9 L 281.62 961.48 L 277.77 962.14 L 275.98 965.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 455.49 1023 L 401.65 1058.49" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 397.27 1061.38 L 401.19 1054.61 L 401.65 1058.49 L 405.04 1060.45 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 351.35 1062 L 278.23 962.14" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 275.13 957.9 L 282.09 961.48 L 278.23 962.14 L 276.44 965.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 312.54 1182 C 315.34 1178.86 319.32 1177.05 323.52 1177 L 357.49 1177 C 361.69 1177.05 365.67 1178.86 368.47 1182 L 388.45 1205 C 389.01 1206.28 389.01 1207.72 388.45 1209 L 368.47 1232 C 365.67 1235.14 361.69 1236.95 357.49 1237 L 323.52 1237 C 319.32 1236.95 315.34 1235.14 312.54 1232 L 292.56 1209 C 292 1207.72 292 1206.28 292.56 1205 L 312.54 1182 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="340.25" y="1210.75">
 	timeout</text>
     </g>
-    <path d="M 319 1237 L 276.68 1296.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 273.65 1301.09 L 274.83 1293.35 L 276.68 1296.8 L 280.55 1297.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 362 1102 L 348.25 1170.76" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 347.22 1175.9 L 345.16 1168.35 L 348.25 1170.76 L 352.02 1169.73 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 319.26 1237 L 276.92 1296.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 273.89 1301.09 L 275.07 1293.35 L 276.92 1296.8 L 280.79 1297.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 361.92 1102 L 347.89 1170.76" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 346.84 1175.9 L 344.81 1168.35 L 347.89 1170.76 L 351.67 1169.75 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <ellipse cx="253" cy="1602" rx="49.5" ry="30" fill="#ccccff" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="252.25" y="1605.75">
 	IDLE</text>
     </g>
-    <path d="M 253 1502 L 253 1565.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 253 1570.88 L 249.5 1563.88 L 253 1565.63 L 256.5 1563.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 594 1004 L 556.33 999.72" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 551.11 999.13 L 558.46 996.44 L 556.33 999.72 L 557.67 1003.39 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 764 1034 L 700.24 1021.25" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 695.1 1020.22 L 702.65 1018.16 L 700.24 1021.25 L 701.27 1025.02 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 252.5 1502 L 252.5 1565.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 252.5 1570.88 L 249 1563.88 L 252.5 1565.63 L 256 1563.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 594 1004.38 L 556.32 999.77" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 551.11 999.13 L 558.48 996.51 L 556.32 999.77 L 557.63 1003.46 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 763.5 1033.62 L 700.25 1021.38" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 695.1 1020.38 L 702.63 1018.28 L 700.25 1021.38 L 701.31 1025.15 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="621.5" y="562" width="209" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="725.75" y="585.75">
@@ -948,10 +946,10 @@
       <text x="402.75" y="680.75">
 	press</text>
     </g>
-    <path d="M 291 793 L 371.7 704.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 375.25 700.83 L 373.11 708.35 L 371.7 704.7 L 367.94 703.63 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 452 657 L 646.86 603.68" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 651.92 602.3 L 646.09 607.52 L 646.86 603.68 L 644.25 600.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 291.17 792.5 L 371.32 704.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 374.86 700.83 L 372.72 708.36 L 371.32 704.7 L 367.55 703.64 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 452 656.65 L 646.45 603.67" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 651.51 602.29 L 645.68 607.51 L 646.45 603.67 L 643.84 600.76 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 473.54 685 C 476.34 681.86 480.32 680.05 484.52 680 L 518.49 680 C 522.69 680.05 526.67 681.86 529.47 685 L 549.45 708 C 550.01 709.28 550.01 710.72 549.45 712 L 529.47 735 C 526.67 738.14 522.69 739.95 518.49 740 L 484.52 740 C 480.32 739.95 476.34 738.14 473.54 735 L 453.56 712 C 453 710.72 453 709.28 453.56 708 L 473.54 685 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="501.25" y="706.75">
@@ -959,8 +957,8 @@
       <text x="501.25" y="720.75">
 	finger up</text>
     </g>
-    <path d="M 691 602 L 555.54 678.86" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 550.97 681.45 L 555.33 674.95 L 555.54 678.86 L 558.79 681.04 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 690.92 602 L 555.53 679.19" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 550.97 681.79 L 555.32 675.29 L 555.53 679.19 L 558.79 681.37 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 353.22 910.1 C 354.36 906.9 356.22 905.04 358.18 905.12 L 426.64 905.12 C 428.2 905.08 429.7 905.63 430.67 906.61 C 431.65 907.59 431.99 908.88 431.6 910.1 L 412.75 959.9 C 411.61 963.1 409.75 964.96 407.79 964.88 L 338.34 964.88 C 336.95 964.69 335.73 964.05 334.97 963.1 C 334.22 962.15 334 960.99 334.37 959.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="382.75" y="931.75">
@@ -968,8 +966,8 @@
       <text x="382.75" y="945.75">
 	release</text>
     </g>
-    <path d="M 456 848 L 412.1 900.13" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 408.72 904.14 L 410.55 896.54 L 412.1 900.13 L 415.91 901.04 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 455.55 847.5 L 411.94 900.1" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 408.59 904.14 L 410.36 896.52 L 411.94 900.1 L 415.75 900.98 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 762.54 687 C 765.34 683.86 769.32 682.05 773.52 682 L 807.49 682 C 811.69 682.05 815.67 683.86 818.47 687 L 838.45 710 C 839.01 711.28 839.01 712.72 838.45 714 L 818.47 737 C 815.67 740.14 811.69 741.95 807.49 742 L 773.52 742 C 769.32 741.95 765.34 740.14 762.54 737 L 742.56 714 C 742 712.72 742 711.28 742.56 710 L 762.54 687 Z" fill="#99ffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="790.25" y="715.75">
@@ -989,12 +987,12 @@
       <text x="614.25" y="720.75">
 	threshold</text>
     </g>
-    <path d="M 709 602 L 645.18 675.2" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 641.73 679.16 L 643.7 671.58 L 645.18 675.2 L 648.97 676.18 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 736 602 L 773.15 676.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 775.5 681 L 769.24 676.3 L 773.15 676.3 L 775.5 673.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 755 602 L 864.73 676.43" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 869.07 679.37 L 861.32 678.34 L 864.73 676.43 L 865.25 672.55 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 708.58 602 L 644.82 675.2" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 641.37 679.16 L 643.33 671.58 L 644.82 675.2 L 648.6 676.18 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 735.92 602 L 772.79 676.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 775.12 681 L 768.87 676.28 L 772.79 676.3 L 775.14 673.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 755.3 602 L 864.3 676.41" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 868.63 679.37 L 860.88 678.31 L 864.3 676.41 L 864.82 672.53 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 651.22 800.1 C 652.36 796.9 654.22 795.04 656.18 795.12 L 724.64 795.12 C 726.2 795.08 727.7 795.63 728.67 796.61 C 729.65 797.59 729.99 798.88 729.6 800.1 L 710.75 849.9 C 709.61 853.1 707.75 854.96 705.79 854.88 L 636.34 854.88 C 634.95 854.69 633.73 854.05 632.97 853.1 C 632.22 852.15 632 850.99 632.37 849.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="680.75" y="821.75">
@@ -1009,12 +1007,12 @@
       <text x="696.75" y="947.75">
 	press</text>
     </g>
-    <path d="M 632 740 L 660.8 789.5" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 663.44 794.03 L 656.89 789.74 L 660.8 789.5 L 662.94 786.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 685 855 L 692.03 900.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 692.83 905.9 L 688.31 899.51 L 692.03 900.71 L 695.22 898.44 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 711 967 L 892.23 1342.27" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 894.51 1346.99 L 888.32 1342.21 L 892.23 1342.27 L 894.62 1339.17 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 631.85 740 L 660.46 789.49" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 663.09 794.03 L 656.56 789.72 L 660.46 789.49 L 662.62 786.22 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 685.29 855 L 691.81 900.7" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 692.56 905.89 L 688.1 899.46 L 691.81 900.7 L 695.03 898.47 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 711.46 967 L 892.07 1341.76" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 894.35 1346.49 L 888.16 1341.71 L 892.07 1341.76 L 894.47 1338.67 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 782.22 802.1 C 783.36 798.9 785.22 797.04 787.18 797.12 L 855.64 797.12 C 857.2 797.08 858.7 797.63 859.67 798.61 C 860.65 799.59 860.99 800.88 860.6 802.1 L 841.75 851.9 C 840.61 855.1 838.75 856.96 836.79 856.88 L 767.34 856.88 C 765.95 856.69 764.73 856.05 763.97 855.1 C 763.22 854.15 763 852.99 763.37 851.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="811.75" y="823.75">
@@ -1029,12 +1027,12 @@
       <text x="890.75" y="945.75">
 	press</text>
     </g>
-    <path d="M 834 857 L 865.25 899.85" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 868.34 904.1 L 861.39 900.5 L 865.25 899.85 L 867.05 896.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 796 742 L 804.86 790.73" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 805.8 795.9 L 801.1 789.64 L 804.86 790.73 L 807.99 788.39 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 892 965 L 908.72 1341.64" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 908.95 1346.88 L 905.14 1340.05 L 908.72 1341.64 L 912.14 1339.73 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 833.94 857 L 865.3 899.86" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 868.4 904.1 L 861.44 900.51 L 865.3 899.86 L 867.09 896.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 796.11 742 L 805.22 790.74" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 806.19 795.9 L 801.46 789.66 L 805.22 790.74 L 808.34 788.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 892.31 965 L 908.8 1341.14" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 909.03 1346.38 L 905.22 1339.54 L 908.8 1341.14 L 912.22 1339.24 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 903.22 800.1 C 904.36 796.9 906.22 795.04 908.18 795.12 L 976.64 795.12 C 978.2 795.08 979.7 795.63 980.67 796.61 C 981.65 797.59 981.99 798.88 981.6 800.1 L 962.75 849.9 C 961.61 853.1 959.75 854.96 957.79 854.88 L 888.34 854.88 C 886.95 854.69 885.73 854.05 884.97 853.1 C 884.22 852.15 884 850.99 884.37 849.9 Z" fill="#ff6666" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="932.75" y="821.75">
@@ -1049,28 +1047,28 @@
       <text x="994.75" y="947.75">
 	press</text>
     </g>
-    <path d="M 949 855 L 974.9 901.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 977.46 906.02 L 970.99 901.61 L 974.9 901.44 L 977.1 898.21 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 919 740 L 926.97 788.72" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 927.82 793.9 L 923.23 787.55 L 926.97 788.72 L 930.14 786.42 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1002 967 L 1093.56 1361.8" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 1094.75 1366.91 L 1089.76 1360.88 L 1093.56 1361.8 L 1096.58 1359.3 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 379 965 L 368.72 1055.67" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 368.13 1060.89 L 365.44 1053.54 L 368.72 1055.67 L 372.39 1054.33 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 949.61 855 L 975.31 901.43" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 977.85 906.02 L 971.4 901.59 L 975.31 901.43 L 977.52 898.2 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 918.59 740 L 926.85 788.72" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 927.73 793.9 L 923.11 787.58 L 926.85 788.72 L 930.01 786.41 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1001.97 967 L 1093.51 1361.3" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1094.7 1366.41 L 1089.71 1360.38 L 1093.51 1361.3 L 1096.53 1358.8 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 379.53 965 L 369.04 1055.67" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 368.44 1060.89 L 365.77 1053.53 L 369.04 1055.67 L 372.72 1054.34 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 211.5 798.7 C 227.62 804.91 245.38 804.91 261.5 798.7 C 277.62 792.5 295.38 792.5 311.5 798.7 L 311.5 851.28 C 295.38 845.08 277.62 845.08 261.5 851.28 C 245.38 857.49 227.62 857.49 211.5 851.28 L 211.5 798.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="261.25" y="828.75">
 	TOUCH_TOUCH</text>
     </g>
-    <path d="M 255 897 L 258.35 864.33" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 258.89 859.11 L 261.65 866.43 L 258.35 864.33 L 254.69 865.72 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 255.15 897 L 258.07 863.84" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 258.53 858.61 L 261.41 865.89 L 258.07 863.84 L 254.43 865.28 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 432.5 788.7 C 448.62 794.91 466.38 794.91 482.5 788.7 C 498.62 782.5 516.38 782.5 532.5 788.7 L 532.5 841.28 C 516.38 835.08 498.62 835.08 482.5 841.28 C 466.38 847.49 448.62 847.49 432.5 841.28 L 432.5 788.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="482.25" y="818.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 496 740 L 489.16 776.74" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 488.2 781.9 L 486.04 774.38 L 489.16 776.74 L 492.93 775.66 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 496.07 740 L 489.51 776.23" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 488.58 781.4 L 486.38 773.89 L 489.51 776.23 L 493.27 775.13 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 22.54 1307 C 25.34 1303.86 29.32 1302.05 33.52 1302 L 67.49 1302 C 71.69 1302.05 75.67 1303.86 78.47 1307 L 98.45 1330 C 99.01 1331.28 99.01 1332.72 98.45 1334 L 78.47 1357 C 75.67 1360.14 71.69 1361.95 67.49 1362 L 33.52 1362 C 29.32 1361.95 25.34 1360.14 22.54 1357 L 2.56 1334 C 2 1332.72 2 1331.28 2.56 1330 L 22.54 1307 Z" fill="#000000" stroke="#ffffff" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#FFFFFF" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="50.25" y="1321.75">
@@ -1080,12 +1078,12 @@
       <text x="50.25" y="1349.75">
 	press</text>
     </g>
-    <path d="M 341 1102 L 93 1298.05" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 88.88 1301.31 L 92.2 1294.22 L 93 1298.05 L 96.54 1299.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 73 1362 L 226.19 1566.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 229.33 1571.1 L 222.34 1567.59 L 226.19 1566.9 L 227.94 1563.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 718 602 L 484.35 1191.08" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 482.41 1195.96 L 481.74 1188.16 L 484.35 1191.08 L 488.25 1190.74 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 340.76 1102 L 93.35 1298.05" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 89.24 1301.31 L 92.55 1294.22 L 93.35 1298.05 L 96.9 1299.7 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 72.94 1362 L 226.24 1566.9" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 229.39 1571.1 L 222.39 1567.6 L 226.24 1566.9 L 227.99 1563.4 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 718.08 602 L 484.73 1191.08" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 482.8 1195.96 L 482.12 1188.16 L 484.73 1191.08 L 488.63 1190.74 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <rect x="439.5" y="1512" width="209" height="40" rx="2.4" ry="2.4" fill="#ccffcc" stroke="#000000" stroke-width="2" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="543.75" y="1535.75">
@@ -1098,17 +1096,17 @@
       <text x="451.75" y="1812.75">
 	finger up</text>
     </g>
-    <path d="M 537 1552 L 464.05 1765.97" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 462.36 1770.94 L 461.31 1763.19 L 464.05 1765.97 L 467.93 1765.45 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 537.19 1552 L 464.28 1765.97" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 462.58 1770.94 L 461.53 1763.19 L 464.28 1765.97 L 468.15 1765.44 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 596.04 1417 C 598.84 1413.86 602.82 1412.05 607.02 1412 L 640.99 1412 C 645.19 1412.05 649.17 1413.86 651.97 1417 L 671.95 1440 C 672.51 1441.28 672.51 1442.72 671.95 1444 L 651.97 1467 C 649.17 1470.14 645.19 1471.95 640.99 1472 L 607.02 1472 C 602.82 1471.95 598.84 1470.14 596.04 1467 L 576.06 1444 C 575.5 1442.72 575.5 1441.28 576.06 1440 L 596.04 1417 Z" fill="#99ffff" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="623.75" y="1445.75">
 	timeout</text>
     </g>
-    <path d="M 562 1512 L 592.81 1476.79" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 596.26 1472.84 L 594.29 1480.41 L 592.81 1476.79 L 589.02 1475.8 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 673 1454 L 823.8 1489.54" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 828.91 1490.74 L 821.3 1492.54 L 823.8 1489.54 L 822.9 1485.73 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 561.78 1512 L 593.1 1476.76" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 596.59 1472.84 L 594.56 1480.39 L 593.1 1476.76 L 589.32 1475.74 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 672.5 1453.63 L 823.81 1489.92" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 828.91 1491.15 L 821.29 1492.92 L 823.81 1489.92 L 822.92 1486.11 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 713.54 1517 C 716.34 1513.86 720.32 1512.05 724.52 1512 L 758.49 1512 C 762.69 1512.05 766.67 1513.86 769.47 1517 L 789.45 1540 C 790.01 1541.28 790.01 1542.72 789.45 1544 L 769.47 1567 C 766.67 1570.14 762.69 1571.95 758.49 1572 L 724.52 1572 C 720.32 1571.95 716.34 1570.14 713.54 1567 L 693.56 1544 C 693 1542.72 693 1541.28 693.56 1540 L 713.54 1517 Z" fill="#67ab9f" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="741.25" y="1538.75">
@@ -1116,26 +1114,70 @@
       <text x="741.25" y="1552.75">
 	threshold</text>
     </g>
-    <path d="M 649 1538 L 686.64 1539.71" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 691.88 1539.95 L 684.73 1543.13 L 686.64 1539.71 L 685.05 1536.13 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 790 1531 L 823.79 1523.4" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 828.91 1522.25 L 822.85 1527.2 L 823.79 1523.4 L 821.31 1520.37 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 616 1939 L 580.47 1789.2" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 579.26 1784.09 L 584.28 1790.09 L 580.47 1789.2 L 577.47 1791.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 567 1718 L 547.76 1558.32" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 547.13 1553.11 L 551.45 1559.64 L 547.76 1558.32 L 544.5 1560.48 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 568 1552 L 778.14 1729.89" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 782.15 1733.28 L 774.54 1731.43 L 778.14 1729.89 L 779.07 1726.08 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 648.5 1537.29 L 686.64 1539.22" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 691.88 1539.49 L 684.72 1542.63 L 686.64 1539.22 L 685.07 1535.64 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 790 1530.94 L 823.79 1523.24" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 828.91 1522.07 L 822.86 1527.04 L 823.79 1523.24 L 821.31 1520.21 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 574.93 1931 L 572.24 1788.87" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 572.14 1783.62 L 575.77 1790.55 L 572.24 1788.87 L 568.77 1790.68 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 567.4 1717.5 L 547.32 1558.32" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 546.66 1553.11 L 551.01 1559.62 L 547.32 1558.32 L 544.07 1560.49 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 567.66 1552 L 778.14 1729.89" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 782.15 1733.28 L 774.54 1731.43 L 778.14 1729.89 L 779.06 1726.09 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
     <path d="M 469.5 2037.7 C 485.62 2043.91 503.38 2043.91 519.5 2037.7 C 535.62 2031.5 553.38 2031.5 569.5 2037.7 L 569.5 2090.28 C 553.38 2084.08 535.62 2084.08 519.5 2090.28 C 503.38 2096.49 485.62 2096.49 469.5 2090.28 L 469.5 2037.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
     <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
       <text x="519.25" y="2067.75">
 	TOUCH_IDLE</text>
     </g>
-    <path d="M 460 1832 L 509.43 2025.83" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 510.72 2030.92 L 505.6 2025 L 509.43 2025.83 L 512.39 2023.27 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 570 2054 L 877.75 1994.21" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 882.9 1993.21 L 876.7 1997.98 L 877.75 1994.21 L 875.36 1991.11 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 539 1512 L 479.48 1263.19" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-    <path d="M 478.26 1258.09 L 483.29 1264.08 L 479.48 1263.19 L 476.48 1265.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 459.73 1832 L 509.54 2025.33" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 510.85 2030.42 L 505.71 2024.51 L 509.54 2025.33 L 512.49 2022.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 569.5 2064 L 814.63 2064" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 819.88 2064 L 812.88 2067.5 L 814.63 2064 L 812.88 2060.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 539.18 1512 L 479.22 1263.19" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 477.99 1258.09 L 483.03 1264.07 L 479.22 1263.19 L 476.23 1265.71 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 737 1808 L 777 1848 L 737 1888 L 697 1848 Z" fill="#ffffff" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <g transform="translate(705,1834)">
+      <switch>
+	<foreignObject pointer-events="all" width="64" height="31" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+	  <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; width: 64px; white-space: normal; text-align: center;">
+	    <div style="display:inline-block;text-align:inherit;text-decoration:inherit;" xmlns="http://www.w3.org/1999/xhtml">
+	      drag lock<br />
+	      enabled?<br />
+	    </div>
+	  </div>
+	</foreignObject>
+	<text x="32" y="22" fill="#000000" text-anchor="middle" font-size="12px" font-family="Helvetica">
+	  [Not supported by viewer]</text>
+      </switch>
+    </g>
+    <path d="M 777 1848 L 870 1848 L 870 2027.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 870 2032.88 L 866.5 2025.88 L 870 2027.63 L 873.5 2025.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <g transform="translate(864,1885)">
+      <switch>
+	<foreignObject pointer-events="all" width="16" height="16" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+	  <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; white-space: nowrap; text-align: center;">
+	    <div style="display:inline-block;text-align:inherit;text-decoration:inherit;background-color:#ffffff;" xmlns="http://www.w3.org/1999/xhtml">
+	      no</div>
+	  </div>
+	</foreignObject>
+	<text x="8" y="14" fill="#000000" text-anchor="middle" font-size="12px" font-family="Helvetica">
+	  [Not supported by viewer]</text>
+      </switch>
+    </g>
+    <path d="M 737 1888 L 737 1922.63" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 737 1927.88 L 733.5 1920.88 L 737 1922.63 L 740.5 1920.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <g transform="translate(727,1906)">
+      <switch>
+	<foreignObject pointer-events="all" width="21" height="16" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+	  <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; vertical-align: top; white-space: nowrap; text-align: center;">
+	    <div style="display:inline-block;text-align:inherit;text-decoration:inherit;background-color:#ffffff;" xmlns="http://www.w3.org/1999/xhtml">
+	      yes<br />
+	    </div>
+	  </div>
+	</foreignObject>
+	<text x="11" y="14" fill="#000000" text-anchor="middle" font-size="12px" font-family="Helvetica">
+	  [Not supported by viewer]</text>
+      </switch>
+    </g>
   </g>
 </svg>
