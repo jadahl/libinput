@@ -34,7 +34,7 @@
  * TP_MAGIC_SLOWDOWN in filter.c */
 #define DEFAULT_ACCEL_NUMERATOR 3000.0
 #define DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR 700.0
-#define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 500 /* ms */
+#define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 300 /* ms */
 #define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1 200 /* ms */
 #define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2 500 /* ms */
 #define FAKE_FINGER_OVERFLOW (1 << 7)
@@ -515,6 +515,31 @@ tp_palm_detect_dwt(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	return 0;
 }
 
+static int
+tp_palm_detect_trackpoint(struct tp_dispatch *tp,
+			  struct tp_touch *t,
+			  uint64_t time)
+{
+	if (t->palm.state == PALM_NONE &&
+	    t->state == TOUCH_BEGIN &&
+	    tp->palm.trackpoint_active) {
+		t->palm.state = PALM_TRACKPOINT;
+		return 1;
+	} else if (t->palm.state == PALM_TRACKPOINT &&
+		   t->state == TOUCH_UPDATE &&
+		   !tp->palm.trackpoint_active) {
+
+		if (t->palm.time == 0 ||
+		    t->palm.time > tp->palm.trackpoint_last_event_time) {
+			t->palm.state = PALM_NONE;
+			log_debug(tp_libinput_context(tp),
+				  "palm: touch released, timeout after trackpoint\n");
+		}
+	}
+
+	return 0;
+}
+
 static void
 tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
@@ -524,6 +549,9 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	int dirs;
 
 	if (tp_palm_detect_dwt(tp, t, time))
+		goto out;
+
+	if (tp_palm_detect_trackpoint(tp, t, time))
 		goto out;
 
 	/* If labelled a touch as palm, we unlabel as palm when
@@ -568,7 +596,8 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 out:
 	log_debug(tp_libinput_context(tp),
 		  "palm: palm detected (%s)\n",
-		  t->palm.state == PALM_EDGE ? "edge" : "typing");
+		  t->palm.state == PALM_EDGE ? "edge" :
+		  t->palm.state == PALM_TYPING ? "typing" : "trackpoint");
 }
 
 static void
@@ -948,6 +977,7 @@ tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
 		tp->palm.trackpoint_active = true;
 	}
 
+	tp->palm.trackpoint_last_event_time = time;
 	libinput_timer_set(&tp->palm.trackpoint_timer,
 			   time + DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT);
 }

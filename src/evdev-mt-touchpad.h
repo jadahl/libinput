@@ -64,6 +64,7 @@ enum touch_palm_state {
 	PALM_NONE = 0,
 	PALM_EDGE,
 	PALM_TYPING,
+	PALM_TRACKPOINT,
 };
 
 enum button_event {
@@ -281,6 +282,7 @@ struct tp_dispatch {
 		bool trackpoint_active;
 		struct libinput_event_listener trackpoint_listener;
 		struct libinput_timer trackpoint_timer;
+		uint64_t trackpoint_last_event_time;
 	} palm;
 
 	struct {
