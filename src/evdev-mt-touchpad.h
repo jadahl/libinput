@@ -277,15 +277,15 @@ struct tp_dispatch {
 		int32_t right_edge;		/* in device coordinates */
 		int32_t left_edge;		/* in device coordinates */
 		int32_t vert_center;		/* in device coordinates */
+
+		bool trackpoint_active;
+		struct libinput_event_listener trackpoint_listener;
+		struct libinput_timer trackpoint_timer;
 	} palm;
 
 	struct {
 		struct libinput_device_config_send_events config;
 		enum libinput_config_send_events_mode current_mode;
-
-		bool trackpoint_active;
-		struct libinput_event_listener trackpoint_listener;
-		struct libinput_timer trackpoint_timer;
 	} sendevents;
 
 	struct {

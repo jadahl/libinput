@@ -762,7 +762,7 @@ tp_post_events(struct tp_dispatch *tp, uint64_t time)
 	filter_motion |= tp_post_button_events(tp, time);
 
 	if (filter_motion ||
-	    tp->sendevents.trackpoint_active ||
+	    tp->palm.trackpoint_active ||
 	    tp->dwt.keyboard_active) {
 		tp_edge_scroll_stop_events(tp, time);
 		tp_gesture_stop(tp, time);
@@ -812,12 +812,12 @@ tp_interface_process(struct evdev_dispatch *dispatch,
 static void
 tp_remove_sendevents(struct tp_dispatch *tp)
 {
-	libinput_timer_cancel(&tp->sendevents.trackpoint_timer);
+	libinput_timer_cancel(&tp->palm.trackpoint_timer);
 	libinput_timer_cancel(&tp->dwt.keyboard_timer);
 
 	if (tp->buttons.trackpoint)
 		libinput_device_remove_event_listener(
-					&tp->sendevents.trackpoint_listener);
+					&tp->palm.trackpoint_listener);
 
 	if (tp->dwt.keyboard)
 		libinput_device_remove_event_listener(
@@ -928,7 +928,7 @@ tp_trackpoint_timeout(uint64_t now, void *data)
 	struct tp_dispatch *tp = data;
 
 	tp_tap_resume(tp, now);
-	tp->sendevents.trackpoint_active = false;
+	tp->palm.trackpoint_active = false;
 }
 
 static void
@@ -941,14 +941,14 @@ tp_trackpoint_event(uint64_t time, struct libinput_event *event, void *data)
 	if (event->type == LIBINPUT_EVENT_POINTER_BUTTON)
 		return;
 
-	if (!tp->sendevents.trackpoint_active) {
+	if (!tp->palm.trackpoint_active) {
 		tp_edge_scroll_stop_events(tp, time);
 		tp_gesture_stop(tp, time);
 		tp_tap_suspend(tp, time);
-		tp->sendevents.trackpoint_active = true;
+		tp->palm.trackpoint_active = true;
 	}
 
-	libinput_timer_set(&tp->sendevents.trackpoint_timer,
+	libinput_timer_set(&tp->palm.trackpoint_timer,
 			   time + DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT);
 }
 
@@ -1080,7 +1080,7 @@ tp_interface_device_added(struct evdev_device *device,
 		tp->buttons.active_is_topbutton = false;
 		tp->buttons.trackpoint = added_device;
 		libinput_device_add_event_listener(&added_device->base,
-					&tp->sendevents.trackpoint_listener,
+					&tp->palm.trackpoint_listener,
 					tp_trackpoint_event, tp);
 	}
 
@@ -1121,7 +1121,7 @@ tp_interface_device_removed(struct evdev_device *device,
 			tp->buttons.active_is_topbutton = false;
 		}
 		libinput_device_remove_event_listener(
-					&tp->sendevents.trackpoint_listener);
+					&tp->palm.trackpoint_listener);
 		tp->buttons.trackpoint = NULL;
 	}
 
@@ -1432,7 +1432,7 @@ static int
 tp_init_sendevents(struct tp_dispatch *tp,
 		   struct evdev_device *device)
 {
-	libinput_timer_init(&tp->sendevents.trackpoint_timer,
+	libinput_timer_init(&tp->palm.trackpoint_timer,
 			    tp_libinput_context(tp),
 			    tp_trackpoint_timeout, tp);
 
