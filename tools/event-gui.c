@@ -489,24 +489,6 @@ sockets_init(struct libinput *li)
 	g_io_add_watch(c, G_IO_IN, handle_event_libinput, li);
 }
 
-static int
-open_restricted(const char *path, int flags, void *user_data)
-{
-	int fd = open(path, flags);
-	return fd < 0 ? -errno : fd;
-}
-
-static void
-close_restricted(int fd, void *user_data)
-{
-	close(fd);
-}
-
-static const struct libinput_interface interface = {
-	.open_restricted = open_restricted,
-	.close_restricted = close_restricted,
-};
-
 int
 main(int argc, char *argv[])
 {
@@ -525,7 +507,7 @@ main(int argc, char *argv[])
 	if (!udev)
 		error("Failed to initialize udev\n");
 
-	li = tools_open_backend(&options, &w, &interface);
+	li = tools_open_backend(&options, &w);
 	if (!li)
 		return 1;
 

@@ -25,6 +25,7 @@
 #include <config.h>
 
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -344,17 +345,37 @@ open_device(const struct libinput_interface *interface,
 	return li;
 }
 
+static int
+open_restricted(const char *path, int flags, void *user_data)
+{
+	int fd = open(path, flags);
+	if (fd < 0)
+		fprintf(stderr, "Failed to open %s (%s)\n",
+			path, strerror(errno));
+	return fd < 0 ? -errno : fd;
+}
+
+static void
+close_restricted(int fd, void *user_data)
+{
+	close(fd);
+}
+
+static const struct libinput_interface interface = {
+	.open_restricted = open_restricted,
+	.close_restricted = close_restricted,
+};
+
 struct libinput *
 tools_open_backend(struct tools_options *options,
-		   void *userdata,
-		   const struct libinput_interface *interface)
+		   void *userdata)
 {
 	struct libinput *li = NULL;
 
 	if (options->backend == BACKEND_UDEV) {
-		li = open_udev(interface, userdata, options->seat, options->verbose);
+		li = open_udev(&interface, userdata, options->seat, options->verbose);
 	} else if (options->backend == BACKEND_DEVICE) {
-		li = open_device(interface, userdata, options->device, options->verbose);
+		li = open_device(&interface, userdata, options->device, options->verbose);
 	} else
 		abort();
 

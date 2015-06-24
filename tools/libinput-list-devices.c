@@ -23,7 +23,6 @@
 
 #define _GNU_SOURCE
 #include <errno.h>
-#include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -35,27 +34,6 @@
 #include <libinput-version.h>
 
 #include "shared.h"
-
-static int
-open_restricted(const char *path, int flags, void *user_data)
-{
-	int fd = open(path, flags);
-	if (fd < 0)
-		fprintf(stderr, "Failed to open %s (%s)\n",
-			path, strerror(errno));
-	return fd < 0 ? -errno : fd;
-}
-
-static void
-close_restricted(int fd, void *user_data)
-{
-	close(fd);
-}
-
-static const struct libinput_interface interface = {
-	.open_restricted = open_restricted,
-	.close_restricted = close_restricted,
-};
 
 static inline const char*
 bool_to_str(bool b)
@@ -308,7 +286,7 @@ main(int argc, char **argv)
 
 	tools_init_options(&options);
 
-	li = tools_open_backend(&options, NULL, &interface);
+	li = tools_open_backend(&options, NULL);
 	if (!li)
 		return 1;
 

@@ -45,24 +45,6 @@ static const uint32_t screen_height = 100;
 struct tools_options options;
 static unsigned int stop = 0;
 
-static int
-open_restricted(const char *path, int flags, void *user_data)
-{
-	int fd = open(path, flags);
-	return fd < 0 ? -errno : fd;
-}
-
-static void
-close_restricted(int fd, void *user_data)
-{
-	close(fd);
-}
-
-static const struct libinput_interface interface = {
-	.open_restricted = open_restricted,
-	.close_restricted = close_restricted,
-};
-
 static void
 print_event_header(struct libinput_event *ev)
 {
@@ -403,7 +385,7 @@ main(int argc, char **argv)
 	if (tools_parse_args(argc, argv, &options))
 		return 1;
 
-	li = tools_open_backend(&options, NULL, &interface);
+	li = tools_open_backend(&options, NULL);
 	if (!li)
 		return 1;
 
