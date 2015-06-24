@@ -40,6 +40,7 @@
 enum options {
 	OPT_DEVICE,
 	OPT_UDEV,
+	OPT_GRAB,
 	OPT_HELP,
 	OPT_VERBOSE,
 	OPT_TAP_ENABLE,
@@ -95,6 +96,7 @@ tools_usage()
 	       "is not explicitly specified it is left at each device's default.\n"
 	       "\n"
 	       "Other options:\n"
+	       "--grab .......... Exclusively grab all openend devices\n"
 	       "--verbose ....... Print debugging output.\n"
 	       "--help .......... Print this help.\n",
 		program_invocation_short_name);
@@ -122,14 +124,17 @@ tools_init_context(struct tools_context *context)
 }
 
 int
-tools_parse_args(int argc, char **argv, struct tools_options *options)
+tools_parse_args(int argc, char **argv, struct tools_context *context)
 {
+	struct tools_options *options = &context->options;
+
 	while (1) {
 		int c;
 		int option_index = 0;
 		static struct option opts[] = {
 			{ "device", 1, 0, OPT_DEVICE },
 			{ "udev", 0, 0, OPT_UDEV },
+			{ "grab", 0, 0, OPT_GRAB },
 			{ "help", 0, 0, OPT_HELP },
 			{ "verbose", 0, 0, OPT_VERBOSE },
 			{ "enable-tap", 0, 0, OPT_TAP_ENABLE },
@@ -170,6 +175,9 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				options->backend = BACKEND_UDEV;
 				if (optarg)
 					options->seat = optarg;
+				break;
+			case OPT_GRAB:
+				options->grab = 1;
 				break;
 			case OPT_VERBOSE:
 				options->verbose = 1;
@@ -352,10 +360,17 @@ open_device(const struct libinput_interface *interface,
 static int
 open_restricted(const char *path, int flags, void *user_data)
 {
+	const struct tools_context *context = user_data;
 	int fd = open(path, flags);
+
 	if (fd < 0)
 		fprintf(stderr, "Failed to open %s (%s)\n",
 			path, strerror(errno));
+	else if (context->options.grab &&
+		 ioctl(fd, EVIOCGRAB, (void*)1) == -1)
+		fprintf(stderr, "Grab requested, but failed for %s (%s)\n",
+			path, strerror(errno));
+
 	return fd < 0 ? -errno : fd;
 }
 

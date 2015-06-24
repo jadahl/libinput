@@ -35,6 +35,7 @@ struct tools_options {
 	enum tools_backend backend;
 	const char *device; /* if backend is BACKEND_DEVICE */
 	const char *seat; /* if backend is BACKEND_UDEV */
+	int grab; /* EVIOCGRAB */
 
 	int verbose;
 	int tapping;
