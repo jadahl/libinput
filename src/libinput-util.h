@@ -93,6 +93,15 @@ int list_empty(const struct list *list);
 #define streq(s1, s2) (strcmp((s1), (s2)) == 0)
 #define strneq(s1, s2, n) (strncmp((s1), (s2), (n)) == 0)
 
+#ifdef DEBUG_TRACE
+#define debug_trace(...) \
+	do { \
+	printf("%s:%d %s() - ", __FILE__, __LINE__, __func__); \
+	printf(__VA_ARGS__); \
+	} while (0)
+#else
+#define debug_trace(...) { }
+#endif
 #define LIBINPUT_EXPORT __attribute__ ((visibility("default")))
 
 static inline void *
