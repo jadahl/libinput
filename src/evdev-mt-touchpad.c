@@ -211,6 +211,7 @@ tp_begin_touch(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	t->state = TOUCH_BEGIN;
 	t->millis = time;
 	tp->nfingers_down++;
+	t->palm.time = time;
 	assert(tp->nfingers_down >= 1);
 }
 
@@ -491,7 +492,6 @@ tp_palm_detect_dwt(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	if (tp->dwt.keyboard_active &&
 	    t->state == TOUCH_BEGIN) {
 		t->palm.state = PALM_TYPING;
-		t->palm.time = time;
 		t->palm.first = t->point;
 		return 1;
 	} else if (!tp->dwt.keyboard_active &&
