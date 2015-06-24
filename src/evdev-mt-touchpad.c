@@ -520,6 +520,9 @@ tp_palm_detect_trackpoint(struct tp_dispatch *tp,
 			  struct tp_touch *t,
 			  uint64_t time)
 {
+	if (!tp->palm.monitor_trackpoint)
+		return 0;
+
 	if (t->palm.state == PALM_NONE &&
 	    t->state == TOUCH_BEGIN &&
 	    tp->palm.trackpoint_active) {
@@ -844,7 +847,8 @@ tp_remove_sendevents(struct tp_dispatch *tp)
 	libinput_timer_cancel(&tp->palm.trackpoint_timer);
 	libinput_timer_cancel(&tp->dwt.keyboard_timer);
 
-	if (tp->buttons.trackpoint)
+	if (tp->buttons.trackpoint &&
+	    tp->palm.monitor_trackpoint)
 		libinput_device_remove_event_listener(
 					&tp->palm.trackpoint_listener);
 
@@ -1109,9 +1113,10 @@ tp_interface_device_added(struct evdev_device *device,
 		/* Don't send any pending releases to the new trackpoint */
 		tp->buttons.active_is_topbutton = false;
 		tp->buttons.trackpoint = added_device;
-		libinput_device_add_event_listener(&added_device->base,
-					&tp->palm.trackpoint_listener,
-					tp_trackpoint_event, tp);
+		if (tp->palm.monitor_trackpoint)
+			libinput_device_add_event_listener(&added_device->base,
+						&tp->palm.trackpoint_listener,
+						tp_trackpoint_event, tp);
 	}
 
 	if (added_device->tags & EVDEV_TAG_KEYBOARD &&
@@ -1150,8 +1155,9 @@ tp_interface_device_removed(struct evdev_device *device,
 			tp->buttons.active = 0;
 			tp->buttons.active_is_topbutton = false;
 		}
-		libinput_device_remove_event_listener(
-					&tp->palm.trackpoint_listener);
+		if (tp->palm.monitor_trackpoint)
+			libinput_device_remove_event_listener(
+						&tp->palm.trackpoint_listener);
 		tp->buttons.trackpoint = NULL;
 	}
 
@@ -1454,6 +1460,8 @@ tp_init_palmdetect(struct tp_dispatch *tp,
 	tp->palm.right_edge = device->abs.absinfo_x->maximum - width * 0.05;
 	tp->palm.left_edge = device->abs.absinfo_x->minimum + width * 0.05;
 	tp->palm.vert_center = device->abs.absinfo_y->minimum + height/2;
+
+	tp->palm.monitor_trackpoint = true;
 
 	return 0;
 }

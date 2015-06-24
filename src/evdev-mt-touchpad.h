@@ -283,6 +283,7 @@ struct tp_dispatch {
 		struct libinput_event_listener trackpoint_listener;
 		struct libinput_timer trackpoint_timer;
 		uint64_t trackpoint_last_event_time;
+		bool monitor_trackpoint;
 	} palm;
 
 	struct {
