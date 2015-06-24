@@ -149,11 +149,11 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 			break;
 
 		switch(c) {
-			case 'h': /* --help */
+			case 'h':
 			case OPT_HELP:
 				tools_usage();
 				exit(0);
-			case OPT_DEVICE: /* --device */
+			case OPT_DEVICE:
 				options->backend = BACKEND_DEVICE;
 				if (!optarg) {
 					tools_usage();
@@ -161,12 +161,12 @@ tools_parse_args(int argc, char **argv, struct tools_options *options)
 				}
 				options->device = optarg;
 				break;
-			case OPT_UDEV: /* --udev */
+			case OPT_UDEV:
 				options->backend = BACKEND_UDEV;
 				if (optarg)
 					options->seat = optarg;
 				break;
-			case OPT_VERBOSE: /* --verbose */
+			case OPT_VERBOSE:
 				options->verbose = 1;
 				break;
 			case OPT_TAP_ENABLE:
