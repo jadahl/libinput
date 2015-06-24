@@ -524,7 +524,7 @@ tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 	int dirs;
 
 	if (tp_palm_detect_dwt(tp, t, time))
-	    goto out;
+		goto out;
 
 	/* If labelled a touch as palm, we unlabel as palm when
 	   we move out of the palm edge zone within the timeout, provided
