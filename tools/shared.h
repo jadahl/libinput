@@ -48,10 +48,14 @@ struct tools_options {
 	double speed;
 };
 
-void tools_init_options(struct tools_options *options);
-int tools_parse_args(int argc, char **argv, struct tools_options *options);
-struct libinput* tools_open_backend(struct tools_options *options,
-				    void *userdata);
+struct tools_context {
+	struct tools_options options;
+	void *user_data;
+};
+
+void tools_init_context(struct tools_context *context);
+int tools_parse_args(int argc, char **argv, struct tools_context *context);
+struct libinput* tools_open_backend(struct tools_context *context);
 void tools_device_apply_config(struct libinput_device *device,
 			       struct tools_options *options);
 void tools_usage();

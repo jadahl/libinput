@@ -44,7 +44,7 @@
 
 #define clip(val_, min_, max_) min((max_), max((min_), (val_)))
 
-struct tools_options options;
+struct tools_context context;
 
 struct touch {
 	int active;
@@ -264,6 +264,7 @@ change_ptraccel(struct window *w, double amount)
 static void
 handle_event_device_notify(struct libinput_event *ev)
 {
+	struct tools_context *context;
 	struct libinput_device *dev = libinput_event_get_device(ev);
 	struct libinput *li;
 	struct window *w;
@@ -280,11 +281,12 @@ handle_event_device_notify(struct libinput_event *ev)
 	    libinput_device_get_name(dev),
 	    type);
 
-	tools_device_apply_config(libinput_event_get_device(ev),
-				  &options);
-
 	li = libinput_event_get_context(ev);
-	w = libinput_get_user_data(li);
+	context = libinput_get_user_data(li);
+	w = context->user_data;
+
+	tools_device_apply_config(libinput_event_get_device(ev),
+				  &context->options);
 
 	if (libinput_event_get_type(ev) == LIBINPUT_EVENT_DEVICE_ADDED) {
 		for (i = 0; i < ARRAY_LENGTH(w->devices); i++) {
@@ -430,7 +432,8 @@ static gboolean
 handle_event_libinput(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	struct libinput *li = data;
-	struct window *w = libinput_get_user_data(li);
+	struct tools_context *context = libinput_get_user_data(li);
+	struct window *w = context->user_data;
 	struct libinput_event *ev;
 
 	libinput_dispatch(li);
@@ -498,16 +501,17 @@ main(int argc, char *argv[])
 
 	gtk_init(&argc, &argv);
 
-	tools_init_options(&options);
+	tools_init_context(&context);
 
-	if (tools_parse_args(argc, argv, &options) != 0)
+	if (tools_parse_args(argc, argv, &context) != 0)
 		return 1;
 
 	udev = udev_new();
 	if (!udev)
 		error("Failed to initialize udev\n");
 
-	li = tools_open_backend(&options, &w);
+	context.user_data = &w;
+	li = tools_open_backend(&context);
 	if (!li)
 		return 1;
 

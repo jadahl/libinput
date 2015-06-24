@@ -42,7 +42,7 @@
 uint32_t start_time;
 static const uint32_t screen_width = 100;
 static const uint32_t screen_height = 100;
-struct tools_options options;
+struct tools_context context;
 static unsigned int stop = 0;
 
 static void
@@ -298,7 +298,7 @@ handle_and_print_events(struct libinput *li)
 		case LIBINPUT_EVENT_DEVICE_REMOVED:
 			print_device_notify(ev);
 			tools_device_apply_config(libinput_event_get_device(ev),
-						  &options);
+						  &context.options);
 			break;
 		case LIBINPUT_EVENT_KEYBOARD_KEY:
 			print_key_event(ev);
@@ -380,12 +380,12 @@ main(int argc, char **argv)
 	struct libinput *li;
 	struct timespec tp;
 
-	tools_init_options(&options);
+	tools_init_context(&context);
 
-	if (tools_parse_args(argc, argv, &options))
+	if (tools_parse_args(argc, argv, &context))
 		return 1;
 
-	li = tools_open_backend(&options, NULL);
+	li = tools_open_backend(&context);
 	if (!li)
 		return 1;
 

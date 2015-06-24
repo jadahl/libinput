@@ -101,8 +101,12 @@ tools_usage()
 }
 
 void
-tools_init_options(struct tools_options *options)
+tools_init_context(struct tools_context *context)
 {
+	struct tools_options *options = &context->options;
+
+	context->user_data = NULL;
+
 	memset(options, 0, sizeof(*options));
 	options->tapping = -1;
 	options->drag_lock = -1;
@@ -367,15 +371,15 @@ static const struct libinput_interface interface = {
 };
 
 struct libinput *
-tools_open_backend(struct tools_options *options,
-		   void *userdata)
+tools_open_backend(struct tools_context *context)
 {
 	struct libinput *li = NULL;
+	struct tools_options *options = &context->options;
 
 	if (options->backend == BACKEND_UDEV) {
-		li = open_udev(&interface, userdata, options->seat, options->verbose);
+		li = open_udev(&interface, context, options->seat, options->verbose);
 	} else if (options->backend == BACKEND_DEVICE) {
-		li = open_device(&interface, userdata, options->device, options->verbose);
+		li = open_device(&interface, context, options->device, options->verbose);
 	} else
 		abort();
 

@@ -268,7 +268,7 @@ int
 main(int argc, char **argv)
 {
 	struct libinput *li;
-	struct tools_options options;
+	struct tools_context context;
 	struct libinput_event *ev;
 
 	if (argc > 1) {
@@ -284,9 +284,9 @@ main(int argc, char **argv)
 		}
 	}
 
-	tools_init_options(&options);
+	tools_init_context(&context);
 
-	li = tools_open_backend(&options, NULL);
+	li = tools_open_backend(&context);
 	if (!li)
 		return 1;
 
