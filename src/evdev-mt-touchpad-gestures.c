@@ -91,6 +91,7 @@ static void
 tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 {
 	struct normalized_coords delta, unaccel;
+	struct device_float_coords raw;
 
 	/* When a clickpad is clicked, combine motion of all active touches */
 	if (tp->buttons.is_clickpad && tp->buttons.state)
@@ -101,8 +102,11 @@ tp_gesture_post_pointer_motion(struct tp_dispatch *tp, uint64_t time)
 	delta = tp_filter_motion(tp, &unaccel, time);
 
 	if (!normalized_is_zero(delta) || !normalized_is_zero(unaccel)) {
-		pointer_notify_motion(&tp->device->base, time,
-				      &delta, &unaccel);
+		raw = tp_unnormalize_for_xaxis(tp, unaccel);
+		pointer_notify_motion(&tp->device->base,
+				      time,
+				      &delta,
+				      &raw);
 	}
 }
 

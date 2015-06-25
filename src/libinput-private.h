@@ -324,7 +324,7 @@ void
 pointer_notify_motion(struct libinput_device *device,
 		      uint64_t time,
 		      const struct normalized_coords *delta,
-		      const struct normalized_coords *unaccel);
+		      const struct device_float_coords *raw);
 
 void
 pointer_notify_motion_absolute(struct libinput_device *device,

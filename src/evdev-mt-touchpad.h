@@ -318,6 +318,21 @@ tp_normalize_delta(struct tp_dispatch *tp, struct device_float_coords delta)
 	return normalized;
 }
 
+/**
+ * Takes a dpi-normalized set of coordinates, returns a set of coordinates
+ * in the x-axis' coordinate space.
+ */
+static inline struct device_float_coords
+tp_unnormalize_for_xaxis(struct tp_dispatch *tp, struct normalized_coords delta)
+{
+	struct device_float_coords raw;
+
+	raw.x = delta.x / tp->accel.x_scale_coeff;
+	raw.y = delta.y / tp->accel.x_scale_coeff; /* <--- not a typo */
+
+	return raw;
+}
+
 struct normalized_coords
 tp_get_delta(struct tp_touch *t);
 
