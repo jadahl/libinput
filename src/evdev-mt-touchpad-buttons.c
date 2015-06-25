@@ -527,8 +527,8 @@ tp_init_softbuttons(struct tp_dispatch *tp,
 	xoffset = absinfo_x->minimum,
 	yoffset = absinfo_y->minimum;
 	yres = absinfo_y->resolution;
-	width = abs(absinfo_x->maximum - absinfo_x->minimum);
-	height = abs(absinfo_y->maximum - absinfo_y->minimum);
+	width = device->abs.dimensions.x;
+	height = device->abs.dimensions.y;
 
 	/* button height: 10mm or 15% of the touchpad height,
 	   whichever is smaller */
@@ -558,8 +558,8 @@ tp_init_top_softbuttons(struct tp_dispatch *tp,
 	xoffset = absinfo_x->minimum,
 	yoffset = absinfo_y->minimum;
 	yres = absinfo_y->resolution;
-	width = abs(absinfo_x->maximum - absinfo_x->minimum);
-	height = abs(absinfo_y->maximum - absinfo_y->minimum);
+	width = device->abs.dimensions.x;
+	height = device->abs.dimensions.y;
 
 	if (tp->buttons.has_topbuttons) {
 		/* T440s has the top button line 5mm from the top, event
@@ -742,8 +742,8 @@ tp_init_buttons(struct tp_dispatch *tp,
 	   The MAGIC for resolution-less touchpads ends up as 2% of the diagonal */
 	if (device->abs.fake_resolution) {
 		const double BUTTON_MOTION_MAGIC = 0.007;
-		width = abs(absinfo_x->maximum - absinfo_x->minimum);
-		height = abs(absinfo_y->maximum - absinfo_y->minimum);
+		width = device->abs.dimensions.x;
+		height = device->abs.dimensions.y;
 		diagonal = sqrt(width*width + height*height);
 		tp->buttons.motion_dist.x_scale_coeff = diagonal * BUTTON_MOTION_MAGIC;
 		tp->buttons.motion_dist.y_scale_coeff = diagonal * BUTTON_MOTION_MAGIC;
@@ -838,10 +838,8 @@ tp_check_clickfinger_distance(struct tp_dispatch *tp,
 
 		/* Use a maximum of 30% of the touchpad width or height if
 		 * we dont' have resolution. */
-		w = tp->device->abs.absinfo_x->maximum -
-		    tp->device->abs.absinfo_x->minimum;
-		h = tp->device->abs.absinfo_y->maximum -
-		    tp->device->abs.absinfo_y->minimum;
+		w = tp->device->abs.dimensions.x;
+		h = tp->device->abs.dimensions.y;
 
 		return (x < w * 0.3 && y < h * 0.3) ? 1 : 0;
 	} else {

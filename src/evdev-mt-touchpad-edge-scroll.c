@@ -275,8 +275,8 @@ tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device)
 	int width, height;
 	int edge_width, edge_height;
 
-	width = device->abs.absinfo_x->maximum - device->abs.absinfo_x->minimum;
-	height = device->abs.absinfo_y->maximum - device->abs.absinfo_y->minimum;
+	width = device->abs.dimensions.x;
+	height = device->abs.dimensions.y;
 
 	switch (tp->model) {
 	case MODEL_ALPS:

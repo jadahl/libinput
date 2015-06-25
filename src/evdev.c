@@ -1762,6 +1762,10 @@ evdev_configure_mt_device(struct evdev_device *device)
 
 	device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
 	device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_MT_POSITION_Y);
+	device->abs.dimensions.x = abs(device->abs.absinfo_x->maximum -
+				       device->abs.absinfo_x->minimum);
+	device->abs.dimensions.y = abs(device->abs.absinfo_y->maximum -
+				       device->abs.absinfo_y->minimum);
 	device->is_mt = 1;
 
 	/* We only handle the slotted Protocol B in libinput.
@@ -1874,6 +1878,10 @@ evdev_configure_device(struct evdev_device *device)
 		device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_Y);
 		device->abs.point.x = device->abs.absinfo_x->value;
 		device->abs.point.y = device->abs.absinfo_y->value;
+		device->abs.dimensions.x = abs(device->abs.absinfo_x->maximum -
+					       device->abs.absinfo_x->minimum);
+		device->abs.dimensions.y = abs(device->abs.absinfo_y->maximum -
+					       device->abs.absinfo_y->minimum);
 
 		if (evdev_is_fake_mt_device(device)) {
 			udev_tags &= ~EVDEV_UDEV_TAG_TOUCHSCREEN;

@@ -137,6 +137,8 @@ struct evdev_device {
 		struct matrix calibration;
 		struct matrix default_calibration; /* from LIBINPUT_CALIBRATION_MATRIX */
 		struct matrix usermatrix; /* as supplied by the caller */
+
+		struct device_coords dimensions;
 	} abs;
 
 	struct {
