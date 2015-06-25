@@ -254,6 +254,23 @@ normalize_delta(struct evdev_device *device,
 	normalized->y = delta->y * DEFAULT_MOUSE_DPI / (double)device->dpi;
 }
 
+static inline bool
+evdev_post_trackpoint_scroll(struct evdev_device *device,
+			     struct normalized_coords unaccel,
+			     uint64_t time)
+{
+	if (device->scroll.method != LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN ||
+	    !hw_is_key_down(device, device->scroll.button))
+		return false;
+
+	if (device->scroll.button_scroll_active)
+		evdev_post_scroll(device, time,
+				  LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS,
+				  &unaccel);
+
+	return true;
+}
+
 static void
 evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 {
@@ -276,14 +293,8 @@ evdev_flush_pending_event(struct evdev_device *device, uint64_t time)
 		device->rel.y = 0;
 
 		/* Use unaccelerated deltas for pointing stick scroll */
-		if (device->scroll.method == LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN &&
-		    hw_is_key_down(device, device->scroll.button)) {
-			if (device->scroll.button_scroll_active)
-				evdev_post_scroll(device, time,
-						  LIBINPUT_POINTER_AXIS_SOURCE_CONTINUOUS,
-						  &unaccel);
-			break;
-		}
+		if (evdev_post_trackpoint_scroll(device, unaccel, time))
+		    break;
 
 		/* Apply pointer acceleration. */
 		accel = filter_dispatch(device->pointer.filter,
