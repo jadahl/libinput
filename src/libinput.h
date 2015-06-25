@@ -38,6 +38,8 @@ extern "C" {
 #define LIBINPUT_ATTRIBUTE_DEPRECATED __attribute__ ((deprecated))
 
 /**
+ * @ingroup base
+ *
  * Log priority for internal logging messages.
  */
 enum libinput_log_priority {
