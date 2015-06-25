@@ -741,7 +741,7 @@ tp_init_buttons(struct tp_dispatch *tp,
 	/* pinned-finger motion threshold, see tp_unpin_finger.
 	   The MAGIC for resolution-less touchpads ends up as 2% of the diagonal */
 	if (device->abs.fake_resolution) {
-		const int BUTTON_MOTION_MAGIC = 0.007;
+		const double BUTTON_MOTION_MAGIC = 0.007;
 		width = abs(absinfo_x->maximum - absinfo_x->minimum);
 		height = abs(absinfo_y->maximum - absinfo_y->minimum);
 		diagonal = sqrt(width*width + height*height);
