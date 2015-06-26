@@ -1699,16 +1699,16 @@ START_TEST(touchpad_tap_invalid)
 }
 END_TEST
 
-START_TEST(touchpad_drag_lock_default_enabled)
+START_TEST(touchpad_drag_lock_default_disabled)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput_device *device = dev->libinput_device;
 	enum libinput_config_status status;
 
 	ck_assert_int_eq(libinput_device_config_tap_get_drag_lock_enabled(device),
-			 LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+			 LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
 	ck_assert_int_eq(libinput_device_config_tap_get_default_drag_lock_enabled(device),
-			 LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
+			 LIBINPUT_CONFIG_DRAG_LOCK_DISABLED);
 
 	status = libinput_device_config_tap_set_drag_lock_enabled(device,
 								  LIBINPUT_CONFIG_DRAG_LOCK_ENABLED);
@@ -1728,7 +1728,7 @@ START_TEST(touchpad_drag_lock_default_enabled)
 }
 END_TEST
 
-START_TEST(touchpad_drag_lock_default_disabled)
+START_TEST(touchpad_drag_lock_default_unavailable)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput_device *device = dev->libinput_device;
@@ -1809,7 +1809,7 @@ litest_setup_tests(void)
 	litest_add("touchpad:tap", clickpad_1fg_tap_click, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:tap", clickpad_2fg_tap_click, LITEST_CLICKPAD, LITEST_SINGLE_TOUCH|LITEST_APPLE_CLICKPAD);
 
-	litest_add("touchpad:tap", touchpad_drag_lock_default_enabled, LITEST_TOUCHPAD, LITEST_ANY);
-	litest_add("touchpad:tap", touchpad_drag_lock_default_disabled, LITEST_ANY, LITEST_TOUCHPAD);
+	litest_add("touchpad:tap", touchpad_drag_lock_default_disabled, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:tap", touchpad_drag_lock_default_unavailable, LITEST_ANY, LITEST_TOUCHPAD);
 
 }

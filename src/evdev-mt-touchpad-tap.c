@@ -880,7 +880,7 @@ tp_tap_config_get_draglock_enabled(struct libinput_device *device)
 static inline enum libinput_config_drag_lock_state
 tp_drag_lock_default(struct evdev_device *device)
 {
-	return LIBINPUT_CONFIG_DRAG_LOCK_ENABLED;
+	return LIBINPUT_CONFIG_DRAG_LOCK_DISABLED;
 }
 
 static enum libinput_config_drag_lock_state
