@@ -23,6 +23,7 @@ liblitest_la_SOURCES = \
 	litest-logitech-trackball.c \
 	litest-mouse.c \
 	litest-mouse-roccat.c \
+	litest-mouse-low-dpi.c \
 	litest-ms-surface-cover.c \
 	litest-protocol-a-touch-screen.c \
 	litest-qemu-usb-tablet.c \
