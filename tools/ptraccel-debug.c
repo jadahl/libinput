@@ -95,7 +95,7 @@ print_ptraccel_movement(struct motion_filter *filter,
 		motion.y = 0;
 		time += 12; /* pretend 80Hz data */
 
-		filter_dispatch(filter, &motion, NULL, time);
+		motion = filter_dispatch(filter, &motion, NULL, time);
 
 		printf("%d	%.3f	%.3f\n", i, motion.x, dx);
 
@@ -129,7 +129,7 @@ print_ptraccel_sequence(struct motion_filter *filter,
 		motion.y = 0;
 		time += 12; /* pretend 80Hz data */
 
-		filter_dispatch(filter, &motion, NULL, time);
+		motion = filter_dispatch(filter, &motion, NULL, time);
 
 		printf("%d	%.3f	%.3f\n", i, motion.x, *dx);
 	}
