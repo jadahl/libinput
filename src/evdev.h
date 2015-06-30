@@ -279,13 +279,6 @@ evdev_device_create(struct libinput_seat *seat,
 		    struct udev_device *device);
 
 int
-evdev_fix_abs_resolution(struct evdev_device *device,
-			 unsigned int xcode,
-			 unsigned int ycode,
-			 int yresolution,
-			 int xresolution);
-
-int
 evdev_device_init_pointer_acceleration(struct evdev_device *device,
 				       accel_profile_func_t profile);
 

@@ -1548,7 +1548,7 @@ evdev_read_model(struct evdev_device *device)
 }
 
 /* Return 1 if the given resolutions have been set, or 0 otherwise */
-inline int
+static inline int
 evdev_fix_abs_resolution(struct evdev_device *device,
 			 unsigned int xcode,
 			 unsigned int ycode,
