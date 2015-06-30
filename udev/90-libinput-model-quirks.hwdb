@@ -22,6 +22,10 @@ libinput:name:*AlpsPS/2 ALPS DualPoint TouchPad:dmi:*
 libinput:name:*AlpsPS/2 ALPS GlidePoint:dmi:*
  LIBINPUT_MODEL_ALPS_TOUCHPAD=1
 
+libinput:name:*AlpsPS/2 ALPS DualPoint TouchPad:fwversion:8
+libinput:name:*AlpsPS/2 ALPS GlidePoint:fwversion:8
+ LIBINPUT_ATTR_SIZE_HINT=100x55
+
 ##########################################
 # Apple
 ##########################################
