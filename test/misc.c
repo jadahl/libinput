@@ -584,6 +584,52 @@ START_TEST(trackpoint_accel_parser)
 }
 END_TEST
 
+struct parser_test_dimension {
+	char *tag;
+	bool success;
+	int x, y;
+};
+
+START_TEST(dimension_prop_parser)
+{
+	struct parser_test_dimension tests[] = {
+		{ "10x10", true, 10, 10 },
+		{ "1x20", true, 1, 20 },
+		{ "1x8000", true, 1, 8000 },
+		{ "238492x428210", true, 238492, 428210 },
+		{ "0x0", true, 0, 0 },
+		{ "-10x10", false, 0, 0 },
+		{ "-1", false, 0, 0 },
+		{ "1x-99", false, 0, 0 },
+		{ "0", false, 0, 0 },
+		{ "100", false, 0, 0 },
+		{ "", false, 0, 0 },
+		{ "abd", false, 0, 0 },
+		{ "xabd", false, 0, 0 },
+		{ "0xaf", false, 0, 0 },
+		{ "0x0x", true, 0, 0 },
+		{ "x10", false, 0, 0 },
+		{ NULL, false, 0, 0 }
+	};
+	int i;
+	size_t x, y;
+	bool success;
+
+	for (i = 0; tests[i].tag != NULL; i++) {
+		x = y = 0xad;
+		success = parse_dimension_property(tests[i].tag, &x, &y);
+		ck_assert(success == tests[i].success);
+		if (success) {
+			ck_assert_int_eq(x, tests[i].x);
+			ck_assert_int_eq(y, tests[i].y);
+		} else {
+			ck_assert_int_eq(x, 0xad);
+			ck_assert_int_eq(y, 0xad);
+		}
+	}
+}
+END_TEST
+
 void
 litest_setup_tests(void)
 {
@@ -602,4 +648,5 @@ litest_setup_tests(void)
 	litest_add_no_device("misc:parser", dpi_parser);
 	litest_add_no_device("misc:parser", wheel_click_parser);
 	litest_add_no_device("misc:parser", trackpoint_accel_parser);
+	litest_add_no_device("misc:parser", dimension_prop_parser);
 }

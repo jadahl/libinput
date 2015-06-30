@@ -234,3 +234,33 @@ parse_trackpoint_accel_property(const char *prop)
 
 	return accel;
 }
+
+/**
+ * Parses a simple dimension string in the form of "10x40". The two
+ * numbers must be positive integers in decimal notation.
+ * On success, the two numbers are stored in w and h. On failure, w and h
+ * are unmodified.
+ *
+ * @param prop The value of the property
+ * @param w Returns the first component of the dimension
+ * @param h Returns the second component of the dimension
+ * @return true on success, false otherwise
+ */
+bool
+parse_dimension_property(const char *prop, size_t *w, size_t *h)
+{
+	int x, y;
+
+	if (!prop)
+		return false;
+
+	if (sscanf(prop, "%dx%d", &x, &y) != 2)
+		return false;
+
+	if (x < 0 || y < 0)
+		return false;
+
+	*w = (size_t)x;
+	*h = (size_t)y;
+	return true;
+}
