@@ -11,6 +11,7 @@
 ACTION!="add|change", GOTO="libinput_model_quirks_end"
 KERNEL!="event*", GOTO="libinput_model_quirks_end"
 
+# Matches below are exclusive, if one matches we skip the rest
 # hwdb matches:
 # 
 # libinput:touchpad:<modalias>
