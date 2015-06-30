@@ -599,7 +599,7 @@ litest_setup_tests(void)
 
 	litest_add_no_device("misc:matrix", matrix_helpers);
 	litest_add_no_device("misc:ratelimit", ratelimit_helpers);
-	litest_add_no_device("misc:dpi parser", dpi_parser);
-	litest_add_no_device("misc:wheel click parser", wheel_click_parser);
-	litest_add_no_device("misc:trackpoint accel parser", trackpoint_accel_parser);
+	litest_add_no_device("misc:parser", dpi_parser);
+	litest_add_no_device("misc:parser", wheel_click_parser);
+	litest_add_no_device("misc:parser", trackpoint_accel_parser);
 }
