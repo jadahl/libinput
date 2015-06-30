@@ -1559,6 +1559,43 @@ error:
 }
 
 static int
+tp_init_default_resolution(struct tp_dispatch *tp,
+			   struct evdev_device *device)
+{
+	const int touchpad_width_mm = 69, /* 1 under palm detection */
+		  touchpad_height_mm = 50;
+	int xres, yres;
+
+	if (!device->abs.fake_resolution)
+		return 0 ;
+
+	/* we only get here if
+	 * - the touchpad provides no resolution
+	 * - the udev hwdb didn't override the resoluion
+	 * - no ATTR_SIZE_HINT is set
+	 *
+	 * The majority of touchpads that triggers all these conditions
+	 * are old ones, so let's assume a small touchpad size and assume
+	 * that.
+	 */
+	log_info(tp_libinput_context(tp),
+		 "%s: no resolution or size hints, assuming a size of %dx%dmm\n",
+		 device->devname,
+		 touchpad_width_mm,
+		 touchpad_height_mm);
+
+	xres = device->abs.dimensions.x/touchpad_width_mm;
+	yres = device->abs.dimensions.y/touchpad_height_mm;
+	libevdev_set_abs_resolution(device->evdev, ABS_X, xres);
+	libevdev_set_abs_resolution(device->evdev, ABS_Y, yres);
+	libevdev_set_abs_resolution(device->evdev, ABS_MT_POSITION_X, xres);
+	libevdev_set_abs_resolution(device->evdev, ABS_MT_POSITION_Y, yres);
+	device->abs.fake_resolution = 0;
+
+	return 0;
+}
+
+static int
 tp_init(struct tp_dispatch *tp,
 	struct evdev_device *device)
 {
@@ -1569,6 +1606,9 @@ tp_init(struct tp_dispatch *tp,
 	tp->device = device;
 
 	if (tp_sanity_check(tp, device) != 0)
+		return -1;
+
+	if (tp_init_default_resolution(tp, device) != 0)
 		return -1;
 
 	if (tp_init_slots(tp, device) != 0)
