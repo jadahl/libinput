@@ -1551,19 +1551,16 @@ evdev_read_model(struct evdev_device *device)
 	return m->model;
 }
 
-/* Return 1 if the given resolutions have been set, or 0 otherwise */
+/* Return 1 if the device is set to the fake resolution or 0 otherwise */
 static inline int
 evdev_fix_abs_resolution(struct evdev_device *device,
 			 unsigned int xcode,
-			 unsigned int ycode,
-			 int xresolution,
-			 int yresolution)
+			 unsigned int ycode)
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
-	const struct input_absinfo *absx, *absy;
-	struct input_absinfo fixed;
-	int rc = 0;
+	int xres = EVDEV_FAKE_RESOLUTION,
+	    yres = EVDEV_FAKE_RESOLUTION;
 
 	if (!(xcode == ABS_X && ycode == ABS_Y)  &&
 	    !(xcode == ABS_MT_POSITION_X && ycode == ABS_MT_POSITION_Y)) {
@@ -1573,37 +1570,15 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 		return 0;
 	}
 
-	if (xresolution == 0 || yresolution == 0 ||
-	    (xresolution == EVDEV_FAKE_RESOLUTION && xresolution != yresolution) ||
-	    (yresolution == EVDEV_FAKE_RESOLUTION && xresolution != yresolution)) {
-		log_bug_libinput(libinput,
-				 "Invalid x/y resolutions %d/%d\n",
-				 xresolution, yresolution);
+	if (libevdev_get_abs_resolution(evdev, xcode) != 0)
 		return 0;
-	}
 
-	absx = libevdev_get_abs_info(evdev, xcode);
-	absy = libevdev_get_abs_info(evdev, ycode);
+	/* libevdev_set_abs_resolution() changes the absinfo we already
+	   have a pointer to, no need to fetch it again */
+	libevdev_set_abs_resolution(evdev, xcode, xres);
+	libevdev_set_abs_resolution(evdev, ycode, yres);
 
-	if (absx->resolution == 0 || absx->resolution == EVDEV_FAKE_RESOLUTION) {
-		fixed = *absx;
-		fixed.resolution = xresolution;
-		/* libevdev_set_abs_info() changes the absinfo we already
-		   have a pointer to, no need to fetch it again */
-		libevdev_set_abs_info(evdev, xcode, &fixed);
-		rc = 1;
-	}
-
-	if (absy->resolution == 0 || absy->resolution == EVDEV_FAKE_RESOLUTION) {
-		fixed = *absy;
-		fixed.resolution = yresolution;
-		/* libevdev_set_abs_info() changes the absinfo we already
-		   have a pointer to, no need to fetch it again */
-		libevdev_set_abs_info(evdev, ycode, &fixed);
-		rc = 1;
-	}
-
-	return rc;
+	return 1;
 }
 
 static enum evdev_device_udev_tags
@@ -1774,9 +1749,7 @@ evdev_configure_mt_device(struct evdev_device *device)
 
 	if (evdev_fix_abs_resolution(device,
 				     ABS_MT_POSITION_X,
-				     ABS_MT_POSITION_Y,
-				     EVDEV_FAKE_RESOLUTION,
-				     EVDEV_FAKE_RESOLUTION))
+				     ABS_MT_POSITION_Y))
 		device->abs.fake_resolution = 1;
 
 	device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_MT_POSITION_X);
@@ -1900,11 +1873,7 @@ evdev_configure_device(struct evdev_device *device)
 		evdev_fix_android_mt(device);
 
 	if (libevdev_has_event_code(evdev, EV_ABS, ABS_X)) {
-		if (evdev_fix_abs_resolution(device,
-					     ABS_X,
-					     ABS_Y,
-					     EVDEV_FAKE_RESOLUTION,
-					     EVDEV_FAKE_RESOLUTION))
+		if (evdev_fix_abs_resolution(device, ABS_X, ABS_Y))
 			device->abs.fake_resolution = 1;
 		device->abs.absinfo_x = libevdev_get_abs_info(evdev, ABS_X);
 		device->abs.absinfo_y = libevdev_get_abs_info(evdev, ABS_Y);
