@@ -67,6 +67,10 @@ to normalize them.
 <dd><b>This prefix is reserved as private API, do not use.</b>. See @ref
 model_specific_configuration for details.
 </dd>
+<dt>LIBINPUT_ATTR_*</dt>
+<dd><b>This prefix is reserved as private API, do not use.</b>. See @ref
+model_specific_configuration for details.
+</dd>
 </dl>
 
 Below is an example udev rule to assign "seat1" to a device from vendor
@@ -103,13 +107,13 @@ ENV{ID_MODEL_ID}=="034b", ENV{ID_INPUT_TOUCHPAD}="", ENV{ID_INPUT_TABLET}="1"
 
 @section model_specific_configuration Model-specific configuration
 
-libinput reserves the property prefix <b>LIBINPUT_MODEL_</b> for
-model-specific configuration. <b>This prefix is reserved as private API, do
-not use.</b>
+libinput reserves the property prefixes <b>LIBINPUT_MODEL_</b> and
+<b>LIBINPUT_ATTR_*</b> for model-specific configuration. <b>These prefixes
+are reserved as private API, do not use.</b>
 
-The effect of this property may be to enable or disable certain
+The effect of these properties may be to enable or disable certain
 features on a specific device or set of devices, to change configuration
-defaults or any other reason. The effects of setting this property, the
+defaults or any other reason. The effects of setting these properties, the
 format of the property and the value of the property are subject to change
 at any time.
 

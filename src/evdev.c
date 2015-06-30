@@ -1551,6 +1551,23 @@ evdev_read_model(struct evdev_device *device)
 	return m->model;
 }
 
+static inline int
+evdev_read_attr_size_prop(struct evdev_device *device,
+			  size_t *size_x,
+			  size_t *size_y)
+{
+	struct udev_device *udev;
+	const char *size_prop;
+
+	udev = device->udev_device;
+	size_prop = udev_device_get_property_value(udev,
+						   "LIBINPUT_ATTR_SIZE_HINT");
+	if (!size_prop)
+		return false;
+
+	return parse_dimension_property(size_prop, size_x, size_y);
+}
+
 /* Return 1 if the device is set to the fake resolution or 0 otherwise */
 static inline int
 evdev_fix_abs_resolution(struct evdev_device *device,
@@ -1559,6 +1576,8 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 {
 	struct libinput *libinput = device->base.seat->libinput;
 	struct libevdev *evdev = device->evdev;
+	const struct input_absinfo *absx, *absy;
+	size_t widthmm = 0, heightmm = 0;
 	int xres = EVDEV_FAKE_RESOLUTION,
 	    yres = EVDEV_FAKE_RESOLUTION;
 
@@ -1570,15 +1589,28 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 		return 0;
 	}
 
-	if (libevdev_get_abs_resolution(evdev, xcode) != 0)
+	absx = libevdev_get_abs_info(evdev, xcode);
+	absy = libevdev_get_abs_info(evdev, ycode);
+
+	if (absx->resolution != 0 || absy->resolution != 0)
 		return 0;
+
+	/* Note: we *do not* override resolutions if provided by the kernel.
+	 * If a device needs this, add it to 60-evdev.hwdb. The libinput
+	 * property is only for general size hints where we can make
+	 * educated guesses but don't know better.
+	 */
+	if (evdev_read_attr_size_prop(device, &widthmm, &heightmm)) {
+		xres = (absx->maximum - absx->minimum)/widthmm;
+		yres = (absy->maximum - absy->minimum)/heightmm;
+	}
 
 	/* libevdev_set_abs_resolution() changes the absinfo we already
 	   have a pointer to, no need to fetch it again */
 	libevdev_set_abs_resolution(evdev, xcode, xres);
 	libevdev_set_abs_resolution(evdev, ycode, yres);
 
-	return 1;
+	return xres == EVDEV_FAKE_RESOLUTION;
 }
 
 static enum evdev_device_udev_tags
