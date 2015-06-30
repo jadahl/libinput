@@ -1088,10 +1088,10 @@ litest_wait_for_udev(int fd)
 	litest_assert_ptr_notnull(device);
 	while (device && !udev_device_get_property_value(device, "ID_INPUT")) {
 		loop_count++;
-		litest_assert_int_lt(loop_count, 300);
+		litest_assert_int_lt(loop_count, 200);
 
 		udev_device_unref(device);
-		msleep(2);
+		msleep(10);
 		device = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
 	}
 
