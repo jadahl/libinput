@@ -1351,17 +1351,8 @@ tp_init_accel(struct tp_dispatch *tp, double diagonal)
 	 * and y resolution, so that a circle on the
 	 * touchpad does not turn into an elipse on the screen.
 	 */
-	if (!tp->device->abs.fake_resolution) {
-		tp->accel.x_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_x;
-		tp->accel.y_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_y;
-	} else {
-	/*
-	 * For touchpads where the driver does not provide resolution, fall
-	 * back to scaling motion events based on the diagonal size in units.
-	 */
-		tp->accel.x_scale_coeff = DEFAULT_ACCEL_NUMERATOR / diagonal;
-		tp->accel.y_scale_coeff = DEFAULT_ACCEL_NUMERATOR / diagonal;
-	}
+	tp->accel.x_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_x;
+	tp->accel.y_scale_coeff = (DEFAULT_MOUSE_DPI/25.4) / res_y;
 
 	switch (tp->device->model) {
 	case EVDEV_MODEL_LENOVO_X230:
@@ -1601,6 +1592,7 @@ tp_init(struct tp_dispatch *tp,
 {
 	int width, height;
 	double diagonal;
+	int res_x, res_y;
 
 	tp->base.interface = &tp_interface;
 	tp->device = device;
@@ -1614,6 +1606,8 @@ tp_init(struct tp_dispatch *tp,
 	if (tp_init_slots(tp, device) != 0)
 		return -1;
 
+	res_x = tp->device->abs.absinfo_x->resolution;
+	res_y = tp->device->abs.absinfo_y->resolution;
 	width = device->abs.dimensions.x;
 	height = device->abs.dimensions.y;
 	diagonal = sqrt(width*width + height*height);
@@ -1622,18 +1616,8 @@ tp_init(struct tp_dispatch *tp,
 						       EV_ABS,
 						       ABS_MT_DISTANCE);
 
-	if (device->abs.fake_resolution) {
-		tp->hysteresis_margin.x =
-			diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
-		tp->hysteresis_margin.y =
-			diagonal / DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR;
-	} else {
-		int res_x = tp->device->abs.absinfo_x->resolution,
-		    res_y = tp->device->abs.absinfo_y->resolution;
-
-		tp->hysteresis_margin.x = res_x/2;
-		tp->hysteresis_margin.y = res_y/2;
-	}
+	tp->hysteresis_margin.x = res_x/2;
+	tp->hysteresis_margin.y = res_y/2;
 
 	if (tp_init_accel(tp, diagonal) != 0)
 		return -1;
