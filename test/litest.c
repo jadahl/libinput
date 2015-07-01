@@ -52,7 +52,7 @@
 #define UDEV_RULES_D "/run/udev/rules.d"
 #define UDEV_RULE_PREFIX "99-litest-"
 #define UDEV_HWDB_D "/etc/udev/hwdb.d"
-#define UDEV_COMMON_RULE_FILE UDEV_RULES_D "/91-litest-model-quirks.rules"
+#define UDEV_COMMON_RULE_FILE UDEV_RULES_D "/91-litest-model-quirks-REMOVEME.rules"
 #define UDEV_COMMON_HWDB_FILE UDEV_HWDB_D "/91-litest-model-quirks-REMOVEME.hwdb"
 
 static int in_debugger = -1;
@@ -923,16 +923,20 @@ litest_copy_file(const char *dest, const char *src, const char *header)
 static inline void
 litest_install_model_quirks(void)
 {
-	litest_copy_file(UDEV_COMMON_RULE_FILE, LIBINPUT_UDEV_RULES_FILE, NULL);
-	litest_copy_file(UDEV_COMMON_HWDB_FILE,
-			 LIBINPUT_UDEV_HWDB_FILE,
+	const char *warning =
 			 "#################################################################\n"
 			 "# WARNING: REMOVE THIS FILE\n"
-			 "# This is the run-time hwdb file for the libinput test suite and\n"
+			 "# This is a run-time file for the libinput test suite and\n"
 			 "# should be removed on exit. If the test-suite is not currently \n"
 			 "# running, remove this file and update your hwdb: \n"
 			 "#       sudo udevadm hwdb --update\n"
-			 "#################################################################\n\n");
+			 "#################################################################\n\n";
+	litest_copy_file(UDEV_COMMON_RULE_FILE,
+			 LIBINPUT_UDEV_RULES_FILE,
+			 warning);
+	litest_copy_file(UDEV_COMMON_HWDB_FILE,
+			 LIBINPUT_UDEV_HWDB_FILE,
+			 warning);
 }
 
 static inline void
