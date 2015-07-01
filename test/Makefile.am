@@ -43,7 +43,7 @@ liblitest_la_SOURCES = \
 	litest.c
 liblitest_la_LIBADD = $(top_builddir)/src/libinput-util.la
 liblitest_la_CFLAGS = $(AM_CFLAGS) \
-	      -DLIBINPUT_UDEV_RULES_FILE="\"$(abs_top_srcdir)/udev/90-libinput-model-quirks.rules\"" \
+	      -DLIBINPUT_UDEV_RULES_FILE="\"$(abs_top_srcdir)/udev/90-libinput-model-quirks-litest.rules\"" \
 	      -DLIBINPUT_UDEV_HWDB_FILE="\"$(abs_top_srcdir)/udev/90-libinput-model-quirks.hwdb\""
 if HAVE_LIBUNWIND
 liblitest_la_LIBADD += $(LIBUNWIND_LIBS) -ldl

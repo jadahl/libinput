@@ -184,6 +184,12 @@ AM_CONDITIONAL(HAVE_VALGRIND, [test "x$VALGRIND" != "x"])
 AM_CONDITIONAL(BUILD_TESTS, [test "x$build_tests" = "xyes"])
 AM_CONDITIONAL(BUILD_DOCS, [test "x$build_documentation" = "xyes"])
 
+# Used by the udev rules so we can use callouts during testing without
+# installing everything first. Default is the empty string so the installed
+# rule will use udev's default path. Override is in udev/Makefile.am
+AC_SUBST(UDEV_TEST_PATH, "")
+AC_PATH_PROG(SED, [sed])
+
 AC_CONFIG_FILES([Makefile
 		 doc/Makefile
 		 doc/libinput.doxygen
@@ -192,7 +198,9 @@ AC_CONFIG_FILES([Makefile
 		 src/libinput-version.h
 		 test/Makefile
 		 tools/Makefile
-		 udev/Makefile])
+		 udev/Makefile
+		 udev/80-libinput-device-groups.rules
+		 udev/90-libinput-model-quirks.rules])
 AC_CONFIG_FILES([test/symbols-leak-test],
 		[chmod +x test/symbols-leak-test])
 AC_OUTPUT
