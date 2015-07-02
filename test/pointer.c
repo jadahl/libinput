@@ -115,6 +115,47 @@ START_TEST(pointer_motion_relative)
 }
 END_TEST
 
+START_TEST(pointer_motion_relative_zero)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	int i;
+
+	/* NOTE: this test does virtually nothing. The kernel should not
+	 * allow 0/0 events to be passed to userspace. If it ever happens,
+	 * let's hope this test fails if we do the wrong thing.
+	 */
+	litest_drain_events(li);
+
+	for (i = 0; i < 5; i++) {
+		litest_event(dev, EV_REL, REL_X, 0);
+		litest_event(dev, EV_REL, REL_Y, 0);
+		litest_event(dev, EV_SYN, SYN_REPORT, 0);
+		libinput_dispatch(li);
+	}
+	litest_assert_empty_queue(li);
+
+	/* send a single event, the first movement
+	   is always decelerated by 0.3 */
+	litest_event(dev, EV_REL, REL_X, 1);
+	litest_event(dev, EV_REL, REL_Y, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	libinput_dispatch(li);
+
+	libinput_event_destroy(libinput_get_event(li));
+	litest_assert_empty_queue(li);
+
+	for (i = 0; i < 5; i++) {
+		litest_event(dev, EV_REL, REL_X, 0);
+		litest_event(dev, EV_REL, REL_Y, 0);
+		litest_event(dev, EV_SYN, SYN_REPORT, 0);
+		libinput_dispatch(dev->libinput);
+	}
+	litest_assert_empty_queue(li);
+
+}
+END_TEST
+
 START_TEST(pointer_motion_relative_min_decel)
 {
 	struct litest_device *dev = litest_current_device();
@@ -1379,6 +1420,7 @@ litest_setup_tests(void)
 	struct range compass = {0, 7}; /* cardinal directions */
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
+	litest_add_for_device("pointer:motion", pointer_motion_relative_zero, LITEST_MOUSE);
 	litest_add_ranged("pointer:motion", pointer_motion_relative_min_decel, LITEST_RELATIVE, LITEST_ANY, &compass);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_unaccel, LITEST_RELATIVE, LITEST_ANY);
