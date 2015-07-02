@@ -1560,6 +1560,7 @@ litest_wait_for_event_of_type(struct libinput *li, ...)
 	enum libinput_event_type types[32] = {LIBINPUT_EVENT_NONE};
 	size_t ntypes = 0;
 	enum libinput_event_type type;
+	struct pollfd fds;
 
 	va_start(args, li);
 	type = va_arg(args, int);
@@ -1571,12 +1572,16 @@ litest_wait_for_event_of_type(struct libinput *li, ...)
 	}
 	va_end(args);
 
+	fds.fd = libinput_get_fd(li);
+	fds.events = POLLIN;
+	fds.revents = 0;
+
 	while (1) {
 		size_t i;
 		struct libinput_event *event;
 
 		while ((type = libinput_next_event_type(li)) == LIBINPUT_EVENT_NONE) {
-			msleep(10);
+			poll(&fds, 1, -1);
 			libinput_dispatch(li);
 		}
 
