@@ -115,6 +115,54 @@ START_TEST(pointer_motion_relative)
 }
 END_TEST
 
+START_TEST(pointer_motion_relative_min_decel)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event_pointer *ptrev;
+	struct libinput_event *event;
+	double evx, evy;
+	int dx, dy;
+	int cardinal = _i; /* ranged test */
+	double len;
+
+	int deltas[8][2] = {
+		/* N, NE, E, ... */
+		{ 0, 1 },
+		{ 1, 1 },
+		{ 1, 0 },
+		{ 1, -1 },
+		{ 0, -1 },
+		{ -1, -1 },
+		{ -1, 0 },
+		{ -1, 1 },
+	};
+
+	litest_drain_events(dev->libinput);
+
+	dx = deltas[cardinal][0];
+	dy = deltas[cardinal][1];
+
+	litest_event(dev, EV_REL, REL_X, dx);
+	litest_event(dev, EV_REL, REL_Y, dy);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	libinput_dispatch(li);
+
+	event = libinput_get_event(li);
+	ptrev = litest_is_motion_event(event);
+	evx = libinput_event_pointer_get_dx(ptrev);
+	evy = libinput_event_pointer_get_dy(ptrev);
+
+	ck_assert((evx == 0.0) == (dx == 0));
+	ck_assert((evy == 0.0) == (dy == 0));
+
+	len = vector_length(evx, evy);
+	ck_assert(fabs(len) >= 0.3);
+
+	libinput_event_destroy(event);
+}
+END_TEST
+
 static void
 test_absolute_event(struct litest_device *dev, double x, double y)
 {
@@ -1328,8 +1376,10 @@ void
 litest_setup_tests(void)
 {
 	struct range axis_range = {ABS_X, ABS_Y + 1};
+	struct range compass = {0, 7}; /* cardinal directions */
 
 	litest_add("pointer:motion", pointer_motion_relative, LITEST_RELATIVE, LITEST_ANY);
+	litest_add_ranged("pointer:motion", pointer_motion_relative_min_decel, LITEST_RELATIVE, LITEST_ANY, &compass);
 	litest_add("pointer:motion", pointer_motion_absolute, LITEST_ABSOLUTE, LITEST_ANY);
 	litest_add("pointer:motion", pointer_motion_unaccel, LITEST_RELATIVE, LITEST_ANY);
 	litest_add("pointer:button", pointer_button, LITEST_BUTTON, LITEST_CLICKPAD);
