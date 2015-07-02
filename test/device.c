@@ -947,6 +947,65 @@ START_TEST(device_wheel_only)
 }
 END_TEST
 
+START_TEST(device_udev_tag_alps)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	struct udev_device *d;
+	const char *prop;
+
+	d = libinput_device_get_udev_device(device);
+	prop = udev_device_get_property_value(d,
+					      "LIBINPUT_MODEL_ALPS_TOUCHPAD");
+
+	if (strstr(libinput_device_get_name(device), "ALPS"))
+		ck_assert_notnull(prop);
+	else
+		ck_assert(prop == NULL);
+
+	udev_device_unref(d);
+}
+END_TEST
+
+START_TEST(device_udev_tag_wacom)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	struct udev_device *d;
+	const char *prop;
+
+	d = libinput_device_get_udev_device(device);
+	prop = udev_device_get_property_value(d,
+					      "LIBINPUT_MODEL_WACOM_TOUCHPAD");
+
+	if (libevdev_get_id_vendor(dev->evdev) == VENDOR_ID_WACOM)
+		ck_assert_notnull(prop);
+	else
+		ck_assert(prop == NULL);
+
+	udev_device_unref(d);
+}
+END_TEST
+
+START_TEST(device_udev_tag_apple)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput_device *device = dev->libinput_device;
+	struct udev_device *d;
+	const char *prop;
+
+	d = libinput_device_get_udev_device(device);
+	prop = udev_device_get_property_value(d,
+					      "LIBINPUT_MODEL_WACOM_TOUCHPAD");
+
+	if (libevdev_get_id_vendor(dev->evdev) == VENDOR_ID_WACOM)
+		ck_assert_notnull(prop);
+	else
+		ck_assert(prop == NULL);
+
+	udev_device_unref(d);
+}
+END_TEST
 void
 litest_setup_tests(void)
 {
@@ -989,4 +1048,8 @@ litest_setup_tests(void)
 	litest_add_no_device("device:invalid devices", abs_mt_device_missing_res);
 
 	litest_add("device:wheel", device_wheel_only, LITEST_WHEEL, LITEST_RELATIVE|LITEST_ABSOLUTE);
+
+	litest_add("device:udev tags", device_udev_tag_alps, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("device:udev tags", device_udev_tag_wacom, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("device:udev tags", device_udev_tag_apple, LITEST_TOUCHPAD, LITEST_ANY);
 }
