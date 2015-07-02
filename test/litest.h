@@ -137,6 +137,7 @@ enum litest_device_type {
 	LITEST_LOGITECH_TRACKBALL = -23,
 	LITEST_ATMEL_HOVER = -24,
 	LITEST_ALPS_DUALPOINT = -25,
+	LITEST_MOUSE_LOW_DPI = -26,
 };
 
 enum litest_device_feature {
