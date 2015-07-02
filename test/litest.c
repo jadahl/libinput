@@ -44,6 +44,7 @@
 #include <sys/sendfile.h>
 #include <sys/timerfd.h>
 #include <sys/wait.h>
+#include <libudev.h>
 
 #include "litest.h"
 #include "litest-int.h"
@@ -1079,32 +1080,6 @@ litest_restore_log_handler(struct libinput *libinput)
 	libinput_log_set_handler(libinput, litest_log_handler);
 }
 
-static inline void
-litest_wait_for_udev(int fd)
-{
-	struct udev *udev;
-	struct udev_device *device;
-	struct stat st;
-	int loop_count = 0;
-
-	litest_assert_int_ge(fstat(fd, &st), 0);
-
-	udev = udev_new();
-	device = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
-	litest_assert_ptr_notnull(device);
-	while (device && !udev_device_get_property_value(device, "ID_INPUT")) {
-		loop_count++;
-		litest_assert_int_lt(loop_count, 200);
-
-		udev_device_unref(device);
-		msleep(10);
-		device = udev_device_new_from_devnum(udev, 'c', st.st_rdev);
-	}
-
-	udev_device_unref(device);
-	udev_unref(udev);
-}
-
 struct litest_device *
 litest_add_device_with_overrides(struct libinput *libinput,
 				 enum litest_device_type which,
@@ -1131,8 +1106,6 @@ litest_add_device_with_overrides(struct libinput *libinput,
 
 	rc = libevdev_new_from_fd(fd, &d->evdev);
 	litest_assert_int_eq(rc, 0);
-
-	litest_wait_for_udev(fd);
 
 	d->libinput = libinput;
 	d->libinput_device = libinput_path_add_device(d->libinput, path);
@@ -1220,11 +1193,6 @@ litest_delete_device(struct litest_device *d)
 	free(d->private);
 	memset(d,0, sizeof(*d));
 	free(d);
-
-	/* zzz so udev can catch up with things, so we don't accidentally open
-	 * an old device in the next test and then get all upset when things blow
-	 * up */
-	msleep(10);
 }
 
 void
@@ -1756,11 +1724,11 @@ litest_assert_empty_queue(struct libinput *li)
 	litest_assert(empty_queue);
 }
 
-struct libevdev_uinput *
-litest_create_uinput_device_from_description(const char *name,
-					     const struct input_id *id,
-					     const struct input_absinfo *abs_info,
-					     const int *events)
+static struct libevdev_uinput *
+litest_create_uinput(const char *name,
+		     const struct input_id *id,
+		     const struct input_absinfo *abs_info,
+		     const int *events)
 {
 	struct libevdev_uinput *uinput;
 	struct libevdev *dev;
@@ -1844,6 +1812,58 @@ litest_create_uinput_device_from_description(const char *name,
 	}
 	close(fd);
 	libevdev_free(dev);
+
+	return uinput;
+}
+
+struct libevdev_uinput *
+litest_create_uinput_device_from_description(const char *name,
+					     const struct input_id *id,
+					     const struct input_absinfo *abs_info,
+					     const int *events)
+{
+	struct libevdev_uinput *uinput;
+	const char *syspath;
+
+	struct udev *udev;
+	struct udev_monitor *udev_monitor;
+	struct udev_device *udev_device;
+	const char *udev_action;
+	const char *udev_syspath;
+
+	udev = udev_new();
+	litest_assert_notnull(udev);
+	udev_monitor = udev_monitor_new_from_netlink(udev, "udev");
+	litest_assert_notnull(udev_monitor);
+	udev_monitor_filter_add_match_subsystem_devtype(udev_monitor, "input",
+							NULL);
+	/* remove O_NONBLOCK */
+	fcntl(udev_monitor_get_fd(udev_monitor), F_SETFL, 0);
+	litest_assert_int_eq(udev_monitor_enable_receiving(udev_monitor),
+			     0);
+
+	uinput = litest_create_uinput(name, id, abs_info, events);
+
+	syspath = libevdev_uinput_get_syspath(uinput);
+
+	/* blocking, we don't want to continue until udev is ready */
+	do {
+		udev_device = udev_monitor_receive_device(udev_monitor);
+		litest_assert_notnull(udev_device);
+		udev_action = udev_device_get_action(udev_device);
+		if (strcmp(udev_action, "add") != 0) {
+			udev_device_unref(udev_device);
+			continue;
+		}
+
+		udev_syspath = udev_device_get_syspath(udev_device);
+	} while (!udev_syspath || strcmp(udev_syspath, syspath) != 0);
+
+	litest_assert(udev_device_get_property_value(udev_device, "ID_INPUT"));
+
+	udev_device_unref(udev_device);
+	udev_monitor_unref(udev_monitor);
+	udev_unref(udev);
 
 	return uinput;
 }
