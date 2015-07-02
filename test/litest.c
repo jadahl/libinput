@@ -2390,6 +2390,8 @@ main(int argc, char **argv)
 
 	list_init(&all_tests);
 
+	setenv("CK_DEFAULT_TIMEOUT", "10", 0);
+
 	mode = litest_parse_argv(argc, argv);
 	if (mode == LITEST_MODE_ERROR)
 		return EXIT_FAILURE;
