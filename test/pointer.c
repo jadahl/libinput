@@ -35,52 +35,26 @@
 #include "libinput-util.h"
 #include "litest.h"
 
-static struct libinput_event_pointer *
-get_accelerated_motion_event(struct libinput *li)
-{
-	struct libinput_event *event;
-	struct libinput_event_pointer *ptrev;
-
-	while (1) {
-		event = libinput_get_event(li);
-		ptrev = litest_is_motion_event(event);
-
-		if (fabs(libinput_event_pointer_get_dx(ptrev)) < DBL_MIN &&
-		    fabs(libinput_event_pointer_get_dy(ptrev)) < DBL_MIN) {
-			libinput_event_destroy(event);
-			continue;
-		}
-
-		return ptrev;
-	}
-
-	litest_abort_msg("No accelerated pointer motion event found");
-	return NULL;
-}
-
 static void
 test_relative_event(struct litest_device *dev, int dx, int dy)
 {
 	struct libinput *li = dev->libinput;
 	struct libinput_event_pointer *ptrev;
+	struct libinput_event *event;
 	double ev_dx, ev_dy;
 	double expected_dir;
 	double expected_length;
 	double actual_dir;
 	double actual_length;
 
-	/* Send two deltas, as the first one may be eaten up by an
-	 * acceleration filter. */
-	litest_event(dev, EV_REL, REL_X, dx);
-	litest_event(dev, EV_REL, REL_Y, dy);
-	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_REL, REL_X, dx);
 	litest_event(dev, EV_REL, REL_Y, dy);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 
 	libinput_dispatch(li);
 
-	ptrev = get_accelerated_motion_event(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_motion_event(event);
 
 	expected_length = sqrt(4 * dx*dx + 4 * dy*dy);
 	expected_dir = atan2(dx, dy);
@@ -97,7 +71,7 @@ test_relative_event(struct litest_device *dev, int dx, int dy)
 	 * indifference). */
 	litest_assert(fabs(expected_dir - actual_dir) < M_PI_2);
 
-	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+	libinput_event_destroy(event);
 
 	litest_drain_events(dev->libinput);
 }
@@ -119,6 +93,13 @@ disable_button_scrolling(struct litest_device *device)
 START_TEST(pointer_motion_relative)
 {
 	struct litest_device *dev = litest_current_device();
+
+	/* send a single event, the first movement
+	   is always decelerated by 0.3 */
+	litest_event(dev, EV_REL, REL_X, 1);
+	litest_event(dev, EV_REL, REL_Y, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	libinput_dispatch(dev->libinput);
 
 	litest_drain_events(dev->libinput);
 
