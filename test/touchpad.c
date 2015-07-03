@@ -291,6 +291,13 @@ START_TEST(touchpad_2fg_clickfinger_distance)
 {
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
+	double w, h;
+	bool small_touchpad = false;
+	unsigned int expected_button;
+
+	if (libinput_device_get_size(dev->libinput_device, &w, &h) == 0 &&
+	    h < 50.0)
+		small_touchpad = true;
 
 	enable_clickfinger(dev);
 
@@ -323,11 +330,85 @@ START_TEST(touchpad_2fg_clickfinger_distance)
 	litest_touch_up(dev, 0);
 	litest_touch_up(dev, 1);
 
+	/* if the touchpad is small enough, we expect all fingers to count
+	 * for clickfinger */
+	if (small_touchpad)
+		expected_button = BTN_RIGHT;
+	else
+		expected_button = BTN_LEFT;
+
+	litest_assert_button_event(li,
+				   expected_button,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   expected_button,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+}
+END_TEST
+
+START_TEST(touchpad_2fg_clickfinger_bottom)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+
+	/* this test is run for the T440s touchpad only, makes getting the
+	 * mm correct easier */
+
+	libinput_device_config_click_set_method(dev->libinput_device,
+						LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER);
+	litest_drain_events(li);
+
+	/* one above, one below the magic line, vert spread ca 27mm */
+	litest_touch_down(dev, 0, 40, 60);
+	litest_touch_down(dev, 1, 60, 100);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_LEFT, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
 	litest_assert_button_event(li,
 				   BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_PRESSED);
 	litest_assert_button_event(li,
 				   BTN_LEFT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	litest_assert_empty_queue(li);
+
+	/* both below the magic line */
+	litest_touch_down(dev, 0, 40, 100);
+	litest_touch_down(dev, 1, 60, 95);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_LEFT, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_RELEASED);
+
+	/* one above, one below the magic line, vert spread 17mm */
+	litest_touch_down(dev, 0, 50, 75);
+	litest_touch_down(dev, 1, 55, 100);
+	litest_event(dev, EV_KEY, BTN_LEFT, 1);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_event(dev, EV_KEY, BTN_LEFT, 0);
+	litest_event(dev, EV_SYN, SYN_REPORT, 0);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
+				   LIBINPUT_BUTTON_STATE_PRESSED);
+	litest_assert_button_event(li,
+				   BTN_RIGHT,
 				   LIBINPUT_BUTTON_STATE_RELEASED);
 }
 END_TEST
@@ -3676,6 +3757,7 @@ litest_setup_tests(void)
 	litest_add("touchpad:clickfinger", touchpad_1fg_clickfinger_no_touch, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:clickfinger", touchpad_2fg_clickfinger, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:clickfinger", touchpad_2fg_clickfinger_distance, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add_for_device("touchpad:clickfinger", touchpad_2fg_clickfinger_bottom, LITEST_SYNAPTICS_TOPBUTTONPAD);
 	litest_add("touchpad:clickfinger", touchpad_clickfinger_to_area_method, LITEST_CLICKPAD, LITEST_ANY);
 	litest_add("touchpad:clickfinger",
 		   touchpad_clickfinger_to_area_method_while_down, LITEST_CLICKPAD, LITEST_ANY);

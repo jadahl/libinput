@@ -825,6 +825,9 @@ tp_check_clickfinger_distance(struct tp_dispatch *tp,
 			      struct tp_touch *t2)
 {
 	double x, y;
+	int within_distance = 0;
+	int xres, yres;
+	int bottom_threshold;
 
 	if (!t1 || !t2)
 		return 0;
@@ -839,19 +842,44 @@ tp_check_clickfinger_distance(struct tp_dispatch *tp,
 		w = tp->device->abs.dimensions.x;
 		h = tp->device->abs.dimensions.y;
 
-		return (x < w * 0.3 && y < h * 0.3) ? 1 : 0;
-	} else {
-		/* maximum spread is 40mm horiz, 20mm vert. Anything wider than that
-		 * is probably a gesture. The y spread is small so we ignore clicks
-		 * with thumbs at the bottom of the touchpad while the pointer
-		 * moving finger is still on the pad */
-
-		x /= tp->device->abs.absinfo_x->resolution;
-		y /= tp->device->abs.absinfo_y->resolution;
-
-		return (x < 40 && y < 20) ? 1 : 0;
+		within_distance = (x < w * 0.3 && y < h * 0.3) ? 1 : 0;
+		goto out;
 	}
 
+	xres = tp->device->abs.absinfo_x->resolution;
+	yres = tp->device->abs.absinfo_y->resolution;
+	x /= xres;
+	y /= yres;
+
+	/* maximum horiz spread is 40mm horiz, 30mm vert, anything wider
+	 * than that is probably a gesture. */
+	if (x > 40 || y > 30)
+		goto out;
+
+	within_distance = 1;
+
+	/* if y spread is <= 20mm, they're definitely together. */
+	if (y <= 20)
+		goto out;
+
+	/* if they're vertically spread between 20-40mm, they're not
+	 * together if:
+	 * - the touchpad's vertical size is >50mm, anything smaller is
+	 *   unlikely to have a thumb resting on it
+	 * - and one of the touches is in the bottom 20mm of the touchpad
+	 *   and the other one isn't
+	 */
+
+	if (tp->device->abs.dimensions.y/yres < 50)
+		goto out;
+
+	bottom_threshold = tp->device->abs.absinfo_y->maximum - 20 * yres;
+	if ((t1->point.y > bottom_threshold) !=
+		    (t2->point.y > bottom_threshold))
+		within_distance = 0;
+
+out:
+	return within_distance;
 }
 
 static uint32_t
