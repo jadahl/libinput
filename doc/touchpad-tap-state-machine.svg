@@ -1179,5 +1179,23 @@
 	  [Not supported by viewer]</text>
       </switch>
     </g>
+    <path d="M 2095.54 407 C 2098.34 403.86 2102.32 402.05 2106.52 402 L 2140.49 402 C 2144.69 402.05 2148.67 403.86 2151.47 407 L 2171.45 430 C 2172.01 431.28 2172.01 432.72 2171.45 434 L 2151.47 457 C 2148.67 460.14 2144.69 461.95 2140.49 462 L 2106.52 462 C 2102.32 461.95 2098.34 460.14 2095.54 457 L 2075.56 434 C 2075 432.72 2075 431.28 2075.56 430 L 2095.54 407 Z" fill="#ff99cc" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
+      <text x="2123.25" y="435.75">
+	thumb</text>
+    </g>
+    <path d="M 1801.42 332 L 2068.92 415.05" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2073.93 416.61 L 2066.21 417.88 L 2068.92 415.05 L 2068.28 411.19 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2152.5 488.7 C 2168.62 494.91 2186.38 494.91 2202.5 488.7 C 2218.62 482.5 2236.38 482.5 2252.5 488.7 L 2252.5 541.28 C 2236.38 535.08 2218.62 535.08 2202.5 541.28 C 2186.38 547.49 2168.62 547.49 2152.5 541.28 L 2152.5 488.7 Z" fill="#ffd966" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+    <g fill="#000000" font-family="Helvetica" text-anchor="middle" font-size="12px">
+      <text x="2202.25" y="518.75">
+	TOUCH_DEAD</text>
+    </g>
+    <path d="M 2152.05 462 L 2167.18 477.89" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2170.8 481.69 L 2163.43 479.03 L 2167.18 477.89 L 2168.5 474.21 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2217.81 547.5 L 2324.65 774.24" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2326.89 778.99 L 2320.74 774.15 L 2324.65 774.24 L 2327.07 771.16 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 1959.61 577 L 2084.82 466.22" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
+    <path d="M 2088.75 462.74 L 2085.83 470 L 2084.82 466.22 L 2081.19 464.76 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
   </g>
 </svg>

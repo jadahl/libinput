@@ -47,6 +47,7 @@ enum tap_event {
 	TAP_EVENT_RELEASE,
 	TAP_EVENT_BUTTON,
 	TAP_EVENT_TIMEOUT,
+	TAP_EVENT_THUMB,
 };
 
 /*****************************************
@@ -93,6 +94,7 @@ tap_event_to_str(enum tap_event event)
 	CASE_RETURN_STRING(TAP_EVENT_RELEASE);
 	CASE_RETURN_STRING(TAP_EVENT_TIMEOUT);
 	CASE_RETURN_STRING(TAP_EVENT_BUTTON);
+	CASE_RETURN_STRING(TAP_EVENT_THUMB);
 	}
 	return NULL;
 }
@@ -166,6 +168,10 @@ tp_tap_idle_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		break;
+	case TAP_EVENT_THUMB:
+		log_bug_libinput(libinput,
+				 "invalid tap event, no fingers down, no thumb\n");
+		break;
 	}
 }
 
@@ -193,6 +199,12 @@ tp_tap_touch_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		break;
+	case TAP_EVENT_THUMB:
+		tp->tap.state = TAP_STATE_IDLE;
+		t->tap.is_thumb = true;
+		t->tap.state = TAP_TOUCH_STATE_DEAD;
+		tp_tap_clear_timer(tp);
+		break;
 	}
 }
 
@@ -215,6 +227,11 @@ tp_tap_hold_handle_event(struct tp_dispatch *tp,
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
+		break;
+	case TAP_EVENT_THUMB:
+		tp->tap.state = TAP_STATE_IDLE;
+		t->tap.is_thumb = true;
+		t->tap.state = TAP_TOUCH_STATE_DEAD;
 		break;
 	}
 }
@@ -243,6 +260,8 @@ tp_tap_tapped_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -275,6 +294,8 @@ tp_tap_touch2_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		break;
+	case TAP_EVENT_THUMB:
+		break;
 	}
 }
 
@@ -298,6 +319,8 @@ tp_tap_touch2_hold_handle_event(struct tp_dispatch *tp,
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -328,6 +351,8 @@ tp_tap_touch3_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		break;
+	case TAP_EVENT_THUMB:
+		break;
 	}
 }
 
@@ -350,6 +375,8 @@ tp_tap_touch3_hold_handle_event(struct tp_dispatch *tp,
 		break;
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -374,6 +401,8 @@ tp_tap_dragging_or_doubletap_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -408,6 +437,8 @@ tp_tap_dragging_handle_event(struct tp_dispatch *tp,
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
+	case TAP_EVENT_THUMB:
+		break;
 	}
 }
 
@@ -432,6 +463,8 @@ tp_tap_dragging_wait_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -459,6 +492,8 @@ tp_tap_dragging_tap_handle_event(struct tp_dispatch *tp,
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		break;
+	case TAP_EVENT_THUMB:
+		break;
 	}
 }
 
@@ -483,6 +518,8 @@ tp_tap_dragging2_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_DEAD;
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -517,6 +554,8 @@ tp_tap_multitap_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_BUTTON:
 		tp->tap.state = TAP_STATE_IDLE;
 		tp_tap_clear_timer(tp);
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -556,6 +595,8 @@ tp_tap_multitap_down_handle_event(struct tp_dispatch *tp,
 		tp_tap_notify(tp, time, 1, LIBINPUT_BUTTON_STATE_RELEASED);
 		tp_tap_clear_timer(tp);
 		break;
+	case TAP_EVENT_THUMB:
+		break;
 	}
 }
 
@@ -575,6 +616,8 @@ tp_tap_dead_handle_event(struct tp_dispatch *tp,
 	case TAP_EVENT_MOTION:
 	case TAP_EVENT_TIMEOUT:
 	case TAP_EVENT_BUTTON:
+		break;
+	case TAP_EVENT_THUMB:
 		break;
 	}
 }
@@ -731,6 +774,10 @@ tp_tap_handle_state(struct tp_dispatch *tp, uint64_t time)
 			}
 
 			tp_tap_handle_event(tp, t, TAP_EVENT_MOTION, time);
+		} else if (tp->tap.state != TAP_STATE_IDLE &&
+			   t->is_thumb &&
+			   !t->tap.is_thumb) {
+			tp_tap_handle_event(tp, t, TAP_EVENT_THUMB, time);
 		}
 	}
 
