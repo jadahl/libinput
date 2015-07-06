@@ -3745,6 +3745,384 @@ START_TEST(touchpad_dwt_edge_scroll_interrupt)
 }
 END_TEST
 
+static int
+has_thumb_detect(struct litest_device *dev)
+{
+	return libevdev_has_event_code(dev->evdev, EV_ABS, ABS_MT_PRESSURE);
+}
+
+START_TEST(touchpad_thumb_begin_no_motion)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_disable_tap(dev->libinput_device);
+
+	litest_drain_events(li);
+
+	litest_touch_down_extended(dev, 0, 50, 50, axes);
+	litest_touch_move_to(dev, 0, 50, 50, 80, 50, 10, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_update_no_motion)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	litest_disable_tap(dev->libinput_device);
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_move_to(dev, 0, 50, 50, 60, 50, 10, 0);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
+
+	litest_touch_move_extended(dev, 0, 65, 50, axes);
+	litest_touch_move_to(dev, 0, 65, 50, 80, 50, 10, 0);
+	litest_touch_up(dev, 0);
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_clickfinger)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_disable_tap(dev->libinput_device);
+
+	libinput_device_config_click_set_method(dev->libinput_device,
+						LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_down(dev, 1, 60, 50);
+	litest_touch_move_extended(dev, 0, 55, 50, axes);
+	litest_button_click(dev, BTN_LEFT, true);
+
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_LEFT,
+				       LIBINPUT_BUTTON_STATE_PRESSED);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+
+	litest_assert_empty_queue(li);
+
+	litest_button_click(dev, BTN_LEFT, false);
+	litest_touch_up(dev, 0);
+	litest_touch_up(dev, 1);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_down(dev, 1, 60, 50);
+	litest_touch_move_extended(dev, 1, 65, 50, axes);
+	litest_button_click(dev, BTN_LEFT, true);
+
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_LEFT,
+				       LIBINPUT_BUTTON_STATE_PRESSED);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_btnarea)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_disable_tap(dev->libinput_device);
+
+	libinput_device_config_click_set_method(dev->libinput_device,
+						LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 90, 95);
+	litest_touch_move_extended(dev, 0, 95, 95, axes);
+	litest_button_click(dev, BTN_LEFT, true);
+
+	/* button areas work as usual with a thumb */
+
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_RIGHT,
+				       LIBINPUT_BUTTON_STATE_PRESSED);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+
+	litest_assert_empty_queue(li);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_edgescroll)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	enable_edge_scroll(dev);
+	litest_disable_tap(dev->libinput_device);
+
+	litest_drain_events(li);
+
+	litest_touch_down(dev, 0, 99, 30);
+	litest_touch_move_to(dev, 0, 99, 30, 99, 50, 10, 0);
+	litest_drain_events(li);
+
+	litest_touch_move_extended(dev, 0, 99, 55, axes);
+	libinput_dispatch(li);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
+
+	litest_touch_move_to(dev, 0, 99, 55, 99, 70, 10, 0);
+
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_tap_begin)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_enable_tap(dev->libinput_device);
+	litest_drain_events(li);
+
+	/* touch down is a thumb */
+	litest_touch_down_extended(dev, 0, 50, 50, axes);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+
+	litest_assert_empty_queue(li);
+
+	/* make sure normal tap still works */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_tap_touch)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_enable_tap(dev->libinput_device);
+	litest_drain_events(li);
+
+	/* event after touch down is thumb */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_move_extended(dev, 0, 51, 50, axes);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_empty_queue(li);
+
+	/* make sure normal tap still works */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_tap_hold)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_enable_tap(dev->libinput_device);
+	litest_drain_events(li);
+
+	/* event in state HOLD is thumb */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_timeout_tap();
+	libinput_dispatch(li);
+	litest_touch_move_extended(dev, 0, 51, 50, axes);
+	litest_touch_up(dev, 0);
+	litest_assert_empty_queue(li);
+
+	/* make sure normal tap still works */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_tap_hold_2ndfg)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_enable_tap(dev->libinput_device);
+	litest_drain_events(li);
+
+	/* event in state HOLD is thumb */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_timeout_tap();
+	libinput_dispatch(li);
+	litest_touch_move_extended(dev, 0, 51, 50, axes);
+
+	litest_assert_empty_queue(li);
+
+	/* one finger is a thumb, now get second finger down */
+	litest_touch_down(dev, 1, 60, 50);
+	litest_assert_empty_queue(li);
+
+	/* release thumb */
+	litest_touch_up(dev, 0);
+	litest_assert_empty_queue(li);
+
+	/* timeout -> into HOLD, no event on release */
+	litest_timeout_tap();
+	libinput_dispatch(li);
+	litest_touch_up(dev, 1);
+	litest_assert_empty_queue(li);
+
+	/* make sure normal tap still works */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+}
+END_TEST
+
+START_TEST(touchpad_thumb_tap_hold_2ndfg_tap)
+{
+	struct litest_device *dev = litest_current_device();
+	struct libinput *li = dev->libinput;
+	struct libinput_event *event;
+	struct libinput_event_pointer *ptrev;
+	struct axis_replacement axes[] = {
+		{ ABS_MT_PRESSURE, 100 },
+		{ -1, 0 }
+	};
+
+	if (!has_thumb_detect(dev))
+		return;
+
+	litest_enable_tap(dev->libinput_device);
+	litest_drain_events(li);
+
+	/* event in state HOLD is thumb */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_timeout_tap();
+	libinput_dispatch(li);
+	litest_touch_move_extended(dev, 0, 51, 50, axes);
+
+	litest_assert_empty_queue(li);
+
+	/* one finger is a thumb, now get second finger down */
+	litest_touch_down(dev, 1, 60, 50);
+	litest_assert_empty_queue(li);
+
+	/* release thumb */
+	litest_touch_up(dev, 0);
+	litest_assert_empty_queue(li);
+
+	/* release second finger, within timeout, ergo event */
+	litest_touch_up(dev, 1);
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_LEFT,
+				       LIBINPUT_BUTTON_STATE_PRESSED);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+
+	litest_timeout_tap();
+	libinput_dispatch(li);
+	event = libinput_get_event(li);
+	ptrev = litest_is_button_event(event,
+				       BTN_LEFT,
+				       LIBINPUT_BUTTON_STATE_RELEASED);
+	libinput_event_destroy(libinput_event_pointer_get_base_event(ptrev));
+
+	/* make sure normal tap still works */
+	litest_touch_down(dev, 0, 50, 50);
+	litest_touch_up(dev, 0);
+	litest_timeout_tap();
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
+}
+END_TEST
+
 void
 litest_setup_tests(void)
 {
@@ -3863,4 +4241,15 @@ litest_setup_tests(void)
 	litest_add("touchpad:dwt", touchpad_dwt_click, LITEST_TOUCHPAD, LITEST_ANY);
 	litest_add("touchpad:dwt", touchpad_dwt_edge_scroll, LITEST_TOUCHPAD, LITEST_CLICKPAD);
 	litest_add("touchpad:dwt", touchpad_dwt_edge_scroll_interrupt, LITEST_TOUCHPAD, LITEST_CLICKPAD);
+
+	litest_add("touchpad:thumb", touchpad_thumb_begin_no_motion, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_update_no_motion, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_clickfinger, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_btnarea, LITEST_CLICKPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_edgescroll, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_tap_begin, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_tap_touch, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_tap_hold, LITEST_TOUCHPAD, LITEST_ANY);
+	litest_add("touchpad:thumb", touchpad_thumb_tap_hold_2ndfg, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
+	litest_add("touchpad:thumb", touchpad_thumb_tap_hold_2ndfg_tap, LITEST_TOUCHPAD, LITEST_SINGLE_TOUCH);
 }
