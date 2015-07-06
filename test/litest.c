@@ -1834,7 +1834,7 @@ litest_create_uinput_device_from_description(const char *name,
 	struct udev_monitor *udev_monitor;
 	struct udev_device *udev_device;
 	const char *udev_action;
-	const char *udev_syspath;
+	const char *udev_syspath = NULL;
 
 	udev = udev_new();
 	litest_assert_notnull(udev);
