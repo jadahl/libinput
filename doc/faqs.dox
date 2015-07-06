@@ -3,6 +3,12 @@
 
 Frequently asked questions about libinput.
 
+@section faq_fast_mouse My mouse moves too fast, even at the slowest setting
+
+This is a symptom of high-dpi mice (greater than 1000dpi). These devices
+need a udev hwdb entry to normalize their motion. See @ref
+motion_normalization for a detailed explanation.
+
 @section faq_kinetic_scrolling Kinetic scrolling does not work
 
 The X.Org synaptics driver implemented kinetic scrolling in the driver. It
