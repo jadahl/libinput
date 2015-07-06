@@ -21,6 +21,7 @@ liblitest_la_SOURCES = \
 	litest-keyboard.c \
 	litest-keyboard-razer-blackwidow.c \
 	litest-logitech-trackball.c \
+	litest-nexus4-touch-screen.c \
 	litest-mouse.c \
 	litest-mouse-roccat.c \
 	litest-mouse-low-dpi.c \
