@@ -72,6 +72,19 @@ struct window {
 	/* l/m/r mouse buttons */
 	int l, m, r;
 
+	/* touchpad swipe */
+	struct {
+		int nfingers;
+		double x, y;
+	} swipe;
+
+	struct {
+		int nfingers;
+		double scale;
+		double angle;
+		double x, y;
+	} pinch;
+
 	struct libinput_device *devices[50];
 };
 
@@ -104,10 +117,47 @@ draw(GtkWidget *widget, cairo_t *cr, gpointer data)
 {
 	struct window *w = data;
 	struct touch *t;
+	int i, offset;
 
 	cairo_set_source_rgb(cr, 1, 1, 1);
 	cairo_rectangle(cr, 0, 0, w->width, w->height);
 	cairo_fill(cr);
+
+	/* swipe */
+	cairo_save(cr);
+	cairo_translate(cr, w->swipe.x, w->swipe.y);
+	for (i = 0; i < w->swipe.nfingers; i++) {
+		cairo_set_source_rgb(cr, .8, .8, .4);
+		cairo_arc(cr, (i - 2) * 40, 0, 20, 0, 2 * M_PI);
+		cairo_fill(cr);
+	}
+
+	for (i = 0; i < 4; i++) { /* 4 fg max */
+		cairo_set_source_rgb(cr, 0, 0, 0);
+		cairo_arc(cr, (i - 2) * 40, 0, 20, 0, 2 * M_PI);
+		cairo_stroke(cr);
+	}
+	cairo_restore(cr);
+
+	/* pinch */
+	cairo_save(cr);
+	offset = w->pinch.scale * 100;
+	cairo_translate(cr, w->pinch.x, w->pinch.y);
+	cairo_rotate(cr, w->pinch.angle * M_PI/180.0);
+	if (w->pinch.nfingers > 0) {
+		cairo_set_source_rgb(cr, .4, .4, .8);
+		cairo_arc(cr, offset, -offset, 20, 0, 2 * M_PI);
+		cairo_arc(cr, -offset, offset, 20, 0, 2 * M_PI);
+		cairo_fill(cr);
+	}
+
+	cairo_set_source_rgb(cr, 0, 0, 0);
+	cairo_arc(cr, offset, -offset, 20, 0, 2 * M_PI);
+	cairo_stroke(cr);
+	cairo_arc(cr, -offset, offset, 20, 0, 2 * M_PI);
+	cairo_stroke(cr);
+
+	cairo_restore(cr);
 
 	/* draw pointer sprite */
 	cairo_set_source_rgb(cr, 0, 0, 0);
@@ -185,6 +235,13 @@ map_event_cb(GtkWidget *widget, GdkEvent *event, gpointer data)
 	w->vy = w->height/2;
 	w->hx = w->width/2;
 	w->hy = w->height/2;
+
+	w->swipe.x = w->width/2;
+	w->swipe.y = w->height/2;
+
+	w->pinch.scale = 1.0;
+	w->pinch.x = w->width/2;
+	w->pinch.y = w->height/2;
 
 	g_signal_connect(G_OBJECT(w->area), "draw", G_CALLBACK(draw), w);
 
@@ -428,6 +485,72 @@ handle_event_button(struct libinput_event *ev, struct window *w)
 
 }
 
+static void
+handle_event_swipe(struct libinput_event *ev, struct window *w)
+{
+	struct libinput_event_gesture *g = libinput_event_get_gesture_event(ev);
+	int nfingers;
+	double dx, dy;
+
+	nfingers = libinput_event_gesture_get_finger_count(g);
+
+	switch (libinput_event_get_type(ev)) {
+	case LIBINPUT_EVENT_GESTURE_SWIPE_BEGIN:
+		w->swipe.nfingers = nfingers;
+		w->swipe.x = w->width/2;
+		w->swipe.y = w->height/2;
+		break;
+	case LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE:
+		dx = libinput_event_gesture_get_dx(g);
+		dy = libinput_event_gesture_get_dy(g);
+		w->swipe.x += dx;
+		w->swipe.y += dy;
+		break;
+	case LIBINPUT_EVENT_GESTURE_SWIPE_END:
+		w->swipe.nfingers = 0;
+		w->swipe.x = w->width/2;
+		w->swipe.y = w->height/2;
+		break;
+	default:
+		abort();
+	}
+}
+
+static void
+handle_event_pinch(struct libinput_event *ev, struct window *w)
+{
+	struct libinput_event_gesture *g = libinput_event_get_gesture_event(ev);
+	int nfingers;
+	double dx, dy;
+
+	nfingers = libinput_event_gesture_get_finger_count(g);
+
+	switch (libinput_event_get_type(ev)) {
+	case LIBINPUT_EVENT_GESTURE_PINCH_BEGIN:
+		w->pinch.nfingers = nfingers;
+		w->pinch.x = w->width/2;
+		w->pinch.y = w->height/2;
+		break;
+	case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
+		dx = libinput_event_gesture_get_dx(g);
+		dy = libinput_event_gesture_get_dy(g);
+		w->pinch.x += dx;
+		w->pinch.y += dy;
+		w->pinch.scale = libinput_event_gesture_get_scale(g);
+		w->pinch.angle += libinput_event_gesture_get_angle_delta(g);
+		break;
+	case LIBINPUT_EVENT_GESTURE_PINCH_END:
+		w->pinch.nfingers = 0;
+		w->pinch.x = w->width/2;
+		w->pinch.y = w->height/2;
+		w->pinch.angle = 0.0;
+		w->pinch.scale = 1.0;
+		break;
+	default:
+		abort();
+	}
+}
+
 static gboolean
 handle_event_libinput(GIOChannel *source, GIOCondition condition, gpointer data)
 {
@@ -472,6 +595,16 @@ handle_event_libinput(GIOChannel *source, GIOCondition condition, gpointer data)
 				gtk_main_quit();
 				return FALSE;
 			}
+			break;
+		case LIBINPUT_EVENT_GESTURE_SWIPE_BEGIN:
+		case LIBINPUT_EVENT_GESTURE_SWIPE_UPDATE:
+		case LIBINPUT_EVENT_GESTURE_SWIPE_END:
+			handle_event_swipe(ev, w);
+			break;
+		case LIBINPUT_EVENT_GESTURE_PINCH_BEGIN:
+		case LIBINPUT_EVENT_GESTURE_PINCH_UPDATE:
+		case LIBINPUT_EVENT_GESTURE_PINCH_END:
+			handle_event_pinch(ev, w);
 			break;
 		}
 

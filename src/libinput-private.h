@@ -366,6 +366,35 @@ touch_notify_touch_up(struct libinput_device *device,
 		      int32_t seat_slot);
 
 void
+gesture_notify_swipe(struct libinput_device *device,
+		     uint64_t time,
+		     enum libinput_event_type type,
+		     int finger_count,
+		     const struct normalized_coords *delta,
+		     const struct normalized_coords *unaccel);
+
+void
+gesture_notify_swipe_end(struct libinput_device *device,
+			 uint64_t time,
+			 int finger_count,
+			 int cancelled);
+
+void
+gesture_notify_pinch(struct libinput_device *device,
+		     uint64_t time,
+		     enum libinput_event_type type,
+		     const struct normalized_coords *delta,
+		     const struct normalized_coords *unaccel,
+		     double scale,
+		     double angle);
+
+void
+gesture_notify_pinch_end(struct libinput_device *device,
+			 uint64_t time,
+			 double scale,
+			 int cancelled);
+
+void
 touch_notify_frame(struct libinput_device *device,
 		   uint64_t time);
 
@@ -391,6 +420,39 @@ device_delta(struct device_coords a, struct device_coords b)
 	delta.y = a.y - b.y;
 
 	return delta;
+}
+
+static inline struct device_float_coords
+device_average(struct device_coords a, struct device_coords b)
+{
+	struct device_float_coords average;
+
+	average.x = (a.x + b.x) / 2.0;
+	average.y = (a.y + b.y) / 2.0;
+
+	return average;
+}
+
+static inline struct device_float_coords
+device_float_delta(struct device_float_coords a, struct device_float_coords b)
+{
+	struct device_float_coords delta;
+
+	delta.x = a.x - b.x;
+	delta.y = a.y - b.y;
+
+	return delta;
+}
+
+static inline struct device_float_coords
+device_float_average(struct device_float_coords a, struct device_float_coords b)
+{
+	struct device_float_coords average;
+
+	average.x = (a.x + b.x) / 2.0;
+	average.y = (a.y + b.y) / 2.0;
+
+	return average;
 }
 
 static inline double
