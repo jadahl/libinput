@@ -138,6 +138,7 @@ enum litest_device_type {
 	LITEST_ATMEL_HOVER = -24,
 	LITEST_ALPS_DUALPOINT = -25,
 	LITEST_MOUSE_LOW_DPI = -26,
+	LITEST_GENERIC_MULTITOUCH_SCREEN = -27,
 };
 
 enum litest_device_feature {
@@ -159,6 +160,7 @@ enum litest_device_feature {
 	LITEST_ABSOLUTE = 1 << 13,
 	LITEST_PROTOCOL_A = 1 << 14,
 	LITEST_HOVER = 1 << 15,
+	LITEST_ELLIPSE = 1 << 16,
 };
 
 struct litest_device {

@@ -33,6 +33,7 @@ liblitest_la_SOURCES = \
 	litest-synaptics-t440.c \
 	litest-synaptics-x1-carbon-3rd.c \
 	litest-trackpoint.c \
+	litest-touch-screen.c \
 	litest-wacom-touch.c \
 	litest-wacom-intuos-finger.c \
 	litest-wheel-only.c \
