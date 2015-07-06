@@ -80,6 +80,12 @@ struct litest_device_interface {
 	void (*touch_up)(struct litest_device *d, unsigned int slot);
 
 	/**
+	 * Default value for the given EV_ABS axis.
+	 * @return 0 on success, nonzero otherwise
+	 */
+	int (*get_axis_default)(struct litest_device *d, unsigned int code, int32_t *value);
+
+	/**
 	 * Set of of events to execute on touch down, terminated by a .type
 	 * and .code value of -1. If the event value is LITEST_AUTO_ASSIGN,
 	 * it will be automatically assigned by the framework (valid for x,
