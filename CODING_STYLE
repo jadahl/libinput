@@ -62,6 +62,26 @@
   	useit(c);
   }
 
+- do not mix function invocations and variable definitions.
+
+  wrong:
+
+  {
+  	  int a = foo();
+  	  int b = 7;
+  }
+
+  right:
+  {
+  	  int a;
+  	  int b = 7;
+
+  	  a = foo();
+  }
+
+  There are exceptions here, e.g. tp_libinput_context(),
+  litest_current_device()
+
 - if/else: { on the same line, no curly braces if both blocks are a single
   statement. If either if or else block are multiple statements, both must
   have curly braces.
@@ -88,3 +108,9 @@
   #include <libevdev/libevdev.h>
 
   #include "libinput-private.h"
+
+- goto jumps only to the end of the function, and only for good reasons
+  (usually cleanup). goto never jumps backwards
+
+- Use stdbool.h's bool for booleans within the library (instead of 'int').
+  Exception: the public API uses int, not bool.
