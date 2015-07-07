@@ -326,6 +326,12 @@ void litest_touch_move_two_touches(struct litest_device *d,
 				   double x1, double y1,
 				   double dx, double dy,
 				   int steps, int sleep_ms);
+void litest_touch_move_three_touches(struct litest_device *d,
+				     double x0, double y0,
+				     double x1, double y1,
+				     double x2, double y2,
+				     double dx, double dy,
+				     int steps, int sleep_ms);
 void litest_hover_start(struct litest_device *d,
 			unsigned int slot,
 			double x,
@@ -375,6 +381,11 @@ struct libinput_event_keyboard * litest_is_keyboard_event(
 		       struct libinput_event *event,
 		       unsigned int key,
 		       enum libinput_key_state state);
+struct libinput_event_gesture * litest_is_gesture_event(
+		       struct libinput_event *event,
+		       enum libinput_event_type type,
+		       int nfingers);
+
 void litest_assert_button_event(struct libinput *li,
 				unsigned int button,
 				enum libinput_button_state state);
@@ -401,6 +412,7 @@ void litest_timeout_finger_switch(void);
 void litest_timeout_middlebutton(void);
 void litest_timeout_dwt_short(void);
 void litest_timeout_dwt_long(void);
+void litest_timeout_gesture(void);
 
 void litest_push_event_frame(struct litest_device *dev);
 void litest_pop_event_frame(struct litest_device *dev);

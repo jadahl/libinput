@@ -1472,6 +1472,32 @@ litest_touch_move_two_touches(struct litest_device *d,
 }
 
 void
+litest_touch_move_three_touches(struct litest_device *d,
+				double x0, double y0,
+				double x1, double y1,
+				double x2, double y2,
+				double dx, double dy,
+				int steps, int sleep_ms)
+{
+	for (int i = 0; i < steps - 1; i++) {
+		litest_touch_move(d, 0, x0 + dx / steps * i,
+					y0 + dy / steps * i);
+		litest_touch_move(d, 1, x1 + dx / steps * i,
+					y1 + dy / steps * i);
+		litest_touch_move(d, 2, x2 + dx / steps * i,
+					y2 + dy / steps * i);
+		if (sleep_ms) {
+			libinput_dispatch(d->libinput);
+			msleep(sleep_ms);
+			libinput_dispatch(d->libinput);
+		}
+	}
+	litest_touch_move(d, 0, x0 + dx, y0 + dy);
+	litest_touch_move(d, 1, x1 + dx, y1 + dy);
+	litest_touch_move(d, 2, x2 + dx, y2 + dy);
+}
+
+void
 litest_hover_start(struct litest_device *d,
 		   unsigned int slot,
 		   double x,
@@ -2142,6 +2168,25 @@ litest_is_keyboard_event(struct libinput_event *event,
 	return kevent;
 }
 
+struct libinput_event_gesture *
+litest_is_gesture_event(struct libinput_event *event,
+			enum libinput_event_type type,
+			int nfingers)
+{
+	struct libinput_event_gesture *gevent;
+
+	litest_assert(event != NULL);
+	litest_assert_int_eq(libinput_event_get_type(event), type);
+
+	gevent = libinput_event_get_gesture_event(event);
+	litest_assert(gevent != NULL);
+
+	if (nfingers != -1)
+		litest_assert_int_eq(libinput_event_gesture_get_finger_count(gevent),
+				     nfingers);
+	return gevent;
+}
+
 void
 litest_assert_scroll(struct libinput *li,
 		     enum libinput_pointer_axis axis,
@@ -2252,6 +2297,12 @@ void
 litest_timeout_dwt_long(void)
 {
 	msleep(520);
+}
+
+void
+litest_timeout_gesture(void)
+{
+	msleep(120);
 }
 
 void

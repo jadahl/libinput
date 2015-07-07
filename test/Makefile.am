@@ -56,6 +56,7 @@ run_tests = \
 	test-touchpad \
 	test-touchpad-tap \
 	test-device \
+	test-gestures \
 	test-pointer \
 	test-touch \
 	test-trackpoint \
@@ -121,6 +122,10 @@ test_keyboard_LDFLAGS = -no-install
 test_device_SOURCES = device.c
 test_device_LDADD = $(TEST_LIBS)
 test_device_LDFLAGS = -no-install
+
+test_gestures_SOURCES = gestures.c
+test_gestures_LDADD = $(TEST_LIBS)
+test_gestures_LDFLAGS = -no-install
 
 test_litest_selftest_SOURCES = litest-selftest.c litest.c litest-int.h litest.h
 test_litest_selftest_CFLAGS = -DLITEST_DISABLE_BACKTRACE_LOGGING -DLITEST_NO_MAIN $(liblitest_la_CFLAGS)
