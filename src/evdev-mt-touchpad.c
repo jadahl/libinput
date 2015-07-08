@@ -496,8 +496,7 @@ tp_palm_detect_dwt(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 		return 1;
 	} else if (!tp->dwt.keyboard_active &&
 		   t->state == TOUCH_UPDATE &&
-		   t->palm.state == PALM_TYPING)
-	{
+		   t->palm.state == PALM_TYPING) {
 		/* If a touch has started before the first or after the last
 		   key press, release it on timeout. Benefit: a palm rested
 		   while typing on the touchpad will be ignored, but a touch
