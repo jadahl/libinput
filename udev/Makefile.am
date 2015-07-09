@@ -1,5 +1,6 @@
 udevdir=$(UDEV_DIR)
-udev_PROGRAMS = libinput-device-group
+udev_PROGRAMS = libinput-device-group \
+		libinput-model-quirks
 
 litest_rules = 80-libinput-device-groups-litest.rules \
 	       90-libinput-model-quirks-litest.rules
@@ -8,6 +9,13 @@ udev_SCRIPTS = $(litest_rules)
 libinput_device_group_SOURCES = libinput-device-group.c
 libinput_device_group_CFLAGS = $(LIBUDEV_CFLAGS) $(GCC_CFLAGS)
 libinput_device_group_LDADD = $(LIBUDEV_LIBS)
+
+libinput_model_quirks_SOURCES = libinput-model-quirks.c
+libinput_model_quirks_CFLAGS = \
+			       -I$(top_srcdir)/src \
+			       $(LIBUDEV_CFLAGS) \
+			       $(GCC_CFLAGS)
+libinput_model_quirks_LDADD = $(LIBUDEV_LIBS)
 
 udev_rulesdir=$(UDEV_DIR)/rules.d
 dist_udev_rules_DATA = \

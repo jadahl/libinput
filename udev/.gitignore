@@ -1,2 +1,3 @@
 libinput-device-group
+libinput-model-quirks
 *.rules

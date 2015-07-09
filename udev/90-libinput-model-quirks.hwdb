@@ -11,7 +11,7 @@
 # Match string formats:
 #	libinput:<modalias>
 #	libinput:name:<name>:dmi:<dmi string>
-
+#	libinput:name:<name>:fwversion:<version>
 #
 # Sort by brand, model
 
