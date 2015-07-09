@@ -413,8 +413,11 @@ START_TEST(udev_device_sysname)
 	libinput_dispatch(li);
 
 	while ((ev = libinput_get_event(li))) {
-		if (libinput_event_get_type(ev) != LIBINPUT_EVENT_DEVICE_ADDED)
+		if (libinput_event_get_type(ev) !=
+		    LIBINPUT_EVENT_DEVICE_ADDED) {
+			libinput_event_destroy(ev);
 			continue;
+		}
 
 		device = libinput_event_get_device(ev);
 		sysname = libinput_device_get_sysname(device);
