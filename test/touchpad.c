@@ -1365,7 +1365,7 @@ START_TEST(touchpad_2fg_scroll_slow_distance)
 
 	litest_touch_down(dev, 0, 49, 50);
 	litest_touch_down(dev, 1, 51, 50);
-	litest_touch_move_two_touches(dev, 49, 50, 51, 50, 0, y_move, 70, 10);
+	litest_touch_move_two_touches(dev, 49, 50, 51, 50, 0, y_move, 100, 10);
 	litest_touch_up(dev, 1);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
@@ -1634,7 +1634,7 @@ START_TEST(touchpad_edge_scroll_timeout)
 	litest_timeout_edgescroll();
 	libinput_dispatch(li);
 
-	litest_touch_move_to(dev, 0, 99, 20, 99, 20 + y_movement, 60, 10);
+	litest_touch_move_to(dev, 0, 99, 20, 99, 20 + y_movement, 100, 10);
 	litest_touch_up(dev, 0);
 	libinput_dispatch(li);
 
