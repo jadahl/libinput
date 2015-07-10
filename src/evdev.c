@@ -1552,6 +1552,23 @@ evdev_read_model(struct evdev_device *device)
 }
 
 static inline int
+evdev_read_attr_res_prop(struct evdev_device *device,
+			 size_t *xres,
+			 size_t *yres)
+{
+	struct udev_device *udev;
+	const char *res_prop;
+
+	udev = device->udev_device;
+	res_prop = udev_device_get_property_value(udev,
+						   "LIBINPUT_ATTR_RESOLUTION_HINT");
+	if (!res_prop)
+		return false;
+
+	return parse_dimension_property(res_prop, xres, yres);
+}
+
+static inline int
 evdev_read_attr_size_prop(struct evdev_device *device,
 			  size_t *size_x,
 			  size_t *size_y)
@@ -1578,8 +1595,8 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 	struct libevdev *evdev = device->evdev;
 	const struct input_absinfo *absx, *absy;
 	size_t widthmm = 0, heightmm = 0;
-	int xres = EVDEV_FAKE_RESOLUTION,
-	    yres = EVDEV_FAKE_RESOLUTION;
+	size_t xres = EVDEV_FAKE_RESOLUTION,
+	       yres = EVDEV_FAKE_RESOLUTION;
 
 	if (!(xcode == ABS_X && ycode == ABS_Y)  &&
 	    !(xcode == ABS_MT_POSITION_X && ycode == ABS_MT_POSITION_Y)) {
@@ -1600,7 +1617,8 @@ evdev_fix_abs_resolution(struct evdev_device *device,
 	 * property is only for general size hints where we can make
 	 * educated guesses but don't know better.
 	 */
-	if (evdev_read_attr_size_prop(device, &widthmm, &heightmm)) {
+	if (!evdev_read_attr_res_prop(device, &xres, &yres) &&
+	    evdev_read_attr_size_prop(device, &widthmm, &heightmm)) {
 		xres = (absx->maximum - absx->minimum)/widthmm;
 		yres = (absy->maximum - absy->minimum)/heightmm;
 	}

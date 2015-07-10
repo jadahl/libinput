@@ -35,6 +35,12 @@ libinput:touchpad:input:b0005v05ACp*
  LIBINPUT_ATTR_SIZE_HINT=104x75
 
 ##########################################
+# Elantech
+##########################################
+libinput:name:*ETPS/2 Elantech Touchpad*:dmi:*
+ LIBINPUT_ATTR_RESOLUTION_HINT=31x31
+
+##########################################
 # Google
 ##########################################
 
