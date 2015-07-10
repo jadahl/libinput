@@ -89,7 +89,7 @@ START_TEST(device_sendevents_config_touchpad_superset)
 	uint32_t modes;
 
 	/* The wacom devices in the test suite are external */
-	if (libevdev_get_id_vendor(dev->evdev) == 0x56a) /* wacom */
+	if (libevdev_get_id_vendor(dev->evdev) == VENDOR_ID_WACOM)
 		return;
 
 	device = dev->libinput_device;
