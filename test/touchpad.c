@@ -3331,6 +3331,8 @@ has_disable_while_typing(struct litest_device *device)
 {
 	if (libevdev_get_id_vendor(device->evdev) == VENDOR_ID_WACOM)
 		return false;
+	if (libevdev_get_id_bustype(device->evdev) == BUS_BLUETOOTH)
+		return false;
 
 	return true;
 }

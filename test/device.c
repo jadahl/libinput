@@ -70,7 +70,8 @@ START_TEST(device_sendevents_config_touchpad)
 	expected = LIBINPUT_CONFIG_SEND_EVENTS_DISABLED;
 
 	/* The wacom devices in the test suite are external */
-	if (libevdev_get_id_vendor(dev->evdev) != VENDOR_ID_WACOM)
+	if (libevdev_get_id_vendor(dev->evdev) != VENDOR_ID_WACOM &&
+	    libevdev_get_id_bustype(dev->evdev) != BUS_BLUETOOTH)
 		expected |=
 			LIBINPUT_CONFIG_SEND_EVENTS_DISABLED_ON_EXTERNAL_MOUSE;
 
@@ -89,7 +90,8 @@ START_TEST(device_sendevents_config_touchpad_superset)
 	uint32_t modes;
 
 	/* The wacom devices in the test suite are external */
-	if (libevdev_get_id_vendor(dev->evdev) == VENDOR_ID_WACOM)
+	if (libevdev_get_id_vendor(dev->evdev) == VENDOR_ID_WACOM ||
+	    libevdev_get_id_bustype(dev->evdev) == BUS_BLUETOOTH)
 		return;
 
 	device = dev->libinput_device;

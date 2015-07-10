@@ -140,6 +140,7 @@ enum litest_device_type {
 	LITEST_MOUSE_LOW_DPI = -26,
 	LITEST_GENERIC_MULTITOUCH_SCREEN = -27,
 	LITEST_NEXUS4_TOUCH_SCREEN = -28,
+	LITEST_MAGIC_TRACKPAD = -29,
 };
 
 enum litest_device_feature {

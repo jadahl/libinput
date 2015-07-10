@@ -356,6 +356,7 @@ extern struct litest_test_device litest_alps_dualpoint_device;
 extern struct litest_test_device litest_mouse_low_dpi_device;
 extern struct litest_test_device litest_generic_multitouch_screen_device;
 extern struct litest_test_device litest_nexus4_device;
+extern struct litest_test_device litest_magicpad_device;
 
 struct litest_test_device* devices[] = {
 	&litest_synaptics_clickpad_device,
@@ -385,6 +386,7 @@ struct litest_test_device* devices[] = {
 	&litest_mouse_low_dpi_device,
 	&litest_generic_multitouch_screen_device,
 	&litest_nexus4_device,
+	&litest_magicpad_device,
 	NULL,
 };
 
