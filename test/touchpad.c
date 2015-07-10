@@ -422,7 +422,7 @@ START_TEST(touchpad_clickfinger_to_area_method)
 
 	enable_buttonareas(dev);
 
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
@@ -440,7 +440,7 @@ START_TEST(touchpad_clickfinger_to_area_method)
 	litest_drain_events(li);
 
 	/* use bottom right corner to catch accidental softbutton right */
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
@@ -465,7 +465,7 @@ START_TEST(touchpad_clickfinger_to_area_method_while_down)
 
 	enable_buttonareas(dev);
 
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	libinput_dispatch(li);
@@ -485,7 +485,7 @@ START_TEST(touchpad_clickfinger_to_area_method_while_down)
 	litest_drain_events(li);
 
 	/* use bottom right corner to catch accidental softbutton right */
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
@@ -511,7 +511,7 @@ START_TEST(touchpad_area_to_clickfinger_method)
 	litest_drain_events(li);
 
 	/* use bottom right corner to catch accidental softbutton right */
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
@@ -526,7 +526,7 @@ START_TEST(touchpad_area_to_clickfinger_method)
 
 	enable_buttonareas(dev);
 
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
@@ -552,7 +552,7 @@ START_TEST(touchpad_area_to_clickfinger_method_while_down)
 	litest_drain_events(li);
 
 	/* use bottom right corner to catch accidental softbutton right */
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_assert_button_event(li, BTN_LEFT,
@@ -568,7 +568,7 @@ START_TEST(touchpad_area_to_clickfinger_method_while_down)
 	litest_assert_button_event(li, BTN_LEFT,
 				   LIBINPUT_BUTTON_STATE_RELEASED);
 
-	litest_touch_down(dev, 0, 90, 90);
+	litest_touch_down(dev, 0, 95, 95);
 	litest_event(dev, EV_KEY, BTN_LEFT, 1);
 	litest_event(dev, EV_SYN, SYN_REPORT, 0);
 	litest_event(dev, EV_KEY, BTN_LEFT, 0);
