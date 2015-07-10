@@ -141,6 +141,7 @@ enum litest_device_type {
 	LITEST_GENERIC_MULTITOUCH_SCREEN = -27,
 	LITEST_NEXUS4_TOUCH_SCREEN = -28,
 	LITEST_MAGIC_TRACKPAD = -29,
+	LITEST_ELANTECH_TOUCHPAD = -30,
 };
 
 enum litest_device_feature {
