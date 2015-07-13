@@ -1767,22 +1767,18 @@ START_TEST(touchpad_edge_scroll_into_buttonareas)
 
 	litest_touch_down(dev, 0, 99, 40);
 	litest_touch_move_to(dev, 0, 99, 40, 99, 95, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 	/* in the button zone now, make sure we still get events */
 	litest_touch_move_to(dev, 0, 99, 95, 99, 100, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	/* and out of the zone again */
 	litest_touch_move_to(dev, 0, 99, 100, 99, 70, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	/* still out of the zone */
 	litest_touch_move_to(dev, 0, 99, 70, 99, 50, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 }
 END_TEST
 
@@ -1799,18 +1795,15 @@ START_TEST(touchpad_edge_scroll_within_buttonareas)
 
 	/* within left button */
 	litest_touch_move_to(dev, 0, 20, 99, 40, 99, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	/* over to right button */
 	litest_touch_move_to(dev, 0, 40, 99, 60, 99, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	/* within right button */
 	litest_touch_move_to(dev, 0, 60, 99, 80, 99, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 }
 END_TEST
 
@@ -1828,8 +1821,7 @@ START_TEST(touchpad_edge_scroll_buttonareas_click_stops_scroll)
 
 	litest_touch_down(dev, 0, 20, 95);
 	litest_touch_move_to(dev, 0, 20, 95, 70, 95, 10, 5);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	litest_button_click(dev, BTN_LEFT, true);
 	libinput_dispatch(li);
@@ -1856,8 +1848,7 @@ START_TEST(touchpad_edge_scroll_buttonareas_click_stops_scroll)
 
 	litest_button_click(dev, BTN_LEFT, false);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_BUTTON);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
 
 	litest_touch_up(dev, 0);
 }
@@ -1877,8 +1868,7 @@ START_TEST(touchpad_edge_scroll_clickfinger_click_stops_scroll)
 
 	litest_touch_down(dev, 0, 20, 95);
 	litest_touch_move_to(dev, 0, 20, 95, 70, 95, 10, 5);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	litest_button_click(dev, BTN_LEFT, true);
 	libinput_dispatch(li);
@@ -1901,14 +1891,12 @@ START_TEST(touchpad_edge_scroll_clickfinger_click_stops_scroll)
 
 	/* clickfinger releases pointer -> expect movement */
 	litest_touch_move_to(dev, 0, 70, 95, 90, 95, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 	litest_assert_empty_queue(li);
 
 	litest_button_click(dev, BTN_LEFT, false);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_BUTTON);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_BUTTON);
 
 	litest_touch_up(dev, 0);
 }
@@ -2715,8 +2703,7 @@ START_TEST(touchpad_semi_mt_hover_down_up)
 		y -= 100;
 	}
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	litest_event(dev, EV_ABS, ABS_MT_SLOT, 0);
 	litest_event(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
@@ -2855,8 +2842,7 @@ START_TEST(touchpad_hover_down)
 
 	libinput_dispatch(li);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 
 	/* go back to hover */
 	litest_hover_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
@@ -2899,8 +2885,7 @@ START_TEST(touchpad_hover_down_hover_down)
 	litest_touch_move_to(dev, 0, 50, 50, 70, 70, 10, 10);
 	litest_touch_up(dev, 0);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 }
 END_TEST
 
@@ -2934,8 +2919,7 @@ START_TEST(touchpad_hover_down_up)
 
 	litest_touch_up(dev, 0);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 }
 END_TEST
 
@@ -2989,8 +2973,7 @@ START_TEST(touchpad_hover_2fg_1fg_down)
 	litest_touch_up(dev, 1);
 	litest_pop_event_frame(dev);;
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_MOTION);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_MOTION);
 }
 END_TEST
 
@@ -3074,8 +3057,7 @@ START_TEST(touchpad_trackpoint_mb_scroll)
 	litest_event(trackpoint, EV_SYN, SYN_REPORT, 0);
 	litest_button_click(touchpad, BTN_2, false);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	litest_delete_device(trackpoint);
 }
@@ -3204,8 +3186,7 @@ START_TEST(touchpad_trackpoint_buttons_2fg_scroll)
 	litest_touch_move_to(touchpad, 0, 40, 30, 40, 70, 10, 0);
 	litest_touch_move_to(touchpad, 1, 60, 30, 60, 70, 10, 0);
 
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 
 	while ((e = libinput_get_event(li))) {
 		ck_assert_int_eq(libinput_event_get_type(e),
@@ -3230,8 +3211,7 @@ START_TEST(touchpad_trackpoint_buttons_2fg_scroll)
 	   */
 	litest_touch_move_to(touchpad, 0, 40, 70, 40, 60, 10, 0);
 	litest_touch_move_to(touchpad, 1, 60, 70, 60, 60, 10, 0);
-	litest_assert_only_typed_events(li,
-					LIBINPUT_EVENT_POINTER_AXIS);
+	litest_assert_only_typed_events(li, LIBINPUT_EVENT_POINTER_AXIS);
 	litest_touch_move_to(touchpad, 0, 40, 60, 40, 30, 10, 0);
 	litest_touch_move_to(touchpad, 1, 60, 60, 60, 30, 10, 0);
 
