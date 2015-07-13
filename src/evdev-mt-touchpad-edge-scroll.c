@@ -305,8 +305,7 @@ tp_edge_scroll_init(struct tp_dispatch *tp, struct evdev_device *device)
 	default:
 		/* For elantech and synaptics, note for lenovo #40 series,
 		 * e.g. the T440s min/max are the absolute edges, not the
-		 * recommended ones as usual with synaptics. But these are
-		 * clickpads, so N/A.
+		 * recommended ones as usual with synaptics.
 		 */
 		edge_width = width * .04;
 		edge_height = height * .054;
