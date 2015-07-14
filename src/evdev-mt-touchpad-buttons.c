@@ -530,7 +530,7 @@ tp_init_softbuttons(struct tp_dispatch *tp,
 	width = device->abs.dimensions.x;
 	height = device->abs.dimensions.y;
 
-	/* button height: 10mm or 15% orf the touchpad height,
+	/* button height: 10mm or 15% or the touchpad height,
 	   whichever is smaller */
 	if ((height * 0.15)/yres > 10) {
 		tp->buttons.bottom_area.top_edge =
