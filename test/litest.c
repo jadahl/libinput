@@ -1926,6 +1926,7 @@ litest_create_uinput_device_from_description(const char *name,
 	struct udev_device *udev_device;
 	const char *udev_action;
 	const char *udev_syspath = NULL;
+	int rc;
 
 	udev = udev_new();
 	litest_assert_notnull(udev);
@@ -1934,7 +1935,8 @@ litest_create_uinput_device_from_description(const char *name,
 	udev_monitor_filter_add_match_subsystem_devtype(udev_monitor, "input",
 							NULL);
 	/* remove O_NONBLOCK */
-	fcntl(udev_monitor_get_fd(udev_monitor), F_SETFL, 0);
+	rc = fcntl(udev_monitor_get_fd(udev_monitor), F_SETFL, 0);
+	litest_assert_int_ne(rc, -1);
 	litest_assert_int_eq(udev_monitor_enable_receiving(udev_monitor),
 			     0);
 
