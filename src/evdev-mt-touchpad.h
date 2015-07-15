@@ -237,7 +237,6 @@ struct tp_dispatch {
 		double prev_scale;
 		double angle;
 		struct device_float_coords center;
-		uint32_t thumb_mask;
 	} gesture;
 
 	struct {

@@ -629,7 +629,7 @@ tp_thumb_detect(struct tp_dispatch *tp, struct tp_touch *t)
 	 * - clickfinger must ignore this touch for finger count
 	 * - software buttons are unaffected
 	 * - edge scrolling unaffected
-	 * - gestures: cancel
+	 * - gestures: unaffected
 	 * - tapping: honour thumb on begin, ignore it otherwise for now,
 	 *   this gets a tad complicated otherwise
 	 */
