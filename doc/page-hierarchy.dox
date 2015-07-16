@@ -24,9 +24,11 @@
 @page misc Users
 
 - @subpage faq
+- @subpage tools
 
 @page developers Developers
 
 - @subpage test-suite
+- @subpage tools
 
 */

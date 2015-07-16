@@ -1,0 +1,102 @@
+/**
+@page tools Helper tools
+
+libinput provides a couple of tools to query state and events. Two of these
+tools are usually installed, others are @ref developer_tools only.
+
+@section user_tools User tools
+
+libinput ships with two tools to gather information about devices:
+@ref libinput-list-devices and @ref libinput-debug-events. Both tools must
+be run as root to have acess to the kernel's @c /dev/input/event* device
+files.
+
+@subsection libinput-list-devices
+
+The libinput-list-devices tool shows information about devices recognized by
+libinput and can help identifying why a device behaves different than
+expected. For example, if a device does not show up in the output, it is not
+a supported input device.
+
+@verbatim
+$ sudo libinput-list-devices
+[...]
+Device:           SynPS/2 Synaptics TouchPad
+Kernel:           /dev/input/event4
+Group:            9
+Seat:             seat0, default
+Size:             97.33x66.86mm
+Capabilities:     pointer 
+Tap-to-click:     disabled
+Tap drag lock:    disabled
+Left-handed:      disabled
+Nat.scrolling:    disabled
+Middle emulation: n/a
+Calibration:      n/a
+Scroll methods:   *two-finger 
+Click methods:    *button-areas clickfinger 
+[...]
+@endverbatim
+
+The above listing shows example output for a touchpad. The
+libinput-list-devices tool lists general information about the device (the
+kernel event node) but also the configuration options. If an option is
+"n/a" it does not exist on this device. Otherwise, the tool will show the
+default configuration for this device, for options that have more than a
+binary state all available options are listed, with the default one prefixed
+with an asterisk (*). In the example above, the default click method is
+button-areas but clickinger is available.
+
+Note that the default configuration may differ from the configuration
+applied by the desktop environment.
+
+@note This tool is intended to be human-readable and may change its output
+at any time.
+
+@subsection libinput-debug-events
+This is an installed version of the @ref event-debug developer tool. It
+prints events from devices and can help to identify why a device behaves
+different than expected.
+
+@verbatim
+$ sudo libinput-debug-events --enable-tapping --set-click-method=clickfinger
+@endverbatim
+
+See the man page or the @c --help output for information about the available
+options.
+
+@section developer_tools Developer tools
+
+The two most common tools used by developers are @ref event-debug and @ref
+event-gui.
+
+@subsection event-debug
+This is the in-tree version of the @ref libinput-debug-events tool and is
+linked to allow for easy debugging (i.e. it avoids libtool shenanigans). The
+code is the same. For debugging, run it against a single device only and
+enable the --verbose flag. This will print the various state machine
+transitions in addition to the events.
+
+@verbatim
+$ sudo ./tools/event-debug --verbose --device /dev/input/event3
+@endverbatim
+
+See the @c --help output for information about the available options.
+
+@subsection event-gui
+
+A simple GTK-based graphical tool that shows the behavior and location of
+touch events, pointer motion, scroll axes and gestures. Since this tool
+gathers data directly from libinput, it is thus suitable for
+pointer-acceleration testing.
+
+@verbatim
+$ sudo ./tools/event-gui
+@endverbatim
+
+See the @c --help output for information about the available options.
+
+@note The @c --grab flag puts an exclusive @c EVIOCGRAB on the device to
+avoid interference with the desktiop while testing.
+
+*/
