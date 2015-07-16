@@ -1,0 +1,32 @@
+/**
+@page touchpads Touchpads
+
+- @subpage scrolling
+- @subpage clickpad_softbuttons
+- @subpage tapping
+- @subpage gestures
+- @subpage palm_detection
+- @subpage t440_support
+
+@page touchscreens Touchscreens
+
+- @subpage absolute_axes
+
+@page pointers Mice, Trackballs, etc.
+
+- @subpage motion_normalization
+
+@page general General setup
+
+- @subpage udev_config
+- @subpage seats
+
+@page misc Users
+
+- @subpage faq
+
+@page developers Developers
+
+- @subpage test-suite
+
+*/
