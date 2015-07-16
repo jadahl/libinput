@@ -4,7 +4,7 @@ udev_PROGRAMS = libinput-device-group \
 
 litest_rules = 80-libinput-device-groups-litest.rules \
 	       90-libinput-model-quirks-litest.rules
-udev_SCRIPTS = $(litest_rules)
+noinst_SCRIPTS = $(litest_rules)
 
 libinput_device_group_SOURCES = libinput-device-group.c
 libinput_device_group_CFLAGS = $(LIBUDEV_CFLAGS) $(GCC_CFLAGS)
