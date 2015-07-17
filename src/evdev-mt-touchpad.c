@@ -616,7 +616,7 @@ tp_thumb_detect(struct tp_dispatch *tp, struct tp_touch *t)
 		return;
 
 	/* Note: a thumb at the edge of the touchpad won't trigger the
-	 * threshold, the surface areas is usually too small.
+	 * threshold, the surface area is usually too small.
 	 */
 	if (t->pressure < tp->thumb.threshold)
 		return;
