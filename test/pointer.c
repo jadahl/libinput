@@ -251,7 +251,6 @@ START_TEST(pointer_absolute_initial_state)
 	struct libinput_event_pointer *p1, *p2;
 	int axis = _i; /* looped test */
 
-	dev = litest_current_device();
 	libinput1 = dev->libinput;
 	litest_touch_down(dev, 0, 40, 60);
 	litest_touch_up(dev, 0);
