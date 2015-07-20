@@ -1958,6 +1958,10 @@ evdev_configure_device(struct evdev_device *device)
 
 	if (udev_tags & EVDEV_UDEV_TAG_MOUSE ||
 	    udev_tags & EVDEV_UDEV_TAG_POINTINGSTICK) {
+		evdev_tag_external_mouse(device, device->udev_device);
+		evdev_tag_trackpoint(device, device->udev_device);
+		device->dpi = evdev_read_dpi_prop(device);
+
 		if (libevdev_has_event_code(evdev, EV_REL, REL_X) &&
 		    libevdev_has_event_code(evdev, EV_REL, REL_Y) &&
 		    evdev_init_accel(device) == -1)
@@ -1975,9 +1979,6 @@ evdev_configure_device(struct evdev_device *device)
 		device->scroll.natural_scrolling_enabled = true;
 		/* want button scrolling config option */
 		device->scroll.want_button = 1;
-
-		evdev_tag_external_mouse(device, device->udev_device);
-		evdev_tag_trackpoint(device, device->udev_device);
 	}
 
 	if (udev_tags & EVDEV_UDEV_TAG_KEYBOARD) {
@@ -2146,7 +2147,7 @@ evdev_device_create(struct libinput_seat *seat,
 	device->scroll.wheel_click_angle =
 		evdev_read_wheel_click_prop(device);
 	device->model = evdev_read_model(device);
-	device->dpi = evdev_read_dpi_prop(device);
+	device->dpi = DEFAULT_MOUSE_DPI;
 
 	/* at most 5 SYN_DROPPED log-messages per 30s */
 	ratelimit_init(&device->syn_drop_limit, 30ULL * 1000, 5);
