@@ -30,10 +30,6 @@
 
 #include "evdev-mt-touchpad.h"
 
-/* Number found by trial-and error, seems to be 1200, divided by the
- * TP_MAGIC_SLOWDOWN in filter.c */
-#define DEFAULT_ACCEL_NUMERATOR 3000.0
-#define DEFAULT_HYSTERESIS_MARGIN_DENOMINATOR 700.0
 #define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 300 /* ms */
 #define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1 200 /* ms */
 #define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2 500 /* ms */
