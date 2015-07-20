@@ -1480,6 +1480,9 @@ evdev_get_trackpoint_dpi(struct evdev_device *device)
 					    DEFAULT_TRACKPOINT_ACCEL);
 			accel = DEFAULT_TRACKPOINT_ACCEL;
 		}
+		log_info(libinput,
+			  "Device '%s' set to const accel %.2f\n",
+			  accel);
 	}
 
 	return DEFAULT_MOUSE_DPI / accel;
