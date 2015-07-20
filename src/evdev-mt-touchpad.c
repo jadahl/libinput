@@ -439,7 +439,7 @@ tp_unpin_finger(struct tp_dispatch *tp, struct tp_touch *t)
 	ydist *= tp->buttons.motion_dist.y_scale_coeff;
 
 	/* 3mm movement -> unpin */
-	if (vector_length(xdist, ydist) >= 3.0) {
+	if (hypot(xdist, ydist) >= 3.0) {
 		t->pinned.is_pinned = false;
 		return;
 	}

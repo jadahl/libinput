@@ -197,7 +197,7 @@ START_TEST(pointer_motion_relative_min_decel)
 	ck_assert((evx == 0.0) == (dx == 0));
 	ck_assert((evy == 0.0) == (dy == 0));
 
-	len = vector_length(evx, evy);
+	len = hypot(evx, evy);
 	ck_assert(fabs(len) >= 0.3);
 
 	libinput_event_destroy(event);
