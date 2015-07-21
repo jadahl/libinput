@@ -430,7 +430,7 @@ START_TEST(touchpad_4fg_clickfinger_btntool_3slots)
 	struct litest_device *dev = litest_current_device();
 	struct libinput *li = dev->libinput;
 
-	if (libevdev_get_num_slots(dev->evdev) >= 4 ||
+	if (libevdev_get_num_slots(dev->evdev) != 3 ||
 	    !libevdev_has_event_code(dev->evdev, EV_KEY, BTN_TOOL_TRIPLETAP))
 		return;
 
