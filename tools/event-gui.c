@@ -650,6 +650,7 @@ main(int argc, char *argv[])
 
 	window_init(&w);
 	sockets_init(li);
+	handle_event_libinput(NULL, 0, li);
 
 	gtk_main();
 
