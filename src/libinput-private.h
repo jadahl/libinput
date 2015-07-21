@@ -247,13 +247,15 @@ typedef void (*libinput_source_dispatch_t)(void *data);
 void
 log_msg(struct libinput *libinput,
 	enum libinput_log_priority priority,
-	const char *format, ...);
+	const char *format, ...)
+	LIBINPUT_ATTRIBUTE_PRINTF(3, 4);
 
 void
 log_msg_va(struct libinput *libinput,
 	   enum libinput_log_priority priority,
 	   const char *format,
-	   va_list args);
+	   va_list args)
+	LIBINPUT_ATTRIBUTE_PRINTF(3, 0);
 
 int
 libinput_init(struct libinput *libinput,

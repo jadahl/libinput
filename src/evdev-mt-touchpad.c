@@ -1536,7 +1536,8 @@ tp_sanity_check(struct tp_dispatch *tp,
 
 error:
 	log_bug_kernel(libinput,
-		       "device %s failed touchpad sanity checks\n");
+		       "device %s failed touchpad sanity checks\n",
+		       device->devname);
 	return -1;
 }
 

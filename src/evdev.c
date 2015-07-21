@@ -563,7 +563,7 @@ evdev_process_touch(struct evdev_device *device,
 	case ABS_MT_SLOT:
 		if ((size_t)e->value >= device->mt.slots_len) {
 			log_bug_libinput(device->base.seat->libinput,
-					 "%s exceeds slots (%d of %d)\n",
+					 "%s exceeds slots (%d of %zd)\n",
 					 device->devname,
 					 e->value,
 					 device->mt.slots_len);
@@ -1482,6 +1482,7 @@ evdev_get_trackpoint_dpi(struct evdev_device *device)
 		}
 		log_info(libinput,
 			  "Device '%s' set to const accel %.2f\n",
+			  device->devname,
 			  accel);
 	}
 
