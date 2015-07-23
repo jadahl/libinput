@@ -2214,9 +2214,9 @@ litest_assert_scroll(struct libinput *li,
 			}
 		} else {
 			/* Last scroll event, must be 0 */
-			litest_assert_int_eq(
+			ck_assert_double_eq(
 				libinput_event_pointer_get_axis_value(ptrev, axis),
-				0);
+				0.0);
 		}
 		libinput_event_destroy(event);
 		event = next_event;
