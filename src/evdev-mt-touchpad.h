@@ -189,7 +189,7 @@ struct tp_touch {
 	struct {
 		enum touch_palm_state state;
 		struct device_coords first; /* first coordinates if is_palm == true */
-		uint32_t time; /* first timestamp if is_palm == true */
+		uint64_t time; /* first timestamp if is_palm == true */
 	} palm;
 
 	struct {

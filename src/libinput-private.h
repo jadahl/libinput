@@ -410,7 +410,7 @@ libinput_now(struct libinput *libinput)
 		return 0;
 	}
 
-	return ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
+	return ts.tv_sec * 1000000ULL + ts.tv_nsec / 1000;
 }
 
 static inline struct device_float_coords

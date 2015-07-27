@@ -1016,8 +1016,8 @@ START_TEST(pointer_accel_direction_change)
 
 	pev = libinput_event_get_pointer_event(event);
 	delta = libinput_event_pointer_get_dx(pev);
-	ck_assert(delta > 0.0);
-	ck_assert(delta < -max_accel);
+	ck_assert_double_gt(delta, 0.0);
+	ck_assert_double_lt(delta, -max_accel);
 	libinput_event_destroy(event);
 }
 END_TEST

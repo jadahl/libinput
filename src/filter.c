@@ -36,19 +36,29 @@
 #include "libinput-util.h"
 #include "filter-private.h"
 
+#define USE_MS 0
+
 struct normalized_coords
 filter_dispatch(struct motion_filter *filter,
 		const struct normalized_coords *unaccelerated,
 		void *data, uint64_t time)
 {
+#if USE_MS
+	return filter->interface->filter(filter, unaccelerated, data, time / 1000.0);
+#else
 	return filter->interface->filter(filter, unaccelerated, data, time);
+#endif
 }
 
 void
 filter_restart(struct motion_filter *filter,
 	       void *data, uint64_t time)
 {
+#if USE_MS
+	filter->interface->restart(filter, data, time / 1000.0);
+#else
 	filter->interface->restart(filter, data, time);
+#endif
 }
 
 void
@@ -77,21 +87,34 @@ filter_get_speed(struct motion_filter *filter)
  * Default parameters for pointer acceleration profiles.
  */
 
+#if USE_MS
 #define DEFAULT_THRESHOLD 0.4			/* in units/ms */
 #define DEFAULT_ACCELERATION 2.0		/* unitless factor */
 #define DEFAULT_INCLINE 1.1			/* unitless factor */
+#else
+#define DEFAULT_THRESHOLD 0.0004		/* in units/us */
+#define DEFAULT_ACCELERATION 2.0		/* unitless factor */
+#define DEFAULT_INCLINE 1.1			/* unitless factor */
+#endif
 
 /*
  * Pointer acceleration filter constants
  */
 
+
+#if USE_MS
 #define MAX_VELOCITY_DIFF	1.0 /* units/ms */
 #define MOTION_TIMEOUT		1000 /* (ms) */
 #define NUM_POINTER_TRACKERS	16
+#else
+#define MAX_VELOCITY_DIFF	0.01 /* units/us */
+#define MOTION_TIMEOUT		1000000 /* (us) */
+#define NUM_POINTER_TRACKERS	16
+#endif
 
 struct pointer_tracker {
 	struct normalized_coords delta; /* delta to most recent event */
-	uint64_t time;  /* ms */
+	uint64_t time;  /* us */
 	int dir;
 };
 
@@ -101,14 +124,14 @@ struct pointer_accelerator {
 
 	accel_profile_func_t profile;
 
-	double velocity;	/* units/ms */
-	double last_velocity;	/* units/ms */
+	double velocity;	/* units/us */
+	double last_velocity;	/* units/us */
 	struct normalized_coords last;
 
 	struct pointer_tracker *trackers;
 	int cur_tracker;
 
-	double threshold;	/* units/ms */
+	double threshold;	/* units/us */
 	double accel;		/* unitless factor */
 	double incline;		/* incline of the function */
 
@@ -149,9 +172,13 @@ tracker_by_offset(struct pointer_accelerator *accel, unsigned int offset)
 static double
 calculate_tracker_velocity(struct pointer_tracker *tracker, uint64_t time)
 {
+#if USE_MS
 	double tdelta = time - tracker->time + 1;
+#else
+	double tdelta = time - tracker->time + 1000.0;
+#endif
 
-	return normalized_length(tracker->delta) / tdelta; /* units/ms */
+	return normalized_length(tracker->delta) / tdelta; /* units/us */
 }
 
 static inline double
@@ -221,7 +248,7 @@ calculate_velocity(struct pointer_accelerator *accel, uint64_t time)
 		}
 	}
 
-	return result; /* units/ms */
+	return result; /* units/us */
 }
 
 static double
@@ -261,7 +288,7 @@ accelerator_filter(struct motion_filter *filter,
 {
 	struct pointer_accelerator *accel =
 		(struct pointer_accelerator *) filter;
-	double velocity; /* units/ms */
+	double velocity; /* units/us */
 	double accel_value; /* unitless factor */
 	struct normalized_coords accelerated;
 	struct normalized_coords unnormalized;
@@ -334,9 +361,15 @@ accelerator_set_speed(struct motion_filter *filter,
 	assert(speed >= -1.0 && speed <= 1.0);
 
 	/* delay when accel kicks in */
+#if USE_MS
 	accel_filter->threshold = DEFAULT_THRESHOLD - speed / 4.0;
 	if (accel_filter->threshold < 0.2)
 		accel_filter->threshold = 0.2;
+#else
+	accel_filter->threshold = DEFAULT_THRESHOLD - speed / 4000.0;
+	if (accel_filter->threshold < 0.0002)
+		accel_filter->threshold = 0.0002;
+#endif
 
 	/* adjust max accel factor */
 	accel_filter->accel = DEFAULT_ACCELERATION + speed * 1.5;
@@ -398,7 +431,7 @@ create_pointer_accelerator_filter(accel_profile_func_t profile,
 double
 pointer_accel_profile_linear_low_dpi(struct motion_filter *filter,
 				     void *data,
-				     double speed_in, /* in device units */
+				     double speed_in, /* in device units (units/us) */
 				     uint64_t time)
 {
 	struct pointer_accelerator *accel_filter =
@@ -406,17 +439,26 @@ pointer_accel_profile_linear_low_dpi(struct motion_filter *filter,
 
 	double s1, s2;
 	double max_accel = accel_filter->accel; /* unitless factor */
-	const double threshold = accel_filter->threshold; /* units/ms */
+	const double threshold = accel_filter->threshold; /* units/us */
 	const double incline = accel_filter->incline;
 	double factor;
 	double dpi_factor = accel_filter->dpi_factor;
 
 	max_accel /= dpi_factor;
 
+#if USE_MS
 	s1 = min(1, 0.3 + speed_in * 10);
 	s2 = 1 + (speed_in - threshold * dpi_factor) * incline;
+#else
+	s1 = min(1, 0.3 + speed_in * 10000.0);
+	s2 = 1 + (speed_in * 1000.0 - threshold * dpi_factor * 1000.0) * incline;
+#endif
 
+#if USE_MS
 	factor = min(max_accel, s2 > 1 ? s2 : s1);
+#else
+	factor = min(max_accel, s2 > 1 ? s2 : s1);
+#endif
 
 	return factor;
 }
@@ -432,14 +474,23 @@ pointer_accel_profile_linear(struct motion_filter *filter,
 
 	double s1, s2;
 	const double max_accel = accel_filter->accel; /* unitless factor */
-	const double threshold = accel_filter->threshold; /* units/ms */
+	const double threshold = accel_filter->threshold; /* units/us */
 	const double incline = accel_filter->incline;
 	double factor;
 
+#if USE_MS
 	s1 = min(1, 0.3 + speed_in * 10);
 	s2 = 1 + (speed_in - threshold) * incline;
+#else
+	s1 = min(1, 0.3 + speed_in * 10 * 1000.0);
+	s2 = 1 + (speed_in * 1000.0 - threshold * 1000.0) * incline;
+#endif
 
+#if USE_MS
 	factor =  min(max_accel, s2 > 1 ? s2 : s1);
+#else
+	factor =  min(max_accel, s2 > 1 ? s2 : s1);
+#endif
 
 	return factor;
 }
@@ -489,13 +540,18 @@ touchpad_lenovo_x230_accel_profile(struct motion_filter *filter,
 	const double max_accel = accel_filter->accel *
 				  TP_MAGIC_LOW_RES_FACTOR; /* unitless factor */
 	const double threshold = accel_filter->threshold /
-				  TP_MAGIC_LOW_RES_FACTOR; /* units/ms */
+				  TP_MAGIC_LOW_RES_FACTOR; /* units/us */
 	const double incline = accel_filter->incline * TP_MAGIC_LOW_RES_FACTOR;
 
 	speed_in *= TP_MAGIC_SLOWDOWN / TP_MAGIC_LOW_RES_FACTOR;
 
+#if USE_MS
 	s1 = min(1, speed_in * 5);
 	s2 = 1 + (speed_in - threshold) * incline;
+#else
+	s1 = min(1, speed_in * 1000.0 * 5);
+	s2 = 1 + (speed_in * 1000.0 - threshold * 1000.0) * incline;
+#endif
 
 	speed_out = min(max_accel, s2 > 1 ? s2 : s1);
 

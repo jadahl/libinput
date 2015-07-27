@@ -33,7 +33,7 @@ struct libinput;
 struct libinput_timer {
 	struct libinput *libinput;
 	struct list link;
-	uint64_t expire; /* in absolute ms CLOCK_MONOTONIC */
+	uint64_t expire; /* in absolute us CLOCK_MONOTONIC */
 	void (*timer_func)(uint64_t now, void *timer_func_data);
 	void *timer_func_data;
 };
@@ -43,7 +43,7 @@ libinput_timer_init(struct libinput_timer *timer, struct libinput *libinput,
 		    void (*timer_func)(uint64_t now, void *timer_func_data),
 		    void *timer_func_data);
 
-/* Set timer expire time, in absolute ms CLOCK_MONOTONIC */
+/* Set timer expire time, in absolute us CLOCK_MONOTONIC */
 void
 libinput_timer_set(struct libinput_timer *timer, uint64_t expire);
 

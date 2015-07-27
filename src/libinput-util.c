@@ -72,9 +72,9 @@ list_empty(const struct list *list)
 }
 
 void
-ratelimit_init(struct ratelimit *r, uint64_t ival_ms, unsigned int burst)
+ratelimit_init(struct ratelimit *r, uint64_t ival_us, unsigned int burst)
 {
-	r->interval = ival_ms;
+	r->interval = ival_us;
 	r->begin = 0;
 	r->burst = burst;
 	r->num = 0;
@@ -97,17 +97,17 @@ enum ratelimit_state
 ratelimit_test(struct ratelimit *r)
 {
 	struct timespec ts;
-	uint64_t mtime;
+	uint64_t utime;
 
 	if (r->interval <= 0 || r->burst <= 0)
 		return RATELIMIT_PASS;
 
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	mtime = ts.tv_sec * 1000 + ts.tv_nsec / 1000 / 1000;
+	utime = ts.tv_sec * 1000000ULL + ts.tv_nsec / 1000ULL;
 
-	if (r->begin <= 0 || r->begin + r->interval < mtime) {
+	if (r->begin <= 0 || r->begin + r->interval < utime) {
 		/* reset counter */
-		r->begin = mtime;
+		r->begin = utime;
 		r->num = 1;
 		return RATELIMIT_PASS;
 	} else if (r->num < r->burst) {

@@ -32,8 +32,8 @@
 
 #include "evdev-mt-touchpad.h"
 
-#define DEFAULT_BUTTON_ENTER_TIMEOUT 100 /* ms */
-#define DEFAULT_BUTTON_LEAVE_TIMEOUT 300 /* ms */
+#define DEFAULT_BUTTON_ENTER_TIMEOUT 100000 /* us */
+#define DEFAULT_BUTTON_LEAVE_TIMEOUT 300000 /* us */
 
 /*****************************************
  * BEFORE YOU EDIT THIS FILE, look at the state diagram in
@@ -923,8 +923,8 @@ tp_notify_clickpadbutton(struct tp_dispatch *tp,
 		struct evdev_dispatch *dispatch = tp->buttons.trackpoint->dispatch;
 		struct input_event event;
 
-		event.time.tv_sec = time/1000;
-		event.time.tv_usec = (time % 1000) * 1000;
+		event.time.tv_sec = time / 1000000;
+		event.time.tv_usec = time % 1000000;
 		event.type = EV_KEY;
 		event.code = button;
 		event.value = (state == LIBINPUT_BUTTON_STATE_PRESSED) ? 1 : 0;

@@ -93,7 +93,7 @@ static inline void
 tp_edge_scroll_set_timer(struct tp_dispatch *tp,
 			 struct tp_touch *t)
 {
-	const int DEFAULT_SCROLL_LOCK_TIMEOUT = 300; /* ms */
+	const int DEFAULT_SCROLL_LOCK_TIMEOUT = 300000; /* us */
 	/* if we use software buttons, we disable timeout-based
 	 * edge scrolling. A finger resting on the button areas is
 	 * likely there to trigger a button event.

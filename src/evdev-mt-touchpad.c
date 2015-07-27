@@ -30,9 +30,9 @@
 
 #include "evdev-mt-touchpad.h"
 
-#define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 300 /* ms */
-#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1 200 /* ms */
-#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2 500 /* ms */
+#define DEFAULT_TRACKPOINT_ACTIVITY_TIMEOUT 300000 /* us */
+#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_1 200000 /* us */
+#define DEFAULT_KEYBOARD_ACTIVITY_TIMEOUT_2 500000 /* us */
 #define FAKE_FINGER_OVERFLOW (1 << 7)
 
 static inline int
@@ -547,7 +547,7 @@ tp_palm_detect_trackpoint(struct tp_dispatch *tp,
 static void
 tp_palm_detect(struct tp_dispatch *tp, struct tp_touch *t, uint64_t time)
 {
-	const int PALM_TIMEOUT = 200; /* ms */
+	const int PALM_TIMEOUT = 200000; /* us */
 	const int DIRECTIONS = NE|E|SE|SW|W|NW;
 	struct device_float_coords delta;
 	int dirs;

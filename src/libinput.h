@@ -476,6 +476,16 @@ libinput_event_pointer_get_time(struct libinput_event_pointer *event);
 /**
  * @ingroup event_pointer
  *
+ * Return the event_time in micro seconds.
+ *
+ * @return The event time for this event in micro seconds
+ */
+uint64_t
+libinput_event_pointer_get_time_usec(struct libinput_event_pointer *event);
+
+/**
+ * @ingroup event_pointer
+ *
  * Return the delta between the last event and the current event. For pointer
  * events that are not of type @ref LIBINPUT_EVENT_POINTER_MOTION, this
  * function returns 0.
